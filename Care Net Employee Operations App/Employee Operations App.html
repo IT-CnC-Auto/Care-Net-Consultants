@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care Net Employee Operations App</title>
+<link rel="stylesheet" href="_ds/care-net-consultants-design-system-7580a9d7-7e8d-4dcd-a891-0cc29bfb770e/tokens/colors.css">
+<link rel="stylesheet" href="_ds/care-net-consultants-design-system-7580a9d7-7e8d-4dcd-a891-0cc29bfb770e/tokens/typography.css">
+<link rel="stylesheet" href="_ds/care-net-consultants-design-system-7580a9d7-7e8d-4dcd-a891-0cc29bfb770e/tokens/layout.css">
+<link rel="stylesheet" href="_ds/care-net-consultants-design-system-7580a9d7-7e8d-4dcd-a891-0cc29bfb770e/styles.css">
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font-body);color:var(--text-body);background:#E8E6E3}
+a{color:var(--cnc-red)}a:hover{color:var(--red-dark)}
+button{font-family:var(--font-heading)}
+@keyframes cncspin{to{transform:rotate(360deg)}}
+@keyframes cncring{0%{transform:scale(1);opacity:.85}70%{transform:scale(1.28);opacity:0}100%{transform:scale(1.28);opacity:0}}
+@keyframes cncbeat{0%,100%{transform:scale(1)}12%{transform:scale(1.18)}24%{transform:scale(1)}36%{transform:scale(1.1)}48%{transform:scale(1)}}
+@keyframes cncpulsemove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes cncdrop{from{transform:translateY(-16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes cncscan{0%,100%{top:12%}50%{top:84%}}
+.cnc-scanline{animation:cncscan 2.2s ease-in-out infinite}
+.cnc-scroll>*{flex:none}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#C9C9C9;border-radius:5px}::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#ED1B24"/><g fill="#fff"><rect x="42" y="30" width="16" height="40" rx="3"/><rect x="30" y="42" width="40" height="16" rx="3"/></g></svg></template>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="_ds/care-net-consultants-design-system-7580a9d7-7e8d-4dcd-a891-0cc29bfb770e/_ds_bundle.js"></script>
+<script src="data.js"></script>
+<script type="text/babel" src="android-frame.jsx"></script>
+<script type="text/babel" src="icons.jsx"></script>
+<script type="text/babel" src="ui.jsx"></script>
+<script type="text/babel" src="screens-auth.jsx"></script>
+<script type="text/babel" src="screens-clock.jsx"></script>
+<script type="text/babel" src="screens-home.jsx"></script>
+<script type="text/babel" src="screens-jobcard.jsx"></script>
+<script type="text/babel" src="screens-hr.jsx"></script>
+<script type="text/babel" src="screens-connect.jsx"></script>
+<script type="text/babel" src="screens-inspect.jsx"></script>
+<script type="text/babel" src="screens-records.jsx"></script>
+<script type="text/babel" src="backend.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

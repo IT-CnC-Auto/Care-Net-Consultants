@@ -1,0 +1,13 @@
+:root{
+--cnc-red:#ED1B24;--cnc-black:#000000;--cnc-white:#FFFFFF;
+--cnc-green:#007749;--cnc-blue:#001489;--cnc-yellow:#FFB81C;
+--cnc-charcoal:#1E1E1E;--cnc-grey-mid:#787878;--cnc-grey-light:#F0F0F0;--cnc-grey-panel:#F2F2F2;
+--red-dark:#C1272D;--red-deep:#8B0000;--red-tint:#FDE8E9;
+--green-tint:#E6F1ED;--blue-tint:#E6E8F3;--yellow-tint:#FFF4DC;
+--text-body:var(--cnc-charcoal);--text-muted:var(--cnc-grey-mid);--text-inverse:var(--cnc-white);
+--accent:var(--cnc-red);--accent-hover:var(--red-dark);
+--surface-page:var(--cnc-white);--surface-panel:var(--cnc-grey-panel);--surface-card:var(--cnc-white);
+--border-subtle:#E2E2E2;--border-strong:var(--cnc-charcoal);
+--success:var(--cnc-green);--info:var(--cnc-blue);--warning:var(--cnc-yellow);--danger:var(--cnc-red);
+--focus-ring:0 0 0 3px rgba(237,27,36,.25);
+}
