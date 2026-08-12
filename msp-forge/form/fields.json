@@ -1,0 +1,213 @@
+{
+  "schema_version": "intake.v1",
+  "docuseal_role": "Client",
+  "capacities": { "sites": 4, "contacts": 3, "exposures": 6, "jobs": 10, "chemicals": 8 },
+  "sections": [
+    {
+      "no": 1,
+      "title": "COMPANY AND SITE DETAILS",
+      "fields": [
+        { "name": "company_registered_name", "label": "Registered company name", "type": "text", "required": true },
+        { "name": "company_trading_name", "label": "Trading name (if different)", "type": "text", "required": false },
+        { "name": "company_registration_number", "label": "Company registration number", "type": "text", "required": true },
+        { "name": "company_vat_number", "label": "VAT registration number", "type": "text", "required": false },
+        { "name": "company_head_office_address", "label": "Registered or head office address", "type": "textarea", "required": true },
+        { "name": "company_core_industry_freetext", "label": "Core industry or nature of business", "type": "text", "required": true },
+        { "name": "company_years_operating", "label": "Years operating at the listed sites", "type": "number", "required": true }
+      ],
+      "repeats": [
+        { "prefix": "site", "count": 4, "title": "Sites covered by this Plan (one block per site; leave unused blocks blank)",
+          "fields": [
+            { "name": "name", "label": "Site name", "type": "text", "required_first": true },
+            { "name": "address", "label": "Site address", "type": "text" },
+            { "name": "activity", "label": "Nature of activity at this site", "type": "text" },
+            { "name": "headcount", "label": "Approximate number of employees", "type": "number" }
+          ] },
+        { "prefix": "contact", "count": 3, "title": "Primary contacts",
+          "fields": [
+            { "name": "role", "label": "Role (for example SHE Officer, HR Manager)", "type": "text", "required_first": true },
+            { "name": "name", "label": "Full name", "type": "text", "required_first": true },
+            { "name": "position", "label": "Position", "type": "text" },
+            { "name": "email", "label": "Email", "type": "text", "required_first": true },
+            { "name": "phone", "label": "Telephone", "type": "text" }
+          ] }
+      ]
+    },
+    {
+      "no": 2,
+      "title": "REGULATORY AND COMPLIANCE CONTEXT",
+      "intro": "Tick every regulation that applies to your operations. This is not an exhaustive list; add any other sector specific regulation in the space provided.",
+      "fields": [
+        { "name": "reg_ohsa", "label": "Occupational Health and Safety Act 85 of 1993 (General Safety and General Administrative Regulations)", "type": "checkbox" },
+        { "name": "reg_construction", "label": "Construction Regulations, 2014", "type": "checkbox" },
+        { "name": "reg_mhsa", "label": "Mine Health and Safety Act 29 of 1996", "type": "checkbox" },
+        { "name": "reg_hca", "label": "Hazardous Chemical Agents Regulations, 2021", "type": "checkbox" },
+        { "name": "reg_noise", "label": "Noise-Induced Hearing Loss Regulations / Noise Exposure Regulations", "type": "checkbox" },
+        { "name": "reg_asbestos", "label": "Asbestos Abatement Regulations", "type": "checkbox" },
+        { "name": "reg_lead", "label": "Lead Regulations", "type": "checkbox" },
+        { "name": "reg_hba", "label": "Hazardous Biological Agents Regulations", "type": "checkbox" },
+        { "name": "reg_ergonomics", "label": "Ergonomics Regulations, 2019", "type": "checkbox" },
+        { "name": "reg_nrta_prdp", "label": "National Road Traffic Act and Professional Driving Permit requirements", "type": "checkbox" },
+        { "name": "reg_nightwork_code", "label": "Code of Good Practice: Arrangement of Working Time (night or shift work)", "type": "checkbox" },
+        { "name": "reg_other_detail", "label": "Other applicable regulations, please specify", "type": "textarea" },
+        { "name": "coida_registered", "label": "Registered for COIDA (tick if yes)", "type": "checkbox" },
+        { "name": "coida_class_tariff_number", "label": "COIDA class, tariff, or assessment number if known", "type": "text" },
+        { "name": "enforcement_notice_3yr", "label": "Any enforcement, prohibition, or improvement notice from a regulator in the past three years (tick if yes)", "type": "checkbox" },
+        { "name": "enforcement_notice_detail", "label": "If yes: date, issuing authority, nature of notice, resolution status", "type": "textarea" },
+        { "name": "third_party_cert_required", "label": "Any principal contractor, client, or third party requiring a specific medical certificate format or validity period (tick if yes)", "type": "checkbox" },
+        { "name": "third_party_cert_detail", "label": "If yes: the third party, the certificate requirement, and the validity period", "type": "textarea" }
+      ]
+    },
+    {
+      "no": 3,
+      "title": "EXISTING RISK ASSESSMENT AND OCCUPATIONAL HYGIENE INFORMATION",
+      "intro": "This section is the foundation of your Medical Surveillance Plan. Care Net relies on the information and documents provided here. Attach the documents referred to.",
+      "fields": [
+        { "name": "ra_exists", "label": "Current workplace health and safety risk assessment in place (tick if yes)", "type": "checkbox" },
+        { "name": "ra_date", "label": "Date the risk assessment was conducted", "type": "date" },
+        { "name": "ra_conducted_by", "label": "Conducted by (name and company or Approved Inspection Authority)", "type": "text" },
+        { "name": "ra_assessor_accreditation", "label": "Qualification or accreditation of the assessor", "type": "text" },
+        { "name": "ra_next_review_date", "label": "Date of next scheduled risk assessment review", "type": "date" },
+        { "name": "ra_file", "label": "Attach the risk assessment", "type": "file" },
+        { "name": "hygiene_results_exist", "label": "Occupational hygiene monitoring results available (tick if yes)", "type": "checkbox" },
+        { "name": "hygiene_date", "label": "Date of the most recent hygiene survey", "type": "date" },
+        { "name": "hygiene_conducted_by", "label": "Conducted by (name and company, accreditation)", "type": "text" },
+        { "name": "hygiene_file", "label": "Attach the hygiene monitoring results", "type": "file" },
+        { "name": "process_change_since_ra", "label": "Any change in process, plant, materials, or job content since the last risk assessment (tick if yes)", "type": "checkbox" },
+        { "name": "process_change_detail", "label": "If yes, describe the change", "type": "textarea" },
+        { "name": "sds_files", "label": "Attach Safety Data Sheets", "type": "file" }
+      ],
+      "repeats": [
+        { "prefix": "exposure", "count": 6, "title": "Quantified exposure levels, if known (one block per measurement)",
+          "fields": [
+            { "name": "hazard_location", "label": "Hazard and location", "type": "text" },
+            { "name": "measured_level", "label": "Measured level", "type": "text" },
+            { "name": "unit", "label": "Unit", "type": "text" },
+            { "name": "stated_oel", "label": "Occupational Exposure Limit, if known", "type": "text" },
+            { "name": "date_measured", "label": "Date measured", "type": "date" }
+          ] }
+      ]
+    },
+    {
+      "no": 4,
+      "title": "WORKFORCE PROFILE",
+      "fields": [
+        { "name": "workforce_total", "label": "Total number of employees covered by this Plan", "type": "number", "required": true },
+        { "name": "workforce_permanent", "label": "Permanent employees", "type": "number" },
+        { "name": "workforce_contract", "label": "Contract employees", "type": "number" },
+        { "name": "workforce_temporary", "label": "Temporary or seasonal employees", "type": "number" },
+        { "name": "shift_night_work", "label": "Employees work rotating shifts or night work (tick if yes)", "type": "checkbox" },
+        { "name": "shift_pattern_detail", "label": "If yes, describe the shift pattern", "type": "textarea" },
+        { "name": "nightwork_medical_current", "label": "Night work medicals currently conducted per the Code of Good Practice (tick if yes)", "type": "checkbox" },
+        { "name": "nightwork_medical_interval", "label": "Current night work medical repeat interval", "type": "text" },
+        { "name": "employees_under_18", "label": "Any employees under the age of 18 (tick if yes)", "type": "checkbox" },
+        { "name": "pregnancy_exposed_roles", "label": "Any employees currently pregnant or breastfeeding in a role with occupational exposure (tick if yes)", "type": "checkbox" },
+        { "name": "hs_committee_present", "label": "Active health and safety committee or union representation on site (tick if yes)", "type": "checkbox" },
+        { "name": "chronic_flag_present", "label": "At an aggregate level, employees in exposed high risk roles with chronic conditions that could cause sudden incapacity (tick if yes; never name any individual)", "type": "checkbox" },
+        { "name": "chronic_flag_categories", "label": "If yes, list the affected job categories only. Do not name any person and do not enter any identity number.", "type": "textarea" }
+      ]
+    },
+    {
+      "no": 5,
+      "title": "JOB CATEGORIES AND EXPOSURE IDENTIFICATION",
+      "intro": "Complete one block per job title or category. Hazard key: A Noise. B Dust or respirable crystalline silica. C Hazardous chemicals (specify in notes). D Biological agents. E Working at height above 1.5m. F Confined spaces. G Vibration. H Heat or thermal stress. I Manual handling or ergonomic strain. J Driving (licence or PrDP class in notes). K Shift or night work. L Ionising or non ionising radiation. M Electrical hazard. N Psychosocial hazard. O Other (specify in notes).",
+      "repeats": [
+        { "prefix": "job", "count": 10, "title": "Job categories (one block per category; leave unused blocks blank)",
+          "fields": [
+            { "name": "title", "label": "Job title or category", "type": "text", "required_first": true },
+            { "name": "headcount", "label": "Number of employees", "type": "number", "required_first": true },
+            { "name": "duties", "label": "Brief description of duties", "type": "textarea", "required_first": true },
+            { "name": "hazards", "label": "Hazard letters from the key, separated by commas (for example A, B, E)", "type": "text", "required_first": true },
+            { "name": "controls", "label": "Existing controls (engineering, administrative, PPE)", "type": "textarea" },
+            { "name": "physical_demands", "label": "Physical demands of the job itself (for example lifting, standing, climbing)", "type": "textarea" },
+            { "name": "sensory_cognitive_demands", "label": "Sensory and cognitive demands (for example vision, hearing, concentration)", "type": "textarea" },
+            { "name": "statutory_requirement", "label": "Statutory or competency requirement (for example PrDP class, heights ticket)", "type": "text" },
+            { "name": "rpe_issued", "label": "RPE issued (state type, or None)", "type": "text" },
+            { "name": "rpe_fit_tested", "label": "RPE fit tested (Yes, No, or Not applicable)", "type": "text" },
+            { "name": "rpe_fit_test_interval", "label": "Fit test interval", "type": "text" },
+            { "name": "other_ppe", "label": "Other PPE issued and inspection interval", "type": "text" }
+          ] },
+        { "prefix": "chem", "count": 8, "title": "Chemical and hazardous substance register (one block per substance; attach SDS rather than retyping)",
+          "fields": [
+            { "name": "substance_name", "label": "Chemical or substance name", "type": "text" },
+            { "name": "sds_reference", "label": "SDS reference number", "type": "text" },
+            { "name": "task_process", "label": "Task or process", "type": "text" },
+            { "name": "frequency", "label": "Frequency of use", "type": "text" },
+            { "name": "quantity_per_use", "label": "Quantity per use", "type": "text" },
+            { "name": "controls", "label": "Control measures in place", "type": "text" }
+          ] }
+      ],
+      "fields": [
+        { "name": "hazard_additional_detail", "label": "Additional detail on specific hazards not captured above (known noise or dust levels, height of work, vehicle classes, and so on)", "type": "textarea" }
+      ]
+    },
+    {
+      "no": 6,
+      "title": "CURRENT MEDICAL SURVEILLANCE ARRANGEMENTS",
+      "fields": [
+        { "name": "current_medicals_exist", "label": "Employees currently undergo occupational medical examinations (tick if yes)", "type": "checkbox" },
+        { "name": "current_provider", "label": "Current service provider, if any", "type": "text" },
+        { "name": "last_cycle_date", "label": "Date of the most recent medical surveillance cycle", "type": "date" },
+        { "name": "current_tests_detail", "label": "Tests currently performed and how often, if known", "type": "textarea" },
+        { "name": "outstanding_referrals", "label": "Outstanding referrals or unresolved abnormal findings from a previous provider (tick if yes)", "type": "checkbox" },
+        { "name": "records_format", "label": "Current medical records format", "type": "text" }
+      ]
+    },
+    {
+      "no": 7,
+      "title": "INCIDENT AND OCCUPATIONAL DISEASE HISTORY",
+      "fields": [
+        { "name": "injuries_3yr", "label": "Reported work related injuries in the past three years (tick if yes)", "type": "checkbox" },
+        { "name": "coida_claims_3yr", "label": "COIDA claims submitted in the past three years for an occupational disease (tick if yes)", "type": "checkbox" },
+        { "name": "modified_duties_current", "label": "Any employees currently on modified or restricted duties for health reasons (tick if yes)", "type": "checkbox" },
+        { "name": "incident_history_detail", "label": "Brief details for any yes answer above (no individual names, no identity numbers)", "type": "textarea" }
+      ]
+    },
+    {
+      "no": 8,
+      "title": "INDUSTRY AND SUBINDUSTRY SELECTION",
+      "intro": "Select from the governed list. Currently selectable: CONSTR-CIVILS (Construction, civil engineering works). Further industries become selectable as they pass kernel verification. If your industry is not listed, enter OTHER and describe your business; an OTHER selection routes to human review and never auto generates.",
+      "fields": [
+        { "name": "industry_code", "label": "Industry code (for example CONSTR, or OTHER)", "type": "text", "required": true },
+        { "name": "subindustry_code", "label": "Subindustry code (for example CONSTR-CIVILS, or OTHER)", "type": "text", "required": true },
+        { "name": "industry_other_detail", "label": "If OTHER, describe your industry and core activities", "type": "textarea" }
+      ]
+    },
+    {
+      "no": 9,
+      "title": "BRANDING AND DELIVERY",
+      "fields": [
+        { "name": "client_logo", "label": "Company logo upload (PNG or SVG, minimum 600 pixels wide, transparent background preferred)", "type": "file", "required": true },
+        { "name": "brand_colour_hex", "label": "Brand colour, if you have one (hex value, for example #003366)", "type": "text" },
+        { "name": "certificate_format_preference", "label": "Preferred certificate format, if any", "type": "textarea" },
+        { "name": "delivery_contact_name", "label": "Delivery contact full name", "type": "text", "required": true },
+        { "name": "delivery_contact_email", "label": "Delivery contact email", "type": "text", "required": true }
+      ]
+    },
+    {
+      "no": 10,
+      "title": "DATA PROTECTION AND CONSENT",
+      "intro": "Care Net Consultants (Pty) Ltd processes the information in this questionnaire for the sole specified purpose of designing your organisation's medical surveillance programme, in accordance with the Protection of Personal Information Act 4 of 2013. You may withdraw consent at any time by contacting the Care Net Information Officer. This form must not contain any employee's identity number, medical condition, or other personal information about an identifiable individual.",
+      "fields": [
+        { "name": "information_officer_name", "label": "Your organisation's Information Officer or Deputy Information Officer", "type": "text", "required": true },
+        { "name": "information_officer_contact", "label": "Email or telephone for the Information Officer", "type": "text", "required": true },
+        { "name": "employees_informed_before_exam", "label": "Employees will be informed of this programme and their POPIA rights before their first examination (tick to confirm)", "type": "checkbox", "required": true },
+        { "name": "consent_processing", "label": "REQUIRED: I consent to Care Net Consultants (Pty) Ltd processing the information in this questionnaire for the sole purpose of designing our medical surveillance programme, under the Protection of Personal Information Act 4 of 2013. Withdrawal: contact the Care Net Information Officer.", "type": "checkbox", "required": true },
+        { "name": "consent_marketing", "label": "OPTIONAL and separate: I consent to Care Net Consultants (Pty) Ltd sending our organisation information about related occupational health services. This is not required for your Plan and is off unless ticked.", "type": "checkbox" },
+        { "name": "popia_use_cnc_forms", "label": "Tick to use Care Net's standard POPIA employee notice and consent forms; leave blank to provide your own", "type": "checkbox" }
+      ]
+    },
+    {
+      "no": 11,
+      "title": "DECLARATION",
+      "intro": "I confirm that the information provided in this questionnaire, and any documents attached to it, is accurate and complete to the best of my knowledge at the date of signature. I understand that Care Net Consultants (Pty) Ltd will design the organisation's Medical Surveillance Plan based on this information and any risk assessment or hygiene monitoring documents attached, and that Care Net does not independently conduct the underlying workplace risk assessment as part of this process. I undertake to notify Care Net promptly of any change in process, plant, materials, job content, or risk assessment findings that may affect the accuracy of the resulting Plan.",
+      "fields": [
+        { "name": "declarant_full_name", "label": "Full name", "type": "text", "required": true },
+        { "name": "declarant_position", "label": "Position", "type": "text", "required": true },
+        { "name": "declarant_company", "label": "Company", "type": "text", "required": true },
+        { "name": "client_signature", "label": "Signature", "type": "signature", "required": true },
+        { "name": "declaration_date", "label": "Date", "type": "date", "required": true }
+      ]
+    }
+  ]
+}

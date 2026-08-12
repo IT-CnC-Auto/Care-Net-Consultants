@@ -1,0 +1,258 @@
+{
+  "schema_version": "intake.v1",
+  "docuseal_submission_id": "SYN-0001",
+  "validation_status": "valid",
+  "triage_reason": null,
+  "company_registered_name": "Horizon Construction and Civils (Pty) Ltd",
+  "company_trading_name": "Horizon Civils",
+  "company_registration_number": "2015/123456/07",
+  "company_vat_number": "4123456789",
+  "company_head_office_address": "12 Contractor Way, Longmeadow Business Estate, Modderfontein, Gauteng, 1609",
+  "company_core_industry_freetext": "Building and civil construction contracting",
+  "company_years_operating": 11,
+  "industry_code": "CONSTR",
+  "subindustry_code": "CONSTR-CIVILS",
+  "industry_other_detail": null,
+  "workforce_total": 85,
+  "shift_night_work": false,
+  "employees_under_18": false,
+  "pregnancy_exposed_roles": false,
+  "hs_committee_present": true,
+  "chronic_flag_present": true,
+  "chronic_flag_categories": "Plant Operator; Driver / Plant and Materials Transport",
+  "coida_registered": true,
+  "coida_class_tariff_number": "Class V, 0500",
+  "enforcement_notice_3yr": false,
+  "enforcement_notice_detail": null,
+  "third_party_cert_required": true,
+  "third_party_cert_detail": "Principal contractor requires heights fitness certificates valid no longer than 12 months",
+  "ra_exists": true,
+  "ra_date": "2026-05-10",
+  "ra_conducted_by": "SafeWork AIA (Pty) Ltd",
+  "ra_assessor_accreditation": "SANAS accredited Approved Inspection Authority",
+  "ra_next_review_date": "2027-05-10",
+  "hygiene_results_exist": true,
+  "hygiene_date": "2026-06-15",
+  "hygiene_conducted_by": "SafeWork AIA (Pty) Ltd",
+  "process_change_since_ra": false,
+  "process_change_detail": null,
+  "current_medicals_exist": false,
+  "current_provider": null,
+  "current_tests_detail": null,
+  "outstanding_referrals": false,
+  "records_format": null,
+  "injuries_3yr": false,
+  "coida_claims_3yr": false,
+  "modified_duties_current": false,
+  "incident_history_detail": null,
+  "brand_colour_hex": "#003366",
+  "certificate_format_preference": null,
+  "delivery_contact_name": "J. Naidoo",
+  "delivery_contact_email": "she@horizoncivils.example",
+  "information_officer_name": "A. Botha",
+  "information_officer_contact": "privacy@horizoncivils.example",
+  "employees_informed_before_exam": true,
+  "consent_processing": true,
+  "consent_marketing": false,
+  "popia_use_cnc_forms": true,
+  "consent_wording_version": "popia.v1",
+  "declarant_full_name": "J. Naidoo",
+  "declarant_position": "SHE Officer",
+  "declarant_company": "Horizon Construction and Civils (Pty) Ltd",
+  "declaration_date": "2026-08-12",
+  "sites": [
+    {
+      "name": "Head office and yard",
+      "address": "Modderfontein, Gauteng",
+      "activity": "Administration, workshop, fabrication bay",
+      "headcount": 25
+    },
+    {
+      "name": "Project site: N3 interchange upgrade",
+      "address": "Gauteng region",
+      "activity": "Civil works, earthworks, structures",
+      "headcount": 60
+    }
+  ],
+  "jobs": [
+    {
+      "title": "Site Manager / Supervisor",
+      "headcount": 6,
+      "duties": "Site oversight, inspection, coordination of trades",
+      "hazard_codes": [
+        "A",
+        "B",
+        "E",
+        "H"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": null,
+      "chronic_flag": false,
+      "rpe_issued": null,
+      "rpe_fit_tested": null,
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    },
+    {
+      "title": "General Labourer",
+      "headcount": 30,
+      "duties": "Manual labour, material handling, site clearing",
+      "hazard_codes": [
+        "A",
+        "B",
+        "I",
+        "H"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": null,
+      "chronic_flag": false,
+      "rpe_issued": "P2 dust mask",
+      "rpe_fit_tested": "No",
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    },
+    {
+      "title": "Scaffolder / Heights Worker",
+      "headcount": 12,
+      "duties": "Erecting and dismantling scaffolding and access structures",
+      "hazard_codes": [
+        "E",
+        "G",
+        "A"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": "Working at heights competency certificate",
+      "chronic_flag": false,
+      "rpe_issued": null,
+      "rpe_fit_tested": null,
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    },
+    {
+      "title": "Plant Operator",
+      "headcount": 10,
+      "duties": "Operating excavators, TLBs, rollers",
+      "hazard_codes": [
+        "G",
+        "A",
+        "C",
+        "I"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": null,
+      "chronic_flag": true,
+      "rpe_issued": null,
+      "rpe_fit_tested": null,
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    },
+    {
+      "title": "Welder / Steel Fabricator",
+      "headcount": 8,
+      "duties": "Cutting, welding, fabricating structural steel",
+      "hazard_codes": [
+        "C",
+        "L",
+        "A"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": null,
+      "chronic_flag": false,
+      "rpe_issued": "Half mask with P3 filter",
+      "rpe_fit_tested": "Yes",
+      "rpe_fit_test_interval": "Annually",
+      "other_ppe": null
+    },
+    {
+      "title": "Concrete and Cement Worker",
+      "headcount": 12,
+      "duties": "Mixing, placing, finishing concrete",
+      "hazard_codes": [
+        "B",
+        "C",
+        "I"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": null,
+      "chronic_flag": false,
+      "rpe_issued": "P2 dust mask",
+      "rpe_fit_tested": "No",
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    },
+    {
+      "title": "Driver / Plant and Materials Transport",
+      "headcount": 5,
+      "duties": "Transporting materials and plant between sites",
+      "hazard_codes": [
+        "J",
+        "G",
+        "I"
+      ],
+      "existing_controls": null,
+      "physical_demands": null,
+      "sensory_cognitive_demands": null,
+      "statutory_requirement": "PrDP",
+      "chronic_flag": true,
+      "rpe_issued": null,
+      "rpe_fit_tested": null,
+      "rpe_fit_test_interval": null,
+      "other_ppe": null
+    }
+  ],
+  "exposures": [
+    {
+      "hazard_location": "Noise, plant and compaction area",
+      "measured_level": "92",
+      "unit": "dB(A) 8 hour TWA",
+      "stated_oel": "85 dB(A)",
+      "date_measured": "2026-06-15"
+    },
+    {
+      "hazard_location": "Respirable crystalline silica, concrete cutting and grinding",
+      "measured_level": "0.15",
+      "unit": "mg/m3 8 hour TWA",
+      "stated_oel": "0.1 mg/m3",
+      "date_measured": "2026-06-15"
+    },
+    {
+      "hazard_location": "Welding fume as manganese, fabrication bay",
+      "measured_level": "0.18",
+      "unit": "mg/m3 8 hour TWA",
+      "stated_oel": "0.02 mg/m3",
+      "date_measured": "2026-06-15"
+    }
+  ],
+  "chemicals": [
+    {
+      "substance_name": "Diesel (plant fuel)",
+      "sds_reference": "SDS-DSL-01",
+      "task_process": "Refuelling of plant",
+      "frequency": "Daily",
+      "controls": "Bunded storage, spill kit, gloves"
+    },
+    {
+      "substance_name": "Welding consumables, manganese containing electrodes",
+      "sds_reference": "SDS-WLD-02",
+      "task_process": "Structural steel welding",
+      "frequency": "Daily in fabrication bay",
+      "controls": "Local extraction, RPE, welding curtains"
+    }
+  ],
+  "nightwork_medical_current": false,
+  "nightwork_medical_interval": null,
+  "shift_pattern_detail": null,
+  "hazard_additional_detail": null
+}
