@@ -191,31 +191,31 @@ Tick everything true — channels filter hard on amenities. Non-negotiables for 
 
 ### 7.5 Price & fees — priced off the ThinkThansa studio rate card
 
-**The product on the channels is the 1-Night Sleepover package** (1 studio day + 1 night, R4,999 excl. VAT). A guest booking 1 night on Airbnb is buying that package; a guest booking N nights is buying N nights + N studio days. The other rate-card products map as follows:
+**The product on the channels is the 1-Night Sleepover package** (1 studio day + 1 night, R4,999). A guest booking 1 night on Airbnb is buying that package; a guest booking N nights is buying N nights + N studio days. The other rate-card products map as follows:
 
-| Rate-card product | Rate (excl. VAT) | On the channels? |
+| Rate-card product | Rate | On the channels? |
 |---|---|---|
-| Full Day (8h studio, no stay) | R3,999 | No — studio-diary product only. It still blocks the Hostaway calendar via iCal (Section 8). |
+| Full Day (8h studio, no stay) | R3,999 | No — booked on the Think Tank website. Its calendar feeds Hostaway via iCal (Section 8) so a Full Day booking **closes the BeeHive night** on all channels. |
 | **1-Night Sleepover** | **R4,999** | **Yes — this IS the nightly rate.** |
 | 2-Day Sleepover (2 studio days + 1 night) | R8,999 | No — direct/quote only (channels cannot sell 2 studio days against 1 night). Offer it as a Guest Portal upgrade after booking. |
 | Midweek Special (3 studio days + 2 nights) | R12,999 | No — direct/quote only; ~R1,000 cheaper than the per-night equivalent, so keep it direct. |
 | Weekend Special (Fri 17:00–Sun 17:00) | R9,999 | Effectively yes: 2 weekend nights at the standard nightly rate ≈ R9,998, so channel pricing already matches — no special setup needed. |
-| Special Shoot (first hour free, then R999/h) | R999/h | No — studio-diary product between bookings. |
+| Special Shoot (first hour free, then R999/h) | R999/h | No — booked on the Think Tank website, typically on Monday deep-clean days (unless the studio has a midday booking). The website's iCal feed **closes the BeeHive night** whenever one is booked. |
 
-**Step 1 — VAT gross-up.** The rate card is excl. VAT; consumer channels must show VAT-inclusive prices. R4,999 × 1.15 = **R5,749 incl. VAT**. This is the **base rate** you enter in Hostaway. (If the entity is not VAT-registered, use R4,999 as the base and scale every channel price below by ÷1.15.)
+**Step 1 — VAT: none.** The entity is **not VAT-registered**, so no gross-up applies — the rate-card price is the final consumer price. The **base rate you enter in Hostaway is R4,999**. (If the entity registers for VAT later — the R1m turnover threshold — multiply the base rate and every channel price below by 1.15 the same day registration takes effect.)
 
 **Step 2 — commission gross-up per channel.** Yes, the fee must absorb each channel's commission — but a markup equal to the commission % under-recovers, because commission is charged on the *marked-up* price. The correct markup is `commission ÷ (1 − commission)`:
 
 | Channel | Commission | Hostaway markup to enter | Guest sees / night | You net after commission |
 |---|---|---|---|---|
-| Airbnb (split fee) | ~3% | **+3.1%** | R5,927 | R5,749 |
-| Vrbo | ~8% | **+8.7%** | R6,249 | R5,749 |
-| Booking.com | ~15% | **+17.65%** | R6,764 | R5,749 |
-| Direct / quote page | 0% | — | R5,749 | R5,749 |
+| Airbnb (split fee) | ~3% | **+3.1%** | R5,154 | R4,999 |
+| Vrbo | ~8% | **+8.7%** | R5,434 | R4,999 |
+| Booking.com | ~15% | **+17.65%** | R5,881 | R4,999 |
+| Direct / Think Tank website | 0% | — | R4,999 | R4,999 |
 
-Sanity check after connecting each channel: open the live listing, divide the displayed nightly price by (1 − commission), and confirm it lands back on R5,749. If Airbnb shows a ~15.5% "host-only fee" instead of the 3% split fee (Hostaway API listings are sometimes moved to host-only pricing), the markup becomes **+18.3%** — check which fee model the connected account is on before trusting the 3.1%.
+Sanity check after connecting each channel: open the live listing, divide the displayed nightly price by (1 − commission), and confirm it lands back on R4,999. If Airbnb shows a ~15.5% "host-only fee" instead of the 3% split fee (Hostaway API listings are sometimes moved to host-only pricing), the markup becomes **+18.3%** — check which fee model the connected account is on before trusting the 3.1%.
 
-1. **Base rate:** R5,749 (from Step 1).
+1. **Base rate:** R4,999 (from Step 1).
 2. **Cleaning fee:** R0 — the package price already includes the operator's equipment inspection, offboarding and turnover. Adding a cleaning fee on top double-charges what the rate card presents as included.
 3. **Extra person fee:** none (capacity is 2).
 4. **Security deposit:** R1,500 flat — the apartment sits above broadcast equipment; a modest deposit filters party bookings without hurting conversion.
@@ -246,7 +246,7 @@ Bedroom 1: **1 × Queen bed**. Nothing else. This tab feeds the "1 queen bed" li
 
 ### 7.10 Channel specific
 
-Set Booking.com room name to "Apartment" default mapping; add the channel markups from the 7.5 table here (or under channel connection settings depending on account version): **Booking.com +17.65%, Vrbo +8.7%, Airbnb +3.1%** — so every channel nets the same R5,749 sleepover rate after commission.
+Set Booking.com room name to "Apartment" default mapping; add the channel markups from the 7.5 table here (or under channel connection settings depending on account version): **Booking.com +17.65%, Vrbo +8.7%, Airbnb +3.1%** — so every channel nets the same R4,999 sleepover rate after commission.
 
 ### 7.11 Custom fields
 
@@ -259,7 +259,7 @@ This is where the ThinkThansa brand lives after booking:
 1. Upload the hexagon lightbulb-brain icon (export PNG from Canva design "Think Tank SA hexagon service icon 2") as the portal logo.
 2. Set portal accent colour to the Think Tank crimson-pink sampled from that icon; if the portal only takes one colour and legibility suffers, use deep navy `#0A1F44` with the icon carrying the crimson.
 3. House manual sections: Getting in (gate + lockbox), Wifi (auto-filled), The studio ("walk in, walk out — everything is pre-configured; your operator meets you for a short equipment inspection before you shoot and offboards you after; nothing gets re-rigged in between", plus rates and the operator's name), Coffee bar, Load-shedding ("you won't notice — solar holds the studio and the apartment essentials"), Check-out (10:00, three steps max).
-4. **Upsell:** the base night already includes a studio day, so the portal sells **upgrades**: "2-Day Sleepover upgrade" (rate-card difference R4,000 excl. VAT over the sleepover night), "Extra studio hours — R999/h excl. VAT", and the Midweek Special for the next visit. This is the highest-leverage config on the whole platform for this business.
+4. **Upsell:** the base night already includes a studio day, so the portal sells **upgrades**: "2-Day Sleepover upgrade" (rate-card difference R4,000 over the sleepover night), "Extra studio hours — R999/h", and the Midweek Special for the next visit. This is the highest-leverage config on the whole platform for this business.
 
 ### 7.13 Channel connections (last — only after every tab above is saved and media is up)
 
@@ -271,22 +271,23 @@ This is where the ThinkThansa brand lives after booking:
 
 ## Section 8: Integration Architecture — iCal is the backbone
 
-The studio diary and the accommodation calendar sell the **same physical space** (a Full Day studio booking makes a sleepover impossible, and every sleepover consumes a studio day). So the non-negotiable integration is a **two-way iCal sync** between Hostaway and the studio booking calendar:
+The studio diary and the accommodation calendar sell the **same physical space**. Full Day and Special Shoot bookings are taken on the **Think Tank website**, and each one must close the BeeHive night; every channel sleepover must equally close the studio diary. So the non-negotiable integration is a **two-way iCal sync** between Hostaway and the Think Tank website's booking calendar:
 
 ```
-STUDIO BOOKING CALENDAR (Full Day / Special Shoot diary)
+THINK TANK WEBSITE booking calendar (Full Day / Special Shoot / direct packages)
         │  export iCal URL                    ▲  import Hostaway iCal URL
         ▼                                     │
-HOSTAWAY master calendar ── blocks nights when the studio is sold ── blocks studio days when a night is sold
+HOSTAWAY master calendar ── closes nights when the studio is sold ── closes studio days when a night is sold
         ▲
         │ channel API sync (real-time)
 Airbnb / Booking.com / Vrbo
 ```
 
 **Setup (Level 2):**
-1. In Hostaway: Listing → Calendar → **Export iCal** — copy the URL and add it as a subscribed/imported calendar in the studio booking system. A confirmed sleepover now blocks the studio diary for that day.
-2. From the studio booking system: copy its iCal export URL and add it in Hostaway under Listing → Calendar → **Import iCal**. A Full Day studio booking now blocks that night on all three channels.
-3. Expected result: create a dummy studio booking; within the refresh window the Hostaway calendar shows the date blocked. If it never appears, the studio system's iCal URL is private/expired — regenerate it.
+1. In Hostaway: Listing → Calendar → **Export iCal** — copy the URL and add it as a subscribed/imported calendar in the Think Tank website's booking system. A confirmed sleepover now blocks the studio diary for that day.
+2. From the Think Tank website's booking system: copy its iCal export URL and add it in Hostaway under Listing → Calendar → **Import iCal**. A Full Day or Special Shoot booking now closes that night on all three channels automatically.
+3. Expected result: create a dummy Full Day booking on the website; within the refresh window the Hostaway calendar shows the night blocked. If it never appears, the website's iCal URL is private/expired — regenerate it.
+4. **Monday deep-clean rhythm:** Special Shoots typically land on Mondays during deep cleaning (unless the studio has a midday booking). No standing block is needed in Hostaway — the website booking's iCal event closes the night each time. But confirm the website calendar marks the *full night*, not just the shoot hours; an event ending 17:00 will not block the night on the channels. If it only marks hours, extend the event to end-of-day or add a manual Hostaway block when a Monday Special Shoot lands.
 
 **iCal limitation you must design around:** iCal is polling, not real-time — Hostaway refreshes imported feeds roughly every 30–60 minutes, and channels add their own delay. In that window a double-booking is possible. Three settings already in this guide are the mitigation: **Instant bookable = No** (7.7), **1-day lead time** (7.7), and the operator checking tomorrow's arrivals daily (Section 6). Never relax all three at once while iCal is the bridge.
 
@@ -348,7 +349,7 @@ POPIA note: guest personal data flows Hostaway → Make.com → Xero/CRM. All th
 | KPI | Target (first 90 days) | Measured | Where | Reviewed by |
 |---|---|---|---|---|
 | Occupancy | ≥45% by month 3 | Weekly | Hostaway dashboard | Barteldt, Monday review |
-| ADR (average daily rate) | Net ≥R5,749 incl. VAT per night after commission (the sleepover floor — if ADR drops below this, a channel markup is wrong) | Weekly | Hostaway | Barteldt |
+| ADR (average daily rate) | Net ≥R4,999 per night after commission (the sleepover floor — if ADR drops below this, a channel markup is wrong) | Weekly | Hostaway | Barteldt |
 | **Package upgrade rate** | ≥25% of channel stays upgrade (2-Day Sleepover, extra studio hours, or a repeat direct booking) | Per stay | Guest Portal upsell log + operator log | Barteldt |
 | Review score | ≥4.8 across channels | Per review | Channel dashboards via Hostaway | Barteldt |
 | Response time | <1 hour, 08:00–21:00 | Weekly | Hostaway inbox stats | Barteldt |
