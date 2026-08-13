@@ -136,7 +136,7 @@ One number to watch: **studio attach rate** — the % of stays that also book st
 |---|---|---|---|---|---|
 | Studio operator | Hostaway mobile app: viewing arrivals, marking cleans done, guest chat | Barteldt | 1 hour | Live walkthrough on the operator's phone | Operator finds tomorrow's arrival and sends a test message unaided |
 | Barteldt | Channel connection flows | Self-guided | 2 hours | Hostaway Help Centre articles for each channel + Section 7.13 | Airbnb test booking completes end-to-end |
-| Studio operator | Onboarding/offboarding SOP (the "Cleaning instruction" already says: Onboarding and Offboarding with the Podcasting Studio Operator) | Barteldt | 1 hour | Written one-page SOP + one dry run | Dry-run turnover done in under 90 minutes |
+| Studio operator | Inspection/offboarding SOP: the studio is walk-in, walk-out — the operator's only two touchpoints are a pre-shoot equipment inspection (state check, signed off with the guest) and post-shoot offboarding (same checklist in reverse) plus apartment turnover | Barteldt | 1 hour | Written one-page SOP with the equipment checklist + one dry run | Dry-run inspection + offboarding + turnover done in under 90 minutes |
 
 Rule applied: the operator's daily workflow must never exceed 5 clicks — arrivals list → today → guest name → message/clean-status. No listing-editing rights for the operator.
 
@@ -161,7 +161,7 @@ Rule applied: the operator's daily workflow must never exceed 5 clicks — arriv
 
    > Sleep above a real broadcast studio. The BeeHive is an open-plan apartment upstairs at The Think Tank SA's podcast studio in High Riding Country Estate, Somerset West: queen bed facing the TV, lit dressing mirror, garment rail and steamer, blackout curtains, fast uncapped fibre, and a kitchenette with air-fryer, microwave, fridge and proper coffee.
    >
-   > One flight down: the coffee bar, and a three-camera podcast and video studio with treated sound and solar backup that holds through load-shedding. **Every night booked includes a full studio day** — shoot late, sleep ten steps away, edit the next morning. The studio manager onboards you on arrival and offboards you on the way out.
+   > One flight down: the coffee bar, and a three-camera podcast and video studio with treated sound and solar backup that holds through load-shedding. **Every night booked includes a full studio day** — and the studio is walk-in, walk-out: everything is set up and ready to record. The operator runs a quick equipment inspection with you before your shoot, then the space is yours; they offboard you on the way out. Shoot late, sleep ten steps away, edit the next morning.
    >
    > 45 minutes from Cape Town International. Estate security, free parking on site.
 
@@ -216,7 +216,7 @@ Tick everything true — channels filter hard on amenities. Non-negotiables for 
 Sanity check after connecting each channel: open the live listing, divide the displayed nightly price by (1 − commission), and confirm it lands back on R5,749. If Airbnb shows a ~15.5% "host-only fee" instead of the 3% split fee (Hostaway API listings are sometimes moved to host-only pricing), the markup becomes **+18.3%** — check which fee model the connected account is on before trusting the 3.1%.
 
 1. **Base rate:** R5,749 (from Step 1).
-2. **Cleaning fee:** R0 — the package price already includes the studio manager's onboarding/offboarding. Adding a cleaning fee on top double-charges what the rate card presents as included.
+2. **Cleaning fee:** R0 — the package price already includes the operator's equipment inspection, offboarding and turnover. Adding a cleaning fee on top double-charges what the rate card presents as included.
 3. **Extra person fee:** none (capacity is 2).
 4. **Security deposit:** R1,500 flat — the apartment sits above broadcast equipment; a modest deposit filters party bookings without hurting conversion.
 5. **Weekly/monthly discounts: OFF.** The rate card has no long-stay economics — every night carries a studio day. Multi-night value seekers belong on the direct Midweek Special, offered via the Guest Portal after booking (never in the listing copy — steering guests off-platform pre-booking violates Airbnb/Booking.com policy).
@@ -226,7 +226,7 @@ Sanity check after connecting each channel: open the live listing, divide the di
 1. **Check-out time:** 10:00am. **Check-in time start:** 3:00pm. **Check-in time end:** 9:00pm (urgent fix #3). If the studio needs same-day turnover slack, keep check-in at 4:00pm rather than moving check-out earlier.
 2. **Airbnb check-in instructions (category):** select **Smart lock** or **Lockbox** — whichever is installed; if neither, install a lockbox before go-live so 9pm arrivals never need the operator.
 3. **House rules** (paste):
-   > The BeeHive sits above a working broadcast studio. Recording happens downstairs — noise travels both ways, so: no parties or events, quiet hours 22:00–07:00, shoes off on the studio stairs during sessions. No smoking anywhere (treated acoustic surfaces absorb smoke permanently). Studio access only with a confirmed studio booking and the operator present. Not suitable for children under 12 or infants: open staircase and broadcast equipment. Estate rules apply: 40 km/h, guests must be registered at the gate.
+   > The BeeHive sits above a working broadcast studio. Recording happens downstairs — noise travels both ways, so: no parties or events, quiet hours 22:00–07:00, shoes off on the studio stairs during sessions. No smoking anywhere (treated acoustic surfaces absorb smoke permanently). The studio is walk-in, walk-out: access opens after the pre-shoot equipment inspection with the operator and closes at offboarding — do not move, re-patch or re-rig equipment; everything is pre-configured, and the offboarding inspection checks it against the pre-shoot state. Not suitable for children under 12 or infants: open staircase and broadcast equipment. Estate rules apply: 40 km/h, guests must be registered at the gate.
 4. **Square meters:** 60 (already set). **Language:** English. **Wi-fi username/password:** fill both — they print onto the Guest Portal and Airbnb's wifi card; guests uploading podcast footage will judge the whole stay on this working first try.
 5. **Cleaning instruction:** keep "Onboarding and Offboarding with the Podcasting Studio Operator", and add the operator's name and phone once confirmed (Section 4).
 6. **Guest suitability / children flags:** mark not suitable for children and infants, with the staircase/equipment reason (urgent fix #4 — this clears the red banner).
@@ -258,7 +258,7 @@ This is where the ThinkThansa brand lives after booking:
 
 1. Upload the hexagon lightbulb-brain icon (export PNG from Canva design "Think Tank SA hexagon service icon 2") as the portal logo.
 2. Set portal accent colour to the Think Tank crimson-pink sampled from that icon; if the portal only takes one colour and legibility suffers, use deep navy `#0A1F44` with the icon carrying the crimson.
-3. House manual sections: Getting in (gate + lockbox), Wifi (auto-filled), The studio (what it is, rates, how to book hours, the operator's name), Coffee bar, Load-shedding ("you won't notice — solar holds the studio and the apartment essentials"), Check-out (10:00, three steps max).
+3. House manual sections: Getting in (gate + lockbox), Wifi (auto-filled), The studio ("walk in, walk out — everything is pre-configured; your operator meets you for a short equipment inspection before you shoot and offboards you after; nothing gets re-rigged in between", plus rates and the operator's name), Coffee bar, Load-shedding ("you won't notice — solar holds the studio and the apartment essentials"), Check-out (10:00, three steps max).
 4. **Upsell:** the base night already includes a studio day, so the portal sells **upgrades**: "2-Day Sleepover upgrade" (rate-card difference R4,000 excl. VAT over the sleepover night), "Extra studio hours — R999/h excl. VAT", and the Midweek Special for the next visit. This is the highest-leverage config on the whole platform for this business.
 
 ### 7.13 Channel connections (last — only after every tab above is saved and media is up)
@@ -339,7 +339,7 @@ POPIA note: guest personal data flows Hostaway → Make.com → Xero/CRM. All th
 | 11 | Booking.com + Vrbo live with markups | 28 Aug 2026 | Pending | Header shows 3 of 3 |
 | 12 | Guest Portal branded (hexagon logo, palette, studio upsell) | 26 Aug 2026 | Pending | Portal preview screenshot |
 
-**Studio operator — per-stay checklist:** arrivals checked daily in app; turnover done ≤90 min; studio add-on guests briefed; issues messaged to Barteldt same day.
+**Studio operator — per-stay checklist:** arrivals checked daily in app; pre-shoot equipment inspection signed off with the guest; post-shoot offboarding inspection against the same checklist; apartment turnover ≤90 min; equipment discrepancies photographed and messaged to Barteldt same day (before the deposit release window closes).
 
 ---
 
