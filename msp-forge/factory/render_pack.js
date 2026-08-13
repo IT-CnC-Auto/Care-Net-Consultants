@@ -27,6 +27,12 @@ const FONT = 'Arial';
 const CONTENT_W = 9072;
 
 const P = draft.composed.placeholders;
+// The Designated OMP identity comes from factory config (CR-12.7); the
+// engagement placeholder wins only when it names a specific OMP.
+const CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+if (!P.omp_name_placeholder || P.omp_name_placeholder.includes('CR-12.7')) {
+  P.omp_name_placeholder = CONFIG.designated_omp.display_line + ' (approval pending, Section 11.1)';
+}
 const cncBanner = fs.readFileSync(path.join(ASSETS, 'cnc_header_banner.png'));
 const cncFooter = fs.readFileSync(path.join(ASSETS, 'cnc_footer_banner.png'));
 const clientLogo = fs.readFileSync(path.join(ASSETS, 'client_logo_prepared.png'));
@@ -138,7 +144,7 @@ function lockedBlock(anchor) {
   } else if (anchor === 'TPL-SGN-01') {
     out.push(h2('11.1 ' + t.omp_heading));
     out.push(para(t.omp_intro, { size: 19 }));
-    t.omp_lines.forEach(l => out.push(para(l, { size: 19, after: 60 })));
+    t.omp_lines.forEach(l => out.push(para(l.replace('{designated_omp_line}', CONFIG.designated_omp.display_line), { size: 19, after: 60 })));
     out.push(h2('11.2 ' + t.client_heading));
     out.push(para(t.client_intro, { size: 19 }));
     t.client_lines.forEach(l => out.push(para(l.replace('{client_name}', P.client_name), { size: 19, after: 60 })));
