@@ -584,11 +584,11 @@
     {
       "no": 8,
       "title": "INDUSTRY AND SUBINDUSTRY SELECTION",
-      "intro": "Select from the governed list. Currently selectable: CONSTR-CIVILS, CONSTR-BUILD, MANU-FOOD, MANU-METAL, MIN-GOLD, MIN-QUARRY, TRANS-ROAD, TRANS-WARE, TRANS-RAIL, AGRI-CROP (crop farming), AGRI-LIVE (livestock), AGRI-FOREST (forestry), HLTH-CLINIC (clinics and practices), HLTH-LAB (laboratories). Further industries become selectable as they pass kernel verification. If your industry is not listed, enter OTHER and describe your business; an OTHER selection routes to human review and never auto generates.",
+      "intro": "Select from the governed list. Currently selectable: CONSTR-CIVILS, CONSTR-BUILD, MANU-FOOD, MANU-METAL, MIN-GOLD, MIN-QUARRY, TRANS-ROAD, TRANS-WARE, TRANS-RAIL, AGRI-CROP (crop farming), AGRI-LIVE (livestock), AGRI-FOREST (forestry), HLTH-CLINIC (clinics and practices), HLTH-LAB (laboratories), UTIL-GEN (power generation), UTIL-WATER (water and wastewater), UTIL-RENEW (renewable energy), SEC-GUARD (guarding services), SEC-ARMED (armed response and cash in transit), CLEAN-COMM (commercial cleaning), CLEAN-SPEC (specialised hygiene services). Further industries become selectable as they pass kernel verification. If your industry is not listed, enter OTHER and describe your business; an OTHER selection routes to human review and never auto generates.",
       "fields": [
         {
           "name": "industry_code",
-          "label": "Industry code (CONSTR, MANU, MINING, TRANS, AGRI, HEALTH, or OTHER)",
+          "label": "Industry code (CONSTR, MANU, MINING, TRANS, AGRI, HEALTH, UTIL, SEC, CLEAN, or OTHER)",
           "type": "text",
           "required": true
         },
