@@ -584,17 +584,17 @@
     {
       "no": 8,
       "title": "INDUSTRY AND SUBINDUSTRY SELECTION",
-      "intro": "Select from the governed list. Currently selectable: CONSTR-CIVILS (civil engineering works), CONSTR-BUILD (building construction), MANU-FOOD (food and beverage manufacturing), MANU-METAL (metals and foundries). Further industries become selectable as they pass kernel verification. If your industry is not listed, enter OTHER and describe your business; an OTHER selection routes to human review and never auto generates.",
+      "intro": "Select from the governed list. Currently selectable: CONSTR-CIVILS, CONSTR-BUILD, MANU-FOOD, MANU-METAL, MIN-GOLD (gold mining), MIN-QUARRY (quarrying). Further industries become selectable as they pass kernel verification. If your industry is not listed, enter OTHER and describe your business; an OTHER selection routes to human review and never auto generates.",
       "fields": [
         {
           "name": "industry_code",
-          "label": "Industry code (CONSTR, MANU, or OTHER)",
+          "label": "Industry code (CONSTR, MANU, MINING, or OTHER)",
           "type": "text",
           "required": true
         },
         {
           "name": "subindustry_code",
-          "label": "Subindustry code (CONSTR-CIVILS, CONSTR-BUILD, MANU-FOOD, MANU-METAL, or OTHER)",
+          "label": "Subindustry code (see the selectable list above, or OTHER)",
           "type": "text",
           "required": true
         },
