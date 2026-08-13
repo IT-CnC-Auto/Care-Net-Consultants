@@ -54,6 +54,20 @@
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
 <script>
 (function () {
+  var ACCESS_TOKEN = new URLSearchParams(location.search).get('token') || '';
+  function refuse(msg) {
+    document.querySelector('main').innerHTML =
+      '<div class="notice err" style="display:block"><strong>Access required.</strong> ' + msg +
+      ' Please start from the <a href="/">Care Net landing page</a> to sign on as a CNC client or request a quotation.</div>';
+  }
+  if (!ACCESS_TOKEN) { window.addEventListener('DOMContentLoaded', function(){ refuse('This assessment link is missing its access token.'); }); }
+  else {
+    fetch('/api/access-check?token=' + encodeURIComponent(ACCESS_TOKEN))
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (!j.valid) refuse('This access link is not valid: ' + (j.reason || 'unknown') + '.'); })
+      .catch(function(){ /* fail open to server side gate: the intake endpoint re-checks */ });
+  }
+
   var repeatSpecs = [{"prefix":"site","max":4,"fields":[{"name":"name","label":"Site name","type":"text"},{"name":"address","label":"Site address","type":"text"},{"name":"activity","label":"Nature of activity at this site","type":"text"},{"name":"headcount","label":"Approximate number of employees","type":"number"}]},{"prefix":"contact","max":3,"fields":[{"name":"role","label":"Role (for example SHE Officer, HR Manager)","type":"text"},{"name":"name","label":"Full name","type":"text"},{"name":"position","label":"Position","type":"text"},{"name":"email","label":"Email","type":"text"},{"name":"phone","label":"Telephone","type":"text"}]},{"prefix":"exposure","max":6,"fields":[{"name":"hazard_location","label":"Hazard and location","type":"text"},{"name":"measured_level","label":"Measured level","type":"text"},{"name":"unit","label":"Unit","type":"text"},{"name":"stated_oel","label":"Occupational Exposure Limit, if known","type":"text"},{"name":"date_measured","label":"Date measured","type":"date"}]},{"prefix":"job","max":10,"fields":[{"name":"title","label":"Job title or category","type":"text"},{"name":"headcount","label":"Number of employees","type":"number"},{"name":"duties","label":"Brief description of duties","type":"textarea"},{"name":"hazards","label":"Hazard letters from the key, separated by commas (for example A, B, E)","type":"text"},{"name":"controls","label":"Existing controls (engineering, administrative, PPE)","type":"textarea"},{"name":"physical_demands","label":"Physical demands of the job itself (for example lifting, standing, climbing)","type":"textarea"},{"name":"sensory_cognitive_demands","label":"Sensory and cognitive demands (for example vision, hearing, concentration)","type":"textarea"},{"name":"statutory_requirement","label":"Statutory or competency requirement (for example PrDP class, heights ticket)","type":"text"},{"name":"rpe_issued","label":"RPE issued (state type, or None)","type":"text"},{"name":"rpe_fit_tested","label":"RPE fit tested (Yes, No, or Not applicable)","type":"text"},{"name":"rpe_fit_test_interval","label":"Fit test interval","type":"text"},{"name":"other_ppe","label":"Other PPE issued and inspection interval","type":"text"}]},{"prefix":"chem","max":8,"fields":[{"name":"substance_name","label":"Chemical or substance name","type":"text"},{"name":"sds_reference","label":"SDS reference number","type":"text"},{"name":"task_process","label":"Task or process","type":"text"},{"name":"frequency","label":"Frequency of use","type":"text"},{"name":"quantity_per_use","label":"Quantity per use","type":"text"},{"name":"controls","label":"Control measures in place","type":"text"}]}];
 
   function fieldHtml(prefix, i, f) {
@@ -106,6 +120,7 @@
       notice.textContent = 'The POPIA processing consent in Section 10 is required before this form can be submitted.';
       return;
     }
+    data.access_token = ACCESS_TOKEN;
     data.docuseal_submission_id = 'WEB-' + Date.now().toString(36).toUpperCase();
     var btn = form.querySelector('button.submit');
     btn.disabled = true;

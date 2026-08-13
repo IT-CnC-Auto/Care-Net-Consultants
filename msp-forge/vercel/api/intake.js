@@ -52,6 +52,30 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // Access gate: the assessment is reached through an approved client grant
+  // or a paid quote; every submission carries its single use token.
+  let accessId = null;
+  try {
+    const gate = await fetch(`${process.env.SUPABASE_URL}/rest/v1/rpc/msp_check_access`, {
+      method: 'POST',
+      headers: {
+        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_token: (payload && payload.access_token) || '' }),
+    }).then(r => r.json());
+    if (!gate.valid) {
+      res.status(200).json({ status: 'rejected', reason: `Access not valid: ${gate.reason}. Please start from the Care Net landing page.` });
+      return;
+    }
+    accessId = gate.access_id;
+  } catch (err) {
+    console.error('access gate failure', err.message);
+    res.status(500).json({ error: 'processing failure' });
+    return;
+  }
+
   try {
     const selectable = await fetchSelectableSubindustries();
     const result = validateIntake(payload, selectable);
@@ -71,6 +95,16 @@ module.exports = async (req, res) => {
     }
 
     const outcome = await ingest(result.normalised);
+    // Consume the single use token against this intake.
+    await fetch(`${process.env.SUPABASE_URL}/rest/v1/msp_form_access?id=eq.${accessId}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ used_by_intake: outcome.intake_id }),
+    });
     res.status(200).json({
       status: outcome.status,
       reference: outcome.reference,
