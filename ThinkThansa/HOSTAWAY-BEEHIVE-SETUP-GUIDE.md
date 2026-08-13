@@ -126,7 +126,7 @@ One number to watch: **studio attach rate** — the % of stays that also book st
 | Thu 21 Aug | Barteldt | Connect Airbnb (7.13); create a R1 test reservation; walk the full guest flow | Test reservation visible in Hostaway inbox | Test data to automation resource |
 | Fri 22 Aug | Barteldt | Fix anything the test surfaced; write guest message templates in Hostaway | Templates saved | None |
 | Mon 25–Tue 26 Aug | Barteldt | Guest Portal branding + house manual content (7.12) | Portal preview matches brand spec | Operator reviews studio add-on copy |
-| Wed 27–Thu 28 Aug | Barteldt | Connect Booking.com and Vrbo with +15% / +8% markups | 3 of 3 channels live | None |
+| Wed 27–Thu 28 Aug | Barteldt | Connect Booking.com and Vrbo with +17.65% / +8.7% markups (7.5) | 3 of 3 channels live | None |
 
 ---
 
@@ -161,7 +161,7 @@ Rule applied: the operator's daily workflow must never exceed 5 clicks — arriv
 
    > Sleep above a real broadcast studio. The BeeHive is an open-plan apartment upstairs at The Think Tank SA's podcast studio in High Riding Country Estate, Somerset West: queen bed facing the TV, lit dressing mirror, garment rail and steamer, blackout curtains, fast uncapped fibre, and a kitchenette with air-fryer, microwave, fridge and proper coffee.
    >
-   > One flight down: the coffee bar, and a three-camera podcast and video studio with treated sound and solar backup that holds through load-shedding. Book studio time with your stay — shoot late, sleep ten steps away, edit the next morning.
+   > One flight down: the coffee bar, and a three-camera podcast and video studio with treated sound and solar backup that holds through load-shedding. **Every night booked includes a full studio day** — shoot late, sleep ten steps away, edit the next morning. The studio manager onboards you on arrival and offboards you on the way out.
    >
    > 45 minutes from Cape Town International. Estate security, free parking on site.
 
@@ -189,13 +189,37 @@ Upload in that order; Hostaway's first image is the channel hero. Caption every 
 
 Tick everything true — channels filter hard on amenities. Non-negotiables for this listing: Wireless internet / fast wifi, Dedicated workspace, Kitchenette (fridge, microwave, coffee machine), Iron/steamer, Hair dryer if present, Heating (winter Somerset West is cold), Free parking on premises, Private entrance, Smoke alarm + CO alarm (install before go-live if missing — Airbnb flags listings without them), Backup power / generator (list under "Other" if no explicit option). Do NOT tick pool/gym unless estate facilities are contractually guest-accessible.
 
-### 7.5 Price & fees
+### 7.5 Price & fees — priced off the ThinkThansa studio rate card
 
-1. **Base rate:** set your nightly ZAR rate (market check: comparable Somerset West 1-bed apartments with a differentiator run R1,100–R1,600; the studio angle supports the top of that band — verify on Airbnb before committing).
-2. **Cleaning fee:** one flat fee covering the operator's onboarding/offboarding time.
+**The product on the channels is the 1-Night Sleepover package** (1 studio day + 1 night, R4,999 excl. VAT). A guest booking 1 night on Airbnb is buying that package; a guest booking N nights is buying N nights + N studio days. The other rate-card products map as follows:
+
+| Rate-card product | Rate (excl. VAT) | On the channels? |
+|---|---|---|
+| Full Day (8h studio, no stay) | R3,999 | No — studio-diary product only. It still blocks the Hostaway calendar via iCal (Section 8). |
+| **1-Night Sleepover** | **R4,999** | **Yes — this IS the nightly rate.** |
+| 2-Day Sleepover (2 studio days + 1 night) | R8,999 | No — direct/quote only (channels cannot sell 2 studio days against 1 night). Offer it as a Guest Portal upgrade after booking. |
+| Midweek Special (3 studio days + 2 nights) | R12,999 | No — direct/quote only; ~R1,000 cheaper than the per-night equivalent, so keep it direct. |
+| Weekend Special (Fri 17:00–Sun 17:00) | R9,999 | Effectively yes: 2 weekend nights at the standard nightly rate ≈ R9,998, so channel pricing already matches — no special setup needed. |
+| Special Shoot (first hour free, then R999/h) | R999/h | No — studio-diary product between bookings. |
+
+**Step 1 — VAT gross-up.** The rate card is excl. VAT; consumer channels must show VAT-inclusive prices. R4,999 × 1.15 = **R5,749 incl. VAT**. This is the **base rate** you enter in Hostaway. (If the entity is not VAT-registered, use R4,999 as the base and scale every channel price below by ÷1.15.)
+
+**Step 2 — commission gross-up per channel.** Yes, the fee must absorb each channel's commission — but a markup equal to the commission % under-recovers, because commission is charged on the *marked-up* price. The correct markup is `commission ÷ (1 − commission)`:
+
+| Channel | Commission | Hostaway markup to enter | Guest sees / night | You net after commission |
+|---|---|---|---|---|
+| Airbnb (split fee) | ~3% | **+3.1%** | R5,927 | R5,749 |
+| Vrbo | ~8% | **+8.7%** | R6,249 | R5,749 |
+| Booking.com | ~15% | **+17.65%** | R6,764 | R5,749 |
+| Direct / quote page | 0% | — | R5,749 | R5,749 |
+
+Sanity check after connecting each channel: open the live listing, divide the displayed nightly price by (1 − commission), and confirm it lands back on R5,749. If Airbnb shows a ~15.5% "host-only fee" instead of the 3% split fee (Hostaway API listings are sometimes moved to host-only pricing), the markup becomes **+18.3%** — check which fee model the connected account is on before trusting the 3.1%.
+
+1. **Base rate:** R5,749 (from Step 1).
+2. **Cleaning fee:** R0 — the package price already includes the studio manager's onboarding/offboarding. Adding a cleaning fee on top double-charges what the rate card presents as included.
 3. **Extra person fee:** none (capacity is 2).
 4. **Security deposit:** R1,500 flat — the apartment sits above broadcast equipment; a modest deposit filters party bookings without hurting conversion.
-5. Weekly (−10%) and monthly (−25%) discounts: enable — editors and podcasters book multi-night blocks.
+5. **Weekly/monthly discounts: OFF.** The rate card has no long-stay economics — every night carries a studio day. Multi-night value seekers belong on the direct Midweek Special, offered via the Guest Portal after booking (never in the listing copy — steering guests off-platform pre-booking violates Airbnb/Booking.com policy).
 
 ### 7.6 Additional info & Policies
 
@@ -222,7 +246,7 @@ Bedroom 1: **1 × Queen bed**. Nothing else. This tab feeds the "1 queen bed" li
 
 ### 7.10 Channel specific
 
-Set Booking.com room name to "Apartment" default mapping; add the +15% Booking.com markup and +8% Vrbo markup here (or under channel connection settings depending on account version) so all-channel net rates match your Airbnb net.
+Set Booking.com room name to "Apartment" default mapping; add the channel markups from the 7.5 table here (or under channel connection settings depending on account version): **Booking.com +17.65%, Vrbo +8.7%, Airbnb +3.1%** — so every channel nets the same R5,749 sleepover rate after commission.
 
 ### 7.11 Custom fields
 
@@ -235,7 +259,7 @@ This is where the ThinkThansa brand lives after booking:
 1. Upload the hexagon lightbulb-brain icon (export PNG from Canva design "Think Tank SA hexagon service icon 2") as the portal logo.
 2. Set portal accent colour to the Think Tank crimson-pink sampled from that icon; if the portal only takes one colour and legibility suffers, use deep navy `#0A1F44` with the icon carrying the crimson.
 3. House manual sections: Getting in (gate + lockbox), Wifi (auto-filled), The studio (what it is, rates, how to book hours, the operator's name), Coffee bar, Load-shedding ("you won't notice — solar holds the studio and the apartment essentials"), Check-out (10:00, three steps max).
-4. **Upsell:** add "Studio hours" as a purchasable extra if your plan supports upsells — this is the highest-leverage config on the whole platform for this business.
+4. **Upsell:** the base night already includes a studio day, so the portal sells **upgrades**: "2-Day Sleepover upgrade" (rate-card difference R4,000 excl. VAT over the sleepover night), "Extra studio hours — R999/h excl. VAT", and the Midweek Special for the next visit. This is the highest-leverage config on the whole platform for this business.
 
 ### 7.13 Channel connections (last — only after every tab above is saved and media is up)
 
@@ -245,18 +269,28 @@ This is where the ThinkThansa brand lives after booking:
 
 ---
 
-## Section 8: Integration Architecture
+## Section 8: Integration Architecture — iCal is the backbone
+
+The studio diary and the accommodation calendar sell the **same physical space** (a Full Day studio booking makes a sleepover impossible, and every sleepover consumes a studio day). So the non-negotiable integration is a **two-way iCal sync** between Hostaway and the studio booking calendar:
 
 ```
-Airbnb ─┐                                  ┌─→ Xero (invoice per reservation)
-Booking ─┼─→ HOSTAWAY (master) ─ webhook ─→ Make.com ─┼─→ AutoHive CRM (guest contact + "BeeHive guest" pipeline)
-Vrbo ───┘        │                                  └─→ Outlook (operator turnover email, day before arrival)
-                 └─ iCal feed ─→ studio booking calendar (block recording bays on turnover mornings)
+STUDIO BOOKING CALENDAR (Full Day / Special Shoot diary)
+        │  export iCal URL                    ▲  import Hostaway iCal URL
+        ▼                                     │
+HOSTAWAY master calendar ── blocks nights when the studio is sold ── blocks studio days when a night is sold
+        ▲
+        │ channel API sync (real-time)
+Airbnb / Booking.com / Vrbo
 ```
 
-- **Credentials needed:** Hostaway API key + webhook secret (Settings → API), existing Make.com connection, existing Xero and AutoHive CRM connections (already in the CNC Make.com stack).
-- **Data format:** Hostaway webhooks post JSON per reservation event (created/modified/cancelled).
-- **Build order:** (1) reservation → CRM contact, (2) reservation → Xero invoice, (3) pre-arrival operator email. Build only after one real test booking exists (Section 5, 21 Aug).
+**Setup (Level 2):**
+1. In Hostaway: Listing → Calendar → **Export iCal** — copy the URL and add it as a subscribed/imported calendar in the studio booking system. A confirmed sleepover now blocks the studio diary for that day.
+2. From the studio booking system: copy its iCal export URL and add it in Hostaway under Listing → Calendar → **Import iCal**. A Full Day studio booking now blocks that night on all three channels.
+3. Expected result: create a dummy studio booking; within the refresh window the Hostaway calendar shows the date blocked. If it never appears, the studio system's iCal URL is private/expired — regenerate it.
+
+**iCal limitation you must design around:** iCal is polling, not real-time — Hostaway refreshes imported feeds roughly every 30–60 minutes, and channels add their own delay. In that window a double-booking is possible. Three settings already in this guide are the mitigation: **Instant bookable = No** (7.7), **1-day lead time** (7.7), and the operator checking tomorrow's arrivals daily (Section 6). Never relax all three at once while iCal is the bridge.
+
+**Second layer (optional, Level 4, after go-live):** Hostaway webhooks → Make.com → Xero invoice per reservation, AutoHive CRM contact on the "BeeHive guest" pipeline, and the pre-arrival operator email. Credentials: Hostaway API key + webhook secret (Settings → API); Xero, CRM and Outlook connections already exist in the CNC Make.com stack. Data format: JSON per reservation event. Build only after one real test booking exists (Section 5, 21 Aug).
 
 ---
 
@@ -314,8 +348,8 @@ POPIA note: guest personal data flows Hostaway → Make.com → Xero/CRM. All th
 | KPI | Target (first 90 days) | Measured | Where | Reviewed by |
 |---|---|---|---|---|
 | Occupancy | ≥45% by month 3 | Weekly | Hostaway dashboard | Barteldt, Monday review |
-| ADR (average daily rate) | Hold ≥R1,200 | Weekly | Hostaway | Barteldt |
-| **Studio attach rate** | ≥25% of stays book studio hours | Per stay | Guest Portal upsell log + operator log | Barteldt |
+| ADR (average daily rate) | Net ≥R5,749 incl. VAT per night after commission (the sleepover floor — if ADR drops below this, a channel markup is wrong) | Weekly | Hostaway | Barteldt |
+| **Package upgrade rate** | ≥25% of channel stays upgrade (2-Day Sleepover, extra studio hours, or a repeat direct booking) | Per stay | Guest Portal upsell log + operator log | Barteldt |
 | Review score | ≥4.8 across channels | Per review | Channel dashboards via Hostaway | Barteldt |
 | Response time | <1 hour, 08:00–21:00 | Weekly | Hostaway inbox stats | Barteldt |
 | Guest → studio client conversion | ≥2 retainer conversations per quarter | Monthly | AutoHive CRM pipeline | Barteldt |
