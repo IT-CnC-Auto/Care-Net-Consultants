@@ -1,0 +1,11 @@
+{
+  "source": "assets/client_logo_horizon.png",
+  "output": "assets/client_logo_prepared.png",
+  "corrections": [],
+  "review_required": false,
+  "reasons": [],
+  "prepared_size": [
+    130,
+    32
+  ]
+}

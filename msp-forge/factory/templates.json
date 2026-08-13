@@ -1,0 +1,61 @@
+{
+  "TPL-LIA-01": {
+    "heading": "Compliance note: limitation of Care Net's role and liability",
+    "body": [
+      "Care Net Consultants (Pty) Ltd did not conduct the underlying workplace risk assessment or occupational hygiene survey referred to in this Plan. That risk assessment was conducted by, or on behalf of, the Client, and was supplied to Care Net for the sole purpose of designing this medical surveillance programme.",
+      "Care Net's role is limited to the design and implementation of the medical surveillance programme (the OREP and WASP) based on the exposure information provided by the Client. Care Net has not independently verified the accuracy, completeness, or currency of that risk assessment data.",
+      "Accordingly, Care Net accepts no responsibility or liability for the accuracy, completeness, or currency of the risk assessment information supplied by the Client, or for any hazard, exposure, or job category that was not disclosed to Care Net at the time this Plan was prepared.",
+      "The Client remains responsible for ensuring that its workplace risk assessment is conducted and kept up to date by a competent person or approved inspection authority, and for promptly informing Care Net of any change in process, plant, materials, or job content so that this Plan can be reviewed and, where necessary, revised."
+    ]
+  },
+  "TPL-POP-01": {
+    "heading": "Confidentiality and protection of personal information",
+    "bullets": [
+      "Individual medical results remain strictly confidential and are held by Care Net's Occupational Health Practitioners under the Designated OMP.",
+      "The Client receives only the fitness outcome and any applicable work restrictions for each employee, never clinical detail or test results.",
+      "Employees provide informed consent before any personal medical information is released beyond the fitness outcome.",
+      "De-identified, aggregated group data may be shared with the Client for workplace risk-management purposes.",
+      "All records are processed and stored in accordance with the Protection of Personal Information Act 4 of 2013 (POPIA)."
+    ],
+    "note_heading": "POPIA note",
+    "note": "This Plan and its annexures contain only job-category and fitness-outcome information. Clinical findings and individual test results are not recorded in this document and are held separately under the Designated OMP."
+  },
+  "TPL-SGN-01": {
+    "omp_heading": "Care Net Occupational Medical Practitioner approval",
+    "omp_intro": "Approval of this Plan by the Designated OMP confirms that the medical assessments and intervals in Sections 5 and 6 are clinically appropriate to the exposures reported by the Client, on the basis set out in Section 4.",
+    "omp_lines": [
+      "Signature: __________________________________________",
+      "Full name: __________________________________________",
+      "Role: Designated Occupational Medical Practitioner, HPCSA Practice No. [Practice Number]",
+      "For and on behalf of Care Net Consultants (Pty) Ltd",
+      "Date (DD/MM/YYYY): __________________________________________"
+    ],
+    "client_heading": "Client acknowledgement",
+    "client_intro": "The Client acknowledges that the hazard and exposure information described in Sections 2, 5, and 8 of this Plan was supplied by the Client, that Care Net did not conduct the underlying risk assessment, and that the Client remains responsible for the accuracy of that information and for its periodic review, as set out in Section 4.",
+    "client_lines": [
+      "Signature: __________________________________________",
+      "Full name: __________________________________________",
+      "Role: [Client Representative Title]",
+      "For and on behalf of {client_name}",
+      "Date (DD/MM/YYYY): __________________________________________"
+    ]
+  },
+  "TPL-EXA-01": {
+    "heading": "Types of medical examination performed under this Plan",
+    "rows": [
+      ["Pre-placement / pre-employment", "Establishes baseline health status and confirms fitness for the specific job's requirements before exposure begins"],
+      ["Routine / periodic", "Conducted at the interval defined in the WASP table above, for as long as the employee remains in the exposed role"],
+      ["Transfer examination", "Performed when an employee moves to a role with a different exposure profile or capability requirement"],
+      ["Return-to-work examination", "Performed following occupational injury, illness, or prolonged absence, before the employee resumes duties"],
+      ["Exit / termination examination", "Performed at the end of service to establish health status and whether any occupational exposure effect has developed"],
+      ["Trigger / unscheduled examination", "Performed where there is a change in the OREP, new symptoms are reported, or a significant workplace incident occurs"]
+    ]
+  },
+  "TPL-CGN-01": {
+    "heading": "Clinical protocol note: implication of exceedances, subject to OMP confirmation",
+    "body": [
+      "The measured levels above indicate exposures at or above the applicable occupational exposure limit for one or more job categories. Pending the Designated OMP's review and confirmation, Care Net's provisional view is that the affected categories warrant the annual interval already set in Section 6 as a minimum, with earlier or additional testing where clinical findings indicate.",
+      "These figures also indicate a need for the Client to review engineering and administrative controls for the affected areas per the hierarchy of controls. Medical surveillance detects early effect but does not substitute for controlling the exposure at source."
+    ]
+  }
+}
