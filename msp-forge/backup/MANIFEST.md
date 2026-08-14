@@ -1,8 +1,8 @@
 # Cognitive Kernel backup manifest
 
-Generated 14/08/2026. Kernel version 1.0.0 plus the productisation migration.
+Generated 14/08/2026. Kernel version 1.0.0 plus the productisation and shop journey migrations.
 
-Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending and uncitable), 17 industries, 56 of 56 selectable subindustries, 316 roles, 851 hazard links, 30 protocols.
+Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending and uncitable), 17 industries, 56 of 56 selectable subindustries, 316 roles, 851 hazard links, 30 protocols, 2 shop packages.
 
 ## Migrations included
 
@@ -36,6 +36,8 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 028_msp_dmr_industry_sweep.sql (1892 bytes)
 - 029_msp_r638_dedup.sql (3284 bytes)
 - 030_msp_cognitive_kernel_product.sql (13412 bytes)
+- 031_msp_shop_journey.sql (8549 bytes)
+- 032_msp_quote_status_fix.sql (451 bytes)
 
 ## Rebuild procedure
 
