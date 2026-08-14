@@ -14,6 +14,7 @@ module.exports = async (req, res) => {
       company_name: b.company_name, contact_name: b.contact_name, contact_email: b.contact_email,
       industry_code: b.industry_code, company_size: b.company_size,
       employee_count: b.employee_count, job_category_count: b.job_category_count,
+      annual_medicals_estimate: b.annual_medicals_estimate,
     } });
     res.status(200).json(quote);
   } catch (err) {

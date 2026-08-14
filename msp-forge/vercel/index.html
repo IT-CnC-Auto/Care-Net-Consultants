@@ -87,6 +87,8 @@
         </select>
         <label>Number of employees to be covered</label><input name="employee_count" type="number" min="1" required>
         <label>Number of distinct job descriptions</label><input name="job_category_count" type="number" min="1" required>
+        <label>Occupational medicals per year with Care Net (0 if none yet)</label><input name="annual_medicals_estimate" type="number" min="0" value="0">
+        <p style="font-size:12px;color:#555;margin:6px 0 0">Companies doing 100 or more occupational medicals a year with Care Net receive this assessment tool free. A consultant confirms the volume before the waiver is finalised.</p>
         <button type="submit">Get my quotation</button>
         <div class="result" id="quote-result"></div>
       </form>
@@ -127,8 +129,13 @@ document.getElementById('quote').onsubmit = async ev => {
   const data = Object.fromEntries(new FormData(f));
   data.employee_count = parseInt(data.employee_count, 10);
   data.job_category_count = parseInt(data.job_category_count, 10);
+  data.annual_medicals_estimate = parseInt(data.annual_medicals_estimate || '0', 10);
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(x => x.json()).catch(() => null);
-  if (r && r.reference) {
+  if (r && r.reference && r.price_status === 'free_qualifying') {
+    out.className = 'result ok';
+    out.innerHTML = 'Quotation <strong>' + r.reference + '</strong>: <span class="price">FREE</span> under the Care Net client benefit for companies with 100 or more occupational medicals a year.<br><br>A Care Net consultant will confirm your medicals volume and email your secure assessment link to <strong>' + data.contact_email + '</strong>.';
+    f.querySelectorAll('input,select,button').forEach(el => el.disabled = true);
+  } else if (r && r.reference) {
     out.className = 'result ok';
     out.innerHTML = 'Quotation <strong>' + r.reference + '</strong>: <span class="price">' + fmtZAR(r.price_zar) + '</span>' +
       (r.price_status === 'indicative' ? ' <em>(indicative, confirmed with your invoice)</em>' : '') +
