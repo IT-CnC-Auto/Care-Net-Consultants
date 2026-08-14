@@ -55,12 +55,25 @@
 <script>
 (function () {
   var ACCESS_TOKEN = new URLSearchParams(location.search).get('token') || '';
+  var DEMO = new URLSearchParams(location.search).get('demo') === '1';
+  window.MSP_DEMO = DEMO;
   function refuse(msg) {
     document.querySelector('main').innerHTML =
       '<div class="notice err" style="display:block"><strong>Access required.</strong> ' + msg +
       ' Please start from the <a href="/">Care Net landing page</a> to sign on as a CNC client or request a quotation.</div>';
   }
-  if (!ACCESS_TOKEN) { window.addEventListener('DOMContentLoaded', function(){ refuse('This assessment link is missing its access token.'); }); }
+  if (DEMO) {
+    window.addEventListener('DOMContentLoaded', function () {
+      var b = document.createElement('div');
+      b.style.cssText = 'background:#eef3fb;border:1px solid #4a6fb5;border-radius:6px;padding:12px 14px;font-size:14px;margin-bottom:16px';
+      b.innerHTML = '<strong>Demo preview.</strong> This is the real assessment your company completes; in the demo, submission is disabled and nothing you type is stored. Start from the <a href="/pilot.html">pilot journey</a> or the <a href="/shop.html">shop</a> for your own secure link.';
+      var main = document.querySelector('main');
+      main.insertBefore(b, main.firstChild);
+      var s = document.querySelector('.submit');
+      if (s) { s.disabled = true; s.textContent = 'Submission disabled in the demo preview'; }
+    });
+  }
+  else if (!ACCESS_TOKEN) { window.addEventListener('DOMContentLoaded', function(){ refuse('This assessment link is missing its access token.'); }); }
   else {
     fetch('/api/access-check?token=' + encodeURIComponent(ACCESS_TOKEN))
       .then(function(r){ return r.json(); })
@@ -119,6 +132,7 @@
       notice.textContent = 'The POPIA processing consent in Section 10 is required before this form can be submitted.';
       return;
     }
+    if (window.MSP_DEMO) { return; }
     data.access_token = ACCESS_TOKEN;
     data.docuseal_submission_id = 'WEB-' + Date.now().toString(36).toUpperCase();
     var btn = form.querySelector('button.submit');
