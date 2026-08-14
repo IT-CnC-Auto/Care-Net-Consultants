@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<!--
+=====================================================================
+ medical-surveillance-plans.html :: Care Net Consultants :: Version 1.0
+ Status: BUILT, PENDING APPROVAL | Built 14 August 2026
+ House style matches cnc-home.html and the Project Nexus industry pages
+   (Bebas Neue, Montserrat, Inter; red ED1B24 as the sole active accent; dark hero).
+ Page type: service page. Schema: Organization, Service, FAQPage, BreadcrumbList.
+ Every figure on this page is drawn from the live Care Net Method framework
+   on the build date and is stated as at that date. Nothing is estimated.
+ HARD RULES enforced: SA British English, ZAR, no em dashes, no en dashes,
+   Grade 10 reading level, red ED1B24 sole accent, POPIA consent before any send,
+   only the verified WhatsApp number 27600702723, staff are "sales executives",
+   no accreditation badges (this is not a training page).
+ Slot markers left for the shared Nexus artefacts (quote form I2, Sr Thandi widget T1).
+ Pending inputs (never fabricated): [[SITE_BASE]], [[GTM_ID]], lead endpoint, privacy URL.
+ PRICING NOTE: the rate card amounts and the practitioner review fee shown in the
+   packages section are the current internal placeholders. Confirm both with commercial
+   leadership before this page goes live, or replace the figures with 'from quotation'.
+=====================================================================
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- CNC:SECTION id=consent_loader v=1 lock=false -->
+<script>
+(function () {
+  var KEY = "cnc_consent_v1";
+  var TWELVE_MONTHS = 365 * 24 * 60 * 60 * 1000;
+  var stored = null;
+  try { stored = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+  if (stored && (Date.now() - stored.savedAt) > TWELVE_MONTHS) { stored = null; localStorage.removeItem(KEY); }
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag("consent", "default", {
+    ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied",
+    analytics_storage: "denied", functionality_storage: "granted",
+    security_storage: "granted", wait_for_update: 500
+  });
+  if (stored) {
+    gtag("consent", "update", {
+      analytics_storage: stored.analytics ? "granted" : "denied",
+      ad_storage: stored.marketing ? "granted" : "denied",
+      ad_user_data: stored.marketing ? "granted" : "denied",
+      ad_personalization: stored.marketing ? "granted" : "denied"
+    });
+    window.__cncConsent = stored;
+  } else {
+    window.__cncConsentPending = true;
+  }
+})();
+</script>
+<!-- CNC:END id=consent_loader -->
+
+<!-- CNC:SECTION id=meta_block v=1 lock=false -->
+<title>Medical Surveillance Plans for SA Employers | Care Net</title>
+<meta name="description" content="A Medical Surveillance Plan built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, kept current.">
+<link rel="canonical" href="[[SITE_BASE]]/medical-surveillance-plans">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Care Net Consultants">
+<meta name="publisher" content="Care Net Consultants (Pty) Ltd">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Care Net Consultants">
+<meta property="og:title" content="Medical Surveillance Plans | Care Net Consultants">
+<meta property="og:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
+<meta property="og:url" content="[[SITE_BASE]]/medical-surveillance-plans">
+<meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
+<meta property="og:locale" content="en_ZA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Medical Surveillance Plans | Care Net Consultants">
+<meta name="twitter:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
+<meta name="twitter:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
+<link rel="alternate" hreflang="en-za" href="[[SITE_BASE]]/medical-surveillance-plans">
+<!-- CNC:END id=meta_block -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- CNC:SECTION id=org_schema v=1 lock=false -->
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"MedicalBusiness",
+ "name":"Care Net Consultants (Pty) Ltd",
+ "description":"Occupational health medical services across South Africa: mobile clinics, fixed walk-in clinics, medical surveillance planning and online medical records.",
+ "url":"[[SITE_BASE]]/",
+ "logo":"https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp",
+ "areaServed":"ZA",
+ "telephone":"+27600702723",
+ "email":"salesdesk@carenetconsultants.co.za",
+ "sameAs":[
+  "https://www.linkedin.com/company/care-net-consultants-south-africa",
+  "https://www.youtube.com/@carenetconsultantsSouthAfrica",
+  "https://www.facebook.com/CareNetConsultantsSouthAfrica",
+  "https://www.instagram.com/carenetconsultantssouthafrica",
+  "https://www.tiktok.com/@carenetconsultantssa"
+ ]
+}
+</script>
+<!-- CNC:END id=org_schema -->
+
+<!-- CNC:SECTION id=service_schema v=1 lock=false -->
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"Service",
+ "serviceType":"Medical Surveillance Plan",
+ "name":"Medical Surveillance Plans",
+ "description":"A written Medical Surveillance Plan that sets out, per job category, which occupational medical assessments a workforce needs, how often, and on what legal basis. Built on verified South African occupational health law and signed by a registered Occupational Medical Practitioner.",
+ "provider":{"@type":"Organization","name":"Care Net Consultants (Pty) Ltd","url":"[[SITE_BASE]]/"},
+ "areaServed":{"@type":"Country","name":"South Africa"},
+ "audience":{"@type":"Audience","audienceType":"Employers with occupational health and safety obligations in South Africa"},
+ "hasOfferCatalog":{
+  "@type":"OfferCatalog",
+  "name":"Medical Surveillance Plan packages",
+  "itemListElement":[
+   {"@type":"Offer","itemOffered":{"@type":"Service","name":"Medical Surveillance Plan, working draft"}},
+   {"@type":"Offer","itemOffered":{"@type":"Service","name":"Medical Surveillance Plan, reviewed and signed by an Occupational Medical Practitioner"}}
+  ]
+ }
+}
+</script>
+<!-- CNC:END id=service_schema -->
+
+<!-- CNC:SECTION id=breadcrumbs v=1 lock=false -->
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"BreadcrumbList",
+ "itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Home","item":"[[SITE_BASE]]/"},
+  {"@type":"ListItem","position":2,"name":"Medicals","item":"[[SITE_BASE]]/medicals"},
+  {"@type":"ListItem","position":3,"name":"Medical Surveillance Plans","item":"[[SITE_BASE]]/medical-surveillance-plans"}
+ ]
+}
+</script>
+<!-- CNC:END id=breadcrumbs -->
+
+<!-- CNC:SECTION id=faq_schema v=1 lock=false -->
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"FAQPage",
+ "mainEntity":[
+  {"@type":"Question","name":"What is a Medical Surveillance Plan?","acceptedAnswer":{"@type":"Answer","text":"A Medical Surveillance Plan is a written document that sets out, for every job category in your workplace, which occupational medical assessments your employees need, how often they need them, and the law that requires each one. It is the plan your medicals run from, and the document an inspector, an auditor or a client asks to see."}},
+  {"@type":"Question","name":"Does my company need one?","acceptedAnswer":{"@type":"Answer","text":"If your risk assessment shows employees are exposed to a hazard that South African law places under medical surveillance, such as noise, dust, hazardous chemicals, biological agents or work at height, then a written programme is required. The Occupational Health and Safety Act and its regulations place that duty on the employer."}},
+  {"@type":"Question","name":"How long does it take?","acceptedAnswer":{"@type":"Answer","text":"The assessment takes about 30 to 45 minutes to complete with your risk assessment at hand. Your draft Plan is prepared from that assessment, then reviewed and signed by a registered Occupational Medical Practitioner before it is released to you."}},
+  {"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"Pricing depends on your industry, your headcount and the number of job descriptions. Companies under an active service level agreement with Care Net, or doing 100 or more occupational medicals a year with us, receive the assessment tool free and pay only the practitioner review fee. Every quotation is confirmed on your invoice before any work begins."}},
+  {"@type":"Question","name":"Who signs the Plan?","acceptedAnswer":{"@type":"Answer","text":"A registered Occupational Medical Practitioner reviews the draft, records clinical recommendations, and signs the released Plan with their name and HPCSA registration number. No Plan is released without that signature."}},
+  {"@type":"Question","name":"What happens when the law changes?","acceptedAnswer":{"@type":"Answer","text":"The framework behind your Plan is reviewed every month and carries a version number. When a regulation is amended or replaced, the change is verified against the primary source before anything is updated, and your revision follows the same clinical review as the original."}}
+ ]
+}
+</script>
+<!-- CNC:END id=faq_schema -->
+
+<style>
+:root{
+  --red:#ED1B24; --red-deep:#c5141b; --ink:#16161a; --ink-2:#555; --soft:#f6f6f8;
+  --line:#e6e6e9; --white:#fff; --max:1200px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Montserrat,Arial,sans-serif;color:var(--ink);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+h1,h2,h3{font-family:Montserrat,Arial,sans-serif;line-height:1.12;margin:0}
+h1{font-size:clamp(34px,5vw,58px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.01em}
+h3{font-size:20px;font-weight:700}
+p{margin:.6em 0}
+a{color:inherit}
+.r{color:var(--red)}
+.eyebrow{font-family:Montserrat,Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:15px;text-decoration:none;padding:13px 22px;border-radius:10px;border:2px solid transparent;cursor:pointer;min-height:48px;transition:transform .12s ease, background .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-deep)}
+.btn-ghost{background:transparent;border-color:rgba(255,255,255,.5);color:#fff}
+.btn-ghost:hover{border-color:#fff}
+.btn-ghost-dark{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn-ghost-dark:hover{border-color:var(--red);color:var(--red)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Utility + nav */
+.util{background:var(--ink);color:#cfcfd6;font-size:13px}
+.util .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;padding-top:8px;padding-bottom:8px}
+.util ul{list-style:none;display:flex;flex-wrap:wrap;gap:14px;margin:0;padding:0}
+.util a{color:#cfcfd6;text-decoration:none}
+.util a:hover{color:#fff}
+.nav{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-top:12px;padding-bottom:12px}
+.nav img{height:46px;width:auto;display:block}
+.nav ul{list-style:none;display:flex;gap:20px;margin:0;padding:0;font-weight:600;font-size:14px}
+.nav a{text-decoration:none}
+.nav a:hover{color:var(--red)}
+.nav-cta{display:flex;gap:10px}
+.nav-links{display:flex;align-items:center;gap:22px}
+@media(max-width:980px){.nav-links ul{display:none}}
+
+/* Hero banner */
+.hero-banner{position:relative;min-height:clamp(360px,46vw,560px);display:flex;align-items:center;overflow:hidden;background:#0c0c0f}
+.hero-banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-banner:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(12,12,15,.92),rgba(12,12,15,.66) 55%,rgba(12,12,15,.3))}
+.hero-overlay{position:relative;z-index:2;width:100%;padding:56px 0}
+.hero-overlay h1{color:#fff;max-width:19ch}
+.hero-overlay .lede{color:#e7e7ee;max-width:54ch;font-size:18px}
+.hero-overlay .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.hero-overlay .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid rgba(255,255,255,.25);color:#eee;border-radius:999px;padding:7px 13px}
+@media(max-width:680px){.hero-banner:before{background:linear-gradient(180deg,rgba(12,12,15,.55),rgba(12,12,15,.88))}.hero-banner{min-height:440px}}
+
+/* KPI band */
+.kpis{background:#fff;border-bottom:1px solid var(--line)}
+.kpis .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:26px 22px}
+.kpi b{display:block;font-family:Bebas Neue,Montserrat,sans-serif;font-size:42px;line-height:1;color:var(--red);letter-spacing:.5px}
+.kpi span{display:block;color:var(--ink-2);font-size:13.5px;margin-top:4px}
+@media(max-width:760px){.kpis .wrap{grid-template-columns:1fr 1fr}}
+
+/* Sections */
+section{padding:64px 0}
+.sec-head{max-width:800px;margin:0 0 30px}
+.sec-head h2{margin-top:8px}
+.sec-head p{color:var(--ink-2);font-size:17px}
+.soft{background:var(--soft)}
+
+/* Split */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}
+.split img{width:100%;height:auto;border-radius:14px;display:block;border:1px solid var(--line)}
+@media(max-width:880px){.split{grid-template-columns:1fr}}
+
+/* Problem list */
+.ticks{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ticks li{position:relative;padding-left:30px;font-size:15.5px}
+.ticks li:before{content:"";position:absolute;left:0;top:7px;width:16px;height:16px;border-radius:4px;background:var(--red)}
+
+/* Method cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 24px}
+.card .num{font-family:Bebas Neue,Montserrat,sans-serif;font-size:34px;color:var(--red);line-height:1}
+.card h3{margin:8px 0 6px}
+.card p{color:var(--ink-2);font-size:15px;margin:0}
+@media(max-width:860px){.cards3{grid-template-columns:1fr}}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:step}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 18px;position:relative}
+.step b{display:block;font-family:Bebas Neue,Montserrat,sans-serif;font-size:30px;color:var(--red);line-height:1;margin-bottom:6px}
+.step h3{font-size:16px;margin-bottom:6px}
+.step p{color:var(--ink-2);font-size:14px;margin:0}
+@media(max-width:980px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}}
+
+/* Industry grid */
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ind{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 16px;transition:border-color .15s ease, transform .12s ease, box-shadow .15s ease}
+.ind:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.07)}
+.ind img{width:84px;height:84px;object-fit:contain;display:block}
+.ind b{font-size:15px;font-weight:700;line-height:1.25}
+@media(max-width:860px){.ind-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.ind-grid{grid-template-columns:1fr}}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600}
+
+/* Packages */
+.packs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pack{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;display:flex;flex-direction:column}
+.pack.featured{border-color:var(--red);box-shadow:0 18px 40px rgba(237,27,36,.08)}
+.pack .tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--red);margin-bottom:8px}
+.pack h3{font-size:22px}
+.pack .price{font-family:Bebas Neue,Montserrat,sans-serif;font-size:34px;color:var(--ink);margin:14px 0 2px;line-height:1}
+.pack .price small{font-family:Inter,Arial,sans-serif;font-size:13px;font-weight:600;color:var(--ink-2);display:block;margin-top:6px;line-height:1.4}
+.pack ul{list-style:none;margin:16px 0 22px;padding:0;display:flex;flex-direction:column;gap:9px;font-size:15px}
+.pack ul li{position:relative;padding-left:26px;color:var(--ink-2)}
+.pack ul li:before{content:"";position:absolute;left:0;top:8px;width:12px;height:12px;border-radius:3px;background:var(--red)}
+.pack .foot{margin-top:auto}
+@media(max-width:760px){.packs{grid-template-columns:1fr}}
+.freebox{background:#fff;border:1px solid var(--line);border-left:5px solid var(--red);border-radius:12px;padding:24px 26px;margin-top:20px}
+.freebox b{font-size:17px}
+.freebox p{color:var(--ink-2);margin:.4em 0 0}
+
+/* Dark band */
+.band{background:linear-gradient(120deg,#16161a,#2a0508);color:#fff;border-radius:18px;padding:40px;display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+.band p{color:#d9d9e0}
+.band .cta{display:flex;flex-wrap:wrap;gap:12px}
+@media(max-width:760px){.band{grid-template-columns:1fr;padding:28px}}
+
+/* Retention */
+.retain{background:#fff;border:1px solid var(--line);border-left:5px solid var(--red);border-radius:12px;padding:28px 30px}
+.retain h2{font-size:26px}
+.retain p{color:var(--ink-2)}
+
+/* FAQ */
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.faq details[open]{border-color:var(--red)}
+.faq summary{font-weight:700;cursor:pointer;font-size:16px;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";float:right;color:var(--red);font-size:20px;line-height:1;transition:transform .15s ease}
+.faq details[open] summary{color:var(--red)}
+.faq details[open] summary:after{transform:rotate(45deg)}
+.faq p{color:var(--ink-2);font-size:15px;margin:.7em 0 0}
+@media(max-width:760px){.faq{grid-template-columns:1fr}}
+
+/* Divider + CTA band */
+.divider{width:100%;height:auto;display:block;margin:8px 0 0;opacity:.9}
+.cta-band{background:var(--red);color:#fff;border-radius:18px;padding:44px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.cta-band h2{color:#fff}
+.cta-band p{margin:.3em 0 0;color:#ffe3e4}
+.cta-band .btn{background:#fff;color:var(--red)}
+.cta-band .btn:hover{background:#fff2f2}
+
+/* Footer */
+.foot{background:var(--ink);color:#c7c7cf;padding:54px 0 26px;font-size:14px}
+.foot .cols{display:grid;grid-template-columns:repeat(5,1fr);gap:24px}
+.foot h2{font-family:Montserrat;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;margin:0 0 12px}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.foot a{color:#c7c7cf;text-decoration:none}
+.foot a:hover{color:#fff}
+.foot .base{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;border-top:1px solid #2b2b32;margin-top:34px;padding-top:18px}
+.foot .base img{height:46px;width:auto}
+@media(max-width:900px){.foot .cols{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.foot .cols{grid-template-columns:1fr}}
+
+/* Consent */
+.consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.18);padding:16px 18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;max-width:760px;margin:0 auto}
+.consent p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.consent .row{display:flex;gap:10px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:16px;top:10px;background:#fff;color:var(--ink);padding:8px 12px;border-radius:8px;z-index:100}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<div class="util">
+  <div class="wrap">
+    <ul>
+      <li><a href="tel:+27600702723">Call us</a></li>
+      <li><a href="mailto:salesdesk@carenetconsultants.co.za">Email</a></li>
+      <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
+      <li><a href="https://www.carenetconsultants.co.za/fixed-clinic-medicals">Clinic locator</a></li>
+      <li><a href="https://www.carenetconsultants.co.za/faq">FAQ</a></li>
+    </ul>
+    <ul>
+      <li><a href="https://www.linkedin.com/company/care-net-consultants-south-africa" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://www.youtube.com/@carenetconsultantsSouthAfrica" target="_blank" rel="noopener">YouTube</a></li>
+      <li><a href="https://www.facebook.com/CareNetConsultantsSouthAfrica" target="_blank" rel="noopener">Facebook</a></li>
+      <li><a href="https://www.instagram.com/carenetconsultantssouthafrica/" target="_blank" rel="noopener">Instagram</a></li>
+    </ul>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="https://www.carenetconsultants.co.za/" aria-label="Care Net Consultants home">
+      <img decoding="async" loading="eager" width="200" height="58" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-Basic.webp" alt="Care Net Consultants logo">
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <ul>
+        <li><a href="https://www.carenetconsultants.co.za/about">About</a></li>
+        <li><a href="https://www.carenetconsultants.co.za/medicals">Medicals</a></li>
+        <li><a href="#industries">Industries</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="https://www.carenetconsultants.co.za/my-clinic-online">My Clinic Online</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost-dark" href="/samples/CNC-MSP-SAMPLE-Construction.pdf">See a sample Plan</a>
+      <a class="btn btn-red" href="#quote">Get a quote</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- CNC:SECTION id=hero v=1 lock=false -->
+  <section class="hero-banner" aria-labelledby="hero-title">
+    <img src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" alt="Care Net Consultants occupational health team supporting workplace medical surveillance" loading="eager" decoding="async" width="1024" height="384" fetchpriority="high">
+    <div class="hero-overlay">
+      <div class="wrap">
+        <span class="eyebrow">Medical Surveillance Plans</span>
+        <h1 id="hero-title">The plan your medicals run from, built on <span class="r">the law your industry answers to.</span></h1>
+        <p class="lede">Your Plan sets out, for every job on your site, which medicals your people need, how often, and the exact regulation behind each one. Written from your own risk information, reviewed and signed by a registered Occupational Medical Practitioner, and kept current as the law changes.</p>
+        <div class="cta">
+          <a class="btn btn-red" href="#quote">Get a quote</a>
+          <a class="btn btn-ghost" href="/samples/CNC-MSP-SAMPLE-Construction.pdf">See a sample Plan</a>
+        </div>
+        <div class="chips">
+          <span class="chip">17 industries covered</span>
+          <span class="chip">31 verified instruments</span>
+          <span class="chip">Practitioner signed</span>
+          <span class="chip">POPIA compliant</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- CNC:END id=hero -->
+
+  <div class="kpis">
+    <div class="wrap">
+      <div class="kpi"><b>17</b><span>industries mapped end to end</span></div>
+      <div class="kpi"><b>31</b><span>Acts and regulations verified</span></div>
+      <div class="kpi"><b>316</b><span>job roles with their own risk profile</span></div>
+      <div class="kpi"><b>12</b><span>month review, or sooner if the law moves</span></div>
+    </div>
+  </div>
+
+  <!-- THE PROBLEM -->
+  <section aria-labelledby="why-title">
+    <div class="wrap split">
+      <div>
+        <span class="eyebrow">Why this matters</span>
+        <h2 id="why-title">A plan on the shelf is not <span class="r">a plan that protects you.</span></h2>
+        <p>Most Medical Surveillance Plans are written once, copied between sites, and quietly go out of date while the regulations move on. The plan still looks fine in the file. It stops holding up the moment somebody tests it.</p>
+        <ul class="ticks">
+          <li>An inspector asks which regulation requires a test, and the plan cannot say.</li>
+          <li>A client audit finds medicals being done that no hazard on site calls for.</li>
+          <li>A worker leaves and no exit medical was ever planned for the job.</li>
+          <li>A law is replaced, and nobody notices until the next incident.</li>
+        </ul>
+        <p>We built our Plans to survive all four of those moments.</p>
+      </div>
+      <div>
+        <img decoding="async" src="https://www.carenetconsultants.co.za/images/Company_Overview.png" alt="Care Net Consultants occupational health team reviewing workplace medical surveillance requirements" loading="lazy" width="1024" height="576">
+      </div>
+    </div>
+  </section>
+
+  <!-- THE METHOD -->
+  <section class="soft" aria-labelledby="method-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">The Care Net Method</span>
+        <h2 id="method-title">Three promises behind <span class="r">every page we release.</span></h2>
+        <p>Your Plan is built against a maintained body of South African occupational health law that carries a version number, an audit trail on every change, and a review every month.</p>
+      </div>
+      <div class="cards3">
+        <article class="card">
+          <span class="num">01</span>
+          <h3>Every law checked three ways</h3>
+          <p>No regulation reaches your Plan until it passes three separate checks: the primary legal text, a second authoritative source that agrees with it, and a currency check that confirms it is still in force today. Anything that fails a check is left out rather than guessed at.</p>
+        </article>
+        <article class="card">
+          <span class="num">02</span>
+          <h3>A legal reason for every test</h3>
+          <p>Each medical assessment carries two reasons: the hazard on your site that calls for it, and section 7 of the Employment Equity Act, which is what makes testing a worker lawful in the first place. No test without a reason. No reason without a law.</p>
+        </article>
+        <article class="card">
+          <span class="num">03</span>
+          <h3>A practitioner signs, or it does not go out</h3>
+          <p>A registered Occupational Medical Practitioner reviews the draft, records recommendations, and signs with their HPCSA number. That gate sits inside our systems, not in a policy document, so no Plan can be released around it.</p>
+        </article>
+      </div>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:20px">One example of the review at work: the Noise Induced Hearing Loss Regulations are replaced by the Noise Exposure Regulations on 6 September 2026. That change is already loaded, with the new action levels for workers exposed to both noise and certain chemicals, and it takes effect in your Plan on the day the law does.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">How it works</span>
+        <h2 id="how-title">From first question to signed Plan, <span class="r">in five steps.</span></h2>
+        <p>Most of the work sits with us. What we need from you is one structured assessment, with your risk assessment at hand.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <b>1</b>
+          <h3>Tell us about the work</h3>
+          <p>A guided assessment covers your sites, job categories, hazards, controls and any exposure readings you already have. About 30 to 45 minutes.</p>
+        </article>
+        <article class="step">
+          <b>2</b>
+          <h3>We match your jobs</h3>
+          <p>Each job category is matched against the role library for your industry, then adjusted to your real operations, shifts and measured exposures.</p>
+        </article>
+        <article class="step">
+          <b>3</b>
+          <h3>The Plan is drafted</h3>
+          <p>Your surveillance programme is set out per job: baseline, periodic interval, exit medical, and the regulation behind each test.</p>
+        </article>
+        <article class="step">
+          <b>4</b>
+          <h3>A practitioner reviews</h3>
+          <p>A registered Occupational Medical Practitioner checks the clinical detail, adds recommendations, and signs the Plan.</p>
+        </article>
+        <article class="step">
+          <b>5</b>
+          <h3>You receive and we maintain</h3>
+          <p>Your Plan arrives with revision control and is updated as your operations or the law change, through the same review.</p>
+        </article>
+      </div>
+      <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn btn-red" href="/pilot.html">Walk through the full journey</a>
+        <a class="btn btn-ghost-dark" href="/assess.html?demo=1">Preview the assessment</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT IS INSIDE -->
+  <section class="soft" aria-labelledby="inside-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">What is inside your Plan</span>
+        <h2 id="inside-title">Eleven sections an auditor <span class="r">can follow line by line.</span></h2>
+        <p>Your Plan is written to be read by the people who test it: your safety team, your client's auditor, and the inspector at the gate.</p>
+      </div>
+      <div class="cards3">
+        <article class="card">
+          <h3>The legal frame</h3>
+          <p>Every Act and regulation that governs your industry, with its gazette reference, and what each one requires of you. No generic list, only what applies to your operation.</p>
+        </article>
+        <article class="card">
+          <h3>The risk profile per job</h3>
+          <p>Every job category with its duties, the hazards it carries, an exposure rating with the reason for it, and how your measured levels compare to the legal limits.</p>
+        </article>
+        <article class="card">
+          <h3>The surveillance programme</h3>
+          <p>Per job: the baseline medical before placement, the periodic interval, the exit medical, and any biological monitoring, each tied to the law that calls for it.</p>
+        </article>
+      </div>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:20px">The Plan also carries your inherent job requirements, your chemical register, respirator fit test status, responsibilities by role, the confidentiality and personal information sections required under POPIA, and the practitioner sign off page.</p>
+    </div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section id="industries" aria-labelledby="ind-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Built for your industry</span>
+        <h2 id="ind-title">Seventeen industries, <span class="r">each with its own law.</span></h2>
+        <p>A cashier and a forklift driver in the same building need different medicals. So do a rock drill operator and a contact centre agent. Every industry below carries its own verified regulations and its own job role library.</p>
+      </div>
+      <div class="ind-grid">
+        <a class="ind" href="https://www.carenetconsultants.co.za/construction-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Construction.webp" alt="" loading="lazy">
+          <b>Construction</b>
+          <span class="sr-only">Five subindustries covered, including civil works, building, demolition, electrical construction and roadworks.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/mining-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp" alt="" loading="lazy">
+          <b>Mining &amp; Quarrying</b>
+          <span class="sr-only">Gold, coal, platinum, chrome, diamond and quarrying, with dust disease surveillance routed through the statutory mines pathway.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/transport-logistics-warehousing-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp" alt="" loading="lazy">
+          <b>Transport, Logistics &amp; Warehousing</b>
+          <span class="sr-only">Road freight, warehousing, rail operations, ports and terminals, and aviation ground handling.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/manufacturing-engineering-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp" alt="" loading="lazy">
+          <b>Manufacturing &amp; Engineering</b>
+          <span class="sr-only">Food and beverage, metals and foundries, chemical, automotive, textiles, plastics, wood and furniture.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/agriculture-abattoir-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp" alt="" loading="lazy">
+          <b>Agriculture &amp; Forestry</b>
+          <span class="sr-only">Crop farming, livestock and forestry, including pesticide exposure monitoring.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/food-handling-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Food-Handling.webp" alt="" loading="lazy">
+          <b>Hospitality &amp; Food Handling</b>
+          <span class="sr-only">Hotels and accommodation, restaurants and catering, with food handler requirements under the food premises regulations.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/cleaning-recycling-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp" alt="" loading="lazy">
+          <b>Cleaning, Hygiene &amp; Waste</b>
+          <span class="sr-only">Commercial cleaning, specialised hygiene, waste collection, landfill and recycling.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/telecommunications-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp" alt="" loading="lazy">
+          <b>Telecommunications</b>
+          <span class="sr-only">Tower construction and rigging, field network services, and data centre operations.</span>
+        </a>
+        <a class="ind" href="https://www.carenetconsultants.co.za/safety-security-medicals">
+          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp" alt="" loading="lazy">
+          <b>Safety &amp; Security</b>
+          <span class="sr-only">Guarding services, armed response and cash in transit.</span>
+        </a>
+      </div>
+      <p style="margin-top:24px;font-weight:600">Also covered, with the same depth:</p>
+      <div class="pills">
+        <span class="pill">Healthcare and laboratories</span>
+        <span class="pill">Utilities and energy</span>
+        <span class="pill">Petrochemical and fuel retail</span>
+        <span class="pill">Retail and wholesale</span>
+        <span class="pill">Government and municipal</span>
+        <span class="pill">Education</span>
+        <span class="pill">Office and contact centres</span>
+      </div>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:16px">Work that sits across two industries, or outside all of them, goes to a sales executive to be mapped properly. We would rather ask than guess.</p>
+    </div>
+  </section>
+
+  <!-- SAMPLE BAND -->
+  <section class="soft" aria-labelledby="sample-title">
+    <div class="wrap">
+      <div class="band">
+        <div>
+          <span class="eyebrow" style="color:#fff">See it before you buy it</span>
+          <h2 id="sample-title" style="color:#fff;margin-top:8px">Read a full Plan, <span class="r" style="color:#ff8086">start to finish.</span></h2>
+          <p>A complete sample Plan for a civil engineering company, produced the same way yours will be. The company is fictitious and every page is watermarked, so you can see the real depth without the document being reusable.</p>
+        </div>
+        <div class="cta">
+          <a class="btn btn-red" href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Download the sample</a>
+          <a class="btn btn-ghost" href="/method.html">See the law behind it</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section id="packages" aria-labelledby="pack-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Packages and pricing</span>
+        <h2 id="pack-title">Two ways to take it, <span class="r">priced before you commit.</span></h2>
+        <p>Your quotation is worked out from your industry, your headcount and the number of job descriptions you carry. You see the full amount before anything begins.</p>
+      </div>
+      <div class="packs">
+        <article class="pack">
+          <span class="tag">For internal planning</span>
+          <h3>Working draft</h3>
+          <p class="price">From R4 500,00<small>Plus a per employee and per job category amount, shown on your quotation</small></p>
+          <ul>
+            <li>The full guided assessment</li>
+            <li>Your Plan drafted against the verified law for your industry</li>
+            <li>Delivered watermarked as a working document</li>
+            <li>No practitioner signature, so it is not a clinical document</li>
+          </ul>
+          <div class="foot"><a class="btn btn-ghost-dark" href="/shop.html">Price this package</a></div>
+        </article>
+        <article class="pack featured">
+          <span class="tag">Recommended, and audit ready</span>
+          <h3>Reviewed and signed</h3>
+          <p class="price">Draft price plus R2 500,00<small>Practitioner review fee, confirmed on your invoice</small></p>
+          <ul>
+            <li>Everything in the working draft</li>
+            <li>Clinical review and recommendations by a registered Occupational Medical Practitioner</li>
+            <li>Signed with practitioner name and HPCSA number</li>
+            <li>Released with revision control and secure hosting</li>
+            <li>Revisions follow the same review when things change</li>
+          </ul>
+          <div class="foot"><a class="btn btn-red" href="/shop.html">Price this package</a></div>
+        </article>
+      </div>
+      <div class="freebox">
+        <b>The tool is free for many of our clients.</b>
+        <p>If your company is under an active service level agreement with Care Net, or you do 100 or more occupational medicals a year with us, the assessment and the Plan are included at no charge. You pay only the practitioner review fee if you want the signed version. A sales executive confirms your volume before the waiver is applied.</p>
+      </div>
+      <p style="color:var(--ink-2);font-size:14px;margin-top:16px">All amounts exclude VAT and are confirmed on your invoice before work begins. Industries without a published rate go to a sales executive for a tailored quotation rather than an automatic price.</p>
+    </div>
+  </section>
+
+  <!-- RECORD RETENTION -->
+  <section class="soft" aria-labelledby="retain-title">
+    <div class="wrap">
+      <div class="retain">
+        <span class="eyebrow">Always protect yourself</span>
+        <h2 id="retain-title" style="margin-top:8px">Your records, kept <span class="r">for as long as the law requires.</span></h2>
+        <p>Health legislation sets different retention periods for different records. Some are kept for 5 years, and medical surveillance records for hazardous exposure for 40 years. Paper records are easy to lose, hard to secure, and seldom survive those periods intact, which puts both your POPIA compliance and your audit defence at risk. Your Plan, and the medicals that run from it, sit in secure digital storage for as long as the law prescribes, ready for audits and access requests.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Questions we are asked</span>
+        <h2 id="faq-title">Straight answers, <span class="r">no small print.</span></h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>What is a Medical Surveillance Plan?</summary>
+          <p>It is a written document that sets out, for every job category in your workplace, which occupational medical assessments your employees need, how often they need them, and the law that requires each one. It is the plan your medicals run from, and the document an inspector, an auditor or a client asks to see.</p>
+        </details>
+        <details>
+          <summary>Does my company need one?</summary>
+          <p>If your risk assessment shows employees are exposed to a hazard that South African law places under medical surveillance, such as noise, dust, hazardous chemicals, biological agents or work at height, then a written programme is required. The Occupational Health and Safety Act and its regulations place that duty on the employer.</p>
+        </details>
+        <details>
+          <summary>How long does it take?</summary>
+          <p>The assessment takes about 30 to 45 minutes with your risk assessment at hand. Your draft is prepared from that assessment, then reviewed and signed by a registered Occupational Medical Practitioner before it is released to you.</p>
+        </details>
+        <details>
+          <summary>Do you do the medicals as well?</summary>
+          <p>Yes. Once your Plan is signed, a mobile clinic can come to your site for 10 or more workers, or your people can walk into any of our four fixed clinics. The Plan tells the clinic exactly what to do for each job.</p>
+        </details>
+        <details>
+          <summary>What if we already have a plan?</summary>
+          <p>Bring it. We will run the same assessment, show you where the two differ, and tell you plainly which of your current tests have a legal basis and which do not. That comparison is often the most useful part.</p>
+        </details>
+        <details>
+          <summary>What happens when the law changes?</summary>
+          <p>The framework behind your Plan is reviewed every month and carries a version number. When a regulation is amended or replaced, the change is verified against the primary source first, and your revision then follows the same clinical review as the original.</p>
+        </details>
+        <details>
+          <summary>How is our information protected?</summary>
+          <p>The assessment asks about jobs and hazards, never about named individuals or their health. It is designed that way on purpose. Everything is processed under POPIA for the single purpose of designing your programme, and you can withdraw consent at any time.</p>
+        </details>
+        <details>
+          <summary>Who signs the Plan?</summary>
+          <p>A registered Occupational Medical Practitioner reviews the draft, records clinical recommendations, and signs with their name and HPCSA registration number. No Plan is released without that signature.</p>
+        </details>
+      </div>
+      <img decoding="async" width="2000" height="100" class="divider" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp" alt="" aria-hidden="true" loading="lazy">
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="quote" aria-labelledby="cta-title">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <h2 id="cta-title">Ready to plan your medicals properly?</h2>
+          <p>Tell us your industry and your headcount. A sales executive replies the same working day with a firm proposal.</p>
+        </div>
+        <div class="cta" style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn" href="/shop.html">Get a quote</a>
+          <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp us</a>
+        </div>
+      </div>
+      <!-- CNC:SLOT I2 START -->
+      <!-- Shared Nexus quote form (I2) injects here. POPIA consent captured before any send; Consent Mode defaults denied. -->
+      <div id="quote-form"></div>
+      <!-- CNC:SLOT I2 END -->
+    </div>
+  </section>
+
+</main>
+
+<!-- CNC:SLOT T1 START -->
+<!-- Sr Thandi widget (T1) injects here, industry aware via window.CNC_ACTIVE_INDUSTRY (this page: medical surveillance planning). -->
+<!-- CNC:SLOT T1 END -->
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h2>Navigate</h2>
+        <ul>
+          <li><a href="https://www.carenetconsultants.co.za/">Home</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/about">About</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/company-overview">Company overview</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/occupational-health">Occupational health</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/medicals">Medicals</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/affiliations">Affiliations</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Industries</h2>
+        <ul>
+          <li><a href="https://www.carenetconsultants.co.za/construction-medicals">Construction</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/mining-medicals">Mining</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/transport-logistics-warehousing-medicals">Transport &amp; Logistics</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/manufacturing-engineering-medicals">Manufacturing</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/agriculture-abattoir-medicals">Agriculture</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/safety-security-medicals">Safety &amp; Security</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Surveillance Plans</h2>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#packages">Packages and pricing</a></li>
+          <li><a href="/method.html">The law we verify</a></li>
+          <li><a href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Sample Plan</a></li>
+          <li><a href="/pilot.html">The full journey</a></li>
+          <li><a href="/account.html">Client sign in</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Clinics &amp; records</h2>
+        <ul>
+          <li><a href="https://www.carenetconsultants.co.za/fixed-clinic-medicals">Fixed clinics</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/on-site-mobile-clinics">Mobile clinics</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/my-clinic-online">My Clinic Online</a></li>
+          <li><a href="https://app.mycliniconline.co.za/verify" target="_blank" rel="noopener">Verify a certificate</a></li>
+        </ul>
+        <h2 style="margin-top:18px">Legal</h2>
+        <ul>
+          <li><a href="https://www.carenetconsultants.co.za/privacy-policy">Privacy policy</a></li>
+          <li><a href="https://www.carenetconsultants.co.za/terms-and-conditions">Terms and conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li><a href="tel:+27600702723">+27 60 070 2723</a></li>
+          <li><a href="tel:+27100210520">+27 10 021 0520</a></li>
+          <li><a href="mailto:salesdesk@carenetconsultants.co.za">salesdesk@carenetconsultants.co.za</a></li>
+          <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>Care Net Consultants (Pty) Ltd</li>
+        </ul>
+      </div>
+    </div>
+    <div class="base">
+      <img decoding="async" loading="lazy" width="1024" height="331" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp" alt="Care Net Consultants logo">
+      <span>Occupational health, on site or at our four clinics. &copy; Care Net Consultants 2026</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CNC:SECTION id=consent_form v=1 lock=false -->
+<div class="consent" id="consent" role="dialog" aria-label="Cookie and privacy notice">
+  <p>We use cookies to improve your experience and to comply with POPIA. Tracking stays off until you accept. <a href="https://www.carenetconsultants.co.za/privacy-policy" class="r">Read our Privacy Policy</a>.</p>
+  <div class="row">
+    <button class="btn btn-ghost-dark" id="consent-decline" type="button">Decline</button>
+    <button class="btn btn-red" id="consent-accept" type="button">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY="cnc_consent_v1", bar=document.getElementById('consent');
+  if(!window.__cncConsentPending && bar){ bar.style.display='none'; }
+  function save(analytics, marketing){
+    try{ localStorage.setItem(KEY, JSON.stringify({analytics:analytics, marketing:marketing, savedAt:Date.now()})); }catch(e){}
+    if(typeof window.gtag==='function'){
+      window.gtag('consent','update',{
+        analytics_storage: analytics?'granted':'denied',
+        ad_storage: marketing?'granted':'denied',
+        ad_user_data: marketing?'granted':'denied',
+        ad_personalization: marketing?'granted':'denied'
+      });
+    }
+    if(bar){ bar.style.display='none'; }
+  }
+  var a=document.getElementById('consent-accept'), d=document.getElementById('consent-decline');
+  if(a){ a.addEventListener('click', function(){ save(true,true); }); }
+  if(d){ d.addEventListener('click', function(){ save(false,false); }); }
+})();
+</script>
+<!-- CNC:END id=consent_form -->
+</body>
+</html>
