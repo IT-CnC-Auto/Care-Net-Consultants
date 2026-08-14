@@ -16,7 +16,10 @@ This document records the state of the engine at the completion of the phased bu
 
 ## Kernel state
 
-- 32 triple verified legal instruments; 5 instruments remain pending and are uncitable by design (they never appear in a deliverable).
+- 31 triple verified legal instruments; 4 instruments remain pending and are uncitable by design (they never appear in a deliverable), and one duplicate record (FCD Act R638, 2018) is retired through a hygiene sweep in favour of the fuller batch 7 record.
+- Register closures on 14/08/2026: the Noise Exposure Regulations, 2024 values are confirmed (85 dB(A) rating limit retained; 82 dB(A) continuous and 135 dB(C) impulse action level for ototoxic or vibration co exposure), the PrDP medical provision is pinned to NRTR 2000 regulations 115 to 117, COIDA Circular Instructions 171 to 180 are recorded, and record retention is resolved per class (HCA air monitoring 30 years, HBA 40 years, 40 year house floor for medical surveillance records).
+- Instrument sweep: the Driven Machinery, General Safety, General Administrative, and Environmental Regulations are backfilled onto the industry maps that predate their verification, and a gate now proves every industry citing lifting machine work carries the DMR mapping.
+- Post scale out regression 14/08/2026: refreshed Construction kernel snapshot, pipeline validation 9 of 9, dual brand render, geometry verification 16 of 16 (agent/kernel_snapshot_constr.json is the committed snapshot; agent/draft.json is the revision 2 draft of record).
 - 17 industries, 56 subindustries, all 56 selectable after passing the batch gate (at least five roles, no unmapped roles, no unprotocolled hazards outside the narrative codes O and N).
 - 316 job roles, 851 role to hazard mappings, 31 test protocols, every protocol carrying dual justification (hazard basis plus EEA section 7) and exit medical requirement.
 - Register: 24 confirmation items resolved or closed with documentary basis; open items are all external dependencies listed below.

@@ -69,7 +69,7 @@
       {
         "instrument_id": "c0314512-95c8-4e6e-a8e5-45f0f2152f0a",
         "short_name": "NRTA PrDP medical",
-        "full_citation": "National Road Traffic Act 93 of 1996, read with the National Road Traffic Regulations, Professional Driving Permit medical fitness provisions",
+        "full_citation": "National Road Traffic Act 93 of 1996, Chapter 13 professional driving permits, read with the National Road Traffic Regulations, 2000 (GNR 225 of 17 March 2000), regulations 115 to 117: regulation 115 sets the categories of drivers requiring a professional driving permit, and regulation 117(b) disqualifies an applicant who is not medically fit, evidenced by the prescribed medical certificate form completed by a registered health practitioner.",
         "applicability": "Applies to professional driving categories"
       },
       {
@@ -89,6 +89,30 @@
         "short_name": "HPCSA Booklet 11",
         "full_citation": "HPCSA Guidelines on Over Servicing, Perverse Incentives and Related Matters, Booklet 11",
         "applicability": "Perverse incentive prohibition; the employer is the payer"
+      },
+      {
+        "instrument_id": "c13ebb10-49d3-4a50-84f2-e0d3d07064fa",
+        "short_name": "Driven Machinery Regulations",
+        "full_citation": "Driven Machinery Regulations, 2015, promulgated 24 June 2015 under GNR 539, 540 and 542 of 2015 in Government Gazettes 38904 and 38905, made under the Occupational Health and Safety Act 85 of 1993. Regulation 18 (lifting machines) requires that lifting machines are operated only by persons who are trained, certified competent, authorised in writing, and in possession of a medical certificate of fitness.",
+        "applicability": "Crane, hoist, and lifting machine operator medical certificates of fitness per regulation 18"
+      },
+      {
+        "instrument_id": "2657ac17-d569-49a3-8864-cd9e5dd08484",
+        "short_name": "General Safety Regulations, 1986",
+        "full_citation": "General Safety Regulations, 1986, GNR 1031, Government Gazette 10252, 30 May 1986, made under the Machinery and Occupational Safety Act 6 of 1983 and kept in force under the Occupational Health and Safety Act 85 of 1993. The Regulations govern first aid provision, personal protective equipment, work in elevated positions, ladders, and general workplace safety duties. They prescribe no standing medical battery: fitness for the work they govern rests on EEA section 7 inherent requirements.",
+        "applicability": "First aid, PPE, elevated positions, and ladder duties on construction sites"
+      },
+      {
+        "instrument_id": "bdcf35f7-a16e-4e70-b3e9-fb0dbd41f87b",
+        "short_name": "General Administrative Regulations, 2003",
+        "full_citation": "General Administrative Regulations, 2003, GNR 929, Government Gazette 25129, 25 June 2003, made under section 43 of the Occupational Health and Safety Act 85 of 1993 after consultation with the Advisory Council for Occupational Health and Safety, repealing GNR 1449 of 6 September 1996. The Regulations govern incident reporting and recording, health and safety representatives and committees, and administrative duties. They prescribe no standing medical battery: the incident recording duties they impose feed the surveillance programme's review triggers.",
+        "applicability": "Incident reporting and health and safety representative duties"
+      },
+      {
+        "instrument_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
+        "short_name": "Environmental Regulations for Workplaces, 1987",
+        "full_citation": "Environmental Regulations for Workplaces, 1987, GN R.2281 of 16 October 1987, made under the Occupational Health and Safety Act 85 of 1993",
+        "applicability": "Outdoor and hot work thermal environments; fitness certification for hot work per regulation 5(4)"
       }
     ],
     "triggered_additions": [
@@ -742,6 +766,15 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
           },
           {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
+          },
+          {
             "protocol_id": "4e8b8f49-b1b0-42e6-9da4-c7a7c1de99ad",
             "test_name": "Respiratory symptom questionnaire",
             "test_type": "clinical",
@@ -772,8 +805,17 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
           }
@@ -796,6 +838,17 @@
             "test_type": "clinical",
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction.",
             "interval_months": 12,
@@ -838,12 +891,23 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction.",
             "interval_months": 12,
-            "interval_basis": "Twelve month floor per house rule."
+            "interval_basis": "Twelve month floor per house rule, consistent with Environmental Regulations for Workplaces, 1987."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor per house rule, consistent with MHSA."
           }
         ],
         "exit": [
@@ -862,6 +926,15 @@
             "test_type": "clinical",
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
           },
@@ -896,8 +969,17 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Regular walking across uneven site terrain; occasional ladder access; Sustained attention, verbal communication; statutory requirement: None beyond general induction."
           }
@@ -945,6 +1027,15 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
           },
           {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
             "protocol_id": "4e8b8f49-b1b0-42e6-9da4-c7a7c1de99ad",
             "test_name": "Respiratory symptom questionnaire",
             "test_type": "clinical",
@@ -975,8 +1066,17 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
           }
@@ -999,6 +1099,17 @@
             "test_type": "clinical",
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction.",
             "interval_months": 12,
@@ -1041,12 +1152,23 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction.",
             "interval_months": 12,
-            "interval_basis": "Twelve month floor per house rule."
+            "interval_basis": "Twelve month floor per house rule, consistent with Environmental Regulations for Workplaces, 1987."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor per house rule, consistent with MHSA."
           }
         ],
         "exit": [
@@ -1065,6 +1187,15 @@
             "test_type": "clinical",
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
           },
@@ -1099,8 +1230,17 @@
             "protocol_id": "8cb3da29-c193-4c2e-9e57-1cc1582d3212",
             "test_name": "Heat stress tolerance assessment",
             "test_type": "clinical",
-            "legal_basis": null,
-            "legal_basis_id": null,
+            "legal_basis": "Environmental Regulations for Workplaces, 1987",
+            "legal_basis_id": "c1464f0d-286f-4de2-892d-fb2f9b65cf4b",
+            "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "408bad8a-cfdc-4002-88c4-af785234d4fd",
+            "test_name": "Heat tolerance screening for hot underground workings",
+            "test_type": "clinical",
+            "legal_basis": "MHSA",
+            "legal_basis_id": "73565fc7-8347-4692-998d-57ef7a770da8",
             "hazard_justification": "Exposure justification: Heat and thermal stress identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual lifting up to 25kg, repetitive bending; Basic instruction following; statutory requirement: None beyond general induction."
           }
@@ -1264,6 +1404,15 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class."
           },
           {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class."
+          },
+          {
             "protocol_id": "0ef4fb2b-a2f6-4264-a069-6b90edd748b6",
             "test_name": "Dermatological screen",
             "test_type": "clinical",
@@ -1310,6 +1459,17 @@
             "legal_basis": "NIHL Regulations, 2003",
             "legal_basis_id": "8bff6f1a-4897-4509-ba01-4fc9b9ae5b2b",
             "hazard_justification": "Exposure justification: Noise (plant, tools, machinery) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class.",
             "interval_months": 12,
             "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
@@ -1365,6 +1525,15 @@
             "legal_basis": "NIHL Regulations, 2003",
             "legal_basis_id": "8bff6f1a-4897-4509-ba01-4fc9b9ae5b2b",
             "hazard_justification": "Exposure justification: Noise (plant, tools, machinery) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class."
+          },
+          {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, foot and hand coordination under vibration; Sustained visual attention, depth perception; statutory requirement: Plant operator certificate for the relevant class."
           },
           {
@@ -1431,6 +1600,15 @@
         "headcount": 8,
         "baseline": [
           {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
+          },
+          {
             "protocol_id": "0ef4fb2b-a2f6-4264-a069-6b90edd748b6",
             "test_name": "Dermatological screen",
             "test_type": "clinical",
@@ -1446,6 +1624,15 @@
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
             "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
+          },
+          {
+            "protocol_id": "b8044c3d-7e37-4782-bba5-b761cad245c4",
+            "test_name": "Radiation worker medical surveillance linked to personal dose monitoring",
+            "test_type": "clinical",
+            "legal_basis": "Hazardous Substances Act (radiation control)",
+            "legal_basis_id": "589ef787-fedf-47a5-832b-832ab0ba937e",
+            "hazard_justification": "Exposure justification: Ionising or non ionising radiation identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
           },
           {
@@ -1469,6 +1656,17 @@
         ],
         "periodic": [
           {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
             "protocol_id": "0ef4fb2b-a2f6-4264-a069-6b90edd748b6",
             "test_name": "Dermatological screen",
             "test_type": "clinical",
@@ -1489,6 +1687,17 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable.",
             "interval_months": 12,
             "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
+            "protocol_id": "b8044c3d-7e37-4782-bba5-b761cad245c4",
+            "test_name": "Radiation worker medical surveillance linked to personal dose monitoring",
+            "test_type": "clinical",
+            "legal_basis": "Hazardous Substances Act (radiation control)",
+            "legal_basis_id": "589ef787-fedf-47a5-832b-832ab0ba937e",
+            "hazard_justification": "Exposure justification: Ionising or non ionising radiation identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor per house rule, consistent with Hazardous Substances Act (radiation control)."
           },
           {
             "protocol_id": "de7db0c0-60ef-4441-94c2-d27d9068afa0",
@@ -1515,6 +1724,15 @@
         ],
         "exit": [
           {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
+          },
+          {
             "protocol_id": "0ef4fb2b-a2f6-4264-a069-6b90edd748b6",
             "test_name": "Dermatological screen",
             "test_type": "clinical",
@@ -1530,6 +1748,15 @@
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
             "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
+          },
+          {
+            "protocol_id": "b8044c3d-7e37-4782-bba5-b761cad245c4",
+            "test_name": "Radiation worker medical surveillance linked to personal dose monitoring",
+            "test_type": "clinical",
+            "legal_basis": "Hazardous Substances Act (radiation control)",
+            "legal_basis_id": "589ef787-fedf-47a5-832b-832ab0ba937e",
+            "hazard_justification": "Exposure justification: Ionising or non ionising radiation identified for this category in the OREP.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Sustained awkward postures, fine motor control; Colour vision for weld inspection, sustained attention near arc and heat; statutory requirement: Trade certification as applicable."
           },
           {
@@ -1596,6 +1823,15 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
           },
           {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
             "protocol_id": "4e8b8f49-b1b0-42e6-9da4-c7a7c1de99ad",
             "test_name": "Respiratory symptom questionnaire",
             "test_type": "clinical",
@@ -1611,6 +1847,15 @@
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
           },
           {
@@ -1654,6 +1899,17 @@
             "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
           },
           {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
             "protocol_id": "4e8b8f49-b1b0-42e6-9da4-c7a7c1de99ad",
             "test_name": "Respiratory symptom questionnaire",
             "test_type": "clinical",
@@ -1671,6 +1927,17 @@
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
+          },
+          {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction.",
             "interval_months": 12,
             "interval_basis": "Twelve month floor, treated as a minimum and not a ceiling for this category because a measured exceedance is recorded (kernel rule RULE-EXCEEDANCE-TIGHTEN); the OMP may shorten the interval."
@@ -1720,6 +1987,15 @@
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
           },
           {
+            "protocol_id": "3e318289-a504-4343-9483-6e696af54c9e",
+            "test_name": "ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers",
+            "test_type": "clinical",
+            "legal_basis": "ODMWA",
+            "legal_basis_id": "3bf34169-88c4-4c80-9284-81f78f975efd",
+            "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
             "protocol_id": "4e8b8f49-b1b0-42e6-9da4-c7a7c1de99ad",
             "test_name": "Respiratory symptom questionnaire",
             "test_type": "clinical",
@@ -1735,6 +2011,15 @@
             "legal_basis": "HCA Regulations, 2021",
             "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
             "hazard_justification": "Exposure justification: Dust, respirable crystalline silica identified for this category in the OREP, with a measured exceedance recorded.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
+          },
+          {
+            "protocol_id": "9984a216-104b-40d7-87fa-0d734d0413b3",
+            "test_name": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure",
+            "test_type": "biological_effect",
+            "legal_basis": "HCA Regulations, 2021",
+            "legal_basis_id": "749e0609-9df8-4514-8f42-b33ae380a77b",
+            "hazard_justification": "Exposure justification: Hazardous chemicals (agent specific) identified for this category in the OREP, with a measured exceedance recorded.",
             "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Frequent manual handling, kneeling, repetitive strain; Basic instruction following; statutory requirement: None beyond general induction."
           },
           {
@@ -1801,6 +2086,15 @@
         "headcount": 5,
         "baseline": [
           {
+            "protocol_id": "d4206aaf-8612-4d01-b8c4-dd148a4ffeb3",
+            "test_name": "Lifting machine operator medical certificate of fitness",
+            "test_type": "clinical",
+            "legal_basis": "Driven Machinery Regulations",
+            "legal_basis_id": "c13ebb10-49d3-4a50-84f2-e0d3d07064fa",
+            "hazard_justification": "Exposure justification: Driving (licence and PrDP class per notes) identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, reversing and manoeuvring in confined yards; Sustained visual attention, reaction time, no uncontrolled hypoglycaemic risk; statutory requirement: PrDP."
+          },
+          {
             "protocol_id": "c2a2442d-4eda-4166-b6ac-b1888ca11a52",
             "test_name": "PrDP statutory medical and vision screen",
             "test_type": "clinical",
@@ -1829,6 +2123,17 @@
           }
         ],
         "periodic": [
+          {
+            "protocol_id": "d4206aaf-8612-4d01-b8c4-dd148a4ffeb3",
+            "test_name": "Lifting machine operator medical certificate of fitness",
+            "test_type": "clinical",
+            "legal_basis": "Driven Machinery Regulations",
+            "legal_basis_id": "c13ebb10-49d3-4a50-84f2-e0d3d07064fa",
+            "hazard_justification": "Exposure justification: Driving (licence and PrDP class per notes) identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, reversing and manoeuvring in confined yards; Sustained visual attention, reaction time, no uncontrolled hypoglycaemic risk; statutory requirement: PrDP.",
+            "interval_months": 12,
+            "interval_basis": "Twelve month floor per house rule, consistent with Driven Machinery Regulations."
+          },
           {
             "protocol_id": "c2a2442d-4eda-4166-b6ac-b1888ca11a52",
             "test_name": "PrDP statutory medical and vision screen",
@@ -1864,6 +2169,15 @@
           }
         ],
         "exit": [
+          {
+            "protocol_id": "d4206aaf-8612-4d01-b8c4-dd148a4ffeb3",
+            "test_name": "Lifting machine operator medical certificate of fitness",
+            "test_type": "clinical",
+            "legal_basis": "Driven Machinery Regulations",
+            "legal_basis_id": "c13ebb10-49d3-4a50-84f2-e0d3d07064fa",
+            "hazard_justification": "Exposure justification: Driving (licence and PrDP class per notes) identified for this category in the OREP.",
+            "eea_s7_justification": "Inherent requirement justification (Employment Equity Act 55 of 1998, section 7): Prolonged sitting, reversing and manoeuvring in confined yards; Sustained visual attention, reaction time, no uncontrolled hypoglycaemic risk; statutory requirement: PrDP."
+          },
           {
             "protocol_id": "c2a2442d-4eda-4166-b6ac-b1888ca11a52",
             "test_name": "PrDP statutory medical and vision screen",
@@ -1941,7 +2255,7 @@
     "placeholders": {
       "reference": "CNC-MSP-2026-0812-001",
       "version": "1.0",
-      "date_of_issue": "2026-08-12",
+      "date_of_issue": "2026-08-14",
       "classification_banner": "CLASSIFICATION: CLIENT",
       "client_name": "Horizon Construction and Civils (Pty) Ltd",
       "client_trading_name": "Horizon Civils",
@@ -2038,7 +2352,7 @@
                   "applicability": "Applies where the intake reports regular night work"
                 },
                 {
-                  "instrument": "National Road Traffic Act 93 of 1996, read with the National Road Traffic Regulations, Professional Driving Permit medical fitness provisions",
+                  "instrument": "National Road Traffic Act 93 of 1996, Chapter 13 professional driving permits, read with the National Road Traffic Regulations, 2000 (GNR 225 of 17 March 2000), regulations 115 to 117: regulation 115 sets the categories of drivers requiring a professional driving permit, and regulation 117(b) disqualifies an applicant who is not medically fit, evidenced by the prescribed medical certificate form completed by a registered health practitioner.",
                   "applicability": "Applies to professional driving categories"
                 },
                 {
@@ -2052,6 +2366,22 @@
                 {
                   "instrument": "HPCSA Guidelines on Over Servicing, Perverse Incentives and Related Matters, Booklet 11",
                   "applicability": "Perverse incentive prohibition; the employer is the payer"
+                },
+                {
+                  "instrument": "Driven Machinery Regulations, 2015, promulgated 24 June 2015 under GNR 539, 540 and 542 of 2015 in Government Gazettes 38904 and 38905, made under the Occupational Health and Safety Act 85 of 1993. Regulation 18 (lifting machines) requires that lifting machines are operated only by persons who are trained, certified competent, authorised in writing, and in possession of a medical certificate of fitness.",
+                  "applicability": "Crane, hoist, and lifting machine operator medical certificates of fitness per regulation 18"
+                },
+                {
+                  "instrument": "General Safety Regulations, 1986, GNR 1031, Government Gazette 10252, 30 May 1986, made under the Machinery and Occupational Safety Act 6 of 1983 and kept in force under the Occupational Health and Safety Act 85 of 1993. The Regulations govern first aid provision, personal protective equipment, work in elevated positions, ladders, and general workplace safety duties. They prescribe no standing medical battery: fitness for the work they govern rests on EEA section 7 inherent requirements.",
+                  "applicability": "First aid, PPE, elevated positions, and ladder duties on construction sites"
+                },
+                {
+                  "instrument": "General Administrative Regulations, 2003, GNR 929, Government Gazette 25129, 25 June 2003, made under section 43 of the Occupational Health and Safety Act 85 of 1993 after consultation with the Advisory Council for Occupational Health and Safety, repealing GNR 1449 of 6 September 1996. The Regulations govern incident reporting and recording, health and safety representatives and committees, and administrative duties. They prescribe no standing medical battery: the incident recording duties they impose feed the surveillance programme's review triggers.",
+                  "applicability": "Incident reporting and health and safety representative duties"
+                },
+                {
+                  "instrument": "Environmental Regulations for Workplaces, 1987, GN R.2281 of 16 October 1987, made under the Occupational Health and Safety Act 85 of 1993",
+                  "applicability": "Outdoor and hot work thermal environments; fitness certification for hot work per regulation 5(4)"
                 }
               ]
             }
@@ -2523,16 +2853,16 @@
               "rows": [
                 {
                   "job_title": "Site Manager / Supervisor",
-                  "baseline": "Audiometry; Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen); Heat stress tolerance assessment",
-                  "periodic": "Audiometry (12 months); Chest X-ray per silica protocol (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen) (12 months); Heat stress tolerance assessment (12 months)",
-                  "exit": "Audiometry; Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen); Heat stress tolerance assessment",
+                  "baseline": "Audiometry; Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen); Heat stress tolerance assessment; Heat tolerance screening for hot underground workings",
+                  "periodic": "Audiometry (12 months); Chest X-ray per silica protocol (12 months); ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen) (12 months); Heat stress tolerance assessment (12 months); Heat tolerance screening for hot underground workings (12 months)",
+                  "exit": "Audiometry; Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Heights medical (cardiovascular, neurological, vision, blood pressure, BMI, vertigo and balance screen); Heat stress tolerance assessment; Heat tolerance screening for hot underground workings",
                   "biological_monitoring": "None indicated"
                 },
                 {
                   "job_title": "General Labourer",
-                  "baseline": "Audiometry; Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Musculoskeletal and ergonomic assessment; Heat stress tolerance assessment",
-                  "periodic": "Audiometry (12 months); Chest X-ray per silica protocol (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Musculoskeletal and ergonomic assessment (12 months); Heat stress tolerance assessment (12 months)",
-                  "exit": "Audiometry; Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Musculoskeletal and ergonomic assessment; Heat stress tolerance assessment",
+                  "baseline": "Audiometry; Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Musculoskeletal and ergonomic assessment; Heat stress tolerance assessment; Heat tolerance screening for hot underground workings",
+                  "periodic": "Audiometry (12 months); Chest X-ray per silica protocol (12 months); ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Musculoskeletal and ergonomic assessment (12 months); Heat stress tolerance assessment (12 months); Heat tolerance screening for hot underground workings (12 months)",
+                  "exit": "Audiometry; Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Musculoskeletal and ergonomic assessment; Heat stress tolerance assessment; Heat tolerance screening for hot underground workings",
                   "biological_monitoring": "None indicated"
                 },
                 {
@@ -2544,30 +2874,30 @@
                 },
                 {
                   "job_title": "Plant Operator",
-                  "baseline": "Vibration and musculoskeletal screen; Audiometry; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
-                  "periodic": "Vibration and musculoskeletal screen (12 months); Audiometry (12 months); Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Musculoskeletal and ergonomic assessment (12 months)",
-                  "exit": "Vibration and musculoskeletal screen; Audiometry; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
+                  "baseline": "Vibration and musculoskeletal screen; Audiometry; Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
+                  "periodic": "Vibration and musculoskeletal screen (12 months); Audiometry (12 months); Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure (12 months); Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Musculoskeletal and ergonomic assessment (12 months)",
+                  "exit": "Vibration and musculoskeletal screen; Audiometry; Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
                   "biological_monitoring": "Biological monitoring for specific agents (reference values under OMP confirmation)"
                 },
                 {
                   "job_title": "Welder / Steel Fabricator",
-                  "baseline": "Dermatological screen; Occupational chemical exposure medical assessment; Vision screening including colour vision, and skin surveillance for ultraviolet exposure; Audiometry",
-                  "periodic": "Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Vision screening including colour vision, and skin surveillance for ultraviolet exposure (12 months); Audiometry (12 months)",
-                  "exit": "Dermatological screen; Occupational chemical exposure medical assessment; Vision screening including colour vision, and skin surveillance for ultraviolet exposure; Audiometry",
+                  "baseline": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Radiation worker medical surveillance linked to personal dose monitoring; Vision screening including colour vision, and skin surveillance for ultraviolet exposure; Audiometry",
+                  "periodic": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure (12 months); Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Radiation worker medical surveillance linked to personal dose monitoring (12 months); Vision screening including colour vision, and skin surveillance for ultraviolet exposure (12 months); Audiometry (12 months)",
+                  "exit": "Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Radiation worker medical surveillance linked to personal dose monitoring; Vision screening including colour vision, and skin surveillance for ultraviolet exposure; Audiometry",
                   "biological_monitoring": "Biological monitoring for specific agents (reference values under OMP confirmation)"
                 },
                 {
                   "job_title": "Concrete and Cement Worker",
-                  "baseline": "Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
-                  "periodic": "Chest X-ray per silica protocol (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Musculoskeletal and ergonomic assessment (12 months)",
-                  "exit": "Chest X-ray per silica protocol; Respiratory symptom questionnaire; Spirometry; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
+                  "baseline": "Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
+                  "periodic": "Chest X-ray per silica protocol (12 months); ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers (12 months); Respiratory symptom questionnaire (12 months); Spirometry (12 months); Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure (12 months); Dermatological screen (12 months); Occupational chemical exposure medical assessment (12 months); Musculoskeletal and ergonomic assessment (12 months)",
+                  "exit": "Chest X-ray per silica protocol; ODMWA benefit examination battery: chest X-ray with lung function for dust exposed mine workers; Respiratory symptom questionnaire; Spirometry; Cholinesterase biological effect monitoring (plasma and erythrocyte) for organophosphate pesticide exposure; Dermatological screen; Occupational chemical exposure medical assessment; Musculoskeletal and ergonomic assessment",
                   "biological_monitoring": "Biological monitoring for specific agents (reference values under OMP confirmation)"
                 },
                 {
                   "job_title": "Driver / Plant and Materials Transport",
-                  "baseline": "PrDP statutory medical and vision screen; Vibration and musculoskeletal screen; Musculoskeletal and ergonomic assessment",
-                  "periodic": "PrDP statutory medical and vision screen (12 months); Vibration and musculoskeletal screen (12 months); Musculoskeletal and ergonomic assessment (12 months)",
-                  "exit": "PrDP statutory medical and vision screen; Vibration and musculoskeletal screen; Musculoskeletal and ergonomic assessment",
+                  "baseline": "Lifting machine operator medical certificate of fitness; PrDP statutory medical and vision screen; Vibration and musculoskeletal screen; Musculoskeletal and ergonomic assessment",
+                  "periodic": "Lifting machine operator medical certificate of fitness (12 months); PrDP statutory medical and vision screen (12 months); Vibration and musculoskeletal screen (12 months); Musculoskeletal and ergonomic assessment (12 months)",
+                  "exit": "Lifting machine operator medical certificate of fitness; PrDP statutory medical and vision screen; Vibration and musculoskeletal screen; Musculoskeletal and ergonomic assessment",
                   "biological_monitoring": "None indicated"
                 }
               ]
@@ -2716,7 +3046,7 @@
       {
         "check_code": "CITATIONS_RESOLVE_VERIFIED",
         "result": "pass",
-        "detail": "13 instruments in frame, all must resolve to verified kernel rows"
+        "detail": "17 instruments in frame, all must resolve to verified kernel rows"
       },
       {
         "check_code": "INTERVALS_HAVE_BASIS",
