@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CNC MSP FORGE Review</title>
+<style>
+  :root { --red: #ED1B24; --charcoal: #1A1A1A; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
+  header { background: var(--charcoal); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; }
+  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  nav { margin: 16px 0; }
+  nav button { background: #fff; border: 1px solid #ccc; padding: 9px 16px; margin-right: 6px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+  nav button.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .card { background: #fff; border-radius: 8px; padding: 18px 20px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h3 { margin: 0 0 8px; font-size: 15px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { background: var(--charcoal); color: #fff; text-align: left; padding: 7px 9px; }
+  td { border-bottom: 1px solid #e2e2e2; padding: 7px 9px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f7f7; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+  .pill.open, .pill.pending { background: #fdeaea; color: var(--red); }
+  .pill.resolved, .pill.verified { background: #e8f7ec; color: #2e7d32; }
+  .note { background: #fff8e6; border-left: 3px solid #e0a800; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
+  form.decide { margin-top: 12px; display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+  form.decide textarea, form.decide input, form.decide select { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 13px; }
+  form.decide textarea { grid-column: 1 / -1; }
+  form.decide button { grid-column: 1 / -1; background: var(--red); color: #fff; border: none; padding: 11px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  #login { max-width: 420px; margin: 60px auto; }
+  #login input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+  #login button { width: 100%; background: var(--red); color: #fff; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  .muted { color: #777; font-size: 12px; }
+  #msg { margin: 10px 0; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div><span class="brand">CARE NET CONSULTANTS</span> · MSP FORGE Review</div>
+  <div id="who" class="muted"></div>
+</header>
+<main>
+  <div id="login" class="card">
+    <h3>Reviewer sign in</h3>
+    <p class="muted">Access requires a Care Net account carrying a forge role. A magic link is emailed to you; no passwords are stored.</p>
+    <input id="email" type="email" placeholder="name@carenetconsultants.co.za">
+    <button id="send">Email me a sign in link</button>
+    <div id="msg"></div>
+  </div>
+
+  <div id="app" style="display:none">
+    <nav>
+      <button data-tab="queue" class="active">OMP queue</button>
+      <button data-tab="confirmation">Confirmation register</button>
+      <button data-tab="exclusion">Exclusion register</button>
+      <button data-tab="due">Verification due</button>
+      <button data-tab="audit">Audit tail</button>
+    </nav>
+    <div id="content"></div>
+  </div>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const supabase = createClient(
+  'https://pboebfnujzffgwctsplw.supabase.co',
+  'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj'
+);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+$('#send').onclick = async () => {
+  const email = $('#email').value.trim();
+  if (!email) return;
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+  $('#msg').textContent = error ? 'Sign in failed: ' + error.message : 'Link sent. Check your inbox.';
+};
+
+async function boot() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  $('#login').style.display = 'none';
+  $('#app').style.display = 'block';
+  const roles = (session.user.app_metadata && session.user.app_metadata.msp_roles) || [];
+  $('#who').textContent = session.user.email + ' · roles: ' + (roles.join(', ') || 'none assigned');
+  show('queue');
+}
+
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  show(b.dataset.tab);
+});
+
+const tabs = {
+  async queue() {
+    const { data, error } = await supabase.from('msp_review_queue').select('*');
+    if (error) return `<div class="card">Queue unavailable: ${esc(error.message)}. Your account may not carry a forge role yet.</div>`;
+    if (!data.length) return '<div class="card">The OMP queue is empty.</div>';
+    const recs = {};
+    const { data: recRows } = await supabase.from('msp_omp_recommendation').select('*').order('created_at');
+    (recRows || []).forEach(x => { (recs[x.review_id] = recs[x.review_id] || []).push(x); });
+    return data.map(r => `
+      <div class="card">
+        <h3>${esc(r.reference)} · ${esc(r.client)}</h3>
+        <p class="muted">Status ${esc(r.status)} · draft ${esc(r.draft_id)} · received ${esc(r.created_at)}</p>
+        ${(r.omp_notes || []).map(n => `<div class="note"><strong>${esc(n.note_kind)}</strong>: ${esc(n.detail)}</div>`).join('')}
+
+        <h3 style="margin-top:16px">Recommendations</h3>
+        ${(recs[r.review_id] || []).map(x => `<div class="note" style="border-left-color:#2e7d32"><strong>${esc(x.category)}</strong> · ${esc(x.made_by)}${x.hpcsa_number ? ' (' + esc(x.hpcsa_number) + ')' : ''} · ${esc(x.created_at)}<br>${esc(x.recommendation)}</div>`).join('') || '<p class="muted">No recommendations recorded yet.</p>'}
+        <form class="recommend decide" data-review="${esc(r.review_id)}">
+          <input name="made_by" placeholder="Your full name" required>
+          <input name="hpcsa" placeholder="HPCSA practice number (optional)">
+          <select name="category">
+            <option value="general">General</option>
+            <option value="controls">Controls (hierarchy of controls)</option>
+            <option value="surveillance">Surveillance (batteries, intervals)</option>
+            <option value="referral_pathway">Referral pathway</option>
+            <option value="fit_testing">RPE fit testing</option>
+            <option value="follow_up">Follow up</option>
+          </select>
+          <span></span>
+          <textarea name="recommendation" rows="2" placeholder="Programme level recommendation. Never name an individual or a diagnosis here." required></textarea>
+          <button type="submit">Record recommendation</button>
+        </form>
+
+        <h3 style="margin-top:16px">Decision and signature</h3>
+        <form class="decide" data-review="${esc(r.review_id)}">
+          <input name="omp_name" placeholder="OMP full name" required>
+          <input name="hpcsa" placeholder="HPCSA practice number" required>
+          <select name="decision">
+            <option value="approved">Approve</option>
+            <option value="amended">Amend (stays in queue)</option>
+            <option value="rejected">Reject</option>
+          </select>
+          <span></span>
+          <textarea name="notes" rows="2" placeholder="Amendment or rejection notes (JSON or plain text)"></textarea>
+          <div style="grid-column:1/-1">
+            <p class="muted" style="margin:4px 0">Draw your signature below (or leave blank to sign with your typed name):</p>
+            <canvas class="sig" width="420" height="110" style="border:1px dashed #bbb;border-radius:5px;background:#fff;touch-action:none"></canvas>
+            <button type="button" class="clear-sig" style="width:auto;background:#fff;color:#ED1B24;border:1px solid #ED1B24;padding:5px 12px;font-size:12px;margin-left:8px">Clear</button>
+          </div>
+          <button type="submit">Apply signature and record decision</button>
+        </form>
+      </div>`).join('');
+  },
+  async confirmation() {
+    const { data, error } = await supabase.from('msp_confirmation_item').select('*').order('item_code');
+    if (error) return `<div class="card">${esc(error.message)}</div>`;
+    return card('Confirmation register', ['Code','Kind','Item','Status','Resolution'],
+      data.map(i => [i.item_code, i.kind, i.description, pill(i.status), i.resolution || '']));
+  },
+  async exclusion() {
+    const { data, error } = await supabase.from('msp_kernel_exclusion').select('*').order('excluded_on');
+    if (error) return `<div class="card">${esc(error.message)}</div>`;
+    if (!data.length) return '<div class="card">The exclusion register is empty. No source has failed the triple gate to date.</div>';
+    return card('Exclusion register', ['Candidate','Failed gate','Reason','Excluded on','By'],
+      data.map(i => [i.candidate_citation, i.failed_gate, i.reason, i.excluded_on, i.excluded_by]));
+  },
+  async due() {
+    const { data, error } = await supabase.from('msp_verification_due').select('*');
+    if (error) return `<div class="card">${esc(error.message)}</div>`;
+    if (!data.length) return '<div class="card">No verified instrument reaches its review date within sixty days.</div>';
+    return card('Verification due within sixty days', ['Instrument','Verified on','Review due','Amendment history'],
+      data.map(i => [i.full_citation, i.verified_on, i.review_due, i.amendment_history]));
+  },
+  async audit() {
+    const { data, error } = await supabase.from('msp_audit').select('id, engagement_id, actor, event_type, created_at').order('id', { ascending: false }).limit(50);
+    if (error) return `<div class="card">${esc(error.message)}. The audit tail is visible to forge_admin and forge_omp.</div>`;
+    return card('Audit tail, most recent fifty events', ['#','Engagement','Actor','Event','At'],
+      data.map(a => [a.id, a.engagement_id || '', a.actor, a.event_type, a.created_at]));
+  },
+};
+
+function pill(s) { return `<span class="pill ${esc(s)}">${esc(s)}</span>`; }
+function card(title, headers, rows) {
+  return `<div class="card"><h3>${esc(title)}</h3><table><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr>` +
+    rows.map(r => `<tr>${r.map(c => `<td>${typeof c === 'string' && c.startsWith('<span') ? c : esc(c)}</td>`).join('')}</tr>`).join('') +
+    '</table></div>';
+}
+
+function wireSignature(canvas) {
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#1A1A1A';
+  let drawing = false, drew = false;
+  const pos = e => {
+    const r = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return [p.clientX - r.left, p.clientY - r.top];
+  };
+  const start = e => { drawing = true; drew = true; const [x, y] = pos(e); ctx.beginPath(); ctx.moveTo(x, y); e.preventDefault(); };
+  const move = e => { if (!drawing) return; const [x, y] = pos(e); ctx.lineTo(x, y); ctx.stroke(); e.preventDefault(); };
+  const end = () => { drawing = false; };
+  canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
+  return { hasInk: () => drew, dataUrl: () => canvas.toDataURL('image/png'), clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); drew = false; } };
+}
+
+async function show(tab) {
+  $('#content').innerHTML = '<div class="card muted">Loading…</div>';
+  $('#content').innerHTML = await tabs[tab]();
+
+  document.querySelectorAll('form.recommend').forEach(f => f.onsubmit = async ev => {
+    ev.preventDefault();
+    const fd = new FormData(f);
+    const { error } = await supabase.rpc('msp_omp_recommend', {
+      p_review_id: f.dataset.review,
+      p_recommendation: fd.get('recommendation'),
+      p_category: fd.get('category'),
+      p_made_by: fd.get('made_by'),
+      p_hpcsa_number: fd.get('hpcsa') || null,
+    });
+    alert(error ? 'Refused: ' + error.message : 'Recommendation recorded.');
+    if (!error) show('queue');
+  });
+
+  document.querySelectorAll('form.decide:not(.recommend)').forEach(f => {
+    const canvas = f.querySelector('canvas.sig');
+    const sig = canvas ? wireSignature(canvas) : null;
+    const clearBtn = f.querySelector('.clear-sig');
+    if (clearBtn && sig) clearBtn.onclick = () => sig.clear();
+    f.onsubmit = async ev => {
+      ev.preventDefault();
+      const fd = new FormData(f);
+      let notes = fd.get('notes') || null;
+      if (notes) { try { notes = JSON.parse(notes); } catch { notes = { note: notes }; } }
+      const { data, error } = await supabase.rpc('msp_omp_decide', {
+        p_review_id: f.dataset.review,
+        p_decision: fd.get('decision'),
+        p_omp_name: fd.get('omp_name'),
+        p_omp_hpcsa_number: fd.get('hpcsa'),
+        p_amendment_notes: notes,
+      });
+      if (error) { alert('Refused: ' + error.message); return; }
+      const { error: sigErr } = await supabase.rpc('msp_omp_sign', {
+        p_review_id: f.dataset.review,
+        p_signature_name: fd.get('omp_name'),
+        p_signature_image: sig && sig.hasInk() ? sig.dataUrl() : null,
+      });
+      alert(sigErr ? 'Decision recorded but signature failed: ' + sigErr.message
+                   : 'Decision recorded and signature applied: ' + JSON.stringify(data));
+      show('queue');
+    };
+  });
+}
+
+supabase.auth.onAuthStateChange(() => boot());
+boot();
+</script>
+</body>
+</html>

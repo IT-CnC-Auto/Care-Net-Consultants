@@ -1,0 +1,7 @@
+{
+  "name": "cnc-msp-forge",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CNC MSP FORGE webhook receiver and agent runtime host. Care Net Consultants (Pty) Ltd.",
+  "engines": { "node": ">=18" }
+}

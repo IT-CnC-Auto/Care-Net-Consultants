@@ -1,0 +1,1141 @@
+{
+  "$id": "cnc-msp-intake.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "docuseal_submission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "intake.v1"
+    },
+    "company_registered_name": {
+      "type": "string"
+    },
+    "company_trading_name": {
+      "type": "string"
+    },
+    "company_registration_number": {
+      "type": "string"
+    },
+    "company_vat_number": {
+      "type": "string"
+    },
+    "company_head_office_address": {
+      "type": "string"
+    },
+    "company_core_industry_freetext": {
+      "type": "string"
+    },
+    "company_years_operating": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "site_1_name": {
+      "type": "string"
+    },
+    "site_1_address": {
+      "type": "string"
+    },
+    "site_1_activity": {
+      "type": "string"
+    },
+    "site_1_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "site_2_name": {
+      "type": "string"
+    },
+    "site_2_address": {
+      "type": "string"
+    },
+    "site_2_activity": {
+      "type": "string"
+    },
+    "site_2_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "site_3_name": {
+      "type": "string"
+    },
+    "site_3_address": {
+      "type": "string"
+    },
+    "site_3_activity": {
+      "type": "string"
+    },
+    "site_3_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "site_4_name": {
+      "type": "string"
+    },
+    "site_4_address": {
+      "type": "string"
+    },
+    "site_4_activity": {
+      "type": "string"
+    },
+    "site_4_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "contact_1_role": {
+      "type": "string"
+    },
+    "contact_1_name": {
+      "type": "string"
+    },
+    "contact_1_position": {
+      "type": "string"
+    },
+    "contact_1_email": {
+      "type": "string"
+    },
+    "contact_1_phone": {
+      "type": "string"
+    },
+    "contact_2_role": {
+      "type": "string"
+    },
+    "contact_2_name": {
+      "type": "string"
+    },
+    "contact_2_position": {
+      "type": "string"
+    },
+    "contact_2_email": {
+      "type": "string"
+    },
+    "contact_2_phone": {
+      "type": "string"
+    },
+    "contact_3_role": {
+      "type": "string"
+    },
+    "contact_3_name": {
+      "type": "string"
+    },
+    "contact_3_position": {
+      "type": "string"
+    },
+    "contact_3_email": {
+      "type": "string"
+    },
+    "contact_3_phone": {
+      "type": "string"
+    },
+    "reg_ohsa": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_construction": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_mhsa": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_hca": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_noise": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_asbestos": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_lead": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_hba": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_ergonomics": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_nrta_prdp": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_nightwork_code": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "reg_other_detail": {
+      "type": "string"
+    },
+    "coida_registered": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "coida_class_tariff_number": {
+      "type": "string"
+    },
+    "enforcement_notice_3yr": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "enforcement_notice_detail": {
+      "type": "string"
+    },
+    "third_party_cert_required": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "third_party_cert_detail": {
+      "type": "string"
+    },
+    "ra_exists": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "ra_date": {
+      "type": "string"
+    },
+    "ra_conducted_by": {
+      "type": "string"
+    },
+    "ra_assessor_accreditation": {
+      "type": "string"
+    },
+    "ra_next_review_date": {
+      "type": "string"
+    },
+    "ra_file": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "hygiene_results_exist": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "hygiene_date": {
+      "type": "string"
+    },
+    "hygiene_conducted_by": {
+      "type": "string"
+    },
+    "hygiene_file": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "process_change_since_ra": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "process_change_detail": {
+      "type": "string"
+    },
+    "sds_files": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "exposure_1_hazard_location": {
+      "type": "string"
+    },
+    "exposure_1_measured_level": {
+      "type": "string"
+    },
+    "exposure_1_unit": {
+      "type": "string"
+    },
+    "exposure_1_stated_oel": {
+      "type": "string"
+    },
+    "exposure_1_date_measured": {
+      "type": "string"
+    },
+    "exposure_2_hazard_location": {
+      "type": "string"
+    },
+    "exposure_2_measured_level": {
+      "type": "string"
+    },
+    "exposure_2_unit": {
+      "type": "string"
+    },
+    "exposure_2_stated_oel": {
+      "type": "string"
+    },
+    "exposure_2_date_measured": {
+      "type": "string"
+    },
+    "exposure_3_hazard_location": {
+      "type": "string"
+    },
+    "exposure_3_measured_level": {
+      "type": "string"
+    },
+    "exposure_3_unit": {
+      "type": "string"
+    },
+    "exposure_3_stated_oel": {
+      "type": "string"
+    },
+    "exposure_3_date_measured": {
+      "type": "string"
+    },
+    "exposure_4_hazard_location": {
+      "type": "string"
+    },
+    "exposure_4_measured_level": {
+      "type": "string"
+    },
+    "exposure_4_unit": {
+      "type": "string"
+    },
+    "exposure_4_stated_oel": {
+      "type": "string"
+    },
+    "exposure_4_date_measured": {
+      "type": "string"
+    },
+    "exposure_5_hazard_location": {
+      "type": "string"
+    },
+    "exposure_5_measured_level": {
+      "type": "string"
+    },
+    "exposure_5_unit": {
+      "type": "string"
+    },
+    "exposure_5_stated_oel": {
+      "type": "string"
+    },
+    "exposure_5_date_measured": {
+      "type": "string"
+    },
+    "exposure_6_hazard_location": {
+      "type": "string"
+    },
+    "exposure_6_measured_level": {
+      "type": "string"
+    },
+    "exposure_6_unit": {
+      "type": "string"
+    },
+    "exposure_6_stated_oel": {
+      "type": "string"
+    },
+    "exposure_6_date_measured": {
+      "type": "string"
+    },
+    "workforce_total": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "workforce_permanent": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "workforce_contract": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "workforce_temporary": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "shift_night_work": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "shift_pattern_detail": {
+      "type": "string"
+    },
+    "nightwork_medical_current": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "nightwork_medical_interval": {
+      "type": "string"
+    },
+    "employees_under_18": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "pregnancy_exposed_roles": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "hs_committee_present": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "chronic_flag_present": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "chronic_flag_categories": {
+      "type": "string"
+    },
+    "hazard_additional_detail": {
+      "type": "string"
+    },
+    "job_1_title": {
+      "type": "string"
+    },
+    "job_1_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_1_duties": {
+      "type": "string"
+    },
+    "job_1_hazards": {
+      "type": "string"
+    },
+    "job_1_controls": {
+      "type": "string"
+    },
+    "job_1_physical_demands": {
+      "type": "string"
+    },
+    "job_1_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_1_statutory_requirement": {
+      "type": "string"
+    },
+    "job_1_rpe_issued": {
+      "type": "string"
+    },
+    "job_1_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_1_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_1_other_ppe": {
+      "type": "string"
+    },
+    "job_2_title": {
+      "type": "string"
+    },
+    "job_2_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_2_duties": {
+      "type": "string"
+    },
+    "job_2_hazards": {
+      "type": "string"
+    },
+    "job_2_controls": {
+      "type": "string"
+    },
+    "job_2_physical_demands": {
+      "type": "string"
+    },
+    "job_2_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_2_statutory_requirement": {
+      "type": "string"
+    },
+    "job_2_rpe_issued": {
+      "type": "string"
+    },
+    "job_2_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_2_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_2_other_ppe": {
+      "type": "string"
+    },
+    "job_3_title": {
+      "type": "string"
+    },
+    "job_3_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_3_duties": {
+      "type": "string"
+    },
+    "job_3_hazards": {
+      "type": "string"
+    },
+    "job_3_controls": {
+      "type": "string"
+    },
+    "job_3_physical_demands": {
+      "type": "string"
+    },
+    "job_3_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_3_statutory_requirement": {
+      "type": "string"
+    },
+    "job_3_rpe_issued": {
+      "type": "string"
+    },
+    "job_3_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_3_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_3_other_ppe": {
+      "type": "string"
+    },
+    "job_4_title": {
+      "type": "string"
+    },
+    "job_4_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_4_duties": {
+      "type": "string"
+    },
+    "job_4_hazards": {
+      "type": "string"
+    },
+    "job_4_controls": {
+      "type": "string"
+    },
+    "job_4_physical_demands": {
+      "type": "string"
+    },
+    "job_4_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_4_statutory_requirement": {
+      "type": "string"
+    },
+    "job_4_rpe_issued": {
+      "type": "string"
+    },
+    "job_4_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_4_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_4_other_ppe": {
+      "type": "string"
+    },
+    "job_5_title": {
+      "type": "string"
+    },
+    "job_5_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_5_duties": {
+      "type": "string"
+    },
+    "job_5_hazards": {
+      "type": "string"
+    },
+    "job_5_controls": {
+      "type": "string"
+    },
+    "job_5_physical_demands": {
+      "type": "string"
+    },
+    "job_5_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_5_statutory_requirement": {
+      "type": "string"
+    },
+    "job_5_rpe_issued": {
+      "type": "string"
+    },
+    "job_5_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_5_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_5_other_ppe": {
+      "type": "string"
+    },
+    "job_6_title": {
+      "type": "string"
+    },
+    "job_6_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_6_duties": {
+      "type": "string"
+    },
+    "job_6_hazards": {
+      "type": "string"
+    },
+    "job_6_controls": {
+      "type": "string"
+    },
+    "job_6_physical_demands": {
+      "type": "string"
+    },
+    "job_6_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_6_statutory_requirement": {
+      "type": "string"
+    },
+    "job_6_rpe_issued": {
+      "type": "string"
+    },
+    "job_6_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_6_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_6_other_ppe": {
+      "type": "string"
+    },
+    "job_7_title": {
+      "type": "string"
+    },
+    "job_7_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_7_duties": {
+      "type": "string"
+    },
+    "job_7_hazards": {
+      "type": "string"
+    },
+    "job_7_controls": {
+      "type": "string"
+    },
+    "job_7_physical_demands": {
+      "type": "string"
+    },
+    "job_7_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_7_statutory_requirement": {
+      "type": "string"
+    },
+    "job_7_rpe_issued": {
+      "type": "string"
+    },
+    "job_7_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_7_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_7_other_ppe": {
+      "type": "string"
+    },
+    "job_8_title": {
+      "type": "string"
+    },
+    "job_8_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_8_duties": {
+      "type": "string"
+    },
+    "job_8_hazards": {
+      "type": "string"
+    },
+    "job_8_controls": {
+      "type": "string"
+    },
+    "job_8_physical_demands": {
+      "type": "string"
+    },
+    "job_8_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_8_statutory_requirement": {
+      "type": "string"
+    },
+    "job_8_rpe_issued": {
+      "type": "string"
+    },
+    "job_8_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_8_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_8_other_ppe": {
+      "type": "string"
+    },
+    "job_9_title": {
+      "type": "string"
+    },
+    "job_9_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_9_duties": {
+      "type": "string"
+    },
+    "job_9_hazards": {
+      "type": "string"
+    },
+    "job_9_controls": {
+      "type": "string"
+    },
+    "job_9_physical_demands": {
+      "type": "string"
+    },
+    "job_9_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_9_statutory_requirement": {
+      "type": "string"
+    },
+    "job_9_rpe_issued": {
+      "type": "string"
+    },
+    "job_9_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_9_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_9_other_ppe": {
+      "type": "string"
+    },
+    "job_10_title": {
+      "type": "string"
+    },
+    "job_10_headcount": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "job_10_duties": {
+      "type": "string"
+    },
+    "job_10_hazards": {
+      "type": "string"
+    },
+    "job_10_controls": {
+      "type": "string"
+    },
+    "job_10_physical_demands": {
+      "type": "string"
+    },
+    "job_10_sensory_cognitive_demands": {
+      "type": "string"
+    },
+    "job_10_statutory_requirement": {
+      "type": "string"
+    },
+    "job_10_rpe_issued": {
+      "type": "string"
+    },
+    "job_10_rpe_fit_tested": {
+      "type": "string"
+    },
+    "job_10_rpe_fit_test_interval": {
+      "type": "string"
+    },
+    "job_10_other_ppe": {
+      "type": "string"
+    },
+    "chem_1_substance_name": {
+      "type": "string"
+    },
+    "chem_1_sds_reference": {
+      "type": "string"
+    },
+    "chem_1_task_process": {
+      "type": "string"
+    },
+    "chem_1_frequency": {
+      "type": "string"
+    },
+    "chem_1_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_1_controls": {
+      "type": "string"
+    },
+    "chem_2_substance_name": {
+      "type": "string"
+    },
+    "chem_2_sds_reference": {
+      "type": "string"
+    },
+    "chem_2_task_process": {
+      "type": "string"
+    },
+    "chem_2_frequency": {
+      "type": "string"
+    },
+    "chem_2_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_2_controls": {
+      "type": "string"
+    },
+    "chem_3_substance_name": {
+      "type": "string"
+    },
+    "chem_3_sds_reference": {
+      "type": "string"
+    },
+    "chem_3_task_process": {
+      "type": "string"
+    },
+    "chem_3_frequency": {
+      "type": "string"
+    },
+    "chem_3_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_3_controls": {
+      "type": "string"
+    },
+    "chem_4_substance_name": {
+      "type": "string"
+    },
+    "chem_4_sds_reference": {
+      "type": "string"
+    },
+    "chem_4_task_process": {
+      "type": "string"
+    },
+    "chem_4_frequency": {
+      "type": "string"
+    },
+    "chem_4_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_4_controls": {
+      "type": "string"
+    },
+    "chem_5_substance_name": {
+      "type": "string"
+    },
+    "chem_5_sds_reference": {
+      "type": "string"
+    },
+    "chem_5_task_process": {
+      "type": "string"
+    },
+    "chem_5_frequency": {
+      "type": "string"
+    },
+    "chem_5_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_5_controls": {
+      "type": "string"
+    },
+    "chem_6_substance_name": {
+      "type": "string"
+    },
+    "chem_6_sds_reference": {
+      "type": "string"
+    },
+    "chem_6_task_process": {
+      "type": "string"
+    },
+    "chem_6_frequency": {
+      "type": "string"
+    },
+    "chem_6_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_6_controls": {
+      "type": "string"
+    },
+    "chem_7_substance_name": {
+      "type": "string"
+    },
+    "chem_7_sds_reference": {
+      "type": "string"
+    },
+    "chem_7_task_process": {
+      "type": "string"
+    },
+    "chem_7_frequency": {
+      "type": "string"
+    },
+    "chem_7_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_7_controls": {
+      "type": "string"
+    },
+    "chem_8_substance_name": {
+      "type": "string"
+    },
+    "chem_8_sds_reference": {
+      "type": "string"
+    },
+    "chem_8_task_process": {
+      "type": "string"
+    },
+    "chem_8_frequency": {
+      "type": "string"
+    },
+    "chem_8_quantity_per_use": {
+      "type": "string"
+    },
+    "chem_8_controls": {
+      "type": "string"
+    },
+    "current_medicals_exist": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "current_provider": {
+      "type": "string"
+    },
+    "last_cycle_date": {
+      "type": "string"
+    },
+    "current_tests_detail": {
+      "type": "string"
+    },
+    "outstanding_referrals": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "records_format": {
+      "type": "string"
+    },
+    "injuries_3yr": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "coida_claims_3yr": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "modified_duties_current": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "incident_history_detail": {
+      "type": "string"
+    },
+    "industry_code": {
+      "type": "string"
+    },
+    "subindustry_code": {
+      "type": "string"
+    },
+    "industry_other_detail": {
+      "type": "string"
+    },
+    "client_logo": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "brand_colour_hex": {
+      "type": "string"
+    },
+    "certificate_format_preference": {
+      "type": "string"
+    },
+    "delivery_contact_name": {
+      "type": "string"
+    },
+    "delivery_contact_email": {
+      "type": "string"
+    },
+    "information_officer_name": {
+      "type": "string"
+    },
+    "information_officer_contact": {
+      "type": "string"
+    },
+    "employees_informed_before_exam": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "consent_processing": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "consent_marketing": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "popia_use_cnc_forms": {
+      "type": [
+        "boolean",
+        "string"
+      ]
+    },
+    "declarant_full_name": {
+      "type": "string"
+    },
+    "declarant_position": {
+      "type": "string"
+    },
+    "declarant_company": {
+      "type": "string"
+    },
+    "client_signature": {
+      "type": [
+        "string",
+        "object",
+        "array"
+      ]
+    },
+    "declaration_date": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "docuseal_submission_id",
+    "company_registered_name",
+    "company_registration_number",
+    "company_head_office_address",
+    "company_core_industry_freetext",
+    "company_years_operating",
+    "workforce_total",
+    "industry_code",
+    "subindustry_code",
+    "client_logo",
+    "delivery_contact_name",
+    "delivery_contact_email",
+    "information_officer_name",
+    "information_officer_contact",
+    "employees_informed_before_exam",
+    "consent_processing",
+    "declarant_full_name",
+    "declarant_position",
+    "declarant_company",
+    "client_signature",
+    "declaration_date"
+  ]
+}
