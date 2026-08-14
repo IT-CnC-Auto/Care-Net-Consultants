@@ -13,8 +13,11 @@
   header h1 { font-size: 19px; font-weight: normal; margin: 10px 0 4px; }
   header .tagline { font-size: 13px; opacity: .85; font-style: italic; }
   .stats { max-width: 960px; margin: -18px auto 0; padding: 0 16px; position: relative; }
-  .stats-inner { background: var(--red); color: #fff; border-radius: 8px; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; font-size: 13px; }
+  .stats-inner { background: var(--red); color: #fff; border-radius: 8px; padding: 12px 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; font-size: 13px; }
+  .stats-inner a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; text-align: center; transition: background .15s; }
+  .stats-inner a:hover, .stats-inner a:focus { background: rgba(255,255,255,.18); text-decoration: underline; }
   .stats-inner strong { font-size: 17px; display: block; text-align: center; }
+  .stats-hint { text-align: center; font-size: 11px; color: #777; margin: 6px 0 0; }
   main { max-width: 960px; margin: 0 auto; padding: 30px 16px 70px; }
   .step { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 18px; border-left: 5px solid var(--red); }
   .step h2 { color: var(--red); font-size: 17px; margin-top: 0; }
@@ -28,6 +31,9 @@
   .muted { font-size: 13px; color: #555; }
   .check { color: #2e8b57; font-weight: bold; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
+  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
+  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 0 9px; display: inline-block; padding: 3px 0; }
+  nav.mainnav a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -36,13 +42,14 @@
   <h1>The pilot journey: from sign up to a signed Medical Surveillance Plan</h1>
   <div class="tagline">Your Partner in Workplace Health</div>
 </header>
+<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Sample Plan</a><a href="/account.html">Sign in</a></nav>
 <div class="stats"><div class="stats-inner" id="stats">
-  <span><strong id="s-version">&nbsp;</strong>Cognitive Kernel</span>
-  <span><strong id="s-instruments">&nbsp;</strong>verified legal instruments</span>
-  <span><strong id="s-industries">&nbsp;</strong>industries covered</span>
-  <span><strong id="s-roles">&nbsp;</strong>job roles mapped</span>
-  <span><strong id="s-protocols">&nbsp;</strong>medical protocols</span>
-</div></div>
+  <a href="/method.html#method"><strong id="s-version">&nbsp;</strong>The Care Net Method</a>
+  <a href="/method.html#instruments"><strong id="s-instruments">&nbsp;</strong>verified legal instruments</a>
+  <a href="/method.html#industries"><strong id="s-industries">&nbsp;</strong>industries covered</a>
+  <a href="/method.html#roles"><strong id="s-roles">&nbsp;</strong>job roles mapped</a>
+  <a href="/method.html#protocols"><strong id="s-protocols">&nbsp;</strong>medical protocols</a>
+</div><p class="stats-hint">Every figure above is live from our maintained framework. Click any of them to see exactly what sits behind it.</p></div>
 <main>
   <p style="font-size:14px;line-height:1.6">This page is the complete journey, live. Every step below links into the real system: the same account flow, the same assessment, the same engine, and the same clinical review your Plan goes through. Walk it end to end in about ten minutes.</p>
 
@@ -74,7 +81,7 @@
 
   <div class="step">
     <h2><span class="n">4</span>The engine drafts your Plan</h2>
-    <p>Your answers run through a deterministic pipeline against the Cognitive Kernel: the triple verified body of South African occupational health law. The pipeline classifies your operation, frames the exact legal instruments that govern it, profiles every job against the hazard map, prescribes the surveillance battery with a legal basis for every test, composes the document, and then validates itself. Nine checks must pass before a draft exists at all, among them:</p>
+    <p>Your answers run through <a href="/method.html" style="color:var(--red);font-weight:bold">the Care Net Method</a>: our maintained, triple verified body of South African occupational health law. It classifies your operation, frames the exact legal instruments that govern it, profiles every job against the hazard map, prescribes the surveillance battery with a legal basis for every test, composes the document, and then checks its own work. Nine checks must pass before a draft exists at all, among them:</p>
     <ul class="muted">
       <li><span class="check">PASS</span> every citation resolves to a verified instrument</li>
       <li><span class="check">PASS</span> every test carries dual justification: the hazard and Employment Equity Act section 7</li>
@@ -90,8 +97,8 @@
 
   <div class="step">
     <h2><span class="n">6</span>Delivery, hosting, and revisions</h2>
-    <p>Your signed Plan is delivered for download and hosted securely with revision numbers. When your operations or the law change, the revision runs through the same engine and the same clinical review. This is a live sample generated by the real engine from entirely fictitious company data, watermarked as a draft:</p>
-    <a class="btn secondary" href="/samples/CNC-MSP-SAMPLE-Construction.docx">Download the Construction sample Plan</a>
+    <p>Your signed Plan is delivered for download and hosted securely with revision numbers. When your operations or the law change, the revision runs through the same method and the same clinical review. Below is a real sample, generated from entirely fictitious company data and watermarked on every page:</p>
+    <a class="btn secondary" href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Download the Construction sample Plan (PDF)</a>
   </div>
 
   <div class="step" style="border-left-color:#1A1A1A">
