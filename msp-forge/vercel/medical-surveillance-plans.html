@@ -248,7 +248,8 @@ section{padding:64px 0}
 
 /* Steps */
 .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:step}
-.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 18px;position:relative}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 18px;position:relative;display:block;text-decoration:none;color:var(--ink);transition:border-color .15s ease,transform .12s ease}
+.step:hover{border-color:var(--red);transform:translateY(-2px)}
 .step b{display:block;font-family:Bebas Neue,Montserrat,sans-serif;font-size:30px;color:var(--red);line-height:1;margin-bottom:6px}
 .step h3{font-size:16px;margin-bottom:6px}
 .step p{color:var(--ink-2);font-size:14px;margin:0}
@@ -264,7 +265,8 @@ section{padding:64px 0}
 @media(max-width:860px){.ind-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.ind-grid{grid-template-columns:1fr}}
 .pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600}
+.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);display:inline-block;transition:border-color .15s ease,color .15s ease}
+.pill:hover{border-color:var(--red);color:var(--red)}
 
 /* Packages */
 .packs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -406,10 +408,10 @@ footer.foot .base img{height:46px;width:auto}
 
   <div class="kpis">
     <div class="wrap">
-      <div class="kpi"><b>17</b><span>industries mapped end to end</span></div>
-      <div class="kpi"><b>31</b><span>Acts and regulations verified</span></div>
-      <div class="kpi"><b>316</b><span>job roles with their own risk profile</span></div>
-      <div class="kpi"><b>12</b><span>month review, or sooner if the law moves</span></div>
+      <div class="kpi"><b id="k-ind">17</b><span>industries mapped end to end</span></div>
+      <div class="kpi"><b id="k-instr">31</b><span>Acts and regulations verified</span></div>
+      <div class="kpi"><b id="k-roles">316</b><span>job roles with their own risk profile</span></div>
+      <div class="kpi"><b id="k-prot">30</b><span>medical assessments, each with a legal basis</span></div>
     </div>
   </div>
 
@@ -472,31 +474,31 @@ footer.foot .base img{height:46px;width:auto}
         <p>Most of the work sits with us. What we need from you is one structured assessment, with your risk assessment at hand.</p>
       </div>
       <div class="steps">
-        <article class="step">
+        <a class="step" href="/pilot.html">
           <b>1</b>
           <h3>Tell us about the work</h3>
           <p>A guided assessment covers your sites, job categories, hazards, controls and any exposure readings you already have. About 30 to 45 minutes.</p>
-        </article>
-        <article class="step">
+        </a>
+        <a class="step" href="/pilot.html">
           <b>2</b>
           <h3>We match your jobs</h3>
           <p>Each job category is matched against the role library for your industry, then adjusted to your real operations, shifts and measured exposures.</p>
-        </article>
-        <article class="step">
+        </a>
+        <a class="step" href="/pilot.html">
           <b>3</b>
           <h3>The Plan is drafted</h3>
           <p>Your surveillance programme is set out per job: baseline, periodic interval, exit medical, and the regulation behind each test.</p>
-        </article>
-        <article class="step">
+        </a>
+        <a class="step" href="/pilot.html">
           <b>4</b>
           <h3>A practitioner reviews</h3>
           <p>A registered Occupational Medical Practitioner checks the clinical detail, adds recommendations, and signs the Plan.</p>
-        </article>
-        <article class="step">
+        </a>
+        <a class="step" href="/pilot.html">
           <b>5</b>
           <h3>You receive and we maintain</h3>
           <p>Your Plan arrives with revision control and is updated as your operations or the law change, through the same review.</p>
-        </article>
+        </a>
       </div>
       <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
         <a class="btn btn-red" href="/pilot.html">Walk through the full journey</a>
@@ -540,47 +542,47 @@ footer.foot .base img{height:46px;width:auto}
         <p>A cashier and a forklift driver in the same building need different medicals. So do a rock drill operator and a contact centre agent. Every industry below carries its own verified regulations and its own job role library.</p>
       </div>
       <div class="ind-grid">
-        <a class="ind" href="https://www.carenetconsultants.co.za/construction-medicals">
+        <a class="ind" href="/industry.html?code=CONSTR">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Construction.webp" alt="" loading="lazy">
           <b>Construction</b>
           <span class="sr-only">Five subindustries covered, including civil works, building, demolition, electrical construction and roadworks.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/mining-medicals">
+        <a class="ind" href="/industry.html?code=MINING">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp" alt="" loading="lazy">
           <b>Mining &amp; Quarrying</b>
           <span class="sr-only">Gold, coal, platinum, chrome, diamond and quarrying, with dust disease surveillance routed through the statutory mines pathway.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/transport-logistics-warehousing-medicals">
+        <a class="ind" href="/industry.html?code=TRANS">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp" alt="" loading="lazy">
           <b>Transport, Logistics &amp; Warehousing</b>
           <span class="sr-only">Road freight, warehousing, rail operations, ports and terminals, and aviation ground handling.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/manufacturing-engineering-medicals">
+        <a class="ind" href="/industry.html?code=MANU">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp" alt="" loading="lazy">
           <b>Manufacturing &amp; Engineering</b>
           <span class="sr-only">Food and beverage, metals and foundries, chemical, automotive, textiles, plastics, wood and furniture.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/agriculture-abattoir-medicals">
+        <a class="ind" href="/industry.html?code=AGRI">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp" alt="" loading="lazy">
           <b>Agriculture &amp; Forestry</b>
           <span class="sr-only">Crop farming, livestock and forestry, including pesticide exposure monitoring.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/food-handling-medicals">
+        <a class="ind" href="/industry.html?code=HOSP">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Food-Handling.webp" alt="" loading="lazy">
           <b>Hospitality &amp; Food Handling</b>
           <span class="sr-only">Hotels and accommodation, restaurants and catering, with food handler requirements under the food premises regulations.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/cleaning-recycling-medicals">
+        <a class="ind" href="/industry.html?code=CLEAN">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp" alt="" loading="lazy">
           <b>Cleaning, Hygiene &amp; Waste</b>
           <span class="sr-only">Commercial cleaning, specialised hygiene, waste collection, landfill and recycling.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/telecommunications-medicals">
+        <a class="ind" href="/industry.html?code=TEL">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp" alt="" loading="lazy">
           <b>Telecommunications</b>
           <span class="sr-only">Tower construction and rigging, field network services, and data centre operations.</span>
         </a>
-        <a class="ind" href="https://www.carenetconsultants.co.za/safety-security-medicals">
+        <a class="ind" href="/industry.html?code=SEC">
           <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp" alt="" loading="lazy">
           <b>Safety &amp; Security</b>
           <span class="sr-only">Guarding services, armed response and cash in transit.</span>
@@ -588,13 +590,13 @@ footer.foot .base img{height:46px;width:auto}
       </div>
       <p style="margin-top:24px;font-weight:600">Also covered, with the same depth:</p>
       <div class="pills">
-        <span class="pill">Healthcare and laboratories</span>
-        <span class="pill">Utilities and energy</span>
-        <span class="pill">Petrochemical and fuel retail</span>
-        <span class="pill">Retail and wholesale</span>
-        <span class="pill">Government and municipal</span>
-        <span class="pill">Education</span>
-        <span class="pill">Office and contact centres</span>
+        <a class="pill" href="/industry.html?code=HEALTH">Healthcare and laboratories</a>
+        <a class="pill" href="/industry.html?code=UTIL">Utilities and energy</a>
+        <a class="pill" href="/industry.html?code=PETRO">Petrochemical and fuel retail</a>
+        <a class="pill" href="/industry.html?code=RETAIL">Retail and wholesale</a>
+        <a class="pill" href="/industry.html?code=GOV">Government and municipal</a>
+        <a class="pill" href="/industry.html?code=EDU">Education</a>
+        <a class="pill" href="/industry.html?code=OFFICE">Office and contact centres</a>
       </div>
       <p style="color:var(--ink-2);font-size:15px;margin-top:16px">Work that sits across two industries, or outside all of them, goes to a sales executive to be mapped properly. We would rather ask than guess.</p>
     </div>
@@ -840,5 +842,22 @@ footer.foot .base img{height:46px;width:auto}
 })();
 </script>
 <!-- CNC:END id=consent_form -->
+<script>
+/* Live framework figures. Public marketing view, publishable key only, no secrets.
+   If the framework cannot be reached the page keeps the figures already rendered. */
+(function(){
+  var API='https://pboebfnujzffgwctsplw.supabase.co/rest/v1/msp_public_framework_stats?select=*';
+  var KEY='sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj';
+  fetch(API,{headers:{apikey:KEY,Authorization:'Bearer '+KEY}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var s=d&&d[0]; if(!s) return;
+      var set=function(id,v){var e=document.getElementById(id); if(e&&v!=null) e.textContent=v;};
+      set('k-ind',s.industries); set('k-instr',s.instruments);
+      set('k-roles',s.roles); set('k-prot',s.protocols);
+    })
+    .catch(function(){});
+})();
+</script>
 </body>
 </html>
