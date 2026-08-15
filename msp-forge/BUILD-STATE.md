@@ -1,4 +1,4 @@
-# CNC MSP FORGE | Build State | 14/08/2026
+# CNC MSP FORGE | Build State | 15/08/2026
 
 This document records the state of the engine at the completion of the phased build. It is the companion to SPEC.md (the system specification) and the migrations directory (the applied history).
 
@@ -56,6 +56,9 @@ This document records the state of the engine at the completion of the phased bu
 | CR-12.6 | CNC Information Officer name and privacy contact |
 | CR-13.3 / CR-13.4 | CNC contact line details and the standalone CNC logo mark source asset |
 | CR-13.5 / CR-13.6 | Classification banner values and the Ubuntu closing line decision |
+| CR-13.18 | Destination address for monthly framework audit findings (parameter agent.findings_alert_email) |
+| CR-13.19 | Confirmation of the monthly assistant spend ceiling (parameter ai.monthly_cost_ceiling_usd, working figure 200 US dollars) |
+| Supabase secret | ANTHROPIC_API_KEY in the project's function secrets, so the assistant connection can answer |
 
 ## Standing disciplines
 

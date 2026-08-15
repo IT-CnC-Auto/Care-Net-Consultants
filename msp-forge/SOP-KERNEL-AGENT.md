@@ -1,4 +1,4 @@
-# Care Net Cognitive Kernel | Agent SOP | v1.0.0 | 14/08/2026
+# Care Net Cognitive Kernel | Agent SOP | v1.1.0 | 15/08/2026
 
 Standard operating procedure for maintaining the Care Net Cognitive Kernel as a living, versioned product, and for building and linking the smart agents that keep it correct. The Cognitive Kernel is a Care Net Consultants product. It lives in the Supabase project (all objects prefixed msp_), and the migrations directory in this repository is its canonical, replayable source.
 
@@ -19,7 +19,9 @@ Two legs, both landing in `msp_kernel_agent_run`.
 
 ### Leg 1: correctness audit (automated, in the database)
 
-`msp_kernel_monthly_audit()` runs the standing checks: kernel counts, the verification watchdog (`msp_verification_due`, instruments whose review date is within 60 days), unprotocolled hazards outside the narrative codes, and the dash punctuation scan across every text column. It writes the report and outcome (`clean` or `findings`) to `msp_kernel_agent_run` and the audit trail. Where the `pg_cron` extension is enabled the audit is scheduled for 06:00 UTC on the first of each month under the job name `msp-kernel-monthly-audit`; without `pg_cron`, the learning agent calls it as its first act each month.
+`msp_kernel_monthly_audit()` runs the standing checks: kernel counts, the verification watchdog (`msp_verification_due`, instruments whose review date is within 60 days), unprotocolled hazards outside the narrative codes, and the dash punctuation scan across every text column. It writes the report and outcome (`clean` or `findings`) to `msp_kernel_agent_run` and the audit trail.
+
+This is scheduled and running. `pg_cron` job `msp_monthly_audit` calls it on the day and hour held in the parameters `agent.monthly_audit_day` and `agent.monthly_audit_hour_utc`, currently the first of the month at 02:00 UTC. The schedule is not written into a cron string by hand: changing either parameter calls `msp_agent_reschedule()` in the same action and moves the job. `msp_agent_schedule_status()` reports what is actually scheduled, and the settings page shows it, so the claim and the reality can always be compared.
 
 ### Leg 2: learning update (agent driven)
 
@@ -54,13 +56,44 @@ A Claude agent session (Claude Code, or a scheduled cloud session) runs monthly 
 - Quotes capture `annual_medicals_estimate`. At 100 or more occupational medicals per year with Care Net, the quote prices at zero with status `free_qualifying`; a consultant verifies the declared volume before the waiver is confirmed (register item CR-13.15). Below the threshold, the rate card applies as before.
 - The client journey is transparent by design: the landing page explains the flow (sign on or quotation, secure single use assessment link, HTML assessment form, engine draft against the verified kernel, OMP review and signature, delivery with revision numbers). The HTML forms are self contained and embeddable in any landing page or digital journey, and every document carries the dual brand band: CNC banner plus the client's prepared logo on every page.
 
-## 6. Backup and rebuild
+## 6. The runtime parameter store
+
+Everything that can sensibly be retuned without a deployment lives in `msp_env_parameter` and is changed on the settings page at `/settings.html`. Twenty nine parameters in five groups: the assistant, the monthly agent, clinical floors, commercial terms, and integrations.
+
+- Read is open to any forge role through row level security on the table. Write is `forge_admin` only, and only through `msp_env_set`, which validates the type, the enum membership and the numeric range before it writes. A bad value is refused at the database, not caught in the browser.
+- Every change appends to `msp_env_parameter_history` with the old value, the new value, who changed it, when, and why. That table is append only: a trigger refuses updates and deletes. A tuning change is a change to how the plans come out, so it is evidence.
+- Secrets are never stored here. A parameter whose name reads like a credential may only carry a reference such as `supabase_secret:ANTHROPIC_API_KEY`, and a check constraint enforces that at the table.
+- The clinical group needs care. `clinical.periodic_floor_months`, `clinical.record_retention_years`, `clinical.noise_action_level_db` and `clinical.omp_release_required` are regulatory minima carried in the framework, not preferences. Raising one needs a legal basis and a practitioner decision. The database gate on release is independent of the parameter, so switching `clinical.omp_release_required` off would not in fact release anything: the trigger still refuses.
+- Anonymous visitors see nothing. The parameter table returns zero rows to the anonymous role and every reader function is revoked from it.
+
+## 7. The assistant connection
+
+The assistant is a Supabase edge function, `msp-assistant`, deployed to the same project. It carries no settings of its own: model, reasoning effort, thinking mode, output ceiling, monthly spend ceiling, hourly rate limits, the enabled action list and the token price table are all read from the parameter store on every single call.
+
+Four actions: `industry_brief` and `triage_other` for staff, `explain_plan` for a signed in client company, and `monthly_watch` for the agent leg above.
+
+What holds it inside the framework:
+
+1. It answers only from framework rows handed to it in the same request. Those rows come from `msp_ai_context_industry` and `msp_ai_context_instruments`, both of which return verified instruments only and no client data at all.
+2. It may not cite a law, a threshold or an interval that is not in those rows, and it may not express an opinion on any individual worker's fitness. Uncertainty routes to the practitioner.
+3. Every answer carries the same notice: an explanation of the framework, not a clinical opinion and not a signed plan.
+4. The instruction set is versioned by `ai.prompt_version`. Bump it whenever the guardrails change, so the ledger can say which rules were in force for any past answer.
+
+What holds the cost:
+
+- `msp_ai_preflight` runs before any spend: role check, master switch (`ai.enabled`), and the monthly ceiling. Over the ceiling the assistant refuses and says so.
+- Every call lands in `msp_ai_call_log` with the model, effort, instruction version, tokens, priced cost, latency and outcome, including the refusals. `msp_ai_usage_summary()` feeds the usage tab on the settings page.
+- Rate limits are per caller per hour, from `ai.client_hourly_limit` and `ai.staff_hourly_limit`.
+
+Two secrets make it work and neither is in this repository or in the database: `ANTHROPIC_API_KEY` in Supabase secrets, and the service role key in the Vercel project.
+
+## 8. Backup and rebuild
 
 - Canonical backup: `supabase/migrations/001` through the latest, in order. Replaying them into an empty Supabase project rebuilds the entire kernel, workflows, policies, and seed content.
 - Convenience backup: `backup/cognitive_kernel_rebuild.sql` is the concatenation of every migration in order, regenerated at each release alongside `backup/MANIFEST.md` (which records the version, migration list, and kernel counts at backup time).
 - Runtime data (intakes, drafts, reviews, audit) is client data under POPIA and is not part of the kernel backup; it is covered by the Supabase project's own backups and the retention framework (40 year house floor for medical surveillance records).
 - After any rebuild, prove it: run the pipeline regression (`agent/run_pipeline.js` with the committed snapshot and synthetic intake) and require 9 of 9 validation checks and 16 of 16 geometry assertions.
 
-## 7. Standing disciplines
+## 9. Standing disciplines
 
 British English; no dash punctuation in prose (statute names keep their official hyphens); ZAR comma format; Arial; the CNC palette; OREP and WASP terminology; locked liability, POPIA, and sign off blocks verbatim; deliverables never carry CONFIRM or ASSUMPTION tags; Care Net screens and does not diagnose; the employer is always the payer; the WARDEN ring fence holds.

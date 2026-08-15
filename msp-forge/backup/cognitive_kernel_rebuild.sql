@@ -1,7 +1,10 @@
--- Care Net Cognitive Kernel | full rebuild script | generated 14/08/2026
+-- Care Net medical surveillance framework | full rebuild script | regenerated 15/08/2026
 -- Concatenation of every migration in order. Replaying this into an empty
--- Supabase project rebuilds the entire kernel, workflows, policies, and seed
--- content. Canonical source: supabase/migrations/ in this repository.
+-- Supabase project rebuilds the entire framework, workflows, policies, seed
+-- content, the runtime parameter store and the assistant connection tables.
+-- Canonical source: supabase/migrations/ in this repository.
+-- The assistant edge function itself is not SQL and lives at
+-- supabase/functions/msp-assistant/index.ts.
 
 
 ------------------------------------------------------------------------------
@@ -149,7 +152,6 @@ create index msp_job_role_subindustry_idx on msp_job_role(subindustry_id);
 create index msp_test_protocol_hazard_idx on msp_test_protocol(hazard_id);
 create index msp_job_hazard_hazard_idx on msp_job_hazard(hazard_id);
 
-
 ------------------------------------------------------------------------------
 -- 002_msp_kernel_rls.sql
 ------------------------------------------------------------------------------
@@ -283,7 +285,6 @@ create policy msp_confirmation_item_update on msp_confirmation_item
   for update to authenticated
   using (msp_has_role('forge_admin') or msp_has_role('forge_verifier'));
 
-
 ------------------------------------------------------------------------------
 -- 003_msp_kernel_verification.sql
 ------------------------------------------------------------------------------
@@ -409,7 +410,6 @@ select id, short_name, full_citation, status, verified_on, review_due,
  where status = 'verified'
    and review_due <= current_date + interval '60 days';
 comment on view msp_verification_due is 'Verified instruments within sixty days of their review due date. The noise regulation transition of 06/09/2026 is the founding example.';
-
 
 ------------------------------------------------------------------------------
 -- 004_msp_seed_construction.sql
@@ -892,7 +892,6 @@ values
 ('CR-13.9', 'confirm', 'Verification of the General Safety, General Administrative, General Machinery, and Driven Machinery Regulations before any pack cites them.', 'open', null, null, null),
 ('CR-13.10', 'confirm', 'Noise rating limit value under the Noise Exposure Regulations, 2024 before the 06/09/2026 transition, so hazard A citation swaps correctly.', 'open', null, null, null);
 
-
 ------------------------------------------------------------------------------
 -- 005_msp_intake_schema.sql
 ------------------------------------------------------------------------------
@@ -1115,7 +1114,6 @@ create index msp_intake_engagement_idx on msp_intake(engagement_id);
 create index msp_intake_job_category_intake_idx on msp_intake_job_category(intake_id);
 create index msp_audit_engagement_idx on msp_audit(engagement_id);
 
-
 ------------------------------------------------------------------------------
 -- 006_msp_ingest_intake.sql
 ------------------------------------------------------------------------------
@@ -1291,7 +1289,6 @@ $$;
 revoke execute on function msp_ingest_intake(jsonb) from public, anon, authenticated;
 revoke execute on function msp_next_reference() from public, anon, authenticated;
 
-
 ------------------------------------------------------------------------------
 -- 007_msp_draft_review.sql
 ------------------------------------------------------------------------------
@@ -1414,7 +1411,6 @@ create policy msp_document_write on msp_document
 
 create index msp_draft_engagement_idx on msp_draft(engagement_id);
 create index msp_omp_review_engagement_idx on msp_omp_review(engagement_id);
-
 
 ------------------------------------------------------------------------------
 -- 008_msp_omp_workflow.sql
@@ -1638,7 +1634,6 @@ revoke execute on function msp_omp_decide(uuid, text, text, text, jsonb) from an
 revoke execute on function msp_release_pack(uuid, text, text, text) from anon, public;
 revoke execute on function msp_engagement_export(uuid) from anon, public;
 revoke execute on function msp_engagement_erase(uuid, text, boolean) from anon, public;
-
 
 ------------------------------------------------------------------------------
 -- 009_msp_commercial_clinical.sql
@@ -1928,7 +1923,6 @@ insert into msp_confirmation_item (item_code, kind, description, status) values
 ('CR-13.12', 'confirm', 'MyClinicOnline integration: API or filing mechanism for hosting released packs and revisions in MCO, and for surfacing the review interface link per company inside the MCO application.', 'open'),
 ('CR-13.13', 'confirm', 'Payment gateway selection and credentials for the quote path (the host platform ah_payment table is gateway agnostic, Peach referenced). Until wired, payment confirmation is a manual forge_admin action.', 'open'),
 ('CR-13.14', 'confirm', 'CNC commercial rate card per industry. The seeded Construction row (R4,500 base, R35 per employee, R450 per job category) is a PLACEHOLDER; every quote priced from it is marked indicative and states so.', 'open');
-
 
 ------------------------------------------------------------------------------
 -- 010_msp_batch_manufacturing.sql
@@ -2240,7 +2234,6 @@ update msp_confirmation_item
 update msp_confirmation_item
    set description = description || ' Update 13/08/2026: Driven Machinery Regulations medical fitness provision could not be corroborated in the documentary pass; DMR stays pending and uncitable. Lifting operator medicals rest on EEA section 7 inherent requirements and the house floor meanwhile.'
  where item_code = 'CR-13.9';
-
 
 ------------------------------------------------------------------------------
 -- 011_msp_batch_mining.sql
@@ -2684,7 +2677,6 @@ begin
     raise notice 'batch gate: % enabled (% roles)', v_code, v_roles;
   end loop;
 end $$;
-
 
 ------------------------------------------------------------------------------
 -- 013_msp_batch_agri_health.sql
@@ -3195,7 +3187,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 5: electrical work carries no statutory standing medical battery; the Electrical Machinery Regulations 2011 and Electrical Installation Regulations 2009 anchor the hazard and competency context and the lawful testing basis is EEA section 7. Armed duty and firearm fitness likewise rest on EEA section 7 inherent requirements read with PSIRA registration and firearm competency as statutory competencies, not medical instruments.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 015_msp_batch_retail.sql
 ------------------------------------------------------------------------------
@@ -3370,7 +3361,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 6: retail bakery flour dust is carried under hazard B as a respiratory sensitiser context pending a substance specific OEL confirmation; butchery and cold chain biological exposure is carried under the HBA framework.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 016_msp_batch_hospitality.sql
 ------------------------------------------------------------------------------
@@ -3539,7 +3529,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 7: food handler screening is an exclusion regime under R638 of 2018 (a food safety instrument under the Foodstuffs, Cosmetics and Disinfectants Act 54 of 1972), not an occupational medical battery; the lawful testing basis remains EEA section 7 and Care Net screens fitness to handle food without diagnosing.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 017_msp_batch_waste.sql
 ------------------------------------------------------------------------------
@@ -3705,7 +3694,6 @@ end $$;
 update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 8: healthcare risk waste handling is carried under the HBA framework with hepatitis B immunity verification; the SANS 10248 healthcare risk waste standard remains open under the SANS editions item. E waste dismantling feeds the lead biological monitoring protocol where exposure assessment confirms lead bearing work.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 018_msp_batch_telecoms.sql
@@ -3875,7 +3863,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 9: radio frequency electromagnetic field exposure carries no South African statutory occupational exposure limit; tower and antenna roles carry the exclusion zone discipline in the role narrative per international guidance, and hazard L with its dose monitoring protocol remains reserved for ionising sources under SAHPRA licensing. Should an RF instrument be promulgated, the tower role maps tighten accordingly.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 019_msp_batch_petrochem.sql
 ------------------------------------------------------------------------------
@@ -4043,7 +4030,6 @@ end $$;
 update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 10: benzene biological monitoring for process and forecourt exposure anchors to the HCA Regulations, 2021 BEI annexure with values applied from the annexure at examination; no memorised benzene values are stored. The MHI Regulations, 2022 anchor installation risk context only and prescribe no medical battery.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 020_msp_batch_government.sql
@@ -4219,7 +4205,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 11: firefighter and emergency care fitness rests on EEA section 7 inherent requirements read with service certification; no national statutory firefighter medical standard is stored, and any municipal or SANS 10090 aligned standard supplied by the client tightens the role protocol at review. Emergency services psychosocial load is carried in the OREP narrative with COIDA PTSD recognition noted.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 021_msp_batch_education.sql
 ------------------------------------------------------------------------------
@@ -4367,7 +4352,6 @@ update msp_confirmation_item
        resolved_on = '2026-08-13'
  where item_code = 'CR-13.9';
 
-
 ------------------------------------------------------------------------------
 -- 022_msp_batch_office.sql
 ------------------------------------------------------------------------------
@@ -4501,7 +4485,6 @@ end $$;
 update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 13: contact centre headset acoustic exposure is carried under hazard A as a context rating; audiometric surveillance applies where the exposure assessment confirms the noise rating limit is approached, per the operative noise instrument.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 023_msp_batch_held_constr_port_air.sql
@@ -4651,7 +4634,6 @@ end $$;
 update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 14: ports and aviation ground handling are seeded as shore side and airside ground roles only. Seafarer medical fitness (Merchant Shipping Act, SAMSA regime) and aircrew medical certification (Civil Aviation Act, SACAA regime) are separate licensing regimes outside this programme''s scope and are not represented as CNC protocols. Demolition role maps exclude asbestos abatement work: the Asbestos Abatement Regulations remain unverified and asbestos work routes to the OMP queue until that instrument passes verification.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 024_msp_batch_held_mining_hosp.sql
@@ -4818,7 +4800,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 15: coal, platinum, chrome, and diamond role maps route dust disease surveillance through the ODMWA and Medical Bureau for Occupational Diseases pathway per the kernel routing rule, with each mine''s mandatory code of practice medical standards tightening the battery at review. Hospital roles carry the healthcare protocol set (tuberculosis screening, hepatitis B immunity verification, and SAHPRA licensed dose monitoring for radiographers).'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 025_msp_batch_held_manufacturing.sql
 ------------------------------------------------------------------------------
@@ -4969,7 +4950,6 @@ update msp_confirmation_item
    set description = description || ' Update 13/08/2026 batch 16: isocyanate spray painting and wood dust carry respiratory sensitiser surveillance under the HCA framework with spirometry emphasis; cotton dust carries the byssinosis context. Substance specific OEL confirmations for isocyanates, wood dust, and cotton dust remain open under the OEL item and values are applied from the HCA annexure at examination.'
  where item_code = 'CR-12.1';
 
-
 ------------------------------------------------------------------------------
 -- 026_msp_register_closures.sql
 ------------------------------------------------------------------------------
@@ -5040,7 +5020,6 @@ update msp_confirmation_item
    set description = description || ' Update 14/08/2026: the Code of Practice for Audiometry with explanatory notes is published with the Noise Exposure Regulations, 2024 by the Department of Employment and Labour and governs audiometric method from 06/09/2026. SANS edition numbers themselves still require licensed copies and this item stays open for them.'
  where item_code = 'CR-12.3';
 
-
 ------------------------------------------------------------------------------
 -- 027_msp_constr_instrument_backfill.sql
 ------------------------------------------------------------------------------
@@ -5066,7 +5045,6 @@ where not exists (
 update msp_confirmation_item
    set description = description || ' Update 14/08/2026: the Construction industry instrument map is backfilled with the Driven Machinery Regulations, General Safety Regulations, 1986, General Administrative Regulations, 2003, and Environmental Regulations for Workplaces, 1987, all verified in later batches and applicable to construction work. Future instrument verifications must sweep existing industry maps as part of the batch pattern.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 028_msp_dmr_industry_sweep.sql
@@ -5110,7 +5088,6 @@ begin
   end if;
   raise notice 'DMR sweep gate: all citing industries mapped';
 end $$;
-
 
 ------------------------------------------------------------------------------
 -- 029_msp_r638_dedup.sql
@@ -5175,7 +5152,6 @@ end $$;
 update msp_confirmation_item
    set description = description || ' Update 14/08/2026: the duplicate FCD Act R638, 2018 instrument row from batch 1 is retired in favour of the fuller batch 7 Food Premises Hygiene Regulations record; the MANU industry map and the food handler protocol are deduplicated so a pack never prescribes the same assessment twice.'
  where item_code = 'CR-12.1';
-
 
 ------------------------------------------------------------------------------
 -- 030_msp_cognitive_kernel_product.sql
@@ -5460,7 +5436,6 @@ insert into msp_confirmation_item (item_code, kind, description, status) values
  'Cognitive Kernel maintenance agent: the monthly audit function is in place and scheduled where pg_cron is available; the learning update leg requires a standing Claude agent session (or scheduled cloud session) wired to the Supabase project per SOP-KERNEL-AGENT.md. Confirm the agent schedule and the OMP ratification cadence per kernel release.',
  'open');
 
-
 ------------------------------------------------------------------------------
 -- 031_msp_shop_journey.sql
 ------------------------------------------------------------------------------
@@ -5631,7 +5606,6 @@ update msp_confirmation_item
    set description = description || ' Update 14/08/2026: the free qualification now also applies to accounts with an active service level agreement (sla_status active_sla), checked automatically at quote time alongside the 100 medicals declaration.'
  where item_code = 'CR-13.15';
 
-
 ------------------------------------------------------------------------------
 -- 032_msp_quote_status_fix.sql
 ------------------------------------------------------------------------------
@@ -5645,3 +5619,892 @@ alter table msp_quote drop constraint msp_quote_price_status_check;
 alter table msp_quote add constraint msp_quote_price_status_check
   check (price_status in ('indicative', 'firm', 'free_qualifying'));
 
+------------------------------------------------------------------------------
+-- 033_msp_public_industry_profile.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | PUB-01 v1.0.0 | Public industry profile view 14/08/2026
+-- Marketing surface for the website industry pages. This view is deliberately
+-- readable by anon: it carries only content Care Net publishes on its own site.
+--
+-- What it exposes: industry and subindustry names, the short names and
+-- applicability notes of VERIFIED instruments, hazard names, protocol names, and
+-- job role titles with counts.
+-- What it never exposes: client or engagement data, intake responses, drafts,
+-- OMP reviews, the confirmation register, pending or excluded instruments, and
+-- the exposure values and clinical reference ranges inside the protocols.
+--
+-- The view runs with the owner's rights so the anon role never touches the
+-- protected kernel tables directly. Any advisor notice about a definer view on
+-- this object is expected and accepted: publication is the purpose.
+
+create or replace view msp_public_industry_profile as
+select
+  i.code,
+  i.name,
+  i.regulatory_regime as regime,
+  (select count(*) from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustry_count,
+  (select count(*) from msp_job_role r
+     join msp_subindustry s on s.id = r.subindustry_id
+    where s.industry_id = i.id) as role_count,
+  (select coalesce(json_agg(json_build_object('name', s.name, 'roles',
+            (select coalesce(json_agg(r.title order by r.title), '[]'::json)
+               from msp_job_role r where r.subindustry_id = s.id)) order by s.name), '[]'::json)
+     from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustries,
+  (select coalesce(json_agg(json_build_object('name', li.short_name, 'note', ii.applicability_note)
+            order by li.short_name), '[]'::json)
+     from msp_industry_instrument ii
+     join msp_legal_instrument li on li.id = ii.instrument_id
+    where ii.industry_id = i.id and li.status = 'verified') as instruments,
+  (select coalesce(json_agg(distinct h.name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_hazard h on h.id = jh.hazard_id
+    where s.industry_id = i.id) as hazards,
+  (select coalesce(json_agg(distinct tp.test_name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_test_protocol tp on tp.hazard_id = jh.hazard_id
+    where s.industry_id = i.id) as protocols
+from msp_industry i;
+
+comment on view msp_public_industry_profile is
+  'Public marketing surface for the website industry pages. Aggregate, non clinical, no client data. Readable by anon on purpose.';
+
+grant select on msp_public_industry_profile to anon, authenticated;
+
+-- Public framework statistics for the website. Same principle: aggregate counts
+-- and the released version only, nothing clinical, nothing about any client.
+
+create or replace view msp_public_framework_stats as
+select
+  (select semver from msp_kernel_version order by released_on desc, semver desc limit 1) as version,
+  (select count(*) from msp_legal_instrument where status = 'verified') as instruments,
+  (select count(*) from msp_industry) as industries,
+  (select count(*) from msp_subindustry where selectable) as subindustries,
+  (select count(*) from msp_job_role) as roles,
+  (select count(*) from msp_test_protocol) as protocols;
+
+comment on view msp_public_framework_stats is
+  'Public marketing statistics for the website. Aggregate only. Readable by anon on purpose.';
+
+grant select on msp_public_framework_stats to anon, authenticated;
+
+------------------------------------------------------------------------------
+-- 034_msp_env_parameters_ai.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | ENV-01 v1.0.0, AI-01 v1.0.0 | Parameter store and AI connection 15/08/2026
+-- Two things live here. First, a parameter store so the running system can be
+-- retuned without a redeploy: model, effort, thresholds, schedules, ceilings.
+-- Second, the ledger and the budget gate behind the AI connection, so every
+-- call the assistant makes is recorded, priced, and stoppable.
+--
+-- Secrets never live in this table. The API key sits in Supabase secrets and the
+-- service role key sits in Vercel. Where a parameter must point at a secret it
+-- stores a reference, never a value, and a check constraint enforces that.
+
+-- 1. The parameter store -------------------------------------------------------
+
+create table msp_env_parameter (
+  key           text primary key,
+  value         text not null,
+  value_type    text not null check (value_type in ('text','integer','decimal','boolean','date','enum')),
+  allowed_values text[],
+  min_value     numeric,
+  max_value     numeric,
+  category      text not null check (category in ('ai','agent','clinical','commercial','retention','integration')),
+  description   text not null,
+  updated_by    text not null default 'migration_034',
+  updated_at    timestamptz not null default now(),
+  -- A parameter whose name reads like a credential may only carry a reference.
+  -- The pattern matches whole name segments, so ai.max_output_tokens is not
+  -- mistaken for a credential while ai.api_key_ref is.
+  constraint msp_env_parameter_no_secret_values check (
+    key !~* '(^|[._-])(secret|password|api_key|apikey|api-key|token|private_key|credential)([._-]|$)'
+    or value ~ '^(env:|vault:|supabase_secret:)'
+  )
+);
+comment on table msp_env_parameter is
+  'Runtime parameter store. Everything tunable without a redeploy: AI model and effort, agent schedule, clinical floors, commercial thresholds, spend ceilings. Never holds a secret value, only a reference to one.';
+comment on column msp_env_parameter.allowed_values is
+  'Permitted values for an enum parameter. Enforced by msp_env_set, not by the UI.';
+
+create table msp_env_parameter_history (
+  id          bigint generated always as identity primary key,
+  key         text not null,
+  old_value   text,
+  new_value   text not null,
+  changed_by  text not null,
+  changed_at  timestamptz not null default now(),
+  reason      text
+);
+comment on table msp_env_parameter_history is
+  'Append only history of every parameter change. A tuning change is a change to how the plans come out, so it is evidence.';
+
+create index msp_env_parameter_history_key_idx on msp_env_parameter_history(key, changed_at desc);
+
+create or replace function msp_env_history_block_mutation()
+returns trigger
+language plpgsql
+as $$
+begin
+  raise exception 'msp_env_parameter_history is append only';
+end;
+$$;
+
+create trigger msp_env_history_no_update
+  before update or delete on msp_env_parameter_history
+  for each row execute function msp_env_history_block_mutation();
+
+alter table msp_env_parameter enable row level security;
+alter table msp_env_parameter_history enable row level security;
+
+-- Any forge role may read the running configuration. Nobody writes directly:
+-- writes go through msp_env_set so the history and the validation cannot be
+-- bypassed.
+create policy msp_env_parameter_read on msp_env_parameter
+  for select to authenticated using (msp_any_forge_role());
+create policy msp_env_parameter_history_read on msp_env_parameter_history
+  for select to authenticated using (msp_has_role('forge_admin') or msp_has_role('forge_omp'));
+
+-- 2. Read and write --------------------------------------------------------------
+
+create or replace function msp_env_get(p_key text)
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select value from msp_env_parameter where key = p_key;
+$$;
+comment on function msp_env_get is 'Single parameter read. Definer so the server paths and the agent can read configuration without table grants.';
+
+create or replace function msp_env_get_int(p_key text)
+returns integer
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select value::integer from msp_env_parameter where key = p_key and value_type = 'integer';
+$$;
+
+create or replace function msp_env_get_numeric(p_key text)
+returns numeric
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select value::numeric from msp_env_parameter
+   where key = p_key and value_type in ('integer','decimal');
+$$;
+
+create or replace function msp_env_get_bool(p_key text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select value::boolean from msp_env_parameter where key = p_key and value_type = 'boolean';
+$$;
+
+-- The whole configuration for one category, as an object. This is what the AI
+-- connection calls on every invocation so it never carries a hard coded model,
+-- effort, ceiling or prompt version.
+create or replace function msp_env_bundle(p_category text default null)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_object_agg(key, value), '{}'::jsonb)
+    from msp_env_parameter
+   where p_category is null or category = p_category;
+$$;
+comment on function msp_env_bundle is 'All parameters, or all parameters in one category, as a flat object. The AI connection reads its whole configuration through this in a single call.';
+
+create or replace function msp_env_set(p_key text, p_value text, p_reason text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_row msp_env_parameter%rowtype;
+  v_actor text := coalesce(auth.jwt() ->> 'email', auth.role(), 'unknown');
+  v_num numeric;
+begin
+  -- coalesce so a null JWT is a refusal, never a silent pass
+  if not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'changing a runtime parameter requires the forge_admin role';
+  end if;
+
+  select * into v_row from msp_env_parameter where key = p_key;
+  if not found then
+    raise exception 'unknown parameter %. Parameters are declared by migration, not created at runtime', p_key;
+  end if;
+
+  -- Type and range validation happens here, not in the caller. A bad value must
+  -- never reach the running system.
+  if v_row.value_type = 'integer' then
+    if p_value !~ '^-?\d+$' then
+      raise exception 'parameter % expects an integer, got %', p_key, p_value;
+    end if;
+    v_num := p_value::numeric;
+  elsif v_row.value_type = 'decimal' then
+    if p_value !~ '^-?\d+(\.\d+)?$' then
+      raise exception 'parameter % expects a decimal, got %', p_key, p_value;
+    end if;
+    v_num := p_value::numeric;
+  elsif v_row.value_type = 'boolean' then
+    if lower(p_value) not in ('true','false') then
+      raise exception 'parameter % expects true or false, got %', p_key, p_value;
+    end if;
+  elsif v_row.value_type = 'date' then
+    begin
+      perform p_value::date;
+    exception when others then
+      raise exception 'parameter % expects a date in YYYY-MM-DD form, got %', p_key, p_value;
+    end;
+  elsif v_row.value_type = 'enum' then
+    if v_row.allowed_values is null or not (p_value = any(v_row.allowed_values)) then
+      raise exception 'parameter % expects one of %, got %',
+        p_key, array_to_string(v_row.allowed_values, ', '), p_value;
+    end if;
+  end if;
+
+  if v_num is not null then
+    if v_row.min_value is not null and v_num < v_row.min_value then
+      raise exception 'parameter % has a floor of %, got %', p_key, v_row.min_value, p_value;
+    end if;
+    if v_row.max_value is not null and v_num > v_row.max_value then
+      raise exception 'parameter % has a ceiling of %, got %', p_key, v_row.max_value, p_value;
+    end if;
+  end if;
+
+  update msp_env_parameter
+     set value = p_value, updated_by = v_actor, updated_at = now()
+   where key = p_key;
+
+  insert into msp_env_parameter_history (key, old_value, new_value, changed_by, reason)
+  values (p_key, v_row.value, p_value, v_actor, p_reason);
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_actor, 'env_parameter_change',
+          jsonb_build_object('key', p_key, 'from', v_row.value, 'to', p_value, 'reason', p_reason));
+
+  return jsonb_build_object('key', p_key, 'old_value', v_row.value, 'new_value', p_value,
+                            'changed_by', v_actor, 'changed_at', now());
+end;
+$$;
+comment on function msp_env_set is
+  'The only write path into the parameter store. Validates type, enum membership and range, records history, writes an audit event. forge_admin only.';
+
+revoke all on function msp_env_set(text, text, text) from public, anon;
+grant execute on function msp_env_set(text, text, text) to authenticated;
+grant execute on function msp_env_get(text), msp_env_get_int(text), msp_env_get_numeric(text),
+  msp_env_get_bool(text), msp_env_bundle(text) to authenticated;
+
+-- 3. The declared parameters -----------------------------------------------------
+-- Values here are the ones the system is actually running on today. Where a value
+-- is a placeholder awaiting a Care Net decision it is marked in the description
+-- and carried in the confirmation register, not silently presented as settled.
+
+insert into msp_env_parameter (key, value, value_type, allowed_values, min_value, max_value, category, description) values
+  -- AI connection
+  ('ai.model', 'claude-opus-5', 'enum',
+   array['claude-opus-5','claude-sonnet-5','claude-haiku-4-5'], null, null, 'ai',
+   'Model the assistant runs on. Change here, no redeploy.'),
+  ('ai.effort', 'high', 'enum', array['low','medium','high'], null, null, 'ai',
+   'Reasoning effort for assistant calls. High for anything touching a clinical or legal question.'),
+  ('ai.thinking', 'adaptive', 'enum', array['adaptive','off'], null, null, 'ai',
+   'Extended thinking mode. Adaptive lets the model choose its own depth per question.'),
+  ('ai.max_output_tokens', '8000', 'integer', null, 512, 64000, 'ai',
+   'Ceiling on a single assistant response.'),
+  ('ai.enabled', 'true', 'boolean', null, null, null, 'ai',
+   'Master switch. Set to false and every assistant call returns disabled without reaching the API.'),
+  ('ai.api_key_ref', 'supabase_secret:ANTHROPIC_API_KEY', 'text', null, null, null, 'ai',
+   'Where the API key lives. A reference only. The key itself is never stored in the database.'),
+  ('ai.monthly_cost_ceiling_usd', '200', 'decimal', null, 0, 10000, 'ai',
+   'Hard monthly ceiling on assistant spend. The connection refuses to call once the month exceeds it.'),
+  ('ai.prompt_version', '1.0.0', 'text', null, null, null, 'ai',
+   'Version of the assistant instruction set. Bumped whenever the guardrails change.'),
+  ('ai.allow_client_facing', 'true', 'boolean', null, null, null, 'ai',
+   'Whether the assistant may answer a client directly. When false it only serves internal actions.'),
+
+  -- Agent schedule and behaviour
+  ('agent.monthly_audit_day', '1', 'integer', null, 1, 28, 'agent',
+   'Day of the month the framework audit runs. Capped at 28 so every month has one.'),
+  ('agent.monthly_audit_hour_utc', '2', 'integer', null, 0, 23, 'agent',
+   'Hour in UTC the framework audit runs.'),
+  ('agent.currency_check_months', '12', 'integer', null, 1, 60, 'agent',
+   'How old a currency check may be before the audit raises the instrument.'),
+  ('agent.findings_alert_email', 'pending', 'text', null, null, null, 'agent',
+   'Where audit findings are sent. Pending a Care Net address, register item CR-13.18.'),
+  ('agent.autopublish_findings', 'false', 'boolean', null, null, null, 'agent',
+   'Whether the agent may act on its own findings. False by design: a finding is a proposal for the practitioner, not a change.'),
+
+  -- Clinical floors. These are legal minima and are not tuning knobs in practice.
+  ('clinical.periodic_floor_months', '12', 'integer', null, 1, 36, 'clinical',
+   'Maximum interval between periodic examinations. Twelve months is the regulatory floor and must not be raised without a legal basis.'),
+  ('clinical.record_retention_years', '40', 'integer', null, 40, 100, 'clinical',
+   'Medical surveillance record retention floor in years. Forty is the house floor, register item CR-12.4.'),
+  ('clinical.noise_action_level_db', '85', 'integer', null, 80, 90, 'clinical',
+   'Noise action level in dB(A). Eighty five under the Noise Induced Hearing Loss Regulations, register item CR-13.10.'),
+  ('clinical.omp_release_required', 'true', 'boolean', null, null, null, 'clinical',
+   'Whether a registered practitioner signature is required before release. True. The database trigger enforces this independently.'),
+
+  -- Commercial
+  ('commercial.free_medicals_threshold', '100', 'integer', null, 1, 100000, 'commercial',
+   'Annual medicals at which the plan becomes free to the client. Register item CR-13.15.'),
+  ('commercial.omp_review_fee_zar', '2500', 'decimal', null, 0, 100000, 'commercial',
+   'Practitioner review and sign off fee. Placeholder pending confirmation, register item CR-13.17.'),
+  ('commercial.pricing_status', 'indicative', 'enum', array['indicative','confirmed'], null, null, 'commercial',
+   'Whether quoted prices are confirmed. While indicative every quote carries that wording.'),
+  ('commercial.quote_validity_days', '30', 'integer', null, 1, 365, 'commercial',
+   'How long a quotation stands.'),
+
+  -- Integration references. References only, never values.
+  ('integration.payment_gateway', 'pending', 'text', null, null, null, 'integration',
+   'Payment gateway in use. Pending a Care Net decision, register item CR-13.13.'),
+  ('integration.signature_provider', 'docuseal', 'text', null, null, null, 'integration',
+   'Electronic signature provider for practitioner sign off.'),
+  ('integration.site_base_url', 'pending', 'text', null, null, null, 'integration',
+   'Canonical public base URL. Pending confirmation, register item CR-13.3.');
+
+-- 4. The AI call ledger ----------------------------------------------------------
+
+create table msp_ai_call_log (
+  id             bigint generated always as identity primary key,
+  called_at      timestamptz not null default now(),
+  action         text not null,
+  model          text not null,
+  effort         text,
+  prompt_version text,
+  engagement_id  uuid,
+  industry_code  text,
+  actor          text not null,
+  input_tokens   integer,
+  output_tokens  integer,
+  cost_usd       numeric(10,4),
+  latency_ms     integer,
+  outcome        text not null check (outcome in ('ok','refused','error','disabled','over_budget')),
+  error_detail   text
+);
+comment on table msp_ai_call_log is
+  'Every assistant call, priced and attributed. This is the cost control and the evidence trail: what was asked, on what model, at what effort, under which instruction version.';
+
+create index msp_ai_call_log_month_idx on msp_ai_call_log(called_at desc);
+
+alter table msp_ai_call_log enable row level security;
+create policy msp_ai_call_log_read on msp_ai_call_log
+  for select to authenticated using (msp_has_role('forge_admin') or msp_has_role('forge_omp'));
+
+-- Spend so far in the current calendar month.
+create or replace function msp_ai_month_spend_usd()
+returns numeric
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(sum(cost_usd), 0)
+    from msp_ai_call_log
+   where called_at >= date_trunc('month', now());
+$$;
+
+-- The gate the connection calls before it spends anything. Returns the running
+-- configuration together with a verdict, so the connection needs one round trip.
+create or replace function msp_ai_preflight(p_action text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_cfg jsonb := msp_env_bundle('ai');
+  v_spend numeric := msp_ai_month_spend_usd();
+  v_ceiling numeric := (v_cfg ->> 'ai.monthly_cost_ceiling_usd')::numeric;
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'the assistant connection requires the forge_agent or forge_admin role';
+  end if;
+  if (v_cfg ->> 'ai.enabled')::boolean is not true then
+    return jsonb_build_object('allowed', false, 'reason', 'disabled', 'config', v_cfg);
+  end if;
+  if v_spend >= v_ceiling then
+    return jsonb_build_object('allowed', false, 'reason', 'over_budget',
+      'spend_usd', v_spend, 'ceiling_usd', v_ceiling, 'config', v_cfg);
+  end if;
+  return jsonb_build_object('allowed', true, 'action', p_action, 'config', v_cfg,
+    'spend_usd', v_spend, 'ceiling_usd', v_ceiling);
+end;
+$$;
+comment on function msp_ai_preflight is
+  'One round trip before any assistant call: role check, master switch, monthly ceiling, and the whole running configuration. The connection carries no defaults of its own.';
+
+create or replace function msp_ai_log(
+  p_action text, p_model text, p_effort text, p_prompt_version text,
+  p_outcome text, p_input_tokens integer default null, p_output_tokens integer default null,
+  p_cost_usd numeric default null, p_latency_ms integer default null,
+  p_engagement_id uuid default null, p_industry_code text default null,
+  p_error text default null)
+returns bigint
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id bigint;
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'logging an assistant call requires the forge_agent or forge_admin role';
+  end if;
+  insert into msp_ai_call_log (action, model, effort, prompt_version, outcome,
+    input_tokens, output_tokens, cost_usd, latency_ms, engagement_id, industry_code,
+    actor, error_detail)
+  values (p_action, p_model, p_effort, p_prompt_version, p_outcome,
+    p_input_tokens, p_output_tokens, p_cost_usd, p_latency_ms, p_engagement_id, p_industry_code,
+    coalesce(auth.jwt() ->> 'email', auth.role(), 'assistant'), p_error)
+  returning id into v_id;
+  return v_id;
+end;
+$$;
+
+grant execute on function msp_ai_preflight(text), msp_ai_month_spend_usd() to authenticated;
+
+-- 5. Grounding reads for the assistant --------------------------------------------
+-- The assistant is never allowed to answer from its own memory of South African
+-- law. It answers from rows. These two functions are the only kernel content it
+-- can see, and both return verified instruments only.
+
+create or replace function msp_ai_context_industry(p_code text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v jsonb;
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'assistant grounding reads require the forge_agent or forge_admin role';
+  end if;
+  select to_jsonb(p) into v from msp_public_industry_profile p where p.code = p_code;
+  if v is null then
+    return jsonb_build_object('found', false, 'code', p_code);
+  end if;
+  return v || jsonb_build_object('found', true);
+end;
+$$;
+comment on function msp_ai_context_industry is
+  'The grounding pack for one industry: verified instruments with their applicability notes, subindustries, roles, hazards, protocols. Nothing pending, nothing clinical beyond protocol names, no client data.';
+
+create or replace function msp_ai_context_instruments()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'assistant grounding reads require the forge_agent or forge_admin role';
+  end if;
+  return (select coalesce(jsonb_agg(jsonb_build_object(
+            'short_name', short_name, 'citation', citation, 'status', status)
+            order by short_name), '[]'::jsonb)
+            from msp_legal_instrument where status = 'verified');
+end;
+$$;
+
+grant execute on function msp_ai_context_industry(text), msp_ai_context_instruments() to authenticated;
+
+-- 6. Register items opened by this work -------------------------------------------
+
+insert into msp_confirmation_item (item_code, kind, description) values
+  ('CR-13.18', 'confirm',
+   'Destination address for monthly framework audit findings. Parameter agent.findings_alert_email is set to pending until Care Net confirms it.'),
+  ('CR-13.19', 'confirm',
+   'Monthly assistant spend ceiling. Parameter ai.monthly_cost_ceiling_usd is set to 200 US dollars as a working figure pending confirmation.')
+on conflict (item_code) do nothing;
+
+------------------------------------------------------------------------------
+-- 035_msp_agent_schedule.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | AGT-SCH-01 v1.0.0 | Live scheduling from the parameter store 15/08/2026
+-- The monthly framework audit now runs on a real schedule, and the schedule is
+-- read from the parameter store rather than written into a cron string by hand.
+-- Change agent.monthly_audit_day and the job moves. Nothing is redeployed.
+--
+-- The audit itself is pure SQL and needs no network and no secret, so it is
+-- scheduled directly. The assistant assisted watch needs an outbound call and
+-- therefore a key, so it is scheduled only when Care Net has placed that key in
+-- the vault. Until then the function says so plainly and schedules nothing.
+
+-- Model prices, so the call ledger can be priced without a redeploy when rates
+-- move. United States dollars per million tokens.
+insert into msp_env_parameter (key, value, value_type, category, description) values
+  ('ai.price_table_json',
+   '{"claude-opus-5":{"in":5.00,"out":25.00},"claude-sonnet-5":{"in":3.00,"out":15.00},"claude-haiku-4-5":{"in":1.00,"out":5.00}}',
+   'text', 'ai',
+   'Published token prices in United States dollars per million tokens, used to price the call ledger. Update here when rates change.'),
+  ('ai.actions_enabled',
+   'explain_plan,industry_brief,triage_other,monthly_watch',
+   'text', 'ai',
+   'Comma separated list of assistant actions the connection will serve. Remove one to switch it off without a redeploy.')
+on conflict (key) do nothing;
+
+-- Rebuild the cron entry for the monthly framework audit from the parameters.
+create or replace function msp_agent_reschedule()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_day  int := msp_env_get_int('agent.monthly_audit_day');
+  v_hour int := msp_env_get_int('agent.monthly_audit_hour_utc');
+  v_expr text;
+begin
+  if not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'rescheduling the agent requires the forge_admin role';
+  end if;
+  v_expr := format('0 %s %s * *', v_hour, v_day);
+
+  perform cron.unschedule('msp_monthly_audit')
+    where exists (select 1 from cron.job where jobname = 'msp_monthly_audit');
+
+  perform cron.schedule('msp_monthly_audit', v_expr, 'select msp_kernel_monthly_audit();');
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values (coalesce(auth.jwt() ->> 'email', auth.role(), 'msp_agent_reschedule'),
+          'agent_rescheduled',
+          jsonb_build_object('job', 'msp_monthly_audit', 'schedule', v_expr));
+
+  return jsonb_build_object('job', 'msp_monthly_audit', 'schedule', v_expr,
+                            'day', v_day, 'hour_utc', v_hour);
+end;
+$$;
+comment on function msp_agent_reschedule is
+  'Rebuilds the monthly audit cron entry from agent.monthly_audit_day and agent.monthly_audit_hour_utc. Called automatically whenever either parameter changes.';
+
+-- Make the schedule parameters genuinely live: changing one moves the job in the
+-- same call. A scheduling failure is recorded but never blocks the parameter
+-- change itself, because the stored configuration is the source of truth and the
+-- schedule can always be rebuilt from it.
+create or replace function msp_env_after_change(p_key text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_key in ('agent.monthly_audit_day', 'agent.monthly_audit_hour_utc') then
+    begin
+      perform msp_agent_reschedule();
+    exception when others then
+      insert into msp_audit (actor, event_type, event_detail)
+      values ('msp_env_after_change', 'agent_reschedule_failed',
+              jsonb_build_object('key', p_key, 'error', sqlerrm));
+    end;
+  end if;
+end;
+$$;
+
+-- msp_env_set gains the one line that calls the hook. Everything else is as it
+-- was in migration 034.
+create or replace function msp_env_set(p_key text, p_value text, p_reason text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_row msp_env_parameter%rowtype;
+  v_actor text := coalesce(auth.jwt() ->> 'email', auth.role(), 'unknown');
+  v_num numeric;
+begin
+  if not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'changing a runtime parameter requires the forge_admin role';
+  end if;
+
+  select * into v_row from msp_env_parameter where key = p_key;
+  if not found then
+    raise exception 'unknown parameter %. Parameters are declared by migration, not created at runtime', p_key;
+  end if;
+
+  if v_row.value_type = 'integer' then
+    if p_value !~ '^-?\d+$' then
+      raise exception 'parameter % expects an integer, got %', p_key, p_value;
+    end if;
+    v_num := p_value::numeric;
+  elsif v_row.value_type = 'decimal' then
+    if p_value !~ '^-?\d+(\.\d+)?$' then
+      raise exception 'parameter % expects a decimal, got %', p_key, p_value;
+    end if;
+    v_num := p_value::numeric;
+  elsif v_row.value_type = 'boolean' then
+    if lower(p_value) not in ('true','false') then
+      raise exception 'parameter % expects true or false, got %', p_key, p_value;
+    end if;
+  elsif v_row.value_type = 'date' then
+    begin
+      perform p_value::date;
+    exception when others then
+      raise exception 'parameter % expects a date in YYYY-MM-DD form, got %', p_key, p_value;
+    end;
+  elsif v_row.value_type = 'enum' then
+    if v_row.allowed_values is null or not (p_value = any(v_row.allowed_values)) then
+      raise exception 'parameter % expects one of %, got %',
+        p_key, array_to_string(v_row.allowed_values, ', '), p_value;
+    end if;
+  end if;
+
+  if v_num is not null then
+    if v_row.min_value is not null and v_num < v_row.min_value then
+      raise exception 'parameter % has a floor of %, got %', p_key, v_row.min_value, p_value;
+    end if;
+    if v_row.max_value is not null and v_num > v_row.max_value then
+      raise exception 'parameter % has a ceiling of %, got %', p_key, v_row.max_value, p_value;
+    end if;
+  end if;
+
+  update msp_env_parameter
+     set value = p_value, updated_by = v_actor, updated_at = now()
+   where key = p_key;
+
+  insert into msp_env_parameter_history (key, old_value, new_value, changed_by, reason)
+  values (p_key, v_row.value, p_value, v_actor, p_reason);
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_actor, 'env_parameter_change',
+          jsonb_build_object('key', p_key, 'from', v_row.value, 'to', p_value, 'reason', p_reason));
+
+  perform msp_env_after_change(p_key);
+
+  return jsonb_build_object('key', p_key, 'old_value', v_row.value, 'new_value', p_value,
+                            'changed_by', v_actor, 'changed_at', now());
+end;
+$$;
+
+-- What is actually scheduled right now. Readable by any forge role so the admin
+-- page can show the truth rather than a claim.
+create or replace function msp_agent_schedule_status()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not coalesce(msp_any_forge_role(), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'reading the agent schedule requires a forge role';
+  end if;
+  return (select coalesce(jsonb_agg(jsonb_build_object(
+            'job', jobname, 'schedule', schedule, 'command', command, 'active', active)), '[]'::jsonb)
+            from cron.job where jobname like 'msp\_%');
+end;
+$$;
+
+grant execute on function msp_agent_reschedule(), msp_agent_schedule_status() to authenticated;
+
+-- Put the audit on the schedule the parameters currently describe.
+select cron.schedule('msp_monthly_audit', '0 2 1 * *', 'select msp_kernel_monthly_audit();');
+
+------------------------------------------------------------------------------
+-- 036_msp_ai_identity_limits.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | AI-02 v1.0.0 | Caller identity and rate limits for the assistant 15/08/2026
+-- The connection runs on the service context so it can read the parameter store
+-- and write the ledger, which means the database can no longer see who asked.
+-- The connection therefore passes the real caller through, and the ledger records
+-- that person rather than the service. Rate limits are per caller and per hour,
+-- and both ceilings are parameters like everything else.
+
+insert into msp_env_parameter (key, value, value_type, min_value, max_value, category, description) values
+  ('ai.client_hourly_limit', '20', 'integer', 0, 500, 'ai',
+   'Assistant calls one client account may make in an hour. Zero switches client access off entirely.'),
+  ('ai.staff_hourly_limit', '120', 'integer', 0, 5000, 'ai',
+   'Assistant calls one member of staff may make in an hour.')
+on conflict (key) do nothing;
+
+-- How many calls this caller has already made in the window.
+create or replace function msp_ai_recent_calls(p_actor text, p_minutes int default 60)
+returns integer
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select count(*)::int from msp_ai_call_log
+   where actor = p_actor
+     and outcome in ('ok','refused','error')
+     and called_at >= now() - make_interval(mins => p_minutes);
+$$;
+
+-- The ledger write, now carrying the real caller. The previous signature is
+-- dropped rather than overloaded so there is never any doubt which one ran.
+drop function if exists msp_ai_log(text, text, text, text, text, integer, integer, numeric, integer, uuid, text, text);
+
+create or replace function msp_ai_log(
+  p_action text, p_model text, p_effort text, p_prompt_version text,
+  p_outcome text, p_actor text,
+  p_input_tokens integer default null, p_output_tokens integer default null,
+  p_cost_usd numeric default null, p_latency_ms integer default null,
+  p_engagement_id uuid default null, p_industry_code text default null,
+  p_error text default null)
+returns bigint
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id bigint;
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'logging an assistant call requires the forge_agent or forge_admin role';
+  end if;
+  insert into msp_ai_call_log (action, model, effort, prompt_version, outcome,
+    input_tokens, output_tokens, cost_usd, latency_ms, engagement_id, industry_code,
+    actor, error_detail)
+  values (p_action, p_model, p_effort, p_prompt_version, p_outcome,
+    p_input_tokens, p_output_tokens, p_cost_usd, p_latency_ms, p_engagement_id, p_industry_code,
+    coalesce(nullif(p_actor, ''), auth.jwt() ->> 'email', auth.role(), 'assistant'), p_error)
+  returning id into v_id;
+  return v_id;
+end;
+$$;
+comment on function msp_ai_log is
+  'Writes one row to the assistant call ledger. The caller is passed in explicitly because the connection runs on the service context and would otherwise record itself.';
+
+-- Is this Supabase Auth user a client account we recognise, and which one.
+create or replace function msp_ai_client_identity(p_auth_user_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v jsonb;
+begin
+  if not coalesce(msp_caller_is('forge_agent'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'resolving a client identity requires the forge_agent or forge_admin role';
+  end if;
+  select jsonb_build_object('found', true, 'account_id', id, 'company_name', company_name,
+                            'sla_status', sla_status)
+    into v
+    from msp_client_account where auth_user_id = p_auth_user_id;
+  return coalesce(v, jsonb_build_object('found', false));
+end;
+$$;
+
+grant execute on function msp_ai_recent_calls(text, int), msp_ai_client_identity(uuid) to authenticated;
+
+-- A read only view of the ledger for the admin page: this month, by action.
+create or replace function msp_ai_usage_summary()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not coalesce(msp_has_role('forge_admin'), false) and not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'the assistant usage summary requires the forge_admin role';
+  end if;
+  return jsonb_build_object(
+    'month_spend_usd', msp_ai_month_spend_usd(),
+    'ceiling_usd', msp_env_get_numeric('ai.monthly_cost_ceiling_usd'),
+    'by_action', (select coalesce(jsonb_agg(jsonb_build_object(
+        'action', action, 'calls', calls, 'cost_usd', cost_usd, 'ok', ok_calls)
+        order by cost_usd desc), '[]'::jsonb)
+      from (select action, count(*) as calls, coalesce(sum(cost_usd), 0) as cost_usd,
+                   count(*) filter (where outcome = 'ok') as ok_calls
+              from msp_ai_call_log
+             where called_at >= date_trunc('month', now())
+             group by action) t),
+    'recent', (select coalesce(jsonb_agg(jsonb_build_object(
+        'at', called_at, 'action', action, 'actor', actor, 'outcome', outcome,
+        'cost_usd', cost_usd, 'latency_ms', latency_ms)
+        order by called_at desc), '[]'::jsonb)
+      from (select * from msp_ai_call_log order by called_at desc limit 25) r));
+end;
+$$;
+
+grant execute on function msp_ai_usage_summary() to authenticated;
+
+------------------------------------------------------------------------------
+-- 037_msp_env_ai_grant_lockdown.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | ENV-02 v1.0.0 | Grant lockdown on the parameter store and the assistant 15/08/2026
+-- Postgres grants execute on a new function to PUBLIC by default, which means the
+-- anonymous web role could call every helper added in migrations 034 to 036. The
+-- guarded ones would have refused, but the small readers had no guard because
+-- they are internal plumbing. The advisor flagged all of them and it is right.
+--
+-- The rule applied here: a function is reachable from the outside only if a
+-- person or the assistant connection genuinely needs to call it, and every one
+-- that is reachable checks the caller's role in its own body. Everything else is
+-- revoked from PUBLIC and stays callable only inside the definer functions that
+-- use it, which run as the owner.
+--
+-- Staff still read the running configuration the proper way, by selecting from
+-- msp_env_parameter under its row level security policy.
+
+-- 1. Internal plumbing. Nothing outside the database calls these.
+revoke all on function msp_env_get(text)          from public, anon, authenticated;
+revoke all on function msp_env_get_int(text)      from public, anon, authenticated;
+revoke all on function msp_env_get_numeric(text)  from public, anon, authenticated;
+revoke all on function msp_env_get_bool(text)     from public, anon, authenticated;
+revoke all on function msp_env_bundle(text)       from public, anon, authenticated;
+revoke all on function msp_env_after_change(text) from public, anon, authenticated;
+revoke all on function msp_ai_month_spend_usd()   from public, anon, authenticated;
+
+-- 2. Called only by the assistant connection, which runs on the service context.
+revoke all on function msp_ai_preflight(text)           from public, anon, authenticated;
+revoke all on function msp_ai_context_industry(text)    from public, anon, authenticated;
+revoke all on function msp_ai_context_instruments()     from public, anon, authenticated;
+revoke all on function msp_ai_recent_calls(text, int)   from public, anon, authenticated;
+revoke all on function msp_ai_client_identity(uuid)     from public, anon, authenticated;
+revoke all on function msp_ai_log(text, text, text, text, text, text, integer, integer, numeric, integer, uuid, text, text)
+  from public, anon, authenticated;
+
+grant execute on function msp_ai_preflight(text)         to service_role;
+grant execute on function msp_ai_context_industry(text)  to service_role;
+grant execute on function msp_ai_context_instruments()   to service_role;
+grant execute on function msp_ai_recent_calls(text, int) to service_role;
+grant execute on function msp_ai_client_identity(uuid)   to service_role;
+grant execute on function msp_ai_log(text, text, text, text, text, text, integer, integer, numeric, integer, uuid, text, text)
+  to service_role;
+
+-- 3. Called by a signed in person on the settings page. Each one checks the
+-- caller's role in its own body before it does anything.
+revoke all on function msp_env_set(text, text, text) from public, anon;
+revoke all on function msp_ai_usage_summary()        from public, anon;
+revoke all on function msp_agent_reschedule()        from public, anon;
+revoke all on function msp_agent_schedule_status()   from public, anon;
+
+grant execute on function msp_env_set(text, text, text) to authenticated;
+grant execute on function msp_ai_usage_summary()        to authenticated;
+grant execute on function msp_agent_reschedule()        to authenticated;
+grant execute on function msp_agent_schedule_status()   to authenticated;
+
+-- 4. The history guard trigger had a mutable search path. It only ever raises,
+-- but a trigger function with an open search path is still a foothold.
+create or replace function msp_env_history_block_mutation()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'msp_env_parameter_history is append only';
+end;
+$$;
