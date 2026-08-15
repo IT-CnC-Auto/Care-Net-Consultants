@@ -5,18 +5,21 @@ Renders a validated draft into a branded PDF marked as a sample on every page.
 Public samples exist to show prospective clients what they receive, so three
 protections are baked in and cannot be stripped by a reader:
 
-  1. A diagonal SAMPLE watermark drawn under the content on every page.
-  2. A DEMO SAMPLE, NOT FOR USE band in the footer of every page.
-  3. PDF permissions that block modification, copying, and annotation, with a
-     random owner password, so nobody can lift the document and edit it into
-     their own Plan.
+  1. A diagonal SAMPLE watermark drawn under the content on every page, inside
+     the page content stream, so deleting text does not remove it.
+  2. A DEMO SAMPLE, NOT FOR USE band in the header of every page.
+  3. A fictitious client and an unsigned sign off, stated on the first page.
+
+  Note on encryption: an earlier version applied PDF permission flags. ReportLab
+  writes those with 40 bit RC4, which current browsers and Adobe refuse to open,
+  so the sample would not open at all. Those flags are advisory in any event and
+  any reader can strip them. The watermark is the protection that actually holds.
 
 Usage: python3 render_sample_pdf.py <draft.json> <output.pdf> [industry label]
 """
 
 import json
 import os
-import secrets
 import sys
 
 from reportlab.lib import colors
@@ -28,7 +31,6 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import (BaseDocTemplate, Frame, KeepTogether, PageBreak,
                                 PageTemplate, Paragraph, Spacer, Table, TableStyle)
-from reportlab.lib import pdfencrypt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, 'assets')
@@ -244,10 +246,6 @@ def build(draft_path, out_path, industry_label):
     story.append(Spacer(1, 4 * mm))
     story.append(Paragraph('Care Net Consultants (Pty) Ltd. Your Partner in Workplace Health.', note))
 
-    encryption = pdfencrypt.StandardEncryption(
-        userPassword='', ownerPassword=secrets.token_urlsafe(24),
-        canPrint=1, canModify=0, canCopy=0, canAnnotate=0)
-
     doc = BaseDocTemplate(
         out_path, pagesize=A4,
         leftMargin=MARGIN_X, rightMargin=MARGIN_X,
@@ -255,7 +253,7 @@ def build(draft_path, out_path, industry_label):
         title='Sample Medical Surveillance Plan, %s' % industry_label,
         author='Care Net Consultants (Pty) Ltd',
         subject='Demonstration sample generated from fictitious data. Not a clinical document.',
-        creator='Care Net Method', encrypt=encryption)
+        creator='Care Net Method')
     frame = Frame(MARGIN_X, FOOTER_H + 2 * mm, content_w,
                   PAGE_H - (HEADER_H + 4 * mm) - (FOOTER_H + 2 * mm), id='body')
     doc.addPageTemplates([PageTemplate(id='cnc', frames=[frame], onPage=page_furniture)])

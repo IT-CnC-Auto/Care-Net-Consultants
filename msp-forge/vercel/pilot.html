@@ -109,14 +109,26 @@
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
 <script>
-fetch('/api/kernel-stats').then(r => r.json()).then(s => {
-  if (!s || !s.counts) return;
-  document.getElementById('s-version').textContent = s.version ? 'v' + s.version.semver : 'live';
-  document.getElementById('s-instruments').textContent = s.counts.instruments_verified;
-  document.getElementById('s-industries').textContent = s.counts.industries;
-  document.getElementById('s-roles').textContent = s.counts.roles;
-  document.getElementById('s-protocols').textContent = s.counts.protocols;
-}).catch(() => {});
+/* Live framework figures, read straight from the public marketing view with the
+   publishable key. No server environment variables required, no secrets on the page. */
+(function(){
+  var API='https://pboebfnujzffgwctsplw.supabase.co/rest/v1/msp_public_framework_stats?select=*';
+  var KEY='sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj';
+  fetch(API,{headers:{apikey:KEY,Authorization:'Bearer '+KEY}})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var s=d&&d[0]; if(!s) return;
+      var set=function(id,v){var e=document.getElementById(id); if(e&&v!=null) e.textContent=v;};
+      set('s-version', s.version ? 'v'+s.version : 'live');
+      set('s-instruments', s.instruments);
+      set('s-industries', s.industries);
+      set('s-roles', s.roles);
+      set('s-protocols', s.protocols);
+    })
+    .catch(function(){
+      var e=document.getElementById('s-version'); if(e) e.textContent='live';
+    });
+})();
 </script>
 </body>
 </html>
