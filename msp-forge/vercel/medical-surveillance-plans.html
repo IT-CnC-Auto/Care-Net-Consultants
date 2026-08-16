@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--
 =====================================================================
- medical-surveillance-plans.html :: Care Net Consultants :: Version 1.0
- Status: BUILT, PENDING APPROVAL | Built 14 August 2026
+ medical-surveillance-plans.html :: Care Net Consultants :: Version 1.1
+ Status: AUDITED, PENDING APPROVAL | Built 14 August 2026, audited 16 August 2026
  House style matches cnc-home.html and the Project Nexus industry pages
    (Bebas Neue, Montserrat, Inter; red ED1B24 as the sole active accent; dark hero).
  Page type: service page. Schema: Organization, Service, FAQPage, BreadcrumbList.
@@ -15,14 +17,12 @@
    only the verified WhatsApp number 27600702723, staff are "sales executives",
    no accreditation badges (this is not a training page).
  Slot markers left for the shared Nexus artefacts (quote form I2, Sr Thandi widget T1).
- Pending inputs (never fabricated): [[SITE_BASE]], [[GTM_ID]], lead endpoint, privacy URL.
+ Pending inputs (never fabricated): https://www.carenetconsultants.co.za, [[GTM_ID]], lead endpoint, privacy URL.
  PRICING NOTE: the rate card amounts and the practitioner review fee shown in the
    packages section are the current internal placeholders. Confirm both with commercial
    leadership before this page goes live, or replace the figures with 'from quotation'.
 =====================================================================
 -->
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- CNC:SECTION id=consent_loader v=1 lock=false -->
 <script>
@@ -58,7 +58,7 @@
 <!-- CNC:SECTION id=meta_block v=1 lock=false -->
 <title>Medical Surveillance Plans for SA Employers | Care Net</title>
 <meta name="description" content="A Medical Surveillance Plan built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, kept current.">
-<link rel="canonical" href="[[SITE_BASE]]/medical-surveillance-plans">
+<link rel="canonical" href="https://www.carenetconsultants.co.za/medical-surveillance-plans">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Care Net Consultants">
 <meta name="publisher" content="Care Net Consultants (Pty) Ltd">
@@ -67,19 +67,23 @@
 <meta property="og:site_name" content="Care Net Consultants">
 <meta property="og:title" content="Medical Surveillance Plans | Care Net Consultants">
 <meta property="og:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
-<meta property="og:url" content="[[SITE_BASE]]/medical-surveillance-plans">
+<meta property="og:url" content="https://www.carenetconsultants.co.za/medical-surveillance-plans">
 <meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
 <meta property="og:locale" content="en_ZA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Medical Surveillance Plans | Care Net Consultants">
 <meta name="twitter:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
 <meta name="twitter:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
-<link rel="alternate" hreflang="en-za" href="[[SITE_BASE]]/medical-surveillance-plans">
+<link rel="alternate" hreflang="en-za" href="https://www.carenetconsultants.co.za/medical-surveillance-plans">
 <!-- CNC:END id=meta_block -->
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- CNC:SECTION id=fonts v=2 lock=false -->
+<!-- House faces served from our own origin. No render blocking third party
+     stylesheet, and no visitor IP address reaching a font CDN before consent. -->
+<link rel="preload" href="/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/Montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/BebasNeue.woff2" as="font" type="font/woff2" crossorigin>
+<!-- CNC:END id=fonts -->
 
 <!-- CNC:SECTION id=org_schema v=1 lock=false -->
 <script type="application/ld+json">
@@ -88,7 +92,7 @@
  "@type":"MedicalBusiness",
  "name":"Care Net Consultants (Pty) Ltd",
  "description":"Occupational health medical services across South Africa: mobile clinics, fixed walk-in clinics, medical surveillance planning and online medical records.",
- "url":"[[SITE_BASE]]/",
+ "url":"https://www.carenetconsultants.co.za/",
  "logo":"https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp",
  "areaServed":"ZA",
  "telephone":"+27600702723",
@@ -112,7 +116,7 @@
  "serviceType":"Medical Surveillance Plan",
  "name":"Medical Surveillance Plans",
  "description":"A written Medical Surveillance Plan that sets out, per job category, which occupational medical assessments a workforce needs, how often, and on what legal basis. Built on verified South African occupational health law and signed by a registered Occupational Medical Practitioner.",
- "provider":{"@type":"Organization","name":"Care Net Consultants (Pty) Ltd","url":"[[SITE_BASE]]/"},
+ "provider":{"@type":"Organization","name":"Care Net Consultants (Pty) Ltd","url":"https://www.carenetconsultants.co.za/"},
  "areaServed":{"@type":"Country","name":"South Africa"},
  "audience":{"@type":"Audience","audienceType":"Employers with occupational health and safety obligations in South Africa"},
  "hasOfferCatalog":{
@@ -133,9 +137,9 @@
  "@context":"https://schema.org",
  "@type":"BreadcrumbList",
  "itemListElement":[
-  {"@type":"ListItem","position":1,"name":"Home","item":"[[SITE_BASE]]/"},
-  {"@type":"ListItem","position":2,"name":"Medicals","item":"[[SITE_BASE]]/medicals"},
-  {"@type":"ListItem","position":3,"name":"Medical Surveillance Plans","item":"[[SITE_BASE]]/medical-surveillance-plans"}
+  {"@type":"ListItem","position":1,"name":"Home","item":"https://www.carenetconsultants.co.za/"},
+  {"@type":"ListItem","position":2,"name":"Medicals","item":"https://www.carenetconsultants.co.za/medicals"},
+  {"@type":"ListItem","position":3,"name":"Medical Surveillance Plans","item":"https://www.carenetconsultants.co.za/medical-surveillance-plans"}
  ]
 }
 </script>
@@ -159,8 +163,17 @@
 <!-- CNC:END id=faq_schema -->
 
 <style>
+/* Care Net house faces, self hosted. Latin subset only, which is all an en-ZA
+   page needs. Inter and Montserrat are variable fonts, so one file covers every
+   weight the page uses. All three are SIL Open Font License 1.1, which permits
+   self hosting. Self hosted rather than loaded from a font CDN: it removes a
+   render blocking third party stylesheet, and it stops a visitor's IP address
+   reaching a third party before they have consented to anything. */
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/BebasNeue.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/Inter-var.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:600 800;font-display:swap;src:url('/fonts/Montserrat-var.woff2') format('woff2')}
 :root{
-  --red:#ED1B24; --red-deep:#c5141b; --ink:#16161a; --ink-2:#555; --soft:#f6f6f8;
+  --red:#ED1B24; --red-ink:#C5141B; --red-deep:#A81016; --ink:#16161a; --ink-2:#555; --soft:#f6f6f8;
   --line:#e6e6e9; --white:#fff; --max:1200px;
 }
 *{box-sizing:border-box}
@@ -173,17 +186,17 @@ h2{font-size:clamp(26px,3.4vw,40px);font-weight:800;letter-spacing:-.01em}
 h3{font-size:20px;font-weight:700}
 p{margin:.6em 0}
 a{color:inherit}
-.r{color:var(--red)}
-.eyebrow{font-family:Montserrat,Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--red)}
+.r{color:var(--red-ink)}
+.eyebrow{font-family:Montserrat,Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--red-ink)}
 .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:15px;text-decoration:none;padding:13px 22px;border-radius:10px;border:2px solid transparent;cursor:pointer;min-height:48px;transition:transform .12s ease, background .15s ease}
 .btn:hover{transform:translateY(-1px)}
 .btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
-.btn-red{background:var(--red);color:#fff}
+.btn-red{background:var(--red-ink);color:#fff}
 .btn-red:hover{background:var(--red-deep)}
 .btn-ghost{background:transparent;border-color:rgba(255,255,255,.5);color:#fff}
 .btn-ghost:hover{border-color:#fff}
 .btn-ghost-dark{background:transparent;border-color:var(--line);color:var(--ink)}
-.btn-ghost-dark:hover{border-color:var(--red);color:var(--red)}
+.btn-ghost-dark:hover{border-color:var(--red);color:var(--red-ink)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Utility + nav */
@@ -197,10 +210,20 @@ a{color:inherit}
 .nav img{height:46px;width:auto;display:block}
 .nav ul{list-style:none;display:flex;gap:20px;margin:0;padding:0;font-weight:600;font-size:14px}
 .nav a{text-decoration:none}
-.nav a:hover{color:var(--red)}
+.nav a:hover{color:var(--red-ink)}
 .nav-cta{display:flex;gap:10px}
 .nav-links{display:flex;align-items:center;gap:22px}
 @media(max-width:980px){.nav-links ul{display:none}}
+/* On a phone the logo and two calls to action do not fit across the bar,
+   and the page scrolled sideways because of it. The secondary action is
+   dropped from the sticky bar below 760px; it is still the second button
+   in the hero, so nothing is lost. */
+@media(max-width:760px){
+  .nav .wrap{gap:10px}
+  .nav img{height:38px}
+  .nav-cta .btn-ghost-dark{display:none}
+  .nav-cta .btn{padding:11px 16px;font-size:14px;white-space:nowrap}
+}
 
 /* Hero banner */
 .hero-banner{position:relative;min-height:clamp(360px,46vw,560px);display:flex;align-items:center;overflow:hidden;background:#0c0c0f}
@@ -266,13 +289,13 @@ section{padding:64px 0}
 @media(max-width:520px){.ind-grid{grid-template-columns:1fr}}
 .pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);display:inline-block;transition:border-color .15s ease,color .15s ease}
-.pill:hover{border-color:var(--red);color:var(--red)}
+.pill:hover{border-color:var(--red);color:var(--red-ink)}
 
 /* Packages */
 .packs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .pack{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;display:flex;flex-direction:column}
 .pack.featured{border-color:var(--red);box-shadow:0 18px 40px rgba(237,27,36,.08)}
-.pack .tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--red);margin-bottom:8px}
+.pack .tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--red-ink);margin-bottom:8px}
 .pack h3{font-size:22px}
 .pack .price{font-family:Bebas Neue,Montserrat,sans-serif;font-size:34px;color:var(--ink);margin:14px 0 2px;line-height:1}
 .pack .price small{font-family:Inter,Arial,sans-serif;font-size:13px;font-weight:600;color:var(--ink-2);display:block;margin-top:6px;line-height:1.4}
@@ -304,17 +327,17 @@ section{padding:64px 0}
 .faq summary{font-weight:700;cursor:pointer;font-size:16px;list-style:none}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary:after{content:"+";float:right;color:var(--red);font-size:20px;line-height:1;transition:transform .15s ease}
-.faq details[open] summary{color:var(--red)}
+.faq details[open] summary{color:var(--red-ink)}
 .faq details[open] summary:after{transform:rotate(45deg)}
 .faq p{color:var(--ink-2);font-size:15px;margin:.7em 0 0}
 @media(max-width:760px){.faq{grid-template-columns:1fr}}
 
 /* Divider + CTA band */
 .divider{width:100%;height:auto;display:block;margin:8px 0 0;opacity:.9}
-.cta-band{background:var(--red);color:#fff;border-radius:18px;padding:44px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.cta-band{background:var(--red-ink);color:#fff;border-radius:18px;padding:44px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
 .cta-band h2{color:#fff}
 .cta-band p{margin:.3em 0 0;color:#ffe3e4}
-.cta-band .btn{background:#fff;color:var(--red)}
+.cta-band .btn{background:#fff;color:var(--red-ink)}
 .cta-band .btn:hover{background:#fff2f2}
 
 /* Footer */
