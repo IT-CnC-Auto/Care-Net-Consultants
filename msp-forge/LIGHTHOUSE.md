@@ -1,16 +1,15 @@
-# Medical Surveillance Plans page | Lighthouse audit | 16/08/2026
+# Public pages | Lighthouse audit | 16/08/2026
 
-Lighthouse 13.4.1, run locally against Chromium, four mobile runs and two desktop runs. Every run returned the same figures.
+Lighthouse 13.4.1, run locally against Chromium. All four public pages, mobile and desktop, repeated runs, same figures every time.
 
-| Category | Mobile | Desktop |
-| --- | --- | --- |
-| Performance | 100 | 100 |
-| Accessibility | 100 | 100 |
-| Best Practices | 100 | 100 |
-| SEO | 100 | 100 |
-| Agentic Browsing | 100 | 100 |
+| Page | Performance | Accessibility | Best Practices | SEO |
+| --- | --- | --- | --- | --- |
+| `/medical-surveillance-plans` | 100 | 100 | 100 | 100 |
+| `/industry?code=XXX` | 100 | 100 | 100 | 100 |
+| `/method` | 100 | 100 | 100 | 100 |
+| `/pilot` | 100 | 100 | 100 | 100 |
 
-Desktop metrics: first contentful paint 225 ms, largest contentful paint 403 ms, cumulative layout shift 0, total blocking time 0 ms. Ninety six audits pass.
+Service page desktop metrics: first contentful paint 225 ms, largest contentful paint 403 ms, cumulative layout shift 0, total blocking time 0 ms.
 
 ## What was wrong, and what was done about it
 
@@ -38,3 +37,28 @@ The performance hundred is measured against a local mirror, because the build en
 2. The canonical host is resolved to `https://www.carenetconsultants.co.za`, which is the host the page's own navigation, footer and privacy links already point at. If the page will live at a different slug, change the canonical, the og:url, the hreflang and the three breadcrumb items.
 3. The analytics container identifier is still absent and was never invented. The consent loader works correctly without it and denies every storage category until a visitor accepts.
 4. The accent split described above is a brand decision as well as an accessibility one. It is reversible in one line, but reversing it costs the accessibility hundred.
+
+
+## The other three pages
+
+### The industry journey page
+
+It scored 90 / 96 / 92 / 100 first time and carried the same four defects as the service page: charset at byte 1020, one byte inside the limit and one edit away from failing; the font content delivery network; the contrast of white on the brand red; and a footer that scrolled sideways under 400 pixels because the sales desk address is one unbroken thirty three character token.
+
+It also had a fifth defect that only appeared once the audit harness could actually reach the framework, and it was the worst one on any page: **cumulative layout shift of 0.60**. The page paints a short placeholder heading, then replaces it with the real industry name and a three sentence lede, and reveals the whole content block at once. Everything below jumped. Three fixes, all measured rather than guessed:
+
+- The eyebrow, heading and lede reserve enough height for the longest industry name at every width. The longest is "Telecommunications and tower work", which takes five lines at 320 pixels, four to 620, three to 767 and two above that.
+- The placeholder text now has the same shape as the loaded text instead of a short holding line.
+- The loading block holds sixty percent of the viewport, so the footer starts below the fold and does not move when the content appears.
+
+Shift is now 0.006 on mobile and 0.016 on desktop, against a 0.1 threshold.
+
+### The method and pilot pages
+
+Both scored 100 on performance and best practices first time, and failed accessibility at 84 and 85. Three causes, all mechanical:
+
+- The brand red was used directly as small text and as button fills, the same 4.39 to 1 problem. Both pages now use the deeper ink.
+- The Care Net mark in the dark page header measured 2.77 to 1 against the charcoal ground. A red on a dark ground has to be lighter, not darker, so it uses #FF6B70 at 6.0 to 1. That token is only ever used on dark.
+- Navigation links were 13 pixel text with three pixels of padding, so the tap targets were nineteen pixels tall and eighteen apart. They are now forty four pixels tall with real spacing, which is the accessible minimum and also simply easier to hit.
+
+Both also lacked a meta description, which capped SEO at 90. Both now have one.
