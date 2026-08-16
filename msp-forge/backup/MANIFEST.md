@@ -1,6 +1,6 @@
 # Cognitive Kernel backup manifest
 
-Generated 14/08/2026. Kernel version 1.0.0 plus the productisation and shop journey migrations.
+Regenerated 15/08/2026. Framework version 1.0.0 plus the productisation, shop journey, public marketing views, runtime parameter store and assistant connection migrations.
 
 Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending and uncitable), 17 industries, 56 of 56 selectable subindustries, 316 roles, 851 hazard links, 30 protocols, 2 shop packages.
 
@@ -38,6 +38,19 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 030_msp_cognitive_kernel_product.sql (13412 bytes)
 - 031_msp_shop_journey.sql (8549 bytes)
 - 032_msp_quote_status_fix.sql (451 bytes)
+- 033_msp_public_industry_profile.sql (3620 bytes)
+- 034_msp_env_parameters_ai.sql (20410 bytes)
+- 035_msp_agent_schedule.sql (7490 bytes)
+- 036_msp_ai_identity_limits.sql (5321 bytes)
+- 037_msp_env_ai_grant_lockdown.sql (3862 bytes)
+- 038_msp_audit_schedule_dedup.sql (2246 bytes)
+
+## Not SQL, and therefore not in the rebuild script
+
+- supabase/functions/msp-assistant/index.ts, the assistant connection. Deploy it separately.
+- vercel/settings.html, the settings page that reads and writes the parameter store.
+- WIRING.html, the system reference: every page, endpoint, table, function, parameter and scheduled job, read from the live project.
+- Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project.
 
 ## Rebuild procedure
 
@@ -45,4 +58,6 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 2. Replay cognitive_kernel_rebuild.sql (or the migrations in order).
 3. Configure roles via JWT app_metadata.msp_roles: forge_agent, forge_verifier, forge_omp, forge_admin.
 4. Prove the rebuild: run agent/run_pipeline.js with agent/kernel_snapshot_constr.json and test/normalised_synthetic.json; require 9 of 9 validation checks, then render and require 16 of 16 geometry assertions.
-5. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent and version control.
+5. Deploy the assistant connection: supabase/functions/msp-assistant/index.ts, and set ANTHROPIC_API_KEY in the project's function secrets. Without that key the connection answers that it is not configured and records the refusal.
+6. Confirm the schedule: msp_agent_schedule_status() should show job msp_monthly_audit on the day and hour held in the agent parameters.
+7. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent, the parameter store and version control.

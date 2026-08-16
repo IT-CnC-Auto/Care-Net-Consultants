@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>CNC MSP FORGE Settings</title>
+<style>
+  :root { --red: #ED1B24; --charcoal: #1A1A1A; }
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
+  header { background: var(--charcoal); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  nav { margin: 16px 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  nav button { background: #fff; border: 1px solid #ccc; padding: 9px 16px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+  nav button.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .card { background: #fff; border-radius: 8px; padding: 18px 20px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h3 { margin: 0 0 8px; font-size: 15px; }
+  .cat { margin: 0 0 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--red); font-weight: bold; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { background: var(--charcoal); color: #fff; text-align: left; padding: 7px 9px; }
+  td { border-bottom: 1px solid #e2e2e2; padding: 7px 9px; vertical-align: top; }
+  tr:nth-child(even) td { background: #f7f7f7; }
+  .key { font-family: "Courier New", monospace; font-size: 12px; }
+  .param { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start;
+           border-bottom: 1px solid #eee; padding: 12px 0; }
+  .param:last-child { border-bottom: none; }
+  .param .desc { color: #555; font-size: 12px; margin: 3px 0 0; max-width: 620px; }
+  .param .meta { color: #999; font-size: 11px; margin-top: 4px; }
+  .param .edit { display: flex; gap: 6px; align-items: center; }
+  .param input, .param select { padding: 7px 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; min-width: 170px; }
+  .param button { background: var(--red); color: #fff; border: none; padding: 8px 14px; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; }
+  .param button[disabled] { background: #bbb; cursor: default; }
+  .note { background: #fff8e6; border-left: 3px solid #e0a800; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
+  .good { background: #e8f7ec; border-left: 3px solid #2e7d32; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
+  .bar { height: 9px; background: #eee; border-radius: 5px; overflow: hidden; margin: 8px 0; }
+  .bar span { display: block; height: 100%; background: var(--red); }
+  #login { max-width: 420px; margin: 60px auto; }
+  #login input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+  #login button { width: 100%; background: var(--red); color: #fff; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  .muted { color: #777; font-size: 12px; }
+  #msg { margin: 10px 0; font-size: 13px; }
+  textarea { width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 13px; }
+  .answer { white-space: pre-wrap; background: #fafafa; border: 1px solid #e2e2e2; border-radius: 6px; padding: 14px; font-size: 13px; line-height: 1.55; }
+</style>
+</head>
+<body>
+<header>
+  <div><span class="brand">CARE NET CONSULTANTS</span> &middot; MSP FORGE Settings</div>
+  <div id="who" class="muted"></div>
+</header>
+<main>
+  <div id="login" class="card">
+    <h3>Administrator sign in</h3>
+    <p class="muted">Reading the running configuration needs any forge role. Changing it needs forge_admin. A magic link is emailed to you and no passwords are stored.</p>
+    <input id="email" type="email" placeholder="name@carenetconsultants.co.za">
+    <button id="send">Email me a sign in link</button>
+    <div id="msg"></div>
+  </div>
+
+  <div id="app" style="display:none">
+    <nav>
+      <button data-tab="params" class="active">Parameters</button>
+      <button data-tab="history">Change history</button>
+      <button data-tab="schedule">Schedule</button>
+      <button data-tab="usage">Assistant usage</button>
+      <button data-tab="test">Assistant test</button>
+    </nav>
+    <div id="content"></div>
+  </div>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SUPABASE_URL = 'https://pboebfnujzffgwctsplw.supabase.co';
+const supabase = createClient(SUPABASE_URL, 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj');
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let isAdmin = false;
+
+const CATEGORY_TITLE = {
+  ai: 'The assistant',
+  agent: 'The monthly agent',
+  clinical: 'Clinical floors',
+  commercial: 'Commercial',
+  integration: 'Integrations',
+  retention: 'Retention',
+};
+const CATEGORY_NOTE = {
+  clinical: 'These are regulatory minima carried in the framework, not preferences. Raising one needs a legal basis and a practitioner decision, and the change is recorded against your name.',
+  ai: 'Every one of these is read on each assistant call. A change here takes effect on the next question asked, with nothing redeployed.',
+  agent: 'Changing the audit day or hour moves the scheduled job in the same action. Check the Schedule tab afterwards to see it.',
+};
+
+$('#send').onclick = async () => {
+  const email = $('#email').value.trim();
+  if (!email) return;
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
+  $('#msg').textContent = error ? 'Sign in failed: ' + error.message : 'Link sent. Check your inbox.';
+};
+
+async function boot() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  $('#login').style.display = 'none';
+  $('#app').style.display = 'block';
+  const roles = (session.user.app_metadata && session.user.app_metadata.msp_roles) || [];
+  isAdmin = roles.includes('forge_admin');
+  $('#who').textContent = session.user.email + ' · roles: ' + (roles.join(', ') || 'none assigned')
+    + (isAdmin ? '' : ' · read only');
+  show('params');
+}
+
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  show(b.dataset.tab);
+});
+
+function control(p) {
+  const disabled = isAdmin ? '' : ' disabled';
+  if (p.value_type === 'boolean') {
+    return `<select data-key="${esc(p.key)}"${disabled}>
+      <option value="true"${p.value === 'true' ? ' selected' : ''}>true</option>
+      <option value="false"${p.value === 'false' ? ' selected' : ''}>false</option></select>`;
+  }
+  if (p.value_type === 'enum' && Array.isArray(p.allowed_values)) {
+    return `<select data-key="${esc(p.key)}"${disabled}>` +
+      p.allowed_values.map(v => `<option${v === p.value ? ' selected' : ''}>${esc(v)}</option>`).join('') +
+      '</select>';
+  }
+  const t = (p.value_type === 'integer' || p.value_type === 'decimal') ? 'number' : 'text';
+  const step = p.value_type === 'decimal' ? ' step="0.01"' : '';
+  const lo = p.min_value !== null ? ` min="${esc(p.min_value)}"` : '';
+  const hi = p.max_value !== null ? ` max="${esc(p.max_value)}"` : '';
+  const wide = (p.value || '').length > 40 ? ' style="min-width:340px"' : '';
+  return `<input type="${t}"${step}${lo}${hi}${wide} data-key="${esc(p.key)}" value="${esc(p.value)}"${disabled}>`;
+}
+
+function bounds(p) {
+  const bits = [];
+  if (p.min_value !== null || p.max_value !== null) {
+    bits.push('range ' + (p.min_value !== null ? p.min_value : 'any') + ' to ' + (p.max_value !== null ? p.max_value : 'any'));
+  }
+  if (p.value_type === 'enum' && Array.isArray(p.allowed_values)) bits.push('one of ' + p.allowed_values.join(', '));
+  bits.push('last changed by ' + (p.updated_by || 'unknown') + ' on ' + String(p.updated_at || '').slice(0, 10));
+  return bits.join(' · ');
+}
+
+const tabs = {
+  async params() {
+    const { data, error } = await supabase.from('msp_env_parameter').select('*').order('category').order('key');
+    if (error) return `<div class="card">The parameter store is not readable with this sign in: ${esc(error.message)}. Your account may not carry a forge role yet.</div>`;
+    if (!data.length) return '<div class="card">No parameters are declared.</div>';
+    const byCat = {};
+    data.forEach(p => { (byCat[p.category] = byCat[p.category] || []).push(p); });
+    let html = isAdmin ? '' : '<div class="note">You are signed in without forge_admin, so the values below are shown but cannot be changed.</div>';
+    for (const cat of Object.keys(byCat)) {
+      html += `<div class="card"><p class="cat">${esc(CATEGORY_TITLE[cat] || cat)}</p>`;
+      if (CATEGORY_NOTE[cat]) html += `<div class="note">${esc(CATEGORY_NOTE[cat])}</div>`;
+      html += byCat[cat].map(p => `
+        <div class="param">
+          <div>
+            <span class="key">${esc(p.key)}</span>
+            <p class="desc">${esc(p.description)}</p>
+            <p class="meta">${esc(bounds(p))}</p>
+          </div>
+          <div class="edit">
+            ${control(p)}
+            <button data-save="${esc(p.key)}"${isAdmin ? '' : ' disabled'}>Save</button>
+          </div>
+        </div>`).join('');
+      html += '</div>';
+    }
+    return html;
+  },
+
+  async history() {
+    const { data, error } = await supabase.from('msp_env_parameter_history')
+      .select('*').order('changed_at', { ascending: false }).limit(100);
+    if (error) return `<div class="card">The change history is visible to forge_admin and forge_omp: ${esc(error.message)}</div>`;
+    if (!data.length) return '<div class="card">No parameter has been changed since the store was created.</div>';
+    return table('Parameter changes, most recent hundred', ['When','Parameter','From','To','By','Reason'],
+      data.map(h => [String(h.changed_at).replace('T',' ').slice(0,19), h.key, h.old_value, h.new_value, h.changed_by, h.reason || '']));
+  },
+
+  async schedule() {
+    const { data, error } = await supabase.rpc('msp_agent_schedule_status');
+    if (error) return `<div class="card">${esc(error.message)}</div>`;
+    const rows = (data || []).map(j => [j.job, j.schedule, j.command, j.active ? 'active' : 'paused']);
+    let html = rows.length
+      ? table('What is actually scheduled', ['Job','Cron, in UTC','Runs','State'], rows)
+      : '<div class="card">Nothing is scheduled.</div>';
+    const { data: runs } = await supabase.from('msp_kernel_agent_run')
+      .select('*').order('run_on', { ascending: false }).limit(10);
+    if (runs && runs.length) {
+      html += table('Recent agent runs', ['Date','Kind','Outcome','Report'],
+        runs.map(r => [r.run_on, r.kind, r.outcome, JSON.stringify(r.report).slice(0, 160)]));
+    } else {
+      html += '<div class="card"><h3>Recent agent runs</h3><p class="muted">The audit has not run yet. It runs on the day and hour set in the agent parameters.</p></div>';
+    }
+    return html;
+  },
+
+  async usage() {
+    const { data, error } = await supabase.rpc('msp_ai_usage_summary');
+    if (error) return `<div class="card">The usage summary needs forge_admin: ${esc(error.message)}</div>`;
+    const spend = Number(data.month_spend_usd || 0), ceiling = Number(data.ceiling_usd || 0);
+    const pct = ceiling > 0 ? Math.min(100, (spend / ceiling) * 100) : 0;
+    let html = `<div class="card">
+      <h3>This calendar month</h3>
+      <p>Spent ${spend.toFixed(2)} United States dollars of a ${ceiling.toFixed(2)} ceiling.</p>
+      <div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div>
+      <p class="muted">The ceiling is enforced before the call is made, not after. Once it is reached the assistant refuses and says so, and every refusal is recorded below.</p>
+    </div>`;
+    html += (data.by_action || []).length
+      ? table('By action, this month', ['Action','Calls','Answered','Cost in US dollars'],
+          data.by_action.map(a => [a.action, a.calls, a.ok, Number(a.cost_usd).toFixed(4)]))
+      : '<div class="card">No assistant calls this month.</div>';
+    if ((data.recent || []).length) {
+      html += table('Most recent calls', ['When','Action','Who','Outcome','Cost','Latency'],
+        data.recent.map(r => [String(r.at).replace('T',' ').slice(0,19), r.action, r.actor, r.outcome,
+          r.cost_usd === null ? '' : Number(r.cost_usd).toFixed(4), r.latency_ms === null ? '' : r.latency_ms + ' ms']));
+    }
+    return html;
+  },
+
+  async test() {
+    const { data: inds } = await supabase.from('msp_public_industry_profile').select('code, name').order('name');
+    const opts = (inds || []).map(i => `<option value="${esc(i.code)}">${esc(i.name)}</option>`).join('');
+    return `<div class="card">
+      <h3>Ask the assistant</h3>
+      <p class="muted">This calls the live connection with the settings above. The answer is grounded only in the verified framework rows for the industry you pick, and the call is priced and recorded on the usage tab.</p>
+      <div class="param" style="border:none">
+        <div style="width:100%">
+          <select id="t-action" style="padding:8px;border:1px solid #ccc;border-radius:5px;margin-bottom:8px">
+            <option value="industry_brief">Internal brief on an industry</option>
+            <option value="explain_plan">Explain the plan to a client</option>
+            <option value="triage_other">Triage a business description to an industry</option>
+          </select>
+          <select id="t-industry" style="padding:8px;border:1px solid #ccc;border-radius:5px;margin:0 0 8px 8px">${opts}</select>
+          <textarea id="t-question" rows="3" placeholder="Your question, or the business description to triage."></textarea>
+          <button id="t-go" style="margin-top:8px;background:#ED1B24;color:#fff;border:none;padding:10px 18px;border-radius:5px;font-weight:bold;cursor:pointer">Ask</button>
+        </div>
+      </div>
+      <div id="t-out"></div>
+    </div>`;
+  },
+};
+
+function table(title, headers, rows) {
+  return `<div class="card"><h3>${esc(title)}</h3><table><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr>` +
+    rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('') + '</table></div>';
+}
+
+async function askAssistant() {
+  const out = $('#t-out');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { out.innerHTML = '<div class="note">Your session has expired. Sign in again.</div>'; return; }
+  out.innerHTML = '<p class="muted">Asking. This can take a little while at high effort.</p>';
+  const started = Date.now();
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/msp-assistant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
+      body: JSON.stringify({
+        action: $('#t-action').value,
+        industry_code: $('#t-industry').value,
+        question: $('#t-question').value,
+      }),
+    });
+    const body = await res.json();
+    if (!res.ok) { out.innerHTML = `<div class="note">${esc(body.error || 'The call failed.')}</div>`; return; }
+    out.innerHTML = `<div class="good">Answered on ${esc(body.model)} at ${esc(body.effort)} effort, instruction set ${esc(body.prompt_version)}, grounded on ${esc(body.grounded_on)}, in ${Math.round((Date.now() - started) / 1000)} seconds.</div>
+      <div class="answer">${esc(body.answer)}</div>
+      <p class="muted">${esc(body.notice)}</p>`;
+  } catch (e) {
+    out.innerHTML = `<div class="note">${esc(e.message)}</div>`;
+  }
+}
+
+async function show(tab) {
+  $('#content').innerHTML = '<div class="card muted">Loading…</div>';
+  $('#content').innerHTML = await tabs[tab]();
+
+  document.querySelectorAll('button[data-save]').forEach(b => b.onclick = async () => {
+    const key = b.dataset.save;
+    const field = document.querySelector(`[data-key="${CSS.escape(key)}"]`);
+    const reason = prompt('Why is this changing? The reason is stored with the change.', '');
+    if (reason === null) return;
+    b.disabled = true; b.textContent = 'Saving';
+    const { data, error } = await supabase.rpc('msp_env_set', {
+      p_key: key, p_value: String(field.value), p_reason: reason || null,
+    });
+    b.disabled = false; b.textContent = 'Save';
+    if (error) { alert('Refused: ' + error.message); return; }
+    alert(key + ' changed from ' + data.old_value + ' to ' + data.new_value + '.');
+    show('params');
+  });
+
+  const go = $('#t-go');
+  if (go) go.onclick = askAssistant;
+}
+
+supabase.auth.onAuthStateChange(() => boot());
+boot();
+</script>
+</body>
+</html>

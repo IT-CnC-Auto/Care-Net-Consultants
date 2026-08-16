@@ -1,0 +1,473 @@
+<title>MSP Forge Wiring</title>
+<style>
+:root{
+  --ground:#FBFAF9; --surface:#FFFFFF; --surface-2:#F5F2F0; --surface-3:#EFEAE7;
+  --ink:#191716; --ink-2:#5C5350; --ink-3:#8A807C;
+  --line:#E4DEDB; --line-strong:#CFC7C3;
+  --accent:#ED1B24; --accent-ink:#AF1219; --accent-wash:#FDEDEE;
+  --ok:#1B6E45; --ok-wash:#E6F2EB;
+  --wait:#8A5F06; --wait-wash:#FBF1DC;
+  --off:#65707B; --off-wash:#EDEFF1;
+  --display:ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --body:ui-serif,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#141110; --surface:#1C1918; --surface-2:#231F1D; --surface-3:#2B2523;
+    --ink:#F2EDE9; --ink-2:#B3A8A2; --ink-3:#877B74;
+    --line:#332C29; --line-strong:#4B413C;
+    --accent:#FF5057; --accent-ink:#FF8085; --accent-wash:#2E1A1B;
+    --ok:#5FD08D; --ok-wash:#14291E;
+    --wait:#E3B45A; --wait-wash:#2C2415;
+    --off:#9AA4AE; --off-wash:#242A2F;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#141110; --surface:#1C1918; --surface-2:#231F1D; --surface-3:#2B2523;
+  --ink:#F2EDE9; --ink-2:#B3A8A2; --ink-3:#877B74;
+  --line:#332C29; --line-strong:#4B413C;
+  --accent:#FF5057; --accent-ink:#FF8085; --accent-wash:#2E1A1B;
+  --ok:#5FD08D; --ok-wash:#14291E;
+  --wait:#E3B45A; --wait-wash:#2C2415;
+  --off:#9AA4AE; --off-wash:#242A2F;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.masthead{
+  border-bottom:1px solid var(--line-strong); background:var(--surface);
+  padding:34px 28px 26px;
+}
+.masthead .inner{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
+.rule{display:block;width:46px;height:5px;background:var(--accent);margin-bottom:16px}
+h1{
+  font-family:var(--display); font-size:clamp(28px,4.4vw,44px); font-weight:800;
+  letter-spacing:-.025em; line-height:1.05; margin:0; text-wrap:balance;
+}
+.sub{font-size:15px;color:var(--ink-2);margin:10px 0 0;max-width:58ch}
+.stamp{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);line-height:1.9;text-align:right}
+.stamp b{color:var(--ink-2);font-weight:600}
+
+.shell{max-width:1180px;margin:0 auto;padding:0 28px 90px;display:grid;grid-template-columns:212px minmax(0,1fr);gap:52px}
+@media (max-width:940px){.shell{grid-template-columns:1fr;gap:0}}
+
+nav.toc{position:sticky;top:24px;align-self:start;padding-top:38px;font-family:var(--display);font-size:12.5px}
+@media (max-width:940px){nav.toc{position:static;padding:26px 0 0;border-bottom:1px solid var(--line)}}
+nav.toc p{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px;font-weight:700}
+nav.toc a{display:block;color:var(--ink-2);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);line-height:1.35}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--accent-ink);border-left-color:var(--accent)}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+main{padding-top:38px;min-width:0}
+section{padding:0 0 46px;scroll-margin-top:20px}
+.eyebrow{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);font-weight:700;margin:0 0 6px}
+h2{font-family:var(--display);font-size:23px;font-weight:750;letter-spacing:-.015em;margin:0 0 4px;text-wrap:balance}
+h3{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.005em;margin:30px 0 8px}
+p{margin:0 0 14px;max-width:70ch}
+.lede{font-size:17px;color:var(--ink-2)}
+code,.m{font-family:var(--mono);font-size:.855em;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px;white-space:nowrap}
+a{color:var(--accent-ink)}
+
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin:16px 0 6px}
+table{border-collapse:collapse;width:100%;font-family:var(--display);font-size:13px;line-height:1.45}
+th{
+  text-align:left;font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);padding:11px 14px;border-bottom:1px solid var(--line-strong);white-space:nowrap;
+  background:var(--surface-2);
+}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-2)}
+td:first-child{color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:none}
+td .m,th .m{font-size:12px;white-space:nowrap}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+
+.chip{display:inline-block;font-family:var(--display);font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:2px 8px;border-radius:3px;white-space:nowrap}
+.chip.live{background:var(--ok-wash);color:var(--ok)}
+.chip.wait{background:var(--wait-wash);color:var(--wait)}
+.chip.off{background:var(--off-wash);color:var(--off)}
+.chip.brand{background:var(--accent-wash);color:var(--accent-ink)}
+
+.callout{border-left:3px solid var(--accent);background:var(--surface);padding:14px 18px;margin:18px 0;border-radius:0 6px 6px 0}
+.callout p{margin:0;font-size:15px}
+.callout p+p{margin-top:9px}
+
+.lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0 8px}
+@media (max-width:760px){.lanes{grid-template-columns:1fr}}
+.lane{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden;display:flex;flex-direction:column}
+.lane header{padding:12px 14px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.lane h4{font-family:var(--display);font-size:13.5px;font-weight:750;margin:0 0 2px}
+.lane .who{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.lane ol{list-style:none;margin:0;padding:12px 14px 14px;font-family:var(--display);font-size:12.5px;flex:1}
+.lane li{position:relative;padding:0 0 0 16px;margin:0 0 9px;color:var(--ink-2);line-height:1.4}
+.lane li:last-child{margin-bottom:0}
+.lane li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;background:var(--line-strong)}
+.lane li.stop::before{background:var(--accent)}
+.lane li b{color:var(--ink);font-weight:650}
+.lane footer{padding:10px 14px;border-top:1px solid var(--line);font-family:var(--display);font-size:11.5px;color:var(--ink-3)}
+
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);margin:16px 0;font-family:var(--display);font-size:13px}
+.kv dt{padding:9px 14px;border-bottom:1px solid var(--line);background:var(--surface-2);font-weight:650;white-space:nowrap}
+.kv dd{padding:9px 14px;border-bottom:1px solid var(--line);margin:0;color:var(--ink-2)}
+.kv dt:last-of-type,.kv dd:last-of-type{border-bottom:none}
+
+footer.end{border-top:1px solid var(--line-strong);margin-top:20px;padding:26px 0 0;font-family:var(--display);font-size:12.5px;color:var(--ink-3);max-width:70ch}
+</style>
+
+<div class="masthead">
+  <div class="inner">
+    <div>
+      <span class="rule"></span>
+      <h1>MSP Forge Wiring</h1>
+      <p class="sub">Every page, endpoint, table, function, parameter and scheduled job in the medical surveillance planning system, and exactly what each one is connected to.</p>
+    </div>
+    <div class="stamp">
+      <div><b>Snapshot</b> 15/08/2026</div>
+      <div><b>Supabase</b> pboebfnujzffgwctsplw</div>
+      <div><b>Vercel</b> cnc-msp-forge</div>
+      <div><b>Migrations</b> 001 to 038</div>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+<nav class="toc">
+  <p>Contents</p>
+  <a href="#map">The map</a>
+  <a href="#access">Who reaches what</a>
+  <a href="#pages">Website pages</a>
+  <a href="#api">Server endpoints</a>
+  <a href="#tables">Database tables</a>
+  <a href="#views">Views</a>
+  <a href="#functions">Functions and grants</a>
+  <a href="#params">Parameter store</a>
+  <a href="#assistant">Assistant connection</a>
+  <a href="#cron">Scheduled jobs</a>
+  <a href="#security">Security posture</a>
+  <a href="#settings">Settings to complete</a>
+</nav>
+
+<main>
+
+<section id="map">
+  <p class="eyebrow">Orientation</p>
+  <h2>The map in one paragraph</h2>
+  <p class="lede">A static site on Vercel, a Postgres database on Supabase, and three ways in. Anyone can read two deliberately public views. A signed in person reaches the framework through row level security. Everything transactional goes through server endpoints that hold the service key, and everything the assistant does goes through one edge function that reads its own settings from the database on every call.</p>
+  <dl class="kv">
+    <dt>Front end</dt><dd>Static HTML and four serverless endpoints in <span class="m">msp-forge/vercel/</span>, deployed to the Vercel project <span class="m">cnc-msp-forge</span></dd>
+    <dt>Database</dt><dd>Supabase project <span class="m">pboebfnujzffgwctsplw</span>, shared with other Care Net systems. Every object in this build is prefixed <span class="m">msp_</span> so it is additive and never collides</dd>
+    <dt>Assistant</dt><dd>Supabase edge function <span class="m">msp-assistant</span>, one of ten functions on the project</dd>
+    <dt>Source of truth</dt><dd>38 migration files in <span class="m">msp-forge/supabase/migrations/</span>. Replaying them into an empty project rebuilds everything</dd>
+    <dt>Identity</dt><dd>Supabase Auth magic link. Roles carried in <span class="m">app_metadata.msp_roles</span>: forge_agent, forge_verifier, forge_omp, forge_admin</dd>
+  </dl>
+</section>
+
+<section id="access">
+  <p class="eyebrow">Access model</p>
+  <h2>Who reaches what</h2>
+  <p>Three lanes, and they do not overlap. The red mark is where each lane stops.</p>
+  <div class="lanes">
+    <div class="lane">
+      <header><h4>Anyone on the internet</h4><div class="who">role: anon</div></header>
+      <ol>
+        <li>Reads <b>msp_public_industry_profile</b> and <b>msp_public_framework_stats</b> with the publishable key</li>
+        <li>Sees industry names, verified instrument names and gazette applicability notes, role titles, hazard and protocol names, counts</li>
+        <li class="stop">Reaches <b>zero rows</b> of every other table, and <b>no</b> parameter or assistant function</li>
+      </ol>
+      <footer>Marketing surface only. No client data, nothing clinical.</footer>
+    </div>
+    <div class="lane">
+      <header><h4>A signed in company</h4><div class="who">Auth user linked to msp_client_account</div></header>
+      <ol>
+        <li>Signs in by magic link on <b>account.html</b></li>
+        <li>Reaches its own account, packs and revisions under row level security</li>
+        <li>May ask the assistant one action, <b>explain_plan</b>, rate limited per hour</li>
+        <li class="stop">Never reaches the framework tables, the register, or another company's anything</li>
+      </ol>
+      <footer>Client access is itself a parameter and can be switched off.</footer>
+    </div>
+    <div class="lane">
+      <header><h4>Care Net staff</h4><div class="who">a forge role in the JWT</div></header>
+      <ol>
+        <li>Signs in on <b>review.html</b> or <b>settings.html</b></li>
+        <li>Reads the framework, the registers and the audit tail by role</li>
+        <li><b>forge_omp</b> decides, recommends and signs. <b>forge_admin</b> changes parameters and cuts releases</li>
+        <li class="stop">No role releases a pack without a practitioner signature. The database trigger, not the interface, enforces that</li>
+      </ol>
+      <footer>Every function checks the role in its own body. The interface is never trusted.</footer>
+    </div>
+  </div>
+</section>
+
+<section id="pages">
+  <p class="eyebrow">Vercel, browser tier</p>
+  <h2>Website pages</h2>
+  <p>Ten pages. The public ones read the framework directly in the browser with the publishable key, which needs no configuration. The transactional ones call a server endpoint, which needs the service key.</p>
+  <div class="scroll"><table>
+    <tr><th>Path</th><th>What it is</th><th>Reads</th><th>State</th></tr>
+    <tr><td><span class="m">/medical-surveillance-plans.html</span></td><td>The service page, CNC house style</td><td>msp_public_framework_stats</td><td><span class="chip live">Live</span></td></tr>
+    <tr><td><span class="m">/industry.html?code=XXX</span></td><td>Full journey for one of the 17 industries: instruments, subindustries, roles, hazards, protocols</td><td>msp_public_industry_profile</td><td><span class="chip live">Live</span></td></tr>
+    <tr><td><span class="m">/pilot.html</span></td><td>The complete journey walkthrough with the live statistics band</td><td>msp_public_framework_stats</td><td><span class="chip live">Live</span></td></tr>
+    <tr><td><span class="m">/method.html</span></td><td>How the Care Net Method works, client facing</td><td>Static</td><td><span class="chip live">Live</span></td></tr>
+    <tr><td><span class="m">/review.html</span></td><td>Practitioner interface: queue, decisions, recommendations, signature, registers, audit tail</td><td>msp_review_queue, msp_confirmation_item, msp_kernel_exclusion, msp_verification_due, msp_audit</td><td><span class="chip wait">Needs a forge_omp user</span></td></tr>
+    <tr><td><span class="m">/settings.html</span></td><td>Parameters, change history, live schedule, assistant spend, assistant test panel</td><td>msp_env_parameter, msp_env_parameter_history, msp_kernel_agent_run, three RPCs, the edge function</td><td><span class="chip live">Live</span></td></tr>
+    <tr><td><span class="m">/index.html</span></td><td>Landing page: sign on or instant quotation</td><td>/api/signon, /api/quote</td><td><span class="chip off">Needs Vercel keys</span></td></tr>
+    <tr><td><span class="m">/shop.html</span></td><td>Packages and pricing</td><td>/api/quote</td><td><span class="chip off">Needs Vercel keys</span></td></tr>
+    <tr><td><span class="m">/account.html</span></td><td>Company sign in and registration</td><td>/api/signon, /api/company-lookup</td><td><span class="chip off">Needs Vercel keys</span></td></tr>
+    <tr><td><span class="m">/assess.html</span></td><td>The assessment form behind a single use link. <span class="m">?demo=1</span> disables submission</td><td>/api/access-check, /api/intake</td><td><span class="chip off">Needs Vercel keys</span></td></tr>
+  </table></div>
+  <p style="font-size:14px;color:var(--ink-3);margin-top:10px">Also served: <span class="m">/samples/CNC-MSP-SAMPLE-Construction.pdf</span>, the watermarked sample plan.</p>
+</section>
+
+<section id="api">
+  <p class="eyebrow">Vercel, server tier</p>
+  <h2>Server endpoints</h2>
+  <p>Eight functions in <span class="m">msp-forge/vercel/api/</span>. They exist so the service key never reaches a browser. Each one calls a single controlled database function rather than writing tables directly.</p>
+  <div class="scroll"><table>
+    <tr><th>Endpoint</th><th>Calls</th><th>Needs</th></tr>
+    <tr><td><span class="m">/api/quote</span></td><td><span class="m">msp_create_quote</span></td><td>SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY</td></tr>
+    <tr><td><span class="m">/api/signon</span></td><td>insert <span class="m">msp_client_account</span></td><td>same</td></tr>
+    <tr><td><span class="m">/api/company-lookup</span></td><td><span class="m">msp_company_lookup</span></td><td>same</td></tr>
+    <tr><td><span class="m">/api/access-check</span></td><td><span class="m">msp_check_access</span></td><td>same</td></tr>
+    <tr><td><span class="m">/api/intake</span></td><td><span class="m">msp_ingest_intake</span></td><td>same</td></tr>
+    <tr><td><span class="m">/api/kernel-stats</span></td><td><span class="m">msp_kernel_counts</span></td><td>same</td></tr>
+    <tr><td><span class="m">/api/payment-confirm</span></td><td><span class="m">msp_grant_access</span></td><td>same, plus ADMIN_ACTION_SECRET</td></tr>
+    <tr><td><span class="m">/api/docuseal-webhook</span></td><td><span class="m">msp_ingest_intake</span> after validation</td><td>same, plus DOCUSEAL_WEBHOOK_SECRET</td></tr>
+  </table></div>
+  <div class="callout"><p>All eight are written, tested against the database and correct. None of them can authenticate, because the four environment variables have never been set in the Vercel project. Setting them and redeploying turns every one of these on at once, with no code change.</p></div>
+</section>
+
+<section id="tables">
+  <p class="eyebrow">Supabase, data tier</p>
+  <h2>Database tables</h2>
+  <p>Thirty nine tables, every one with row level security enabled and no policy for the anonymous role anywhere. Row counts are live as at the snapshot date.</p>
+
+  <h3>The framework</h3>
+  <p>The legal and clinical truth. Nothing reaches a deliverable unless the framework can cite it as verified.</p>
+  <div class="scroll"><table>
+    <tr><th>Table</th><th>Holds</th><th class="num">Rows</th></tr>
+    <tr><td><span class="m">msp_legal_instrument</span></td><td>Instruments under the triple verification protocol: primary text, corroboration, currency check</td><td class="num">37</td></tr>
+    <tr><td><span class="m">msp_industry</span></td><td>The industry taxonomy</td><td class="num">17</td></tr>
+    <tr><td><span class="m">msp_subindustry</span></td><td>Subindustries, all selectable</td><td class="num">56</td></tr>
+    <tr><td><span class="m">msp_job_role</span></td><td>Job roles across every subindustry</td><td class="num">316</td></tr>
+    <tr><td><span class="m">msp_job_hazard</span></td><td>Role to hazard mappings</td><td class="num">851</td></tr>
+    <tr><td><span class="m">msp_hazard</span></td><td>Canonical hazard key A to O, extensible</td><td class="num">18</td></tr>
+    <tr><td><span class="m">msp_test_protocol</span></td><td>Test protocols with dual justification</td><td class="num">30</td></tr>
+    <tr><td><span class="m">msp_industry_instrument</span></td><td>Which instruments apply to which industry, with applicability notes</td><td class="num">247</td></tr>
+    <tr><td><span class="m">msp_kernel_rule</span></td><td>Routing rules as data: compensation routing, noise transition, night work, employer as payer</td><td class="num">6</td></tr>
+    <tr><td><span class="m">msp_pricing</span></td><td>Industry rate card, all rows still placeholders</td><td class="num">17</td></tr>
+    <tr><td><span class="m">msp_precedent</span></td><td>House style material. Never a source of legal truth</td><td class="num">0</td></tr>
+  </table></div>
+
+  <h3>Governance and version control</h3>
+  <div class="scroll"><table>
+    <tr><th>Table</th><th>Holds</th><th class="num">Rows</th></tr>
+    <tr><td><span class="m">msp_confirmation_item</span></td><td>The confirmation register. No released pack carries an open item</td><td class="num">29</td></tr>
+    <tr><td><span class="m">msp_kernel_exclusion</span></td><td>Sources that failed a verification gate. An honest gap beats a confident guess</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_kernel_version</span></td><td>Semver release register with practitioner ratification fields</td><td class="num">1</td></tr>
+    <tr><td><span class="m">msp_kernel_agent_run</span></td><td>Every monthly audit and learning update</td><td class="num">1</td></tr>
+    <tr><td><span class="m">msp_omp_industry_review</span></td><td>One row per industry. All 17 sit at pending</td><td class="num">17</td></tr>
+    <tr><td><span class="m">msp_audit</span></td><td>Append only trail. Every classification, citation, draft, decision and release</td><td class="num">39</td></tr>
+  </table></div>
+
+  <h3>Clients, engagements and delivery</h3>
+  <div class="scroll"><table>
+    <tr><th>Table</th><th>Holds</th><th class="num">Rows</th></tr>
+    <tr><td><span class="m">msp_client_account</span></td><td>Sign on accounts, linked to Auth by <span class="m">auth_user_id</span>, with SLA status and annual volume</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_engagement</span></td><td>One engagement per plan, with its reference number</td><td class="num">1</td></tr>
+    <tr><td><span class="m">msp_intake</span> and five child tables</td><td>Sites, job categories, exposures, chemicals, files</td><td class="num">15</td></tr>
+    <tr><td><span class="m">msp_consent</span></td><td>Unbundled POPIA consent records with wording version and withdrawal mechanism</td><td class="num">3</td></tr>
+    <tr><td><span class="m">msp_form_access</span></td><td>Single use assessment tokens</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_draft</span></td><td>Drafts of record</td><td class="num">6</td></tr>
+    <tr><td><span class="m">msp_omp_review</span></td><td>Practitioner decisions with name, HPCSA number and timestamp</td><td class="num">1</td></tr>
+    <tr><td><span class="m">msp_omp_recommendation</span></td><td>Programme level recommendations. Never an individual, never a diagnosis</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_release</span></td><td>Released packs, behind the signature gate</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_document</span>, <span class="m">msp_defect</span>, <span class="m">msp_quote</span>, <span class="m">msp_package</span>, <span class="m">msp_client</span></td><td>Rendered documents, defect log, quotations, the two shop packages, legacy client rows</td><td class="num">5</td></tr>
+  </table></div>
+
+  <h3>Parameters and the assistant</h3>
+  <div class="scroll"><table>
+    <tr><th>Table</th><th>Holds</th><th class="num">Rows</th></tr>
+    <tr><td><span class="m">msp_env_parameter</span></td><td>The runtime parameter store. Never a secret value, only a reference</td><td class="num">29</td></tr>
+    <tr><td><span class="m">msp_env_parameter_history</span></td><td>Append only. Old value, new value, who, when, why</td><td class="num">0</td></tr>
+    <tr><td><span class="m">msp_ai_call_log</span></td><td>Every assistant call priced and attributed, refusals included</td><td class="num">0</td></tr>
+  </table></div>
+</section>
+
+<section id="views">
+  <p class="eyebrow">Supabase, data tier</p>
+  <h2>Views</h2>
+  <div class="scroll"><table>
+    <tr><th>View</th><th>Purpose</th><th>Readable by</th></tr>
+    <tr><td><span class="m">msp_public_industry_profile</span></td><td>The whole marketing surface for one industry: verified instruments with applicability notes, subindustries and their roles, hazards, protocols</td><td><span class="chip brand">anon</span> on purpose</td></tr>
+    <tr><td><span class="m">msp_public_framework_stats</span></td><td>Version and counts for the statistics bands</td><td><span class="chip brand">anon</span> on purpose</td></tr>
+    <tr><td><span class="m">msp_review_queue</span></td><td>What is waiting for the practitioner</td><td>forge roles</td></tr>
+    <tr><td><span class="m">msp_verification_due</span></td><td>Verified instruments within sixty days of their review date</td><td>forge roles</td></tr>
+  </table></div>
+  <div class="callout"><p>The two public views are the only deliberate hole in the wall, and they carry only what Care Net publishes on its own website anyway. They hold no client data, no exposure values and no clinical reference ranges.</p></div>
+</section>
+
+<section id="functions">
+  <p class="eyebrow">Supabase, logic tier</p>
+  <h2>Functions and grants</h2>
+  <p>Forty two functions. Every one that mutates checks the caller's role in its own body, so a forged request from a browser gets nothing the interface would have refused. The grant columns below are the live state after the lockdown in migration 037.</p>
+  <div class="scroll"><table>
+    <tr><th>Function</th><th>Does</th><th>anon</th><th>signed in</th><th>service</th></tr>
+    <tr><td><span class="m">msp_verify_instrument</span></td><td>Passes an instrument through the three verification gates</td><td>callable, blocked by RLS</td><td>yes</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_exclude_instrument</span></td><td>Records a gate failure in the exclusion register</td><td>callable, blocked by RLS</td><td>yes</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_ingest_intake</span></td><td>The single controlled write path for an assessment</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_create_quote</span></td><td>Prices a quotation, applies the free qualification rule</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_company_lookup</span></td><td>Resolves an email to a company and its SLA status</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_grant_access</span> and <span class="m">msp_check_access</span></td><td>Issues and consumes a single use assessment token</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_omp_decide</span>, <span class="m">msp_omp_sign</span>, <span class="m">msp_omp_recommend</span></td><td>The practitioner decision, signature and recommendation path</td><td>no</td><td>yes, role checked</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_release_pack</span></td><td>Releases a pack. Refuses without an approved, signed review</td><td>no</td><td>yes, role checked</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_engagement_export</span>, <span class="m">msp_engagement_erase</span></td><td>POPIA data subject access and erasure, respecting the retention floor</td><td>no</td><td>yes, role checked</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_kernel_monthly_audit</span></td><td>The standing correctness checks</td><td>no</td><td>yes, role checked</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_kernel_release</span></td><td>Cuts a semver release with a counts snapshot</td><td>no</td><td>forge_admin</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_env_set</span></td><td>The only write path into the parameter store</td><td>no</td><td>forge_admin</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_env_get</span>, <span class="m">msp_env_bundle</span> and the typed readers</td><td>Internal configuration reads</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_ai_preflight</span>, <span class="m">msp_ai_log</span>, <span class="m">msp_ai_context_*</span>, <span class="m">msp_ai_recent_calls</span>, <span class="m">msp_ai_client_identity</span></td><td>The assistant's preflight, ledger, grounding reads and limits</td><td>no</td><td>no</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_ai_usage_summary</span></td><td>Spend and recent calls for the settings page</td><td>no</td><td>forge_admin</td><td>yes</td></tr>
+    <tr><td><span class="m">msp_agent_reschedule</span>, <span class="m">msp_agent_schedule_status</span></td><td>Moves and reports the scheduled audit</td><td>no</td><td>role checked</td><td>yes</td></tr>
+  </table></div>
+  <p style="font-size:14px;color:var(--ink-3)">The two rows marked "callable, blocked by RLS" run with the caller's own rights, so an anonymous attempt fails at the row level security policy rather than at the grant. That was tested directly, not assumed.</p>
+</section>
+
+<section id="params">
+  <p class="eyebrow">Supabase, control tier</p>
+  <h2>The parameter store</h2>
+  <p>Twenty nine settings that can be changed on <span class="m">/settings.html</span> without a deployment. Reads are open to any forge role. Writes are forge_admin only, go through one validating function, and append to a history table that refuses updates and deletes.</p>
+
+  <h3>The assistant</h3>
+  <div class="scroll"><table>
+    <tr><th>Parameter</th><th>Now</th><th>What it controls</th></tr>
+    <tr><td><span class="m">ai.model</span></td><td><span class="m">claude-opus-5</span></td><td>The model. One of three permitted values</td></tr>
+    <tr><td><span class="m">ai.effort</span></td><td><span class="m">high</span></td><td>Reasoning effort. High for anything touching a clinical or legal question</td></tr>
+    <tr><td><span class="m">ai.thinking</span></td><td><span class="m">adaptive</span></td><td>Lets the model choose its own depth per question</td></tr>
+    <tr><td><span class="m">ai.max_output_tokens</span></td><td class="num">8000</td><td>Ceiling on a single response, floor 512, ceiling 64000</td></tr>
+    <tr><td><span class="m">ai.enabled</span></td><td><span class="m">true</span></td><td>Master switch. False and no call reaches the API</td></tr>
+    <tr><td><span class="m">ai.allow_client_facing</span></td><td><span class="m">true</span></td><td>Whether a client company may ask anything at all</td></tr>
+    <tr><td><span class="m">ai.monthly_cost_ceiling_usd</span></td><td class="num">200</td><td>Hard monthly ceiling, checked before the spend</td></tr>
+    <tr><td><span class="m">ai.client_hourly_limit</span></td><td class="num">20</td><td>Calls one client account may make in an hour</td></tr>
+    <tr><td><span class="m">ai.staff_hourly_limit</span></td><td class="num">120</td><td>Calls one member of staff may make in an hour</td></tr>
+    <tr><td><span class="m">ai.actions_enabled</span></td><td>four actions</td><td>Remove one from the list to switch it off</td></tr>
+    <tr><td><span class="m">ai.prompt_version</span></td><td><span class="m">1.0.0</span></td><td>Version of the instruction set, recorded against every answer</td></tr>
+    <tr><td><span class="m">ai.price_table_json</span></td><td>three models</td><td>Token prices used to price the ledger</td></tr>
+    <tr><td><span class="m">ai.api_key_ref</span></td><td><span class="m">supabase_secret:ANTHROPIC_API_KEY</span></td><td>Where the key lives. A reference only, enforced by a check constraint</td></tr>
+  </table></div>
+
+  <h3>The monthly agent</h3>
+  <div class="scroll"><table>
+    <tr><th>Parameter</th><th>Now</th><th>What it controls</th></tr>
+    <tr><td><span class="m">agent.monthly_audit_day</span></td><td class="num">1</td><td>Day of the month, capped at 28 so every month has one. Changing it moves the cron job</td></tr>
+    <tr><td><span class="m">agent.monthly_audit_hour_utc</span></td><td class="num">2</td><td>Hour in UTC. Changing it moves the cron job</td></tr>
+    <tr><td><span class="m">agent.currency_check_months</span></td><td class="num">12</td><td>How old a currency check may be before the audit raises the instrument</td></tr>
+    <tr><td><span class="m">agent.findings_alert_email</span></td><td><span class="chip wait">pending</span></td><td>Where findings are sent. Needs a Care Net address, CR-13.18</td></tr>
+    <tr><td><span class="m">agent.autopublish_findings</span></td><td><span class="m">false</span></td><td>False by design. A finding is a proposal for the practitioner, not a change</td></tr>
+  </table></div>
+
+  <h3>Clinical floors</h3>
+  <p>These are regulatory minima carried in the framework, not preferences. Raising one needs a legal basis and a practitioner decision, and the change is recorded against the name of whoever made it.</p>
+  <div class="scroll"><table>
+    <tr><th>Parameter</th><th>Now</th><th>Basis</th></tr>
+    <tr><td><span class="m">clinical.periodic_floor_months</span></td><td class="num">12</td><td>The regulatory floor between periodic examinations</td></tr>
+    <tr><td><span class="m">clinical.record_retention_years</span></td><td class="num">40</td><td>House floor for medical surveillance records, CR-12.4</td></tr>
+    <tr><td><span class="m">clinical.noise_action_level_db</span></td><td class="num">85</td><td>dB(A) under the Noise Induced Hearing Loss Regulations, CR-13.10</td></tr>
+    <tr><td><span class="m">clinical.omp_release_required</span></td><td><span class="m">true</span></td><td>Independently enforced by a database trigger, so switching this off would still release nothing</td></tr>
+  </table></div>
+
+  <h3>Commercial and integrations</h3>
+  <div class="scroll"><table>
+    <tr><th>Parameter</th><th>Now</th><th>What it controls</th></tr>
+    <tr><td><span class="m">commercial.free_medicals_threshold</span></td><td class="num">100</td><td>Annual medicals at which the plan becomes free, CR-13.15</td></tr>
+    <tr><td><span class="m">commercial.omp_review_fee_zar</span></td><td class="num">2500</td><td>Practitioner review and sign off fee. Placeholder, CR-13.17</td></tr>
+    <tr><td><span class="m">commercial.pricing_status</span></td><td><span class="chip wait">indicative</span></td><td>While indicative, every quote says so</td></tr>
+    <tr><td><span class="m">commercial.quote_validity_days</span></td><td class="num">30</td><td>How long a quotation stands</td></tr>
+    <tr><td><span class="m">integration.payment_gateway</span></td><td><span class="chip wait">pending</span></td><td>Gateway selection, CR-13.13</td></tr>
+    <tr><td><span class="m">integration.signature_provider</span></td><td><span class="m">docuseal</span></td><td>Electronic signature provider</td></tr>
+    <tr><td><span class="m">integration.site_base_url</span></td><td><span class="chip wait">pending</span></td><td>Canonical public base URL, CR-13.3</td></tr>
+  </table></div>
+</section>
+
+<section id="assistant">
+  <p class="eyebrow">Supabase, edge tier</p>
+  <h2>The assistant connection</h2>
+  <p>One edge function, <span class="m">msp-assistant</span>, deployed and active. It carries no settings of its own: model, effort, thinking mode, ceilings, limits, prices and the enabled action list are read from the parameter store on every single call.</p>
+  <div class="scroll"><table>
+    <tr><th>Action</th><th>Who may run it</th><th>Grounded on</th></tr>
+    <tr><td><span class="m">explain_plan</span></td><td>A signed in client company</td><td>The verified rows for its industry</td></tr>
+    <tr><td><span class="m">industry_brief</span></td><td>Care Net staff</td><td>The verified rows for one industry</td></tr>
+    <tr><td><span class="m">triage_other</span></td><td>Care Net staff</td><td>The industry codes present in the rows, or none at all</td></tr>
+    <tr><td><span class="m">monthly_watch</span></td><td>Care Net staff and the agent</td><td>The audit report and the verified instrument list</td></tr>
+  </table></div>
+
+  <h3>What holds it inside the framework</h3>
+  <p>It answers only from the rows handed to it in the same request, and those rows come from grounding functions that return verified instruments and no client data at all. It may not cite a law, a threshold or an interval that is not in those rows. It may not express an opinion on whether any individual worker is fit for work. Every answer carries the same notice: an explanation of the framework, not a clinical opinion and not a signed plan.</p>
+
+  <h3>What holds the cost</h3>
+  <p>A preflight call runs before any spend and checks the role, the master switch and the monthly ceiling. Over the ceiling the assistant refuses and says so. Every call lands in the ledger with model, effort, instruction version, tokens, priced cost, latency and outcome, and the refusals are recorded just as carefully as the answers.</p>
+
+  <div class="callout"><p><b>One secret outstanding.</b> <span class="m">ANTHROPIC_API_KEY</span> is not set in the Supabase project's function secrets. Until it is, the assistant answers that it is not configured and records the refusal in the ledger. No key was invented, and none is in the repository or the database.</p></div>
+</section>
+
+<section id="cron">
+  <p class="eyebrow">Supabase, scheduler tier</p>
+  <h2>Scheduled jobs</h2>
+  <p>The project runs seven cron jobs. One belongs to this build.</p>
+  <div class="scroll"><table>
+    <tr><th>Job</th><th>Cron, UTC</th><th>Runs</th><th>Belongs to</th></tr>
+    <tr><td><span class="m">msp_monthly_audit</span></td><td><span class="m">0 2 1 * *</span></td><td><span class="m">msp_kernel_monthly_audit()</span></td><td><span class="chip brand">This build</span></td></tr>
+    <tr><td><span class="m">kernel-embed-sweep</span></td><td><span class="m">*/10 * * * *</span></td><td>Embedding sweep</td><td>Other Care Net system</td></tr>
+    <tr><td><span class="m">popia-purge</span></td><td><span class="m">0 0 * * *</span></td><td>POPIA retention purge</td><td>Other Care Net system</td></tr>
+    <tr><td><span class="m">xero-accounts-sync-request</span> and <span class="m">-apply</span></td><td><span class="m">0 0 * * *</span>, <span class="m">10 0 * * *</span></td><td>Accounting sync</td><td>Other Care Net system</td></tr>
+    <tr><td><span class="m">xero-keepalive</span></td><td><span class="m">0 6 * * 1</span></td><td>Token keepalive</td><td>Other Care Net system</td></tr>
+  </table></div>
+  <div class="callout"><p><b>Fixed while writing this page.</b> The audit was scheduled twice: the parameter driven job at 02:00 and an older hand made job named <span class="m">msp-kernel-monthly-audit</span> at 06:00, both live, both writing a row on the first of the month. Only one answered to the parameters. Migration 038 removes the old one, and the reschedule function now clears any legacy name as well as its own, so a reschedule can never leave a second job behind. Verified: one job, and moving the hour still leaves one.</p></div>
+</section>
+
+<section id="security">
+  <p class="eyebrow">Assurance</p>
+  <h2>Security posture, as tested</h2>
+  <p>Each row below was checked by assuming the role directly in the database or by calling the function as that role. None of it is inferred.</p>
+  <div class="scroll"><table>
+    <tr><th>Check</th><th>Result</th></tr>
+    <tr><td>Anonymous reads <span class="m">msp_public_industry_profile</span></td><td>17 rows, correct, this is the marketing surface</td></tr>
+    <tr><td>Anonymous reads <span class="m">msp_legal_instrument</span>, <span class="m">msp_intake</span>, <span class="m">msp_engagement</span>, <span class="m">msp_client_account</span>, <span class="m">msp_draft</span>, <span class="m">msp_audit</span></td><td>0 rows each</td></tr>
+    <tr><td>Anonymous reads <span class="m">msp_env_parameter</span></td><td>0 rows</td></tr>
+    <tr><td>Anonymous calls any parameter or assistant function</td><td>Refused at the grant, after migration 037</td></tr>
+    <tr><td>Anonymous calls <span class="m">msp_ingest_instrument</span></td><td>Refused by row level security on the insert</td></tr>
+    <tr><td>Anonymous calls <span class="m">msp_kernel_counts</span></td><td>Returns zeros, because it can see no rows to count</td></tr>
+    <tr><td>Parameter change with no identity, or signed in without a forge role</td><td>Refused</td></tr>
+    <tr><td>Parameter set outside its enum, above its ceiling, or to the wrong type</td><td>Refused, four separate cases</td></tr>
+    <tr><td>Attempt to edit a parameter history row</td><td>Refused, append only holds</td></tr>
+    <tr><td>Release a pack without a practitioner signature</td><td>Refused by the database trigger, independent of any interface or parameter</td></tr>
+  </table></div>
+  <div class="callout"><p><b>The defect worth naming.</b> Postgres grants execute on a new function to PUBLIC by default, so migrations 034 to 036 left the parameter readers callable by the anonymous web role. That was a real exposure, not a theoretical one. The database advisor flagged it, migration 037 revoked it, and the revocation was then verified function by function rather than assumed.</p></div>
+</section>
+
+<section id="settings">
+  <p class="eyebrow">Outstanding</p>
+  <h2>Settings to complete</h2>
+  <p>Nothing below can be done from the build side. Each one needs a value or a decision that only Care Net holds.</p>
+  <div class="scroll"><table>
+    <tr><th>Setting</th><th>Where</th><th>What it unlocks</th></tr>
+    <tr><td><span class="m">SUPABASE_URL</span>, <span class="m">SUPABASE_SERVICE_ROLE_KEY</span></td><td>Vercel project <span class="m">cnc-msp-forge</span></td><td>All four transactional pages and all eight endpoints, at once</td></tr>
+    <tr><td><span class="m">DOCUSEAL_WEBHOOK_SECRET</span>, <span class="m">ADMIN_ACTION_SECRET</span></td><td>Vercel project</td><td>The signature webhook and payment confirmation</td></tr>
+    <tr><td><span class="m">ANTHROPIC_API_KEY</span></td><td>Supabase function secrets</td><td>The assistant answers instead of reporting itself unconfigured</td></tr>
+    <tr><td>An Auth user with <span class="m">forge_omp</span></td><td>Supabase Auth, <span class="m">app_metadata.msp_roles</span></td><td>The clinical gate opens, the pilot pack can be signed, and the 17 industry reviews can begin</td></tr>
+    <tr><td>Rate card and practitioner fee</td><td>Parameters and <span class="m">msp_pricing</span></td><td>Quotes stop being marked indicative. CR-13.14 and CR-13.17</td></tr>
+    <tr><td>Findings address and spend ceiling</td><td>Parameters</td><td>Closes CR-13.18 and CR-13.19</td></tr>
+    <tr><td>Payment gateway</td><td>Parameter and credentials</td><td>The shop can take money. CR-13.13</td></tr>
+  </table></div>
+</section>
+
+<footer class="end">
+  Snapshot of the live Supabase project and the repository at 15/08/2026, migrations 001 to 038. Row counts, grants, cron entries and parameter values were read from the running database rather than from the source, so this page describes what is, not what was intended.
+</footer>
+
+</main>
+</div>

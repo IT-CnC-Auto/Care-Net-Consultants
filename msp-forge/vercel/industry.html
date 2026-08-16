@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-ZA">
 <head>
+<meta charset="utf-8">
 <!--
 =====================================================================
  industry.html :: Care Net Consultants :: Version 1.0
@@ -17,7 +18,6 @@
    red ED1B24 sole accent, POPIA consent before any tracking.
 =====================================================================
 -->
-<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your industry and the law behind your Plan | Care Net</title>
 <meta name="description" content="See the exact Acts and regulations, job roles, workplace hazards and medical assessments that make up a Care Net Medical Surveillance Plan for your industry.">
@@ -30,12 +30,21 @@
 <meta property="og:description" content="The Acts, job roles, hazards and medical assessments behind a Medical Surveillance Plan for your industry.">
 <meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
 <meta property="og:locale" content="en_ZA">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://pboebfnujzffgwctsplw.supabase.co">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://pboebfnujzffgwctsplw.supabase.co" crossorigin>
+<link rel="preload" href="/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/Montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/BebasNeue.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-:root{--red:#ED1B24;--red-deep:#c5141b;--ink:#16161a;--ink-2:#555;--soft:#f6f6f8;--line:#e6e6e9;--max:1200px}
+/* Care Net house faces, self hosted. Latin subset only, which is all an en-ZA
+   page needs. Inter and Montserrat are variable fonts, so one file covers every
+   weight the page uses. All three are SIL Open Font License 1.1, which permits
+   self hosting. Self hosted rather than loaded from a font CDN: it removes a
+   render blocking third party stylesheet, and it stops a visitor's IP address
+   reaching a third party before they have consented to anything. */
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/BebasNeue.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/Inter-var.woff2') format('woff2')}
+@font-face{font-family:'Montserrat';font-style:normal;font-weight:600 800;font-display:swap;src:url('/fonts/Montserrat-var.woff2') format('woff2')}
+:root{--red:#ED1B24;--red-ink:#C5141B;--red-deep:#A81016;--ink:#16161a;--ink-2:#555;--soft:#f6f6f8;--line:#e6e6e9;--max:1200px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:Inter,Montserrat,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.55;-webkit-font-smoothing:antialiased}
@@ -46,16 +55,16 @@ h2{font-size:clamp(24px,3.2vw,36px);font-weight:800;letter-spacing:-.01em}
 h3{font-size:18px;font-weight:700}
 p{margin:.6em 0}
 a{color:inherit}
-.r{color:var(--red)}
-.eyebrow{font-family:Montserrat,Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--red)}
+.r{color:var(--red-ink)}
+.eyebrow{font-family:Montserrat,Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--red-ink)}
 .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:700;font-size:15px;text-decoration:none;padding:13px 22px;border-radius:10px;border:2px solid transparent;cursor:pointer;min-height:48px;transition:transform .12s ease,background .15s ease}
 .btn:hover{transform:translateY(-1px)}
 .btn:focus-visible{outline:3px solid var(--red);outline-offset:3px}
-.btn-red{background:var(--red);color:#fff}
+.btn-red{background:var(--red-ink);color:#fff}
 .btn-red:hover{background:var(--red-deep)}
 .btn-ghost{background:transparent;border-color:rgba(255,255,255,.5);color:#fff}
 .btn-ghost-dark{background:transparent;border-color:var(--line);color:var(--ink)}
-.btn-ghost-dark:hover{border-color:var(--red);color:var(--red)}
+.btn-ghost-dark:hover{border-color:var(--red);color:var(--red-ink)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .util{background:var(--ink);color:#cfcfd6;font-size:13px}
 .util .wrap{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;padding-top:8px;padding-bottom:8px}
@@ -67,15 +76,23 @@ a{color:inherit}
 .nav img{height:46px;width:auto;display:block}
 .nav ul{list-style:none;display:flex;gap:20px;margin:0;padding:0;font-weight:600;font-size:14px}
 .nav a{text-decoration:none}
-.nav a:hover{color:var(--red)}
+.nav a:hover{color:var(--red-ink)}
 .nav-links{display:flex;align-items:center;gap:22px}
 @media(max-width:980px){.nav-links ul{display:none}}
 .hero{background:radial-gradient(1100px 520px at 78% -8%,#2a0508 0%,#16161a 52%,#0c0c0f 100%);color:#fff;padding:56px 0 48px}
 .hero .lede{color:#d9d9e0;font-size:17px;max-width:60ch}
+/* The eyebrow grows from "Your industry" to the full Act name, which wraps to
+   two lines on a phone and pushed the heading and lede down with it. */
+#eyebrow{display:block;min-height:1.55em}
+#h1{min-height:2.24em}
+#lede{min-height:4.65em}
+@media(max-width:767px){#h1{min-height:3.36em}#lede{min-height:6.2em}}
+@media(max-width:620px){#eyebrow{min-height:3.1em}#h1{min-height:4.48em}#lede{min-height:9.3em}}
+@media(max-width:400px){#h1{min-height:5.6em}#lede{min-height:10.85em}}
 .hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
 .hero .picker{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .hero select{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:#12121a;color:#fff;font-family:inherit;font-size:15px;min-height:48px;min-width:260px}
-.livebar{background:var(--red);color:#fff}
+.livebar{background:var(--red-ink);color:#fff}
 .livebar .wrap{display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center;padding:14px 22px;font-size:13.5px;align-items:center}
 .livebar b{font-family:Bebas Neue,Montserrat,sans-serif;font-size:26px;line-height:1;margin-right:7px}
 .livebar span{display:inline-flex;align-items:baseline}
@@ -105,17 +122,25 @@ tr:last-child td{border-bottom:none}
 .step p{color:var(--ink-2);font-size:13.5px;margin:0}
 @media(max-width:980px){.steps{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.steps{grid-template-columns:1fr}}
-.cta-band{background:var(--red);color:#fff;border-radius:18px;padding:40px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.cta-band{background:var(--red-ink);color:#fff;border-radius:18px;padding:40px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
 .cta-band h2{color:#fff}
 .cta-band p{margin:.3em 0 0;color:#ffe3e4}
-.cta-band .btn{background:#fff;color:var(--red)}
-.state{padding:40px 0;text-align:center;color:var(--ink-2)}
-.state.err{color:var(--red);font-weight:600}
+.cta-band .btn{background:#fff;color:var(--red-ink)}
+.state{padding:40px 0;text-align:center;color:var(--ink-2);min-height:60vh;
+  display:flex;align-items:center;justify-content:center}
+/* The loading block holds at least sixty percent of the viewport so the
+   footer starts below the fold. Without it the footer sat on screen while
+   the framework answered, then jumped down when the content appeared, which
+   measured as a layout shift of 0.30 on a desktop viewport. */
+.state.err{color:var(--red-ink);font-weight:600}
 footer.foot{background:var(--ink);color:#c7c7cf;padding:44px 0 24px;font-size:14px}
 footer.foot .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
 footer.foot h2{font-family:Montserrat;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#fff;margin:0 0 12px}
 footer.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-footer.foot a{color:#c7c7cf;text-decoration:none}
+footer.foot a{color:#c7c7cf;text-decoration:none;overflow-wrap:anywhere}
+/* The sales desk address is one unbroken 33 character token. Without this
+   it pushed the footer grid past the viewport on any screen under 400px,
+   which scrolled the whole page sideways. */
 footer.foot a:hover{color:#fff}
 footer.foot .base{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;border-top:1px solid #2b2b32;margin-top:30px;padding-top:16px}
 footer.foot .base img{height:44px;width:auto}
@@ -163,8 +188,8 @@ footer.foot .base img{height:44px;width:auto}
   <section class="hero" aria-labelledby="h1">
     <div class="wrap">
       <span class="eyebrow" id="eyebrow">Your industry</span>
-      <h1 id="h1">Loading your industry</h1>
-      <p class="lede" id="lede">Reading the current framework for your industry.</p>
+      <h1 id="h1">Medical Surveillance Plans for <span class="r">your industry.</span></h1>
+      <p class="lede" id="lede">Your Plan is built from the verified instruments, mapped job roles and medical assessments that apply to your industry, each with the law that requires it. Reading the current framework now.</p>
       <div class="picker">
         <label for="picker" class="sr-only">Choose your industry</label>
         <select id="picker"><option>Loading industries</option></select>
