@@ -43,11 +43,13 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 035_msp_agent_schedule.sql (7490 bytes)
 - 036_msp_ai_identity_limits.sql (5321 bytes)
 - 037_msp_env_ai_grant_lockdown.sql (3862 bytes)
+- 038_msp_audit_schedule_dedup.sql (2246 bytes)
 
 ## Not SQL, and therefore not in the rebuild script
 
 - supabase/functions/msp-assistant/index.ts, the assistant connection. Deploy it separately.
 - vercel/settings.html, the settings page that reads and writes the parameter store.
+- WIRING.html, the system reference: every page, endpoint, table, function, parameter and scheduled job, read from the live project.
 - Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project.
 
 ## Rebuild procedure
