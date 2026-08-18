@@ -1,0 +1,5 @@
+# Supabase project configuration for the GitHub integration.
+# Linked project: Care Net - Internal Portal (ref sefgzjjppzaesfkpznpe, eu-west-2).
+# project_id below is the local workspace name used by the Supabase CLI; the
+# production link is made in the Supabase Dashboard (Settings > Integrations > GitHub).
+project_id = "care-net-internal-portal"
