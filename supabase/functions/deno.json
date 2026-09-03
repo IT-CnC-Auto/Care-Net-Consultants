@@ -1,0 +1,5 @@
+{
+  "imports": {},
+  "compilerOptions": { "lib": ["deno.window"], "strict": true },
+  "fmt": { "lineWidth": 160 }
+}
