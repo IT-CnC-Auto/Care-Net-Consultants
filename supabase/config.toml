@@ -1,0 +1,52 @@
+# Supabase CLI project config. project_id is set by `supabase link`.
+project_id = "care-net-tasks"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://tasks.carenetconsultants.co.za/auth/callback"]
+jwt_expiry = 3600
+
+[auth.external.azure]
+enabled = true
+client_id = "env(AZURE_CLIENT_ID)"
+secret = "env(AZURE_CLIENT_SECRET)"
+url = "env(AZURE_TENANT_URL)"
+
+[functions.mco-sync]
+verify_jwt = false
+[functions.agent-extract]
+verify_jwt = true
+[functions.capture-fireflies]
+verify_jwt = false
+[functions.graph-mail-flag]
+verify_jwt = false
+[functions.graph-calendar-gaps]
+verify_jwt = true
+[functions.translate]
+verify_jwt = true
+[functions.digest]
+verify_jwt = false
+[functions.approvals-act]
+verify_jwt = true
+[functions.graph-transcript]
+verify_jwt = false
+[functions.sharepoint-docs]
+verify_jwt = true
+[functions.teams-exceptions]
+verify_jwt = false
+[functions.zoom-webhook]
+verify_jwt = false
+[functions.stt-fallback]
+verify_jwt = false
