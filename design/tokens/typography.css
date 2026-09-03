@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+:root{
+--font-display:'Bebas Neue',sans-serif;
+--font-heading:'Montserrat',sans-serif;
+--font-body:'Open Sans',sans-serif;
+--text-display-xl:64px;--text-display:44px;--text-h1:28px;--text-h2:22px;--text-h3:17px;
+--text-base:15px;--text-sm:13px;--text-xs:11.5px;
+--leading-tight:1.1;--leading-heading:1.25;--leading-body:1.55;
+--tracking-display:.02em;--tracking-label:.08em;
+--weight-heading:700;--weight-label:600;
+}
+body{font-family:var(--font-body);color:var(--text-body);}
