@@ -79,6 +79,14 @@
       "y": 4620,
       "w": 1440,
       "h": 900
+    },
+    {
+      "file": "Connections.dc.html",
+      "title": "11 \u00b7 Data and connections (M365, SharePoint, meetings, translator, cost)",
+      "x": 1560,
+      "y": 4620,
+      "w": 1440,
+      "h": 1580
     }
   ],
   "annotations": [
@@ -108,7 +116,7 @@
       "x": 1800,
       "y": -300,
       "w": 480,
-      "text": "Open questions for the build\n\u00b7 20 medical threshold for Sales Manager sign off [CONFIRM].\n\u00b7 MCO task type to journey stage mapping (README section 5).\n\u00b7 Sync interval, default 15 minutes [CONFIRM].\n\u00b7 May Grok close portal tasks when MCO marks them Completed, or always ask?\n\u00b7 Attribution pill on CNC screens [CONFIRM per licence tier].\n\u00b7 Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM]."
+      "text": "Open questions for the build\n\u00b7 20 medical threshold for Sales Manager sign off [CONFIRM].\n\u00b7 MCO task type to journey stage mapping (README section 5).\n\u00b7 Sync interval, default 15 minutes [CONFIRM].\n\u00b7 May Grok close portal tasks when MCO marks them Completed, or always ask?\n\u00b7 Attribution pill on CNC screens [CONFIRM per licence tier].\n\u00b7 Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM].\n\u00b7 Integration layer decisions and prices: see screen 11 and design/specs/INTEGRATIONS.md."
     }
   ],
   "launch": {

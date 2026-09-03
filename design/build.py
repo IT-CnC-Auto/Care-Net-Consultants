@@ -871,6 +871,51 @@ def timeline():
     body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:14px">{head}{main}{others}</div>'
     return doc("Timeline", shell("My work", ["Sales Executive desk", "My work", "Timeline"], body, h=1000))
 
+# =============================================================== 11 DATA AND CONNECTIONS
+def connections():
+    head = page_head("Data and connections", "Buy transcripts, do not build them. Store references, not copies. Every connector is a Make scenario or a Supabase Edge Function with an owner.",
+                     btn("Confirmation register", "sec", "file") + btn("Add connector", "pri", "plus"))
+    def conn(icon, name, role, reads, writes, cost, status, phase, guard=""):
+        st = {"live": (GREEN_T, GREEN, "Live in estate"), "build": (BLUE_T, BLUE, "Phase 1 build"), "later": (GREY_L, MUTE, "Phase 2"), "opt": (YELLOW_T, WARN, "Only if required")}[status]
+        g = f'<div style="display:flex;gap:6px;align-items:flex-start;font-size:11.5px;color:{BLUE};font-weight:600">{ic("shield",12,BLUE,2)}<span>{guard}</span></div>' if guard else ""
+        return (f'<div style="background:{CARD};border:1px solid {LINE};border-radius:{R_MD};box-shadow:{SHADOW};padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0">'
+                f'<div style="display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:{R_SM};background:{RED_T};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">{ic(icon,18,RED,2)}</span>'
+                f'<div style="min-width:0"><div style="font-family:{HEAD};font-weight:600;font-size:13.5px">{name}</div><div style="font-size:11.5px;color:{MUTE}">{role}</div></div>'
+                f'<span style="margin-left:auto;display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;background:{st[0]};color:{st[1]};font-size:11px;font-weight:600;white-space:nowrap">{st[2]}</span></div>'
+                f'<div style="font-size:12px;color:{INK}"><strong>Reads</strong> {reads}</div>'
+                f'<div style="font-size:12px;color:{INK}"><strong>Writes</strong> {writes}</div>'
+                f'<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:{INK};margin-top:2px"><strong>Cost</strong> {cost}</div>{g}</div>')
+    grid = ('<div style="display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:12px">'
+        + conn("monitor", "Microsoft 365 · Graph", "Identity, mail, calendar, Teams, SharePoint through one Entra app", "flagged email (subject, sender, first lines), calendar gaps, Teams transcripts (phase 2)", "daily digest email, Teams channel exceptions, nothing to the calendar without acceptance", f"no API charge, included in licences {confirm('CONFIRM')}", "build", 1, guard="Least privilege: Mail.Read on consented mailboxes, Calendars.Read, Sites.Selected per client library")
+        + conn("file", "SharePoint", "Client document libraries, the CNC document ecosystem", "drive item id and link for proposals, attendance lists, pro forma drafts", "documents created in the client library from templates, task stores the link only", "included in M365", "build", 1, guard="Grok receives fields, never the whole document")
+        + conn("message", "Fireflies", "Meeting layer for Teams and Zoom, phase 1", "transcript and summary by webhook after each call", "nothing", f"existing subscription, about USD 19 per recording seat {confirm('CONFIRM')}", "live", 1, guard="Recording notice at the start of every call")
+        + conn("users", "Teams native transcript", "Replaces Fireflies seats later if wanted", "OnlineMeetingTranscript through Graph", "nothing", f"included in M365, API metering {confirm('CONFIRM')}", "later", 2)
+        + conn("monitor", "Zoom", "Only where a client insists on Zoom", "cloud recording transcript on Pro and above", "nothing", f"about USD 13 to 16 per host per month {confirm('CONFIRM')}", "opt", 3, guard="Fireflies already covers Zoom calls in phase 1")
+        + conn("layers", "Azure AI Translator", "Language layer: Afrikaans, isiZulu, isiXhosa, Sesotho, Setswana and the rest", "task extract, summary, client draft", "translation stored beside the original with a language tag", f"free to 2 million characters a month, then about USD 10 per million {confirm('CONFIRM')}", "build", 1)
+        + conn("bot", "Grok · xAI API", "Extraction, classification, allocation proposals, drafts. No speech input, it reads text only", "MCO rows, transcript text, email extract, client and journey context", "proposed tasks with source reference into Inbox Captured, agent_run log", f"under USD 5 a month at 1 to 2 million tokens, small model first {confirm('CONFIRM')}", "build", 1, guard="Reads untrusted content: no secrets, writes to its own report table only")
+        + conn("zap", "Make", "Automation bridge, webhooks in and out", "Fireflies webhook, Graph change notifications, MCO sync", "calls Supabase Edge Functions, 13 live scenarios reused", f"existing plan, operations headroom {confirm('CONFIRM')}", "live", 1)
+        + conn("db", "Supabase", "Postgres with RLS, Edge Functions, Vault, pgvector", "everything above, by reference", "task, subtask, agent_run, consent_record, audit_log, dead_letter", f"Pro about USD 25 a month {confirm('CONFIRM')}", "live", 1, guard="Secrets in Vault, never in Make scenario fields")
+        + "</div>")
+    def step(t, sub):
+        return f'<div style="flex:1;min-width:0;background:{CARD};border:1px solid {LINE};border-radius:{R_MD};padding:12px 14px"><div style="font-family:{HEAD};font-weight:600;font-size:12.5px">{t}</div><div style="font-size:11.5px;color:{MUTE};margin-top:2px;line-height:1.45">{sub}</div></div>'
+    arrow = f'<span style="display:inline-flex;align-items:center;flex-shrink:0">{ic("arrow",16,"#BDBDBD",2)}</span>'
+    flow = card(f'<div style="margin-bottom:10px">{h2("Meeting to task", "the one flow that touches every connector")}</div><div style="display:flex;align-items:stretch;gap:8px">'
+                + step("1 Call ends", "Teams or Zoom, Fireflies in the room, recording notice given") + arrow
+                + step("2 Webhook", "Fireflies to Make with the transcript reference") + arrow
+                + step("3 Edge Function", "stores the reference, drops any line naming a worker with a health result, logs it") + arrow
+                + step("4 Grok", "proposes tasks with source reference, client and journey stage") + arrow
+                + step("5 Translate", "Azure Translator where the reader's language differs, original kept") + arrow
+                + step("6 Inbox · Captured", "a person accepts, edits or discards, then it becomes a task")
+                + "</div>", pad="16px 20px")
+    costs = card(h2("New monthly spend", f"worked example at R18.50 to the dollar {confirm('CONFIRM rate')}, existing licences excluded") + '<div style="margin-top:6px">'
+                 + "".join(f'<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:6px 0;border-top:1px solid {GREY_L}"><span>{k}</span><span style="font-weight:600;white-space:nowrap">{v}</span></div>'
+                           for k, v in [("Supabase Pro", "R462,50"), ("Grok usage, 1 to 2 million tokens", "R92,50"), ("Azure Translator, free tier", "R0,00"), ("Microsoft Graph", "R0,00"), ("Fireflies, Make, M365", "already paid")])
+                 + f'<div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:8px 0;border-top:2px solid {INK};font-weight:700"><span>Total new spend</span><span>about R555 a month plus VAT</span></div>'
+                 + f'<div style="font-size:11.5px;color:{MUTE};margin-top:6px">Speech to text fallback for a recording without a transcript: under R6 for a 45 minute call {confirm("CONFIRM")}. Do not ask Grok to transcribe audio.</div></div>', pad="16px 20px")
+    grid = grid.replace('gap:12px">', 'gap:12px">' + costs, 1)
+    body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:14px">{head}{flow}{grid}</div>'
+    return doc("Data and connections", shell("Sales automations", ["Sales Executive desk", "Sales automations", "Data and connections"], body, h=1580))
+
 # =============================================================== files + canvas
 write("Desk.dc.html", desk())
 write("Main.dc.html", my_work())
@@ -882,6 +927,7 @@ write("TaskDetail.dc.html", task_detail())
 write("Automations.dc.html", automations())
 write("Permissions.dc.html", permissions())
 write("States.dc.html", states())
+write("Connections.dc.html", connections())
 
 GAP_X = 1440 + 120
 ROW2 = 1340 + 200
@@ -899,6 +945,7 @@ canvas = {
         {"file": "Automations.dc.html", "title": "08 · Sales automations · rules, templates", "x": GAP_X, "y": ROW3, "w": 1440, "h": 1520},
         {"file": "Permissions.dc.html", "title": "09 · Roles and permissions", "x": GAP_X * 2, "y": ROW3, "w": 1440, "h": 1060},
         {"file": "States.dc.html", "title": "10 · Screen states (empty, loading, error, forbidden, package off)", "x": 0, "y": ROW4, "w": 1440, "h": 900},
+        {"file": "Connections.dc.html", "title": "11 · Data and connections (M365, SharePoint, meetings, translator, cost)", "x": GAP_X, "y": ROW4, "w": 1440, "h": 1580},
     ],
     "annotations": [
         {"id": "brief", "x": 0, "y": -300, "w": 520,
@@ -908,7 +955,7 @@ canvas = {
         {"id": "improved", "x": 1200, "y": -300, "w": 560,
          "text": "Improvements from the capability checklist (structure only, all content Care Net)\n· Sales desk: eight one question tiles, each linked to its list, removable.\n· Today: Grok schedules focus blocks into calendar gaps, pin to hold, focus timer, ranking explanation.\n· Capture: tasks proposed from Fireflies transcripts and flagged Outlook email, source reference kept.\n· SLA breach prediction raised before the breach.\n· Timeline: dependencies enforce start after finish, critical path in red, milestones.\n· Renewal ladder 90 / 60 / 30 generated from the MCO expiry date.\n· Templates with version lineage; client source carried on every task; time logged; kill switch and last fired per rule."},
         {"id": "next", "x": 1800, "y": -300, "w": 480,
-         "text": "Open questions for the build\n· 20 medical threshold for Sales Manager sign off [CONFIRM].\n· MCO task type to journey stage mapping (README section 5).\n· Sync interval, default 15 minutes [CONFIRM].\n· May Grok close portal tasks when MCO marks them Completed, or always ask?\n· Attribution pill on CNC screens [CONFIRM per licence tier].\n· Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM]."},
+         "text": "Open questions for the build\n· 20 medical threshold for Sales Manager sign off [CONFIRM].\n· MCO task type to journey stage mapping (README section 5).\n· Sync interval, default 15 minutes [CONFIRM].\n· May Grok close portal tasks when MCO marks them Completed, or always ask?\n· Attribution pill on CNC screens [CONFIRM per licence tier].\n· Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM].\n· Integration layer decisions and prices: see screen 11 and design/specs/INTEGRATIONS.md."},
     ],
     "launch": {"view": "canvas"},
 }

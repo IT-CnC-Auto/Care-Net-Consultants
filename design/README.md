@@ -25,6 +25,7 @@ data and is labelled as such in the top bar.
 | `Automations.dc.html` | 08 Sales automations | Sales Manager, Franchise Director | Consultants see run history only. Kill switch per rule. |
 | `Permissions.dc.html` | 09 Roles and permissions | Franchise Director, Information Officer (read) | Medical outcomes are not viewable by any sales role. |
 | `States.dc.html` | 10 Screen states | Reference for every screen | Empty, loading, error, forbidden (wrong tenant), package off. |
+| `Connections.dc.html` | 11 Data and connections | Sales Manager, Franchise Director | Connector registry with reads, writes, cost and guard per connector, the meeting to task flow, new monthly spend. Detail in `specs/INTEGRATIONS.md`. |
 | `canvas.json` | Artboard layout and sticky notes | | Brief, matched shell and tokens, open questions. |
 
 ## 2. Component inventory
@@ -111,6 +112,17 @@ version lineage, client source carried on every downstream task.
 - Attribution pill on CNC screens [CONFIRM per licence tier].
 - Team lead layer: needed now or when the team grows?
 - Capture channels in scope: Fireflies and Outlook are confirmed in the estate, Teams [CONFIRM].
+
+## 6a. Integration layer
+
+`specs/INTEGRATIONS.md` holds the recommended stack and the reasoning:
+Microsoft Graph with one Entra app for mail, calendar, Teams and SharePoint;
+Fireflies as the meeting layer for Teams and Zoom in phase 1 with Teams
+native transcripts through Graph in phase 2; Zoom only where a client insists;
+Azure AI Translator for the language layer; Grok through the xAI API for
+extraction only, never speech; Make and Supabase as the bridge and store.
+New monthly spend about R555 plus VAT at current fixtures, every price
+[CONFIRM].
 
 ## 7. Regenerating
 
