@@ -1,66 +1,82 @@
 {
   "artboards": [
     {
-      "file": "Main.dc.html",
-      "title": "01 \u00b7 My work (Sales Consultant)",
+      "file": "Desk.dc.html",
+      "title": "01 \u00b7 Sales desk (module dashboard)",
       "x": 0,
       "y": 0,
       "w": 1440,
-      "h": 1240
+      "h": 880
     },
     {
-      "file": "Inbox.dc.html",
-      "title": "02 \u00b7 Inbox (Franchise Director signatures)",
+      "file": "Main.dc.html",
+      "title": "02 \u00b7 My work (Today, auto scheduled)",
       "x": 1560,
       "y": 0,
       "w": 1440,
-      "h": 1000
+      "h": 1340
+    },
+    {
+      "file": "Inbox.dc.html",
+      "title": "03 \u00b7 Inbox (signatures, captured, SLA at risk)",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 1290
     },
     {
       "file": "TeamBoard.dc.html",
-      "title": "03 \u00b7 Team board (Sales Manager)",
-      "x": 3120,
-      "y": 0,
+      "title": "04 \u00b7 Team board (Sales Manager)",
+      "x": 0,
+      "y": 1540,
       "w": 1440,
       "h": 1160
     },
     {
+      "file": "Timeline.dc.html",
+      "title": "05 \u00b7 Timeline (dependencies, critical path)",
+      "x": 1560,
+      "y": 1540,
+      "w": 1440,
+      "h": 1000
+    },
+    {
       "file": "ClientJourney.dc.html",
-      "title": "04 \u00b7 Client 360 \u00b7 journey",
-      "x": 0,
-      "y": 1440,
+      "title": "06 \u00b7 Client 360 \u00b7 journey",
+      "x": 3120,
+      "y": 1540,
       "w": 1440,
       "h": 1140
     },
     {
       "file": "TaskDetail.dc.html",
-      "title": "05 \u00b7 Task detail \u00b7 parent and subtasks",
-      "x": 1560,
-      "y": 1440,
+      "title": "07 \u00b7 Task detail \u00b7 renewal ladder, subtasks",
+      "x": 0,
+      "y": 2900,
       "w": 1440,
-      "h": 1330
+      "h": 1460
     },
     {
       "file": "Automations.dc.html",
-      "title": "06 \u00b7 Sales automations \u00b7 Grok agents",
-      "x": 3120,
-      "y": 1440,
+      "title": "08 \u00b7 Sales automations \u00b7 rules, templates",
+      "x": 1560,
+      "y": 2900,
       "w": 1440,
-      "h": 1240
+      "h": 1520
     },
     {
       "file": "Permissions.dc.html",
-      "title": "07 \u00b7 Roles and permissions",
-      "x": 0,
-      "y": 2970,
+      "title": "09 \u00b7 Roles and permissions",
+      "x": 3120,
+      "y": 2900,
       "w": 1440,
       "h": 1060
     },
     {
       "file": "States.dc.html",
-      "title": "08 \u00b7 Screen states (empty, loading, error, forbidden, package off)",
-      "x": 1560,
-      "y": 2970,
+      "title": "10 \u00b7 Screen states (empty, loading, error, forbidden, package off)",
+      "x": 0,
+      "y": 4620,
       "w": 1440,
       "h": 900
     }
@@ -69,23 +85,30 @@
     {
       "id": "brief",
       "x": 0,
-      "y": -280,
+      "y": -300,
       "w": 520,
       "text": "Care Net AI tasks module \u00b7 Sales first\n\nMyClinicOnline tasks land in Supabase, Grok agents read them, create one parent task per client, draft subtasks along the client journey and propose who does the work. AI drafts, a named human signs. Managers oversee through role rights.\n\nJourney stages used everywhere: Prospect \u00b7 Quote \u00b7 Onboard \u00b7 Schedule \u00b7 Clinic day \u00b7 Certificates \u00b7 Invoice \u00b7 Renewal."
     },
     {
       "id": "matched",
       "x": 600,
-      "y": -280,
+      "y": -300,
       "w": 520,
-      "text": "Matched to the CNC Sales platform handoff\nShell: Client Portal AppShell (216px white sidebar, 64px top bar, StatCard 104px, attribution footer). Tokens: design/tokens (red #ED1B24, charcoal #1E1E1E, greys #787878 / #F0F0F0 / #E2E2E2, blue links, green success, yellow warning). Type: Montserrat 600 headings, Open Sans body. Radii 6 / 10 / 14.\nRules applied: British English, sentence case, no dash punctuation, AutoHive CRM only, [CONFIRM] on unconfirmed values, mock data labelled, no contact email or phone on boards, cases by number not worker name, medical outcomes never in the sales app."
+      "text": "Matched to the CNC Sales platform handoff\nShell: Client Portal AppShell (216px white sidebar, 64px top bar, StatCard 104px, attribution footer). Tokens: design/tokens. Type: Montserrat 600 headings, Open Sans body. Radii 6 / 10 / 14.\nRules applied: British English, sentence case, no dash punctuation, AutoHive CRM only, [CONFIRM] on unconfirmed values, mock data labelled, no contact email or phone on boards, cases by number not worker name, medical outcomes never in the sales app."
+    },
+    {
+      "id": "improved",
+      "x": 1200,
+      "y": -300,
+      "w": 560,
+      "text": "Improvements from the capability checklist (structure only, all content Care Net)\n\u00b7 Sales desk: eight one question tiles, each linked to its list, removable.\n\u00b7 Today: Grok schedules focus blocks into calendar gaps, pin to hold, focus timer, ranking explanation.\n\u00b7 Capture: tasks proposed from Fireflies transcripts and flagged Outlook email, source reference kept.\n\u00b7 SLA breach prediction raised before the breach.\n\u00b7 Timeline: dependencies enforce start after finish, critical path in red, milestones.\n\u00b7 Renewal ladder 90 / 60 / 30 generated from the MCO expiry date.\n\u00b7 Templates with version lineage; client source carried on every task; time logged; kill switch and last fired per rule."
     },
     {
       "id": "next",
-      "x": 1200,
-      "y": -280,
+      "x": 1800,
+      "y": -300,
       "w": 480,
-      "text": "Open questions for the build\n\u00b7 20 medical threshold for Sales Manager sign off [CONFIRM].\n\u00b7 MCO task type to journey stage mapping (draft on screen 06).\n\u00b7 Sync interval, default 15 minutes [CONFIRM].\n\u00b7 May Grok close portal tasks when MCO marks them Completed, or always ask?\n\u00b7 Attribution pill on CNC screens [CONFIRM per licence tier].\n\u00b7 Team lead layer: needed now or when the team grows?"
+      "text": "Open questions for the build\n\u00b7 20 medical threshold for Sales Manager sign off [CONFIRM].\n\u00b7 MCO task type to journey stage mapping (README section 5).\n\u00b7 Sync interval, default 15 minutes [CONFIRM].\n\u00b7 May Grok close portal tasks when MCO marks them Completed, or always ask?\n\u00b7 Attribution pill on CNC screens [CONFIRM per licence tier].\n\u00b7 Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM]."
     }
   ],
   "launch": {

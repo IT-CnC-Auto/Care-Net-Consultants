@@ -15,14 +15,16 @@ data and is labelled as such in the top bar.
 
 | File | Screen | Who sees it | What is hidden or off |
 |------|--------|-------------|-----------------------|
-| `Main.dc.html` | 01 My work (Today view) | Sales Consultant | Only own tasks and clients. Team and other consultants' books are not in this list. |
-| `Inbox.dc.html` | 02 Inbox | Every role, content differs | Consultant sees own items only. Sales Manager sees escalations and allocation signatures. Franchise Director sees threshold breaches and the daily agent digest. |
-| `TeamBoard.dc.html` | 03 Team board | Sales Manager, Franchise Director | Franchisee own sales deals never appear. Package off for franchisees without Independent Sales or Full. |
-| `ClientJourney.dc.html` | 04 Client 360 | Account owner, Sales Manager, Director | No contact email or phone (lives in AutoHive CRM). No employee medical outcomes. Cases by number. |
-| `TaskDetail.dc.html` | 05 Task detail | Assignee, signer, watchers, Director | Rights on this task listed on the card. Send is blocked until a named human signs. |
-| `Automations.dc.html` | 06 Sales automations | Sales Manager, Franchise Director | Consultants see run history only. Kill switch per rule. |
-| `Permissions.dc.html` | 07 Roles and permissions | Franchise Director, Information Officer (read) | Medical outcomes are not viewable by any sales role. |
-| `States.dc.html` | 08 Screen states | Reference for every screen | Empty, loading, error, forbidden (wrong tenant), package off. |
+| `Desk.dc.html` | 01 Sales desk (module dashboard) | Every sales role, tiles filtered to what the role may see | Eight one question tiles, each linked to its list and removable. Book fill and pipeline tiles read AutoHive CRM. |
+| `Main.dc.html` | 02 My work (Today view) | Sales Consultant | Only own tasks and clients. Grok places focus blocks into calendar gaps, pin to hold. Ranking explanation on hover. |
+| `Inbox.dc.html` | 03 Inbox | Every role, content differs | Consultant sees own items only. Sales Manager sees escalations and allocation signatures. Franchise Director sees threshold breaches and the daily agent digest. |
+| `TeamBoard.dc.html` | 04 Team board | Sales Manager, Franchise Director | Franchisee own sales deals never appear. Package off for franchisees without Independent Sales or Full. |
+| `Timeline.dc.html` | 05 Timeline | Account owner, Sales Manager | Dependencies enforce start after finish, critical path in red, milestones, slack stated. Other clients collapsed. |
+| `ClientJourney.dc.html` | 06 Client 360 | Account owner, Sales Manager, Director | No contact email or phone (lives in AutoHive CRM). No employee medical outcomes. Cases by number. |
+| `TaskDetail.dc.html` | 07 Task detail | Assignee, signer, watchers, Director | Rights on this task listed on the card. Send is blocked until a named human signs. |
+| `Automations.dc.html` | 08 Sales automations | Sales Manager, Franchise Director | Consultants see run history only. Kill switch per rule. |
+| `Permissions.dc.html` | 09 Roles and permissions | Franchise Director, Information Officer (read) | Medical outcomes are not viewable by any sales role. |
+| `States.dc.html` | 10 Screen states | Reference for every screen | Empty, loading, error, forbidden (wrong tenant), package off. |
 | `canvas.json` | Artboard layout and sticky notes | | Brief, matched shell and tokens, open questions. |
 
 ## 2. Component inventory
@@ -44,7 +46,14 @@ data and is labelled as such in the top bar.
 - **OrgTree** person cards with parent and child connectors, agent as a service account.
 - **RoleMatrix** allowed, propose, not allowed cells.
 - **ConfirmTag** yellow [CONFIRM] chip for unconfirmed values.
-- **EmptyState, LoadingSkeleton, ErrorBanner, ForbiddenState, PackageOffState** on screen 08.
+- **DeskTile** one question, answer, linked list, remove control.
+- **TodayCalendarStrip** meeting blocks, Grok scheduled focus blocks (pinned or movable), focus timer.
+- **CaptureItem** task proposed from a Fireflies transcript, flagged Outlook email or Teams message, source reference kept, accept / edit / discard.
+- **SlaRiskItem** predicted breach with probability and suggested move.
+- **GanttRow, DependencyConnector, Milestone, CriticalPathOutline** on the Timeline.
+- **RenewalLadder** 90 / 60 / 30 days, clinic days, expiry.
+- **TemplateList** with version lineage.
+- **EmptyState, LoadingSkeleton, ErrorBanner, ForbiddenState, PackageOffState** on screen 10.
 
 ## 3. Tokens
 
@@ -68,6 +77,19 @@ failure only.
 - Tickbox principle: every leaf is a single tick; the agent proposes the breakdown, the person accepts or edits it.
 - One Task table serves every module. Ticket, complaint, renewal and campaign step are Task types.
 
+## 4a. Improvements taken from the capability checklist
+
+Structure only; every word on screen is Care Net. Portfolios and workload view
+(Sales desk, Team board), rules engine with owner, last fired and kill switch,
+dependencies with start after finish and a critical path (Timeline), board
+with column presets, time tracking and focus timer, quick add with natural
+language dates and a keyboard shortcut, calendar strip with AI auto scheduling
+and pinning, capture from email and meeting transcripts with source
+reference, ranked Today list with a visible explanation, recurring obligation
+generation (renewal ladder 90 / 60 / 30), SLA breach prediction raised before
+the breach, one daily digest with exception alerts only, templates with
+version lineage, client source carried on every downstream task.
+
 ## 5. MCO task type to journey stage (draft, confirm before build)
 
 | MCO task type | Journey stage | Default agent |
@@ -88,6 +110,7 @@ failure only.
 - May Grok close portal tasks when MCO marks them Completed, or always ask?
 - Attribution pill on CNC screens [CONFIRM per licence tier].
 - Team lead layer: needed now or when the team grows?
+- Capture channels in scope: Fireflies and Outlook are confirmed in the estate, Teams [CONFIRM].
 
 ## 7. Regenerating
 

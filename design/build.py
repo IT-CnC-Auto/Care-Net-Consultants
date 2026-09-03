@@ -197,8 +197,8 @@ def topbar(crumbs):
         crumb_html += f'<span style="font-size:13px;color:{INK if last else MUTE};font-weight:{600 if last else 400}">{c}</span>'
         if not last:
             crumb_html += ic("chevright", 14, "#BDBDBD", 2)
-    quick = (f'<div style="width:360px;height:40px;border:1px solid {LINE};border-radius:{R_SM};display:flex;align-items:center;gap:8px;padding:0 12px;'
-             f'color:{MUTE};font-size:12.5px;box-sizing:border-box;background:{CARD}">{ic("plus",16,RED_D,2)}Quick add a task, for example call Thabo Friday 9am</div>')
+    quick = (f'<div style="width:380px;height:40px;border:1px solid {LINE};border-radius:{R_SM};display:flex;align-items:center;gap:8px;padding:0 12px;'
+             f'color:{MUTE};font-size:12.5px;box-sizing:border-box;background:{CARD}">{ic("plus",16,RED_D,2)}Quick add, for example call Thabo Friday 9am<span style="margin-left:auto;font-size:10.5px;border:1px solid {LINE};border-radius:4px;padding:0 5px;color:{MUTE}">Q</span></div>')
     return (f'<header style="height:64px;flex:none;border-bottom:1px solid {LINE};background:{CARD};display:flex;align-items:center;gap:12px;padding:0 24px">'
             f'<div style="display:flex;align-items:center;gap:6px">{crumb_html}</div>'
             f'{confirm("Demo data, mock fixtures")}'
@@ -247,14 +247,16 @@ def page_head(title, sub, actions):
 
 # =============================================================== 01 MY WORK
 GRID = "minmax(0,1fr) 130px 150px 100px 72px 90px"
-def task_row(title, kind, due, who, source, stage_txt, sub=None, indent=False, ai=False):
+def task_row(title, kind, due, who, source, stage_txt, sub=None, indent=False, ai=False, blocked=None):
     pad = 56 if indent else 16
     connector = (f'<span style="width:14px;height:14px;border-left:1px solid #CFCFCF;border-bottom:1px solid #CFCFCF;'
                  f'border-radius:0 0 0 4px;margin-right:6px;margin-top:-8px;flex-shrink:0"></span>') if indent else ""
     tick = (f'<span style="width:18px;height:18px;border-radius:5px;border:1.5px solid {"transparent" if kind=="done" else "#BDBDBD"};background:{GREEN if kind=="done" else "#fff"};flex-shrink:0;'
             f'display:inline-flex;align-items:center;justify-content:center">{ic("check",12,"#fff",3) if kind=="done" else ""}</span>')
-    aichip = (f'<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:{RED_D}">{ic("sparkle",12,RED_D,2)}drafted</span>') if ai else ""
-    subline = f'<div style="font-size:11.5px;color:{MUTE};margin-top:1px">{sub}</div>' if sub else ""
+    aichip = (f'<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:{RED_D};flex-shrink:0;white-space:nowrap">{ic("sparkle",12,RED_D,2)}drafted</span>') if ai else ""
+    if blocked:
+        aichip += f'<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:{MUTE};flex-shrink:0;white-space:nowrap">{ic("lock",11,MUTE,2)}{blocked}</span>'
+    subline = f'<div style="font-size:11.5px;color:{MUTE};margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{sub}</div>' if sub else ""
     return (f'<div style="display:grid;grid-template-columns:{GRID};align-items:center;'
             f'height:{"44px" if indent else "52px"};padding:0 16px 0 {pad}px;border-top:1px solid {GREY_L};background:{CARD}">'
             f'<div style="display:flex;align-items:center;gap:10px;min-width:0">{connector}{tick}<div style="min-width:0"><div style="display:flex;align-items:center;gap:8px;min-width:0"><span style="font-size:13px;font-weight:{500 if indent else 600};color:{INK};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{title}</span>{aichip}</div>{subline}</div></div>'
@@ -293,10 +295,10 @@ def my_work():
     rows = [
         group_header("Pt Operational Services (Pty) Ltd", "Account owner Celeste · renewal window October 2026", "1 parent · 5 subtasks"),
         task_row("97 medicals expiring between 01/10/2026 and 31/10/2026", "prog", "16/09/2026", "CB", "mco", "Renewal",
-                 sub="MCO Medicals Due · created 01/09 09:30 · Grok grouped 5 subtasks · 2 of 5 ticked"),
+                 sub="Ranked first: nearest due date, 4 dependent subtasks, SLA risk high · 2 of 5 ticked · hover for why"),
         task_row("Confirm employee list and sites with the HR contact", "done", "03/09/2026", "CB", "bot", "Renewal", indent=True),
         task_row("Send booking proposal for 6 to 10 October", "wait", "04/09/2026", "CB", "bot", "Schedule", indent=True, ai=True),
-        task_row("Reserve mobile clinic slots at Secunda and Sasolburg", "new", "08/09/2026", "AN", "bot", "Schedule", indent=True),
+        task_row("Reserve mobile clinic slots at Secunda and Sasolburg", "new", "08/09/2026", "AN", "bot", "Schedule", indent=True, blocked="blocked by 2"),
         task_row("Collect outstanding ID copies (12 cases pending)", "new", "10/09/2026", "CB", "mco", "Certificates", indent=True),
         task_row("Raise pro forma invoice for 97 medicals", "new", "12/09/2026", "AW", "bot", "Invoice", indent=True),
         group_header("Afrirent Auto (Pty) Ltd", "Account owner Celeste · 26 medicals due October 2026", "1 parent · 4 subtasks", expanded=False),
@@ -319,6 +321,7 @@ def my_work():
         f'<div style="border:1px solid {LINE};border-radius:{R_SM};padding:10px 12px;display:flex;flex-direction:column;gap:6px"><div style="font-size:12.5px;font-weight:600">Accept 4 proposed subtasks</div><div style="font-size:11.5px;color:{MUTE}">Afrirent Auto · 26 medicals · assigned to you</div><div style="display:flex;gap:6px">{btn("Accept all","dark",None,32)}{btn("Review","sec",None,32)}</div></div>'
         f'</div>'
         f'<div style="margin-top:10px;height:40px;border:1px solid {LINE};border-radius:{R_SM};display:flex;align-items:center;padding:0 12px;color:{MUTE};font-size:12.5px;gap:8px">Ask about a client or task<span style="margin-left:auto">{ic("arrow",14,MUTE,2)}</span></div>'
+        f'<div style="margin-top:10px;padding-top:10px;border-top:1px solid {GREY_L};font-size:11.5px;color:{INK}"><strong>Captured today</strong> · 2 tasks from the Fireflies transcript of the Tolcon call, 1 from a flagged Outlook email · <a href="#">review in Inbox</a></div>'
         f'<div style="margin-top:8px;font-size:11px;color:{MUTE}">AI drafts, a named human signs. Nothing sends without you.</div>', pad="16px")
     journey = card(
         h2("My clients on the journey") + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'
@@ -327,15 +330,30 @@ def my_work():
             f'<div style="flex:1;display:flex;gap:3px">' + "".join(f'<span style="flex:1;height:6px;border-radius:3px;background:{RED if i==cur else ("#D6D6D6" if i<cur else GREY_L)}"></span>' for i in range(8)) + f'</div><span style="font-size:11px;color:{MUTE};width:66px;text-align:right">{s}</span></div>'
             for n, cur, s in [("Pt Operational", 7, "Renewal"), ("Afrirent Auto", 7, "Renewal"), ("Tolcon Group", 4, "Clinic day"), ("Nuvest Chemicals", 3, "Schedule"), ("Univac Cooling", 2, "Onboard"), ("CGI Industries", 5, "Certificates")])
         + f'</div><div style="font-size:11px;color:{MUTE};display:flex;justify-content:space-between;margin-top:8px"><span>Prospect</span><span>Renewal</span></div>', pad="16px")
+    def slot(t, label, kind):
+        # kind: meeting | focus_pinned | focus | free
+        if kind == "free":
+            return f'<div style="display:flex;gap:10px;align-items:center;height:26px"><span style="font-size:11px;color:{MUTE};width:36px">{t}</span><span style="flex:1;border-top:1px dashed {LINE}"></span></div>'
+        bg = {"meeting": BLUE_T, "focus_pinned": RED_T, "focus": GREY_L}[kind]
+        fg = {"meeting": BLUE, "focus_pinned": RED_D, "focus": INK}[kind]
+        tag = {"meeting": "", "focus_pinned": ic("lock", 11, RED_D, 2), "focus": ic("sparkle", 11, MUTE, 2)}[kind]
+        return (f'<div style="display:flex;gap:10px;align-items:center;min-height:36px"><span style="font-size:11px;color:{MUTE};width:36px;flex-shrink:0">{t}</span>'
+                f'<div style="flex:1;background:{bg};border-radius:{R_SM};padding:5px 8px;display:flex;align-items:center;gap:6px;font-size:11.5px;color:{fg};font-weight:600">{tag}<span style="flex:1;min-width:0">{label}</span></div></div>')
     today = card(
-        h2("Today") + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">'
-        + "".join(f'<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11.5px;color:{MUTE};width:40px;flex-shrink:0;padding-top:1px">{t}</span><span style="font-size:12.5px;color:{INK}">{d}</span></div>'
-                  for t, d in [("10:00", "Call the Tolcon HR contact about 3 non arrivals"), ("11:30", "Weekly pipeline review with Barteldt"), ("14:00", "Nuvest Chemicals: confirm clinic date")])
-        + "</div>", pad="16px")
+        f'<div style="display:flex;align-items:center;gap:8px">{h2("Today")}<span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 8px;border:1px solid {LINE};border-radius:999px;font-size:11px;font-weight:600;color:{INK}">{ic("clock",12,INK,2)}Focus 25:00 · start</span></div>'
+        f'<div style="font-size:11px;color:{MUTE};margin:4px 0 8px">Grok placed 2 focus blocks into calendar gaps. Pin a block to stop it moving.</div>'
+        + slot("08:30", "Focus: Tolcon rebooking (pinned)", "focus_pinned")
+        + slot("09:30", "", "free")
+        + slot("10:00", "Call the Tolcon HR contact about 3 non arrivals", "meeting")
+        + slot("11:30", "Weekly pipeline review with Barteldt", "meeting")
+        + slot("12:30", "", "free")
+        + slot("13:00", "Focus: Afrirent subtasks (Grok scheduled, movable)", "focus")
+        + slot("14:00", "Nuvest Chemicals: confirm clinic date", "meeting"),
+        pad="16px")
     rail = f'<aside style="width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">{assistant}{journey}{today}</aside>'
     body = (f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;gap:20px">'
             f'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:16px">{head}{tabs}{stats}{filters}{table}</div>{rail}</div>')
-    return doc("My work", shell("My work", ["Sales Executive desk", "My work"], body, h=1240))
+    return doc("My work", shell("My work", ["Sales Executive desk", "My work"], body, h=1340))
 
 # =============================================================== 02 INBOX
 def inbox():
@@ -343,7 +361,7 @@ def inbox():
                      btn("Mark all read", "sec") + btn("Approve all safe items (5)", "dark", "check"))
     tabs = '<div style="display:flex;gap:4px;border-bottom:1px solid ' + LINE + '">' + "".join(
         f'<div style="padding:8px 12px;font-size:13px;font-weight:600;color:{INK if on else MUTE};border-bottom:2px solid {RED if on else "transparent"};margin-bottom:-1px;display:flex;gap:6px;align-items:center">{t}<span style="font-size:11px;color:{MUTE};background:{GREY_L};border-radius:9px;padding:0 6px">{n}</span></div>'
-        for t, n, on in [("Needs my signature", 4, True), ("Proposed by Grok", 5, False), ("Mentions", 2, False), ("MCO changes", 1, False), ("All", 12, False)]) + '</div>'
+        for t, n, on in [("Needs my signature", 4, True), ("Proposed by Grok", 5, False), ("Captured", 3, False), ("SLA at risk", 2, False), ("Mentions", 2, False), ("MCO changes", 1, False), ("All", 17, False)]) + '</div>'
     def item(kind_icon, title, meta, who, when, actions, sel=False, s="bot"):
         return (f'<div style="display:flex;gap:12px;padding:14px 16px;border-top:1px solid {GREY_L};background:{RED_SOFT if sel else CARD}">'
                 f'<span style="width:32px;height:32px;border-radius:{R_SM};background:{RED_T if s=="bot" else GREY_L};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">{ic(kind_icon,16,RED if s=="bot" else INK,2)}</span>'
@@ -360,6 +378,12 @@ def inbox():
                     btn("Approve", "pri", None, 32) + btn("Decline", "sec", None, 32), s="man")
              + item("message", "Annemarie mentioned you on ISE Group · PO number outstanding", "@Barteldt the client wants the PO referenced on the pro forma. Can we hold the invoice two days?", "AW", "Yesterday 14:02",
                     btn("Reply", "sec", None, 32) + btn("Open task", "ghost", None, 32), s="man")
+             + item("clock", "SLA at risk: Tolcon rebooking predicted to breach in 2 days", "Queue depth and the last 6 rebookings put breach probability at 78%. Grok suggests moving the call to today and drafting the rebooking offer now.", "GB", "08:00",
+                    btn("Move call to today", "pri", None, 32) + btn("Draft rebooking offer", "sec", None, 32) + btn("Dismiss", "ghost", None, 32))
+             + item("message", "Captured from the Fireflies transcript: Tolcon call, 2 tasks proposed", "\"Send the amended site list by Friday\" and \"Book the audiometry follow ups before the October wave\". Source reference kept on each task. Accept, edit or discard.", "GB", "Yesterday 15:40",
+                    btn("Accept both", "dark", None, 32) + btn("Edit", "sec", None, 32) + btn("Discard", "ghost", None, 32))
+             + item("mail", "Captured from a flagged Outlook email: Nuvest asks to move the clinic day", "Grok proposes one task on the Nuvest clinic day parent, due Friday, assigned to Asandiswa. The email stays in Outlook, only the reference is stored.", "GB", "Yesterday 09:12",
+                    btn("Accept", "dark", None, 32) + btn("Edit", "sec", None, 32) + btn("Discard", "ghost", None, 32))
              + item("refresh", "MCO changed a task you follow", "Medicals: ID pending, case 4471 (CGI Industries) moved to Completed in MyClinicOnline. The portal task closes in 24 hours unless you keep it open.", "GB", "06:01",
                     btn("Close now", "sec", None, 32) + btn("Keep open", "ghost", None, 32), s="mco"))
     listc = f'<div style="flex:1;min-width:0;background:{CARD};border:1px solid {LINE};border-radius:{R_MD};box-shadow:{SHADOW};overflow:hidden">{items}</div>'
@@ -371,7 +395,7 @@ def inbox():
                    + "</div>", pad="16px")
             + '</div>')
     body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:14px">{head}{tabs}<div style="display:flex;gap:12px;flex:1;min-height:0">{listc}{side}</div></div>'
-    return doc("Inbox", shell("Inbox", ["Sales Executive desk", "Inbox"], body, h=1000))
+    return doc("Inbox", shell("Inbox", ["Sales Executive desk", "Inbox"], body, h=1290))
 
 # =============================================================== 03 TEAM BOARD
 def kcard(client, title, who, due, n, kind, source="mco", ai=False):
@@ -457,7 +481,7 @@ def client360():
         f'<div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:18px">'
         f'<span style="width:48px;height:48px;border-radius:{R_MD};background:{INK};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-family:{HEAD};font-weight:600;font-size:16px">PT</span>'
         f'<div><h1 style="font-size:20px;font-weight:600">Pt Operational Services (Pty) Ltd</h1><div style="font-size:12.5px;color:{MUTE};margin-top:2px">Mining services · Secunda and Sasolburg · 214 employees on medical surveillance · MCO client since 2019</div>'
-        f'<div style="display:flex;gap:8px;margin-top:8px;align-items:center">{pill("done","Active")}{stage("Renewal", on=True)}<span style="font-size:12px;color:{INK}">Account owner</span>{av("CB",22)}<span style="font-size:12px;color:{INK}">Celeste Bulpitt</span><span style="font-size:12px;color:{INK};margin-left:6px">Oversight</span>{av("AW",22)}</div></div>'
+        f'<div style="display:flex;gap:8px;margin-top:8px;align-items:center">{pill("done","Active")}{stage("Renewal", on=True)}<span style="font-size:12px;color:{INK}">Account owner</span>{av("CB",22)}<span style="font-size:12px;color:{INK}">Celeste Bulpitt</span><span style="font-size:12px;color:{INK};margin-left:6px">Oversight</span>{av("AW",22)}<span style="display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;background:{GREY_L};font-size:11px;font-weight:600;color:{INK};margin-left:6px">Client source: Referral · 2019 · carried on every task</span></div></div>'
         f'<div style="margin-left:auto;display:flex;gap:8px">{btn("Log activity","sec","message")}{btn("Open in MCO","sec","external")}{btn("Open in AutoHive CRM","sec","external")}{btn("New task","pri","plus")}</div></div>'
         f'{stepper}', pad="20px 24px")
     stats = ('<div style="display:flex;gap:12px">' + statcard("Medicals due October", "97", "16 September internal deadline")
@@ -506,6 +530,9 @@ def task_detail():
         + prop("Client", f'<span style="display:inline-flex;align-items:center;gap:6px">{ic("building",14,MUTE)}Pt Operational Services</span>')
         + prop("Journey stage", stage("Renewal", on=True))
         + prop("Task type", "<span>Medicals Due</span>")
+        + prop("Template", '<a href="#">Renewal ladder 90 / 60 / 30 v3</a>')
+        + prop("Depends on", f'<span style="font-size:12px;color:{INK}">Subtask 2 blocks 3 · 3 blocks clinic days</span>')
+        + prop("Time logged", f'<span style="display:inline-flex;align-items:center;gap:6px">{ic("clock",14,MUTE)}1h 20m · focus timer</span>')
         + prop("Source", f'{src("mco")}<span style="font-size:12px;color:{MUTE}">MCO 48213 · synced 01/09 09:30</span>')
         + prop("Module", "Sales")
         + prop("Agent run", '<a href="#">run_2026-09-03_0931</a>')
@@ -520,7 +547,7 @@ def task_detail():
     subs = [
         ("Confirm employee list and sites with the HR contact", "done", "CB", "03/09", "HR confirmed 97 cases · Secunda 61, Sasolburg 36"),
         ("Send booking proposal for 6 to 10 October", "wait", "CB", "04/09", "Email drafted by Grok · needs your signature before it sends"),
-        ("Reserve mobile clinic slots at Secunda and Sasolburg", "new", "AN", "08/09", "Depends on proposal acceptance"),
+        ("Reserve mobile clinic slots at Secunda and Sasolburg", "new", "AN", "08/09", "Blocked by subtask 2, start after finish · on the critical path to the clinic days"),
         ("Collect outstanding ID copies (12 cases pending)", "new", "CB", "10/09", "MCO Medicals: ID Pending closes automatically when documents arrive"),
         ("Raise pro forma invoice for 97 medicals", "new", "AW", "12/09", "Grok prefills from the confirmed list, Annemarie signs"),
     ]
@@ -540,7 +567,7 @@ def task_detail():
         f'<p style="margin:8px 0 0;font-size:13px;line-height:1.6;color:{INK}">MyClinicOnline reports 97 periodic medicals expiring between 1 and 31 October 2026 for Pt Operational Services. 61 cases are based at Secunda and 36 at Sasolburg. Last year the client used two mobile clinic days per site. Recommended plan: propose 6 to 10 October, secure slots once accepted, chase 12 outstanding ID copies in parallel and raise the pro forma before the clinic days so the OMP can release certificates without delay.</p>'
         f'<div style="display:flex;gap:8px;margin-top:10px">' + "".join(f'<span style="display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid {LINE};border-radius:{R_SM};font-size:12px;color:{INK}">{ic("file",13,MUTE)}{n}</span>' for n in ["MCO_medicals_due_oct2026.xlsx", "Booking_proposal_draft.docx"]) + '</div>')
     acts = [
-        ("GB", "03/09 09:31", "Drafted <strong>Booking proposal · 6 to 10 October</strong> and attached it to subtask 2. Waiting for Celeste's signature.", "bot"),
+        ("GB", "03/09 09:31", "Drafted <strong>Booking proposal · 6 to 10 October</strong> and attached it to subtask 2. Waiting for Celeste's signature. Logged: input MCO 48213, model and prompt version renewal_v3.2, reversible for 24 hours.", "bot"),
         ("AW", "02/09 16:40", "Confirmed the agent allocation. Keep Annemarie on invoicing so the PO chase starts early.", "man"),
         ("CB", "02/09 11:05", "Ticked <em>Confirm employee list</em>. HR confirmed 97 cases, split 61 and 36.", "man"),
         ("GB", "01/09 09:30", "Created this task from MCO Medicals Due 48213 and allocated it to the account owner under rule R-02.", "mco"),
@@ -558,9 +585,15 @@ def task_detail():
                 f'<div style="min-width:0"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:{MUTE}"><span>Parent task</span>·<span>TSK-2026-1187</span>·{src("mco")}</div>'
                 f'<h1 style="font-size:21px;font-weight:600;margin-top:4px;line-height:1.3">97 medicals expiring for Pt Operational Services between 01/10/2026 and 31/10/2026</h1></div>'
                 f'<div style="margin-left:auto;display:flex;gap:8px;flex-shrink:0">{btn("Mark complete","sec","check")}{btn("Reassign","sec","users")}{btn("Open in MCO","sec","external")}{ic("more",18,MUTE)}</div></div>')
-    left = f'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">{titlebar}{approval}{subs_card}{desc}{activity}</div>'
+    def rung(label, date, state):
+        col = {"done": INK, "on": RED, "todo": "#BDBDBD"}[state]
+        return (f'<div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0"><div style="height:6px;border-radius:3px;background:{col}"></div>'
+                f'<div style="font-size:11.5px;font-weight:{700 if state=="on" else 600};color:{RED_D if state=="on" else INK}">{label}</div><div style="font-size:11px;color:{MUTE}">{date}</div></div>')
+    ladder = card(f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">{h2("Renewal ladder", "recurring obligation generated from the MCO expiry date, template v3")}</div>'
+                  f'<div style="display:flex;gap:8px">{rung("90 days · pre warn", "02/07/2026 · done", "done")}{rung("60 days · propose dates", "01/08/2026 · done", "done")}{rung("30 days · book and chase IDs", "01/09/2026 · now", "on")}{rung("Clinic days", "06 to 10/10/2026", "todo")}{rung("Expiry", "31/10/2026", "todo")}</div>', pad="16px 20px")
+    left = f'<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">{titlebar}{approval}{ladder}{subs_card}{desc}{activity}</div>'
     body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;gap:16px">{left}{props}</div>'
-    return doc("Task detail", shell("My work", ["Sales Executive desk", "My work", "Pt Operational Services", "TSK-2026-1187"], body, h=1330))
+    return doc("Task detail", shell("My work", ["Sales Executive desk", "My work", "Pt Operational Services", "TSK-2026-1187"], body, h=1460))
 
 # =============================================================== 06 SALES AUTOMATIONS
 def automations():
@@ -589,10 +622,10 @@ def automations():
                 f'<div style="font-size:12.5px;font-weight:600">{trigger}</div>'
                 f'<div><div style="font-size:12.5px;color:{INK}"><strong>{agent}:</strong> {action}</div>{g}</div>'
                 f'<div style="display:flex;align-items:center;gap:6px;font-size:12px">{av(owner,22)}{PEOPLE[owner][0].split()[0]}</div>'
-                f'<span style="font-size:12px;color:{MUTE}">{runs}</span><div style="display:flex;justify-content:flex-end">{tog}</div></div>')
+                f'<span style="font-size:12px;color:{MUTE}">{runs}<br>09:30</span><div style="display:flex;justify-content:flex-end">{tog}</div></div>')
     rules = (f'<div style="flex:1;min-width:0;background:{CARD};border:1px solid {LINE};border-radius:{R_MD};box-shadow:{SHADOW};overflow:hidden">'
-             f'<div style="display:flex;align-items:center;gap:8px;padding:14px 16px">{h2("Allocation and journey rules", "7 active · every rule has a human owner, a last fired time and a kill switch")}</div>'
-             f'<div style="display:grid;grid-template-columns:{RG};gap:12px;padding:0 16px 8px;font-size:11px;font-weight:700;color:{MUTE};text-transform:uppercase;letter-spacing:.05em"><span>Rule</span><span>When</span><span>Agent and action</span><span>Owner</span><span>Runs 30d</span><span style="text-align:right">On</span></div>'
+             f'<div style="display:flex;align-items:center;gap:8px;padding:14px 16px">{h2("Allocation and journey rules", "9 active · every rule has a human owner, a last fired time and a kill switch")}</div>'
+             f'<div style="display:grid;grid-template-columns:{RG};gap:12px;padding:0 16px 8px;font-size:11px;font-weight:700;color:{MUTE};text-transform:uppercase;letter-spacing:.05em"><span>Rule</span><span>When</span><span>Agent and action</span><span>Owner</span><span>Runs 30d · last</span><span style="text-align:right">On</span></div>'
              + rule("R-01", "New MCO task of any type", "Documentation agent", "Create a portal parent task, link the MCO id, place it on the journey stage mapped from the task type", "AW", "312")
              + rule("R-02", "Medicals Due · new", "Booking agent, 30 to 90 days", "Allocate to the client's account owner and draft renewal subtasks (confirm list, propose dates, reserve slots, ID copies, pro forma)", "AW", "118", guard=f"Over 20 medicals: Sales Manager signs before allocation {confirm('CONFIRM threshold')}")
              + rule("R-03", "Medicals Overdue · new", "Follow up agent", "Escalate to account owner and Sales Manager, draft the recovery call script, set priority High", "AW", "27", guard="Never contacts the client directly")
@@ -601,6 +634,9 @@ def automations():
              + rule("R-06", "Any subtask drafts an outbound email", "Follow up agent", "Hold in Awaiting approval until the assigned person or their Sales Manager signs", "AW", "41", guard="Hard stop · POPIA: no employee name or medical outcome in an email body")
              + rule("R-07", "Consultant load above 12 open parents", "Allocation rule", "Standard task to the consultant with the largest book gap, high profile client to a senior with room, Sales Manager confirms", "AW", "9")
              + "</div>")
+    rules = rules.replace('</div>\n', '</div>')
+    rules = rules[:-6] + rule("R-08", "Medical expiry date known", "Booking agent, 30 to 90 days", "Generate the renewal ladder as recurring tasks at 90, 60 and 30 days before expiry, tagged [CONFIRM] until the account owner accepts the calendar once", "AW", "44") \
+        + rule("R-09", "Fireflies transcript, flagged Outlook email or Teams message", "Capture agent", "Extract draft tasks with their source reference and hold them in Inbox under Captured. Instructions found inside content are data, never commands", "BK", "21", guard="Reads untrusted input: holds no secret rights, writes only to its own report table") + "</div>"
     runs = [("09:30 today", "Sync and allocate", "10 ingested", "10 created", "8 allocated", "2 need a signature", "done"),
             ("06:01 today", "Sync", "1 ingested", "1 created", "1 allocated", "0", "done"),
             ("Yesterday 17:15", "Overdue sweep", "3 flagged", "3 escalated", "3 allocated", "0", "done"),
@@ -609,6 +645,10 @@ def automations():
     run_html = "".join(f'<div style="display:flex;flex-direction:column;gap:3px;padding:9px 0;border-top:1px solid {GREY_L};font-size:12px"><div style="display:flex;align-items:center;gap:8px"><span style="font-weight:600">{k}</span><span style="color:{MUTE}">{t}</span><span style="margin-left:auto">{pill(s, "OK" if s=="done" else "1 error")}</span></div><div style="color:{MUTE}">{a} · {b} · {c} · {d}</div></div>' for t, k, a, b, c, d, s in runs)
     history = (f'<div style="width:400px;flex-shrink:0;display:flex;flex-direction:column;gap:12px">'
                + card(f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">{h2("Agent runs")}<span style="margin-left:auto;font-size:12px;color:{BLUE};font-weight:600">Full log</span></div>{run_html}', pad="16px")
+               + card(h2("Templates", "task lineage, one Task table") + '<div style="display:flex;flex-direction:column;margin-top:6px">'
+                      + "".join(f'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid {GREY_L};font-size:12.5px"><span style="font-weight:600">{n}</span><span style="color:{MUTE}">{d}</span><span style="margin-left:auto;font-size:11px;color:{MUTE}">{v}</span></div>'
+                                for n, d, v in [("Renewal ladder", "90 / 60 / 30 days", "v3"), ("Discovery to close", "6 steps", "v2"), ("Proposal production checklist", "9 ticks", "v1"), ("Onboarding handover to clinic operations", "7 ticks", "v1"), ("Non arrival recovery", "4 ticks, SLA 2 days", "v2")])
+                      + "</div>", pad="16px")
                + card(h2("Guardrails") + '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">'
                       + "".join(f'<div style="display:flex;gap:10px;align-items:flex-start"><span style="width:22px;height:22px;border-radius:{R_SM};background:{RED_T};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">{ic(i,13,RED,2)}</span><div style="font-size:12.5px;color:{INK};line-height:1.45">{t}</div></div>'
                                 for i, t in [("lock", "AI drafts, a named human signs. No agent sends, pays, files or advances a gated step."),
@@ -618,7 +658,7 @@ def automations():
                       + "</div>", pad="16px")
                + "</div>")
     body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:14px">{head}{pipeline}<div style="display:flex;gap:12px;flex:1;min-height:0">{rules}{history}</div></div>'
-    return doc("Sales automations", shell("Sales automations", ["Sales Executive desk", "Sales automations"], body, h=1240))
+    return doc("Sales automations", shell("Sales automations", ["Sales Executive desk", "Sales automations"], body, h=1520))
 
 # =============================================================== 07 ROLES AND PERMISSIONS
 def permissions():
@@ -703,10 +743,140 @@ def states():
     body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:16px">{head}{grid}</div>'
     return doc("Screen states", shell("My work", ["Sales Executive desk", "Screen states"], body, h=900))
 
+# =============================================================== 00 SALES DESK (module dashboard)
+def desk():
+    head = page_head("Sales desk", "One screen, eight questions. Every tile answers one question, links to the list behind it and can be removed.",
+                     btn("Customise tiles", "sec", "settings") + btn("Daily digest settings", "sec", "bell"))
+    def tile(q, inner, link="Open list", tall=False):
+        return (f'<div style="background:{CARD};border:1px solid {LINE};border-radius:{R_MD};box-shadow:{SHADOW};padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-height:{"300px" if tall else "250px"};box-sizing:border-box">'
+                f'<div style="display:flex;align-items:flex-start;gap:8px"><div style="font-family:{HEAD};font-weight:600;font-size:13.5px;color:{INK};line-height:1.35">{q}</div><span style="margin-left:auto;flex-shrink:0">{ic("x",14,"#BDBDBD",2)}</span></div>'
+                f'<div style="flex:1;display:flex;flex-direction:column;gap:8px">{inner}</div>'
+                f'<a href="#" style="font-size:12px;font-weight:600">{link}</a></div>')
+    def big(v, sub, tone=INK):
+        return f'<div><div style="font-family:{HEAD};font-weight:600;font-size:30px;color:{tone};line-height:1.1">{v}</div><div style="font-size:12px;color:{MUTE};margin-top:2px">{sub}</div></div>'
+    def row(a, b, tone=INK, bold=False):
+        return f'<div style="display:flex;justify-content:space-between;gap:8px;font-size:12.5px;padding:5px 0;border-top:1px solid {GREY_L}"><span style="color:{INK};font-weight:{600 if bold else 400}">{a}</span><span style="font-weight:600;color:{tone}">{b}</span></div>'
+    def bar(label, n, maxn, note=""):
+        w = int(n / maxn * 100)
+        return (f'<div style="display:flex;align-items:center;gap:10px;font-size:12px"><span style="width:56px;color:{INK}">{label}</span>'
+                f'<div style="flex:1;height:10px;border-radius:5px;background:{GREY_L};overflow:hidden"><span style="display:block;height:100%;width:{w}%;background:{INK};border-radius:5px"></span></div>'
+                f'<span style="width:34px;text-align:right;font-weight:600">{n}</span><span style="width:70px;font-size:11px;color:{MUTE}">{note}</span></div>')
+    def load(code, n, cap):
+        name, col = PEOPLE[code]; pct = min(100, int(n / cap * 100)); bc = RED if n > cap else INK
+        return (f'<div style="display:flex;align-items:center;gap:8px">{av(code,22)}<span style="width:84px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{name.split()[0]}</span>'
+                f'<div style="flex:1;height:8px;border-radius:4px;background:{GREY_L};overflow:hidden"><span style="display:block;height:100%;width:{pct}%;background:{bc};border-radius:4px"></span></div><span style="width:36px;text-align:right;font-size:12px;font-weight:600;color:{bc}">{pct}%</span></div>')
+    tiles = ('<div style="display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:14px">'
+        + tile("What is overdue, and whose is it?", big("3", "parent tasks past due", RED_D) + row("Celeste Bulpitt", "2", RED_D) + row("Annemarie Wiese", "1", RED_D) + row("Everyone else", "0"), "Open overdue list")
+        + tile("Which SLAs are about to breach?", big("2", "predicted from queue depth and history", WARN)
+               + row("Tolcon rebooking · 2 days", "78%", RED_D, True) + row("CGI ID pending · today", "64%", RED_D, True) + f'<div style="font-size:11.5px;color:{MUTE}">Prediction raised as an exception before the breach, not after.</div>', "Open SLA queue")
+        + tile("What waits on my signature?", big("4", "AI drafts, a named human signs") + row("Agent allocations", "2") + row("Outbound client email", "1") + row("Threshold over 20 medicals", "1"), "Open Inbox")
+        + tile("Is the book filling?", big("72%", "R180,000 booked of R250,000 monthly target") + f'<div style="height:10px;border-radius:5px;background:{GREY_L};overflow:hidden"><span style="display:block;height:100%;width:72%;background:{INK}"></span></div>' + row("30 to 90 day window", "R385,000 open") + f'<div style="font-size:11px;color:{MUTE}">Demo fixture from the Sales Executive desk. Read from AutoHive CRM.</div>', "Open my book")
+        + tile("What is due in the next 30 days?", f'<div style="font-size:12px;color:{MUTE}">Medicals expiring, by week</div>' + bar("8 Sep", 12, 150) + bar("15 Sep", 147, 150, "3 clients") + bar("22 Sep", 9, 150) + bar("29 Sep", 31, 150) + f'<div style="font-size:11.5px;color:{INK}">Peak week 15 September: Pt Operational, Afrirent, Tolcon. Booking proposals must be signed by 10 September.</div>', "Open renewal calendar")
+        + tile("How is the pipeline moving?", big("6", "opportunities moved forward this week", GREEN) + row("Stalled over 14 days", "2", RED_D) + row("New inbound this week", "4") + row("Recovered from lost", "1", GREEN) + f'<div style="font-size:11px;color:{MUTE}">Read from AutoHive CRM every 15 minutes {confirm("CONFIRM")}.</div>', "Open pipeline")
+        + tile("Who has room this week?", "".join(load(c, n, 12) for c, n in [("CB", 14), ("AN", 11), ("AW", 9), ("AS", 8), ("AM", 6)]) + f'<div style="font-size:11.5px;color:{MUTE}">Allocation rule sends standard work to the largest gap.</div>', "Open team board")
+        + tile("What did the agents do today?", row("MCO tasks ingested", "10") + row("Subtasks drafted", "38") + row("Allocated by rule", "8") + row("Held for a person", "3", WARN) + row("Errors", "0", GREEN) + f'<div style="font-size:11.5px;color:{MUTE}">Daily digest sent 07:00. Real time alerts are exceptions only.</div>', "Open agent log")
+        + "</div>")
+    body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:16px">{head}{tiles}</div>'
+    return doc("Sales desk", shell("Desk", ["Sales Executive desk", "Desk"], body, h=880))
+
+# =============================================================== 04b TIMELINE (dependencies and critical path)
+def timeline():
+    import datetime as _dt
+    START = _dt.date(2026, 8, 31)          # Monday
+    DAYS = 70                               # 10 weeks
+    LABEL_W = 300
+    AREA_W = 1176 - 40 - LABEL_W            # content width minus card padding minus label column
+    PX = AREA_W / DAYS
+    ROW_H = 44
+    def x(d):  # date -> px
+        return round((d - START).days * PX, 1)
+    def D(day, month):
+        return _dt.date(2026, month, day)
+    head = page_head("Timeline", "Pt Operational Services renewal wave · dependencies enforce start after finish · the critical path to the clinic days is red",
+                     field("Group by", "Client", 150) + field("Range", "Sep to Nov 2026", 170) + btn("Add dependency", "sec", "plus") + btn("Open task", "pri", "external"))
+    # week header
+    weeks = ""
+    for w in range(10):
+        d = START + _dt.timedelta(days=7 * w)
+        month = d.strftime("%b")
+        weeks += f'<div style="position:absolute;left:{x(d)}px;width:{PX*7}px;height:100%;border-left:1px solid {GREY_L};box-sizing:border-box;padding:6px 8px;font-size:11px;color:{MUTE}"><span style="font-weight:600;color:{INK}">{d.day} {month}</span></div>'
+    rows = [
+        # label, start, end, kind, owner, note, critical
+        ("97 medicals expiring · parent", D(1, 9), D(31, 10), "parent", "CB", "TSK-2026-1187", False),
+        ("1 Confirm employee list and sites", D(1, 9), D(3, 9), "done", "CB", "", False),
+        ("2 Send booking proposal", D(3, 9), D(4, 9), "wait", "CB", "signature pending", True),
+        ("3 Reserve clinic slots", D(7, 9), D(8, 9), "new", "AN", "blocked by 2", True),
+        ("4 Collect ID copies (12 cases)", D(4, 9), D(10, 9), "new", "CB", "", False),
+        ("5 Raise pro forma invoice", D(10, 9), D(12, 9), "new", "AW", "", False),
+        ("Internal deadline", D(16, 9), D(16, 9), "milestone", None, "16 Sep", False),
+        ("Clinic days · Secunda and Sasolburg", D(6, 10), D(10, 10), "clinic", "AN", "mobile clinic", True),
+        ("OMP releases certificates", D(12, 10), D(16, 10), "new", None, "clinical system", True),
+        ("Expiry window", D(1, 10), D(31, 10), "window", None, "MCO", False),
+    ]
+    fill = {"parent": (GREY_L, INK, LINE), "done": (GREEN_T, GREEN, GREEN), "wait": ("#fff", INK, INK), "new": (BLUE_T, BLUE, BLUE_T), "clinic": (RED, "#fff", RED), "window": ("repeating-linear-gradient(135deg,#fff 0 4px,#F0F0F0 4px 8px)", MUTE, LINE)}
+    labels = ""; bars = ""
+    for i, (label, s0, s1, kind, who, note, crit) in enumerate(rows):
+        top = i * ROW_H
+        indent = 0 if kind in ("parent", "milestone", "window") or label.startswith(("Clinic", "OMP")) else 18
+        bold = 600 if kind == "parent" or crit else 400
+        who_html = av(who, 22) if who else '<span style="width:22px"></span>'
+        labels += (f'<div style="height:{ROW_H}px;display:flex;align-items:center;gap:8px;padding-left:{indent}px;border-top:1px solid {GREY_L};font-size:12.5px;font-weight:{bold};color:{INK}">'
+                   f'{who_html}<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{label}</span></div>')
+        if kind == "milestone":
+            bars += (f'<div style="position:absolute;left:{x(s0)-8}px;top:{top+14}px;width:16px;height:16px;background:{INK};transform:rotate(45deg);border-radius:2px"></div>'
+                     f'<div style="position:absolute;left:{x(s0)+14}px;top:{top+13}px;font-size:11px;color:{INK};font-weight:600">{note}</div>')
+            continue
+        bg, fg, bd = fill[kind]
+        w = max(PX * 2, x(s1 + _dt.timedelta(days=1)) - x(s0))
+        outline = f"box-shadow:0 0 0 2px {RED}" if crit and kind != "clinic" else ""
+        inside = w > 110
+        bars += (f'<div style="position:absolute;left:{x(s0)}px;top:{top+10}px;width:{w}px;height:24px;background:{bg};border:1px solid {bd};border-radius:{R_SM};box-sizing:border-box;'
+                 f'display:flex;align-items:center;padding:0 8px;gap:6px;font-size:11px;font-weight:600;color:{fg};white-space:nowrap;overflow:hidden;{outline}">'
+                 f'{note if inside else ""}</div>')
+        if note and not inside:
+            bars += (f'<div style="position:absolute;left:{x(s0)+w+8}px;top:{top+14}px;display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:{RED_D if crit else INK};white-space:nowrap">'
+                     f'{ic("lock",11,RED_D if crit else INK,2) if "blocked" in note else ""}{note}</div>')
+    # dependency connectors: (from row, to row) end of A -> start of B
+    deps = [(2, 3), (3, 7), (7, 8), (1, 2)]
+    svg = ""
+    for a, b in deps:
+        _, a0, a1, *_r = rows[a]; _, b0, *_r2 = rows[b]
+        xa = x(a1 + _dt.timedelta(days=1)); ya = a * ROW_H + 22
+        xb = x(b0); yb = b * ROW_H + 22
+        xm = xa + 8
+        crit = a in (2, 3, 7) and b in (3, 7, 8)
+        col = RED if crit else "#9A9A9A"
+        svg += f'<path d="M{xa},{ya} H{xm} V{yb} H{xb-2}" fill="none" stroke="{col}" stroke-width="1.5"/><path d="M{xb-6},{yb-4} L{xb-1},{yb} L{xb-6},{yb+4}" fill="none" stroke="{col}" stroke-width="1.5"/>'
+    total_h = len(rows) * ROW_H
+    today_x = x(D(3, 9))
+    chart = (f'<div style="display:flex">'
+             f'<div style="width:{LABEL_W}px;flex-shrink:0;padding-right:12px;box-sizing:border-box"><div style="height:34px;display:flex;align-items:center;font-size:11px;font-weight:700;color:{MUTE};text-transform:uppercase;letter-spacing:.05em">Task</div>{labels}</div>'
+             f'<div style="flex:1;position:relative;overflow:hidden"><div style="position:relative;height:34px;border-bottom:1px solid {LINE}">{weeks}</div>'
+             f'<div style="position:relative;height:{total_h}px">'
+             + "".join(f'<div style="position:absolute;left:{x(START + _dt.timedelta(days=7*w))}px;top:0;height:100%;border-left:1px solid {GREY_L}"></div>' for w in range(10))
+             + f'<div style="position:absolute;left:{today_x}px;top:0;height:100%;border-left:2px dashed {RED}"></div><div style="position:absolute;left:{today_x+6}px;top:-2px;font-size:10.5px;font-weight:700;color:{RED_D}">Today</div>'
+             f'<svg style="position:absolute;left:0;top:0;width:{AREA_W}px;height:{total_h}px;pointer-events:none" viewBox="0 0 {AREA_W} {total_h}">{svg}</svg>{bars}</div></div></div>')
+    legend = ('<div style="display:flex;gap:16px;font-size:11.5px;color:{MUTE};align-items:center;flex-wrap:wrap">'.format(MUTE=MUTE)
+              + "".join(f'<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:14px;height:10px;border-radius:3px;background:{bg};border:1px solid {bd};box-sizing:border-box"></span>{l}</span>'
+                        for l, bg, bd in [("Completed", GREEN_T, GREEN), ("Awaiting approval", "#fff", INK), ("Planned", BLUE_T, BLUE_T), ("Clinic days", RED, RED)])
+              + f'<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:14px;height:10px;border-radius:3px;box-shadow:0 0 0 2px {RED};background:#fff"></span>Critical path</span>'
+              f'<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:{INK};transform:rotate(45deg);border-radius:2px"></span>Milestone</span>'
+              f'<span style="margin-left:auto">Slack on the critical path: 24 days between certificate release and expiry. A 3 day slip on the proposal moves the clinic days.</span></div>')
+    main = card(f'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">{h2("Pt Operational Services · renewal wave October 2026", "9 items · critical path highlighted")}<span style="margin-left:auto">{src("mco")}</span></div>{chart}<div style="margin-top:14px">{legend}</div>')
+    others = card(h2("Other renewal waves in range", "collapsed · expand to see subtasks") + '<div style="margin-top:6px">'
+                  + "".join(f'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid {GREY_L};font-size:12.5px">{ic("chevright",14,INK,2)}{ic("building",14,MUTE)}<span style="font-weight:600;width:230px">{c}</span><span style="color:{MUTE};width:200px">{m}</span>'
+                            f'<div style="flex:1;position:relative;height:10px;background:{GREY_L};border-radius:5px"><span style="position:absolute;left:{l}%;width:{w}%;height:100%;background:{INK};border-radius:5px"></span></div><span style="width:80px;text-align:right;color:{MUTE}">{d}</span>{av(o,22)}</div>'
+                            for c, m, l, w, d, o in [("Afrirent Auto (Pty) Ltd", "26 medicals · 4 subtasks", 22, 62, "16/09 to 31/10", "CB"), ("Tolcon Group (Pty) Ltd.", "24 medicals · 4 subtasks", 22, 62, "16/09 to 31/10", "CB"), ("Nuvest Chemicals", "4 medicals · clinic day 18 Sep", 10, 20, "08/09 to 18/09", "AM")])
+                  + "</div>")
+    body = f'<div style="flex:1;overflow:hidden;padding:20px 24px;display:flex;flex-direction:column;gap:14px">{head}{main}{others}</div>'
+    return doc("Timeline", shell("My work", ["Sales Executive desk", "My work", "Timeline"], body, h=1000))
+
 # =============================================================== files + canvas
+write("Desk.dc.html", desk())
 write("Main.dc.html", my_work())
 write("Inbox.dc.html", inbox())
 write("TeamBoard.dc.html", team_board())
+write("Timeline.dc.html", timeline())
 write("ClientJourney.dc.html", client360())
 write("TaskDetail.dc.html", task_detail())
 write("Automations.dc.html", automations())
@@ -714,26 +884,31 @@ write("Permissions.dc.html", permissions())
 write("States.dc.html", states())
 
 GAP_X = 1440 + 120
-ROW2 = 1240 + 200
-ROW3 = ROW2 + 1330 + 200
+ROW2 = 1340 + 200
+ROW3 = ROW2 + 1160 + 200
+ROW4 = ROW3 + 1520 + 200
 canvas = {
     "artboards": [
-        {"file": "Main.dc.html", "title": "01 · My work (Sales Consultant)", "x": 0, "y": 0, "w": 1440, "h": 1240},
-        {"file": "Inbox.dc.html", "title": "02 · Inbox (Franchise Director signatures)", "x": GAP_X, "y": 0, "w": 1440, "h": 1000},
-        {"file": "TeamBoard.dc.html", "title": "03 · Team board (Sales Manager)", "x": GAP_X * 2, "y": 0, "w": 1440, "h": 1160},
-        {"file": "ClientJourney.dc.html", "title": "04 · Client 360 · journey", "x": 0, "y": ROW2, "w": 1440, "h": 1140},
-        {"file": "TaskDetail.dc.html", "title": "05 · Task detail · parent and subtasks", "x": GAP_X, "y": ROW2, "w": 1440, "h": 1330},
-        {"file": "Automations.dc.html", "title": "06 · Sales automations · Grok agents", "x": GAP_X * 2, "y": ROW2, "w": 1440, "h": 1240},
-        {"file": "Permissions.dc.html", "title": "07 · Roles and permissions", "x": 0, "y": ROW3, "w": 1440, "h": 1060},
-        {"file": "States.dc.html", "title": "08 · Screen states (empty, loading, error, forbidden, package off)", "x": GAP_X, "y": ROW3, "w": 1440, "h": 900},
+        {"file": "Desk.dc.html", "title": "01 · Sales desk (module dashboard)", "x": 0, "y": 0, "w": 1440, "h": 880},
+        {"file": "Main.dc.html", "title": "02 · My work (Today, auto scheduled)", "x": GAP_X, "y": 0, "w": 1440, "h": 1340},
+        {"file": "Inbox.dc.html", "title": "03 · Inbox (signatures, captured, SLA at risk)", "x": GAP_X * 2, "y": 0, "w": 1440, "h": 1290},
+        {"file": "TeamBoard.dc.html", "title": "04 · Team board (Sales Manager)", "x": 0, "y": ROW2, "w": 1440, "h": 1160},
+        {"file": "Timeline.dc.html", "title": "05 · Timeline (dependencies, critical path)", "x": GAP_X, "y": ROW2, "w": 1440, "h": 1000},
+        {"file": "ClientJourney.dc.html", "title": "06 · Client 360 · journey", "x": GAP_X * 2, "y": ROW2, "w": 1440, "h": 1140},
+        {"file": "TaskDetail.dc.html", "title": "07 · Task detail · renewal ladder, subtasks", "x": 0, "y": ROW3, "w": 1440, "h": 1460},
+        {"file": "Automations.dc.html", "title": "08 · Sales automations · rules, templates", "x": GAP_X, "y": ROW3, "w": 1440, "h": 1520},
+        {"file": "Permissions.dc.html", "title": "09 · Roles and permissions", "x": GAP_X * 2, "y": ROW3, "w": 1440, "h": 1060},
+        {"file": "States.dc.html", "title": "10 · Screen states (empty, loading, error, forbidden, package off)", "x": 0, "y": ROW4, "w": 1440, "h": 900},
     ],
     "annotations": [
-        {"id": "brief", "x": 0, "y": -280, "w": 520,
+        {"id": "brief", "x": 0, "y": -300, "w": 520,
          "text": "Care Net AI tasks module · Sales first\n\nMyClinicOnline tasks land in Supabase, Grok agents read them, create one parent task per client, draft subtasks along the client journey and propose who does the work. AI drafts, a named human signs. Managers oversee through role rights.\n\nJourney stages used everywhere: Prospect · Quote · Onboard · Schedule · Clinic day · Certificates · Invoice · Renewal."},
-        {"id": "matched", "x": 600, "y": -280, "w": 520,
-         "text": "Matched to the CNC Sales platform handoff\nShell: Client Portal AppShell (216px white sidebar, 64px top bar, StatCard 104px, attribution footer). Tokens: design/tokens (red #ED1B24, charcoal #1E1E1E, greys #787878 / #F0F0F0 / #E2E2E2, blue links, green success, yellow warning). Type: Montserrat 600 headings, Open Sans body. Radii 6 / 10 / 14.\nRules applied: British English, sentence case, no dash punctuation, AutoHive CRM only, [CONFIRM] on unconfirmed values, mock data labelled, no contact email or phone on boards, cases by number not worker name, medical outcomes never in the sales app."},
-        {"id": "next", "x": 1200, "y": -280, "w": 480,
-         "text": "Open questions for the build\n· 20 medical threshold for Sales Manager sign off [CONFIRM].\n· MCO task type to journey stage mapping (draft on screen 06).\n· Sync interval, default 15 minutes [CONFIRM].\n· May Grok close portal tasks when MCO marks them Completed, or always ask?\n· Attribution pill on CNC screens [CONFIRM per licence tier].\n· Team lead layer: needed now or when the team grows?"},
+        {"id": "matched", "x": 600, "y": -300, "w": 520,
+         "text": "Matched to the CNC Sales platform handoff\nShell: Client Portal AppShell (216px white sidebar, 64px top bar, StatCard 104px, attribution footer). Tokens: design/tokens. Type: Montserrat 600 headings, Open Sans body. Radii 6 / 10 / 14.\nRules applied: British English, sentence case, no dash punctuation, AutoHive CRM only, [CONFIRM] on unconfirmed values, mock data labelled, no contact email or phone on boards, cases by number not worker name, medical outcomes never in the sales app."},
+        {"id": "improved", "x": 1200, "y": -300, "w": 560,
+         "text": "Improvements from the capability checklist (structure only, all content Care Net)\n· Sales desk: eight one question tiles, each linked to its list, removable.\n· Today: Grok schedules focus blocks into calendar gaps, pin to hold, focus timer, ranking explanation.\n· Capture: tasks proposed from Fireflies transcripts and flagged Outlook email, source reference kept.\n· SLA breach prediction raised before the breach.\n· Timeline: dependencies enforce start after finish, critical path in red, milestones.\n· Renewal ladder 90 / 60 / 30 generated from the MCO expiry date.\n· Templates with version lineage; client source carried on every task; time logged; kill switch and last fired per rule."},
+        {"id": "next", "x": 1800, "y": -300, "w": 480,
+         "text": "Open questions for the build\n· 20 medical threshold for Sales Manager sign off [CONFIRM].\n· MCO task type to journey stage mapping (README section 5).\n· Sync interval, default 15 minutes [CONFIRM].\n· May Grok close portal tasks when MCO marks them Completed, or always ask?\n· Attribution pill on CNC screens [CONFIRM per licence tier].\n· Which capture channels are in scope: Fireflies and Outlook confirmed in the estate, Teams [CONFIRM]."},
     ],
     "launch": {"view": "canvas"},
 }
