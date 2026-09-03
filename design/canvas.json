@@ -1,0 +1,86 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "01 \u00b7 My Work (consultant)",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1200
+    },
+    {
+      "file": "Inbox.dc.html",
+      "title": "02 \u00b7 Inbox (director approvals)",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 960
+    },
+    {
+      "file": "TeamBoard.dc.html",
+      "title": "03 \u00b7 Team Board (manager)",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 1120
+    },
+    {
+      "file": "ClientJourney.dc.html",
+      "title": "04 \u00b7 Client 360 \u00b7 journey",
+      "x": 0,
+      "y": 1400,
+      "w": 1440,
+      "h": 1100
+    },
+    {
+      "file": "TaskDetail.dc.html",
+      "title": "05 \u00b7 Task detail \u00b7 parent and sub-tasks",
+      "x": 1560,
+      "y": 1400,
+      "w": 1440,
+      "h": 1290
+    },
+    {
+      "file": "Automations.dc.html",
+      "title": "06 \u00b7 Automations \u00b7 Grok rules",
+      "x": 3120,
+      "y": 1400,
+      "w": 1440,
+      "h": 1300
+    },
+    {
+      "file": "Permissions.dc.html",
+      "title": "07 \u00b7 Permissions \u00b7 parent-child tree",
+      "x": 0,
+      "y": 2900,
+      "w": 1440,
+      "h": 1000
+    }
+  ],
+  "annotations": [
+    {
+      "id": "brief",
+      "x": 0,
+      "y": -260,
+      "w": 520,
+      "text": "Care Net AI Tasks Management \u00b7 Sales dashboard first\n\nMyClinicOnline tasks land in Supabase, Grok bots read them, create parent tasks per client, draft sub-tasks along the client journey and propose who does the work. People approve. Managers oversee through role rights.\n\nJourney stages used everywhere: Prospect \u00b7 Quote \u00b7 Onboard \u00b7 Schedule \u00b7 Clinic day \u00b7 Certificates \u00b7 Invoice \u00b7 Renewal."
+    },
+    {
+      "id": "principles",
+      "x": 600,
+      "y": -260,
+      "w": 520,
+      "text": "Design principles\n1. One task model: parent per MCO item, sub-tasks per journey step.\n2. Source is always visible (MCO \u00b7 Grok \u00b7 Manual \u00b7 CRM).\n3. Bots propose, people approve. Client emails never leave without a named approver.\n4. Status vocabulary kept from MCO: New \u00b7 In progress \u00b7 Completed, plus Awaiting approval and Overdue.\n5. Same shell for every department: swap the Sales data for Clinic operations, Finance, HR later."
+    },
+    {
+      "id": "next",
+      "x": 1200,
+      "y": -260,
+      "w": 480,
+      "text": "Open questions for the build\n\u00b7 Confirm the 20-medical approval threshold and who signs off.\n\u00b7 Which MCO task types map to which journey stage (draft mapping is in screen 06).\n\u00b7 Should Grok be allowed to auto-close portal tasks when MCO marks them Completed, or always ask?\n\u00b7 Team lead layer: needed now or only when the team grows?"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
