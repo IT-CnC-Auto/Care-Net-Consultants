@@ -97,7 +97,7 @@ async function loadAccount(session) {
     } else if (r.account_kind === 'approved_client') {
       show(st, 'info', 'You are an approved Care Net client. Choose a package in the shop, or speak to your consultant about a service level agreement.');
     } else if (r.account_kind === 'applicant') {
-      show(st, 'info', 'Your registration is with a Care Net consultant for approval. Your secure assessment link follows by email once approved; you can already browse packages and samples.');
+      show(st, 'info', 'Your registration is with a Care Net Consultants consultant for approval. Your secure assessment link follows by email once approved; you can already browse packages and samples.');
     } else {
       show(st, 'err', 'Please contact Care Net about your account status.');
     }
