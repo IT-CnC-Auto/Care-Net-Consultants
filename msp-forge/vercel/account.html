@@ -48,7 +48,7 @@
     <h2>Your account</h2>
     <div id="account-body"></div>
     <div id="register-body" style="display:none">
-      <p class="muted">Your email is verified but no company is registered against it yet. Register your company; a Care Net consultant approves new accounts.</p>
+      <p class="muted">Your email is verified but no company is registered against it yet. Register your company; a Care Net Consultants consultant approves new accounts.</p>
       <label>Company name</label><input id="reg-company">
       <label>Contact person</label><input id="reg-contact">
       <button id="register">Register my company</button>
@@ -118,7 +118,7 @@ document.getElementById('register').onclick = async () => {
     body: JSON.stringify({ company_name: company, contact_name: contact, contact_email: session.user.email }),
   }).then(x => x.json()).catch(() => null);
   if (r && r.status === 'received') {
-    show(st, 'good', 'Your company is registered. A Care Net consultant approves new accounts and your secure assessment link follows by email. Meanwhile, browse the packages and samples in the shop.');
+    show(st, 'good', 'Your company is registered. A Care Net Consultants consultant approves new accounts and your secure assessment link follows by email. Meanwhile, browse the packages and samples in the shop.');
     document.getElementById('register-body').style.display = 'none';
   } else {
     show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
