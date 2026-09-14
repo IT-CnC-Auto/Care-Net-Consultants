@@ -1,4 +1,6 @@
-// CNC MSP FORGE | DOC-GEN-01 v1.0.0 | Document Factory renderer
+// CNC MSP FORGE | DOC-GEN-01 v1.1.0 | Document Factory renderer
+// v1.1.0 (14/09/2026): executive summary derived from the draft (was sample template text);
+// MSP_CLIENT_LOGO / MSP_CLIENT_LOGO_SIZE override the client logo asset.
 // Renders the validated structured draft (agent/draft.json) into the dual
 // branded Medical Surveillance Pack DOCX per the cnc-msp-dualbrand skill
 // v1.0.0. Locked template blocks insert verbatim from templates.json and are
@@ -35,8 +37,14 @@ if (!P.omp_name_placeholder || P.omp_name_placeholder.includes('CR-12.7')) {
 }
 const cncBanner = fs.readFileSync(path.join(ASSETS, 'cnc_header_banner.png'));
 const cncFooter = fs.readFileSync(path.join(ASSETS, 'cnc_footer_banner.png'));
-const clientLogo = fs.readFileSync(path.join(ASSETS, 'client_logo_prepared.png'));
-const clientLogoSize = JSON.parse(fs.readFileSync(path.join(ASSETS, 'client_logo_prepared.report.json'), 'utf8')).prepared_size;
+// Client logo: the prepared sample asset by default; MSP_CLIENT_LOGO (path) and
+// MSP_CLIENT_LOGO_SIZE ("w,h" in points) override it for a live engagement or a
+// neutral placeholder (MD ruling 31/08/2026: no real client logo on non-client documents).
+const clientLogoPath = process.env.MSP_CLIENT_LOGO || path.join(ASSETS, 'client_logo_prepared.png');
+const clientLogo = fs.readFileSync(clientLogoPath);
+const clientLogoSize = process.env.MSP_CLIENT_LOGO_SIZE
+  ? process.env.MSP_CLIENT_LOGO_SIZE.split(',').map(Number)
+  : JSON.parse(fs.readFileSync(path.join(ASSETS, 'client_logo_prepared.report.json'), 'utf8')).prepared_size;
 
 // ------------------------------------------------------------------ helpers --
 const run = (text, opts = {}) => new TextRun({ text, font: FONT, size: opts.size || 20, bold: !!opts.bold, italics: !!opts.italics, color: opts.color || CHARCOAL });
@@ -196,9 +204,23 @@ body.push(new Paragraph({ children: [new PageBreak()] }));
 // Executive summary, findings first, never exceeding two pages
 const critical = draft.profile.jobs.flatMap(j => j.risk_matrix.filter(r => r.residual_risk === 'critical').map(r => `${j.title}: ${r.hazard_name}`));
 body.push(h1('EXECUTIVE SUMMARY'));
-body.push(para(`Three measured exposures at ${P.client_name} stand at or above their occupational exposure limits: noise in the plant and compaction area at 92 dB(A) against the 85 dB(A) rating limit, respirable crystalline silica at 0.15 mg/m3 against the 0.1 mg/m3 limit, and welding fume reported well above its stated limit. These exceedances drive this Plan's central prescription: annual surveillance as a strict minimum for every affected category, tighter where the Designated OMP directs, and a clear message that surveillance detects early effect but does not substitute for controlling exposure at source.`, { size: 19 }));
-body.push(para(`The Plan covers ${P.workforce_covered.toLowerCase()} across the sites listed in Section 2. The Occupational Risk Exposure Profile identifies ${critical.length} hazard exposures carrying critical residual risk after reported controls, concentrated in: ${[...new Set(critical.map(c => c.split(':')[0]))].join(', ')}. Respiratory protective equipment is issued but not yet confirmed fit tested for two dust exposed categories, so RPE is not relied upon as a full control and fit testing is recommended as a priority.`, { size: 19 }));
-body.push(para(`Every test prescribed in the Worker Allocated Surveillance Programme is justified twice: against the exposure it monitors and against the inherent requirements of the job under section 7 of the Employment Equity Act. Five matters are reserved to the Designated OMP, including biological monitoring reference values and the enhanced screening approach for the two job categories flagged, at aggregate level only, for chronic conditions with sudden incapacity potential. This Plan is a draft until the Designated OMP's approval is recorded in Section 11.`, { size: 19 }));
+// Every figure below is read from the validated draft for this engagement; nothing is templated.
+const overLimit = draft.profile.exceedances.filter(x => ['exceeds', 'significantly_exceeds', 'borderline'].includes(x.assessment));
+const describeOel = x => x.kernel_oel || (x.stated_oel ? `${x.stated_oel} (client stated)` : 'its stated limit');
+const words = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+const countWord = n => n < words.length ? words[n] : String(n);
+const plural = (n, one, many) => (n === 1 ? one : many);
+if (overLimit.length) {
+  body.push(para(`${countWord(overLimit.length)} measured ${plural(overLimit.length, 'exposure', 'exposures')} at ${P.client_name} ${plural(overLimit.length, 'stands', 'stand')} at or above ${plural(overLimit.length, 'its', 'their')} occupational exposure ${plural(overLimit.length, 'limit', 'limits')}: ${overLimit.map(x => `${x.hazard_location.toLowerCase()} at ${x.measured} against ${describeOel(x)}`).join('; ')}. ${plural(overLimit.length, 'This exceedance drives', 'These exceedances drive')} this Plan's central prescription: annual surveillance as a strict minimum for every affected category, tighter where the Designated OMP directs, and a clear message that surveillance detects early effect but does not substitute for controlling exposure at source.`, { size: 19 }));
+} else {
+  body.push(para(`No measured exposure supplied by ${P.client_name} stands above its occupational exposure limit. The surveillance intervals in this Plan therefore rest on the hazard profile of each job category and the twelve month floor, and are reviewed when hygiene measurements are supplied or updated.`, { size: 19 }));
+}
+const critCats = [...new Set(critical.map(c => c.split(':')[0]))];
+const rpeUnconfirmed = draft.profile.jobs.filter(j => j.rpe.issued && !/^n(one|ot|\/a)/i.test(String(j.rpe.issued)) && !String(j.rpe.fit_tested || '').toLowerCase().startsWith('y')).map(j => j.title);
+body.push(para(`The Plan covers ${P.workforce_covered.toLowerCase()} across the sites listed in Section 2. The Occupational Risk Exposure Profile identifies ${critical.length} hazard ${plural(critical.length, 'exposure', 'exposures')} carrying critical residual risk after reported controls${critCats.length ? ', concentrated in: ' + critCats.join(', ') : ''}. ${rpeUnconfirmed.length ? `Respiratory protective equipment is issued but not yet confirmed fit tested for ${rpeUnconfirmed.join(' and ')}, so RPE is not relied upon as a full control and fit testing is recommended as a priority.` : 'Where respiratory protective equipment is issued it is recorded in Section 6; no category relies on unconfirmed RPE as a control.'}`, { size: 19 }));
+const ompMatters = (draft.prescribed.omp_notes || []).length;
+const chronicCats = draft.profile.jobs.filter(j => j.chronic_flag).map(j => j.title);
+body.push(para(`Every test prescribed in the Worker Allocated Surveillance Programme is justified twice: against the exposure it monitors and against the inherent requirements of the job under section 7 of the Employment Equity Act. ${ompMatters ? `${countWord(ompMatters)} ${plural(ompMatters, 'matter is', 'matters are')} reserved to the Designated OMP${chronicCats.length ? `, including the enhanced screening approach for the ${plural(chronicCats.length, 'job category', 'job categories')} flagged, at aggregate level only, for chronic conditions with sudden incapacity potential` : ''}.` : 'No matter is reserved to the Designated OMP beyond the review itself; every reference value cited is kernel verified.'} This Plan is a draft until the Designated OMP's approval is recorded in Section 11.`, { size: 19 }));
 body.push(new Paragraph({ children: [new PageBreak()] }));
 
 // Sections 1 to 11 from the composed draft
