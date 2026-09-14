@@ -102,7 +102,7 @@
   document.getElementById('title').textContent = cur[2] + ': sample Medical Surveillance Plan';
 
   var s = document.createElement('script');
-  s.src = '/samples/data/' + cur[0] + '.js?v=1';
+  s.src = '/samples/data/' + cur[0] + '.js?v=2';
   s.onload = function () {
     var d = window.__MSP_SAMPLE;
     if (!d || !d.pages || !d.pages.length) { fail(); return; }
