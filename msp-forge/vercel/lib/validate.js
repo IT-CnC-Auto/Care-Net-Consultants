@@ -1,4 +1,4 @@
-// CNC MSP FORGE | FRM-WHK-01 v1.0.0 | Intake validation and normalisation
+// CNC MSP FORGE | FRM-WHK-01 v1.0.1 | Intake validation and normalisation
 // Pure module: no network, no environment. Used identically by the Vercel
 // webhook handler and the synthetic end to end test, so the tested code path
 // is the production code path.
@@ -150,7 +150,9 @@ function validateIntake(payload, selectableSubindustries) {
       other_ppe: j.other_ppe || null,
     });
   }
-  if (!jobs.length) triageReasons.push('no job categories supplied');
+  // The ingest function refuses an intake without a job category, so this is a
+  // rejection the client can fix, not a triage case (it surfaced as a 500 on 14/09/2026).
+  if (!jobs.length) rejections.push('no job categories supplied');
 
   // Aggregate chronic condition flag: mark the named categories, never a person.
   if (coerceBool(flat.chronic_flag_present) && flat.chronic_flag_categories) {
