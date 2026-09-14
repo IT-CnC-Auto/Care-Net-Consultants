@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Sample Medical Surveillance Plan | Care Net Consultants</title>
+<meta name="description" content="View a sample Medical Surveillance Plan for your industry, produced by the Care Net Method from fictitious company data.">
+<style>
+  :root { --red: #ED1B24; --charcoal: #1A1A1A; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #f4f4f4; color: var(--charcoal); font-family: Arial, Helvetica, sans-serif; }
+  body { -webkit-user-select: none; user-select: none; }
+  header { background: var(--charcoal); color: #fff; padding: 30px 16px; text-align: center; }
+  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; font-size: 22px; }
+  header h1 { font-size: 18px; font-weight: normal; margin: 10px 0 0; }
+  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
+  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 2px 3px; display: inline-block; padding: 11px 13px; min-height: 44px; line-height: 22px; }
+  nav.mainnav a:hover { text-decoration: underline; }
+  main { max-width: 900px; margin: 0 auto; padding: 22px 12px 70px; }
+  .bar { background: #fff; border-radius: 8px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; justify-content: space-between; }
+  .bar label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px; }
+  .bar select { padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; min-width: 280px; }
+  .bar .note { font-size: 13px; color: #555; max-width: 460px; }
+  .bar .note strong { color: var(--red); }
+  .pages { margin-top: 18px; }
+  .page { position: relative; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.14); margin: 0 auto 16px; max-width: 794px; }
+  .page img { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-select: none; }
+  .page .shield { position: absolute; inset: 0; }
+  .page .n { position: absolute; right: 10px; bottom: 8px; font-size: 11px; color: #777; background: rgba(255,255,255,.85); padding: 2px 7px; border-radius: 4px; }
+  .status { text-align: center; color: #555; font-size: 14px; padding: 40px 0; }
+  .status.err { color: var(--red); font-weight: bold; }
+  .cta { background: #fff; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-top: 10px; text-align: center; }
+  .cta p { font-size: 14px; margin: 0 0 12px; }
+  a.btn { display: inline-block; text-decoration: none; background: var(--red); color: #fff; border-radius: 5px; padding: 11px 18px; font-weight: bold; font-size: 14px; margin: 4px 6px; }
+  a.btn.secondary { background: #fff; color: var(--red); border: 2px solid var(--red); }
+  footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
+  #printmsg { display: none; }
+  @media print {
+    body > * { display: none !important; }
+    #printmsg { display: block !important; font-family: Arial, sans-serif; padding: 40px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
+  <h1 id="title">Sample Medical Surveillance Plan</h1>
+</header>
+<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/sample.html">Sample Plan</a><a href="/account.html">Sign in</a></nav>
+<main>
+  <div class="bar">
+    <div>
+      <label for="pick">Industry</label>
+      <select id="pick"><option>Loading industries</option></select>
+    </div>
+    <div class="note"><strong>Sample for viewing only.</strong> Produced by the Care Net Method from entirely fictitious company data and watermarked on every page. It cannot be downloaded or printed. Your own Plan is delivered as a signed document with your branding.</div>
+  </div>
+  <div id="status" class="status">Loading the sample.</div>
+  <div id="pages" class="pages"></div>
+  <div class="cta">
+    <p>This is what your Plan looks like. Yours is built from your own sites, job categories and measured exposures, and reviewed by a registered Occupational Medical Practitioner before release.</p>
+    <a class="btn" href="/account.html">Start your assessment</a>
+    <a class="btn secondary" href="/shop.html">Packages and pricing</a>
+  </div>
+</main>
+<div id="printmsg">This sample Medical Surveillance Plan is for on-screen viewing only and cannot be printed. Visit carenetconsultants.co.za to request your own Plan.</div>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<script>
+(function () {
+  var INDUSTRIES = [
+    ["agriculture-and-forestry","AGRI","Agriculture and forestry"],
+    ["cleaning-and-hygiene-services","CLEAN","Cleaning and hygiene services"],
+    ["construction","CONSTR","Construction"],
+    ["education","EDU","Education"],
+    ["government-and-municipal","GOV","Government and municipal"],
+    ["healthcare-and-laboratories","HEALTH","Healthcare and laboratories"],
+    ["hospitality-and-food-service","HOSP","Hospitality and food service"],
+    ["manufacturing","MANU","Manufacturing"],
+    ["mining-and-quarrying","MINING","Mining and quarrying"],
+    ["office-and-professional-services","OFFICE","Office and professional services"],
+    ["petrochemical-and-fuel-retail","PETRO","Petrochemical and fuel retail"],
+    ["retail-and-wholesale","RETAIL","Retail and wholesale"],
+    ["security-services","SEC","Security services"],
+    ["telecommunications-and-tower-work","TEL","Telecommunications and tower work"],
+    ["transport-and-logistics","TRANS","Transport and logistics"],
+    ["utilities-and-energy","UTIL","Utilities and energy"],
+    ["waste-management","WASTE","Waste management"]
+  ];
+  var q = new URLSearchParams(location.search);
+  var want = (q.get('industry') || '').toLowerCase();
+  var code = (q.get('code') || '').toUpperCase();
+  var cur = INDUSTRIES.filter(function (i) { return i[0] === want || i[1] === code; })[0] || INDUSTRIES[2];
+
+  var pick = document.getElementById('pick');
+  pick.innerHTML = INDUSTRIES.map(function (i) {
+    return '<option value="' + i[0] + '"' + (i[0] === cur[0] ? ' selected' : '') + '>' + i[2] + '</option>';
+  }).join('');
+  pick.onchange = function () { location.search = '?industry=' + this.value; };
+
+  document.title = cur[2] + ' sample Medical Surveillance Plan | Care Net Consultants';
+  document.getElementById('title').textContent = cur[2] + ': sample Medical Surveillance Plan';
+
+  var s = document.createElement('script');
+  s.src = '/samples/data/' + cur[0] + '.js?v=1';
+  s.onload = function () {
+    var d = window.__MSP_SAMPLE;
+    if (!d || !d.pages || !d.pages.length) { fail(); return; }
+    var host = document.getElementById('pages');
+    host.innerHTML = d.pages.map(function (src, i) {
+      return '<div class="page"><img alt="Sample Plan page ' + (i + 1) + ' of ' + d.pages.length + '" src="' + src + '" draggable="false">'
+        + '<div class="shield"></div><span class="n">Page ' + (i + 1) + ' of ' + d.pages.length + '</span></div>';
+    }).join('');
+    document.getElementById('status').style.display = 'none';
+    window.__MSP_SAMPLE = null;
+  };
+  s.onerror = fail;
+  document.body.appendChild(s);
+
+  function fail() {
+    var st = document.getElementById('status');
+    st.className = 'status err';
+    st.textContent = 'The sample could not be loaded just now. Please try again, or request a quotation and a sales executive will walk you through a Plan.';
+  }
+
+  /* Viewing only: no context menu, no drag, no save or print shortcuts. */
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'p' || k === 'u')) { e.preventDefault(); }
+  });
+})();
+</script>
+</body>
+</html>

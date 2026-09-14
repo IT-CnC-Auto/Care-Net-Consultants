@@ -269,7 +269,7 @@ footer.foot .base img{height:44px;width:auto}
         </div>
         <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
           <a class="btn btn-red" href="/shop.html">Get your quotation</a>
-          <a class="btn btn-ghost-dark" href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Read a sample Plan</a>
+          <a class="btn btn-ghost-dark" id="sample-link" href="/sample.html">Read a sample Plan</a>
           <a class="btn btn-ghost-dark" href="/assess.html?demo=1">Preview the assessment</a>
         </div>
       </div>
@@ -309,7 +309,7 @@ footer.foot .base img{height:44px;width:auto}
         <ul>
           <li><a href="/account.html">Client sign in</a></li>
           <li><a href="/shop.html">Get a quotation</a></li>
-          <li><a href="/samples/CNC-MSP-SAMPLE-Construction.pdf">Sample Plan</a></li>
+          <li><a href="/sample.html">Sample Plan</a></li>
         </ul>
       </div>
       <div>
@@ -381,6 +381,7 @@ footer.foot .base img{height:44px;width:auto}
 
   function render(p) {
     document.title = p.name + ' medical surveillance | Care Net';
+    el('sample-link').href = '/sample.html?code=' + encodeURIComponent(p.code);
     el('eyebrow').textContent = p.regime === 'MHSA' ? 'Mine Health and Safety Act industry' : 'Occupational Health and Safety Act industry';
     el('h1').innerHTML = 'Medical Surveillance Plans for <span class="r">' + esc(p.name) + '.</span>';
     el('lede').textContent = 'Your Plan is built from ' + p.instruments.length + ' verified instruments, '
