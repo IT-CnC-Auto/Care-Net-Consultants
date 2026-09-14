@@ -5,12 +5,30 @@
   "functions": {
     "api/docuseal-webhook.js": { "maxDuration": 30 }
   },
+  "redirects": [
+    { "source": "/samples/CNC-MSP-SAMPLE-Construction.pdf", "destination": "/sample.html?industry=construction", "permanent": true },
+    { "source": "/samples/:file(.*\\.pdf)", "destination": "/sample.html", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/fonts/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
         { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    },
+    {
+      "source": "/samples/data/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Cache-Control", "value": "public, max-age=86400" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    },
+    {
+      "source": "/sample.html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
       ]
     }
   ]
