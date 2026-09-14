@@ -1,4 +1,4 @@
-// CNC MSP FORGE | FRM-WHK-01 v1.1.0 | Public HTML form intake endpoint
+// CNC MSP FORGE | FRM-WHK-01 v1.1.1 | Public HTML form intake endpoint
 // Receives the flat JSON posted by the hosted onboarding form (index.html),
 // runs the identical validator used by the DocuSeal webhook and the test
 // harness, and persists through the same controlled write path
@@ -83,13 +83,16 @@ module.exports = async (req, res) => {
     if (!result.ok) {
       const consentMissing = result.rejections.some(r => r.includes('consent'));
       const idPattern = result.rejections.some(r => r.includes('identity number'));
+      const noJobs = result.rejections.some(r => r.includes('job categories'));
       res.status(200).json({
         status: 'rejected',
         reason: idPattern
           ? 'A field appears to contain an identity number. This form must never carry personal information about an identifiable individual. Please remove it and resubmit.'
           : consentMissing
             ? 'The POPIA processing consent is required before your information can be processed.'
-            : 'The submission could not be accepted.',
+            : noJobs
+              ? 'Please add at least one job category in Section 5, with its job title and hazard letters, before submitting.'
+              : 'The submission could not be accepted.',
       });
       return;
     }
