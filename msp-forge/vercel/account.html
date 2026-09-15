@@ -3,198 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Care Net Company Account</title>
-<!-- Care Net house faces and the shared site header. Both are front end only:
-     no endpoints, no data handling, nothing that touches the app's plumbing. -->
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
-<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
-<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
-<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
-<link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
-<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<meta name="robots" content="noindex, nofollow">
+<title>Redirecting to your journey | Care Net Consultants</title>
+<!--
+=====================================================================
+ account.html :: retired, kept as a redirect
+ The sign in journey now lives on the landing page, so this page only
+ forwards. It is kept rather than deleted because:
+   1. Sign in links already emailed to people point here, and Supabase
+      returns its tokens in the URL hash, which must survive the hop.
+   2. industry.html and medical-surveillance-plans.html still link here.
+ Front end only. No endpoints, no data handling.
+=====================================================================
+-->
 <style>
-  :root { --red: #ED1B24; --charcoal: #1A1A1A; }
-  * { box-sizing: border-box; }
-  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  main { max-width: 640px; margin: 0 auto; padding: 26px 16px 70px; }
-  .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 18px; }
-  .card h2 { color: var(--red); font-size: 17px; margin-top: 0; }
-  label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; }
-  input { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; }
-  button, a.button { display: block; text-align: center; background: var(--red); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; width: 100%; font-size: 14px; text-decoration: none; }
-  a.button.big { font-size: 16px; padding: 16px 20px; }
-  a.linklike { color: var(--red); font-weight: bold; text-decoration: none; }
-  .status { padding: 12px 14px; border-radius: 6px; font-size: 14px; margin-top: 12px; }
-  .status.good { background: #e8f7ec; border: 1px solid #2e8b57; }
-  .status.info { background: #eef3fb; border: 1px solid #4a6fb5; }
-  .status.err { background: #fdeaea; border: 1px solid var(--red); }
-  .muted { font-size: 13px; color: #555; }
-  footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
-
-  /* Page title block, in the site's own heading style now that the banner
-     carries only the logo and the menu. */
-  .pagehead { margin: 0 0 22px; }
-  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
-  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(30px, 4.6vw, 46px); line-height: .99; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
-  .pagehead h1 .r { color: var(--cnc-red); }
-  /* The header is sticky, so anything linked to sits clear of it. */
-  :target { scroll-margin-top: 130px; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; background: #f4f4f4; color: #1A1A1A;
+         margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+  .box { text-align: center; max-width: 30rem; }
+  a { color: #ED1B24; font-weight: bold; }
 </style>
+<script>
+/* Forward straight away, carrying the query string and the hash. Supabase puts
+   its sign in tokens in the hash, so dropping it would break the link. Using
+   replace() keeps the back button working. */
+(function () {
+  try {
+    location.replace('/' + location.search + location.hash);
+  } catch (e) {
+    /* If that throws for any reason the visitor still has the link below. */
+  }
+})();
+</script>
 </head>
 <body>
-<a class="cnc-skip" href="#main">Skip to main content</a>
-
-<!-- ============ Site header, matching carenetconsultants.co.za ============
-     Red band, the Care Net logo from R2, and the page menu. Styling lives in
-     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
-     presentation only. Every page in this app shares those two files, so the
-     banner is changed in one place, never page by page.
-     ======================================================================= -->
-<header class="cnc-sitehead">
-  <div class="band"></div>
-  <nav class="cnc-mainnav" aria-label="Site menu">
-    <div class="mwrap">
-      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
-      </a>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/pilot.html">How it works</a></li>
-        <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Packages and pricing</a></li>
-        <li><a href="/sample.html">Sample Plan</a></li>
-        <li class="active"><a href="/account.html" aria-current="page">Sign in</a></li>
-      </ul>
-    </div>
-  </nav>
-</header>
-<main id="main">
-  <div class="pagehead">
-    <span class="eyebrow">Your partner in workplace health</span>
-    <h1>Company <span class="r">account</span></h1>
+  <div class="box">
+    <p>Taking you to your Medical Surveillance Plan journey.</p>
+    <p><a href="/">Continue to the Care Net landing page</a> if nothing happens.</p>
   </div>
-  <div class="card" id="signin-card">
-    <h2>Sign in or create your company</h2>
-    <p class="muted">One journey for both: enter your work email and we send a secure sign in link. New here? Sign in first, then register your company below and start your assessment straight away; returning clients land on their account with the assessment one click away.</p>
-    <label>Work email</label><input id="email" type="email" autocomplete="email">
-    <button id="send-link">Email me a sign in link</button>
-    <div class="status" id="signin-status" style="display:none"></div>
-  </div>
-
-  <div class="card" id="account-card" style="display:none">
-    <h2>Your account</h2>
-    <div id="account-body"></div>
-    <div id="register-body" style="display:none">
-      <p class="muted">Your email is verified but no company is registered against it yet. Register your company and your assessment opens immediately.</p>
-      <label>Company name</label><input id="reg-company">
-      <label>Contact person</label><input id="reg-contact">
-      <button id="register">Register my company and start</button>
-    </div>
-    <div id="start-body" style="display:none">
-      <p>Your Medical Surveillance Plan assessment is ready. It takes about twenty minutes, and you can add sites, job categories and substances as you go. Have your risk assessment to hand if you have one.</p>
-      <a class="button big" id="start-link" href="#">Start your assessment</a>
-      <p class="muted" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
-    </div>
-    <div class="status" id="account-status" style="display:none"></div>
-    <p class="muted" style="margin-top:14px">
-      Also see <a class="linklike" href="/shop.html">packages, pricing, and samples</a>
-      or go back to the <a class="linklike" href="/">landing page</a>.
-    </p>
-  </div>
-</main>
-<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
-<!-- ============ AutoHive brand stamp ============
-     The credit strip that closes every page on the main Care Net site.
-     Styling lives in /css/cnc-footer.css and is shared by every page here.
-     ============================================== -->
-<div class="ah-stamp">
-  <div class="ah-row">
-    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
-      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
-    </a>
-  </div>
-</div>
-
-<script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-const sb = createClient('https://pboebfnujzffgwctsplw.supabase.co', 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj');
-
-const $ = id => document.getElementById(id);
-function show(el, cls, msg) { el.className = 'status ' + cls; el.style.display = 'block'; el.textContent = msg; }
-function hide(el) { el.style.display = 'none'; }
-const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-$('send-link').onclick = async () => {
-  const email = $('email').value.trim();
-  const st = $('signin-status');
-  if (!email) { show(st, 'err', 'Please enter your work email.'); return; }
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/account.html' } });
-  if (error) show(st, 'err', 'The sign in link could not be sent: ' + error.message);
-  else show(st, 'good', 'Check your inbox: your secure sign in link is on its way to ' + email + '.');
-};
-
-function renderReady(email, r) {
-  const body = $('account-body');
-  const st = $('account-status');
-  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(email) + '</strong>.</p>'
-    + '<p>Company: <strong>' + esc(r.company_name) + '</strong></p>';
-  hide($('register-body'));
-  if (r.declined || !r.assessment_url) {
-    hide($('start-body'));
-    show(st, 'err', 'Please contact Care Net about your account status before starting an assessment.');
-    return;
-  }
-  $('start-link').href = r.assessment_url;
-  $('start-body').style.display = 'block';
-  hide(st);
-}
-
-async function loadAccount(session) {
-  hide($('signin-card'));
-  $('account-card').style.display = 'block';
-  const body = $('account-body');
-  const st = $('account-status');
-  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>. Checking your company...</p>';
-  try {
-    const r = await fetch('/api/company-lookup', { headers: { Authorization: 'Bearer ' + session.access_token } }).then(x => x.json());
-    if (!r.found) {
-      body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>.</p>';
-      hide($('start-body'));
-      $('register-body').style.display = 'block';
-      return;
-    }
-    renderReady(session.user.email, r);
-  } catch (e) {
-    show(st, 'err', 'Your company status could not be loaded. Please try again.');
-  }
-}
-
-$('register').onclick = async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  const st = $('account-status');
-  const company = $('reg-company').value.trim();
-  const contact = $('reg-contact').value.trim();
-  if (!company || !contact) { show(st, 'err', 'Company name and contact person are required.'); return; }
-  const btn = $('register'); btn.disabled = true; btn.textContent = 'Registering...';
-  const r = await fetch('/api/signon', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ company_name: company, contact_name: contact, contact_email: session.user.email }),
-  }).then(x => x.json()).catch(() => null);
-  btn.disabled = false; btn.textContent = 'Register my company and start';
-  if (r && r.status === 'received') {
-    renderReady(session.user.email, r);
-  } else {
-    show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
-  }
-};
-
-sb.auth.getSession().then(({ data: { session } }) => { if (session) loadAccount(session); });
-sb.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) loadAccount(session); });
-</script>
-<script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>

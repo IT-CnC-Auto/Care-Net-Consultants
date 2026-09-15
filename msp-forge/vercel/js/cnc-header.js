@@ -71,7 +71,7 @@
       burger.focus();
     }
   });
-  var MQ = window.matchMedia('(max-width:1159px)');
+  var MQ = window.matchMedia('(max-width:1219px)');
   function onChange(ev) {
     if (!ev.matches) {
       nav.classList.remove('open');

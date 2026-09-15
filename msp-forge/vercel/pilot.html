@@ -34,6 +34,11 @@
   a.btn { display: inline-block; text-decoration: none; background: var(--red); color: #fff; border-radius: 5px; padding: 11px 18px; font-weight: bold; font-size: 14px; margin: 8px 8px 0 0; }
   a.btn.secondary { background: #fff; color: var(--red); border: 2px solid var(--red); }
   table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+  /* This table is wider than a 320px screen. It gets its own horizontal
+     scroll so the page body never scrolls sideways. Same treatment as the
+     two tables on method.html. */
+  .tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+  .tablewrap table { margin-top: 0; min-width: 300px; }
   th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #eee; }
   th { color: #555; font-weight: bold; }
   .muted { font-size: 13px; color: #555; }
@@ -67,12 +72,11 @@
         <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
-        <li><a href="/">Home</a></li>
+        <li><a href="/">Start your journey</a></li>
         <li class="active"><a href="/pilot.html" aria-current="page">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
         <li><a href="/shop.html">Packages and pricing</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
-        <li><a href="/account.html">Sign in</a></li>
       </ul>
     </div>
   </nav>
@@ -94,18 +98,20 @@
   <div class="step">
     <h2><span class="n">1</span>Sign in or create your company</h2>
     <p>One door for everyone: enter your work email, receive a secure sign in link, and either land on your company's status or register a new company on the spot. The moment you are signed in, the system checks two things automatically: an active service level agreement with Care Net, and whether you do 100 or more occupational medicals a year with us. Either one makes the assessment tool free.</p>
-    <a class="btn" href="/account.html">Try the real sign in</a>
+    <a class="btn" href="/">Try the real sign in</a>
   </div>
 
   <div class="step">
     <h2><span class="n">2</span>Choose your package and see your price</h2>
     <p>Two packages: the watermarked working draft, or the OMP reviewed and signed Plan (the released, board ready document). Three worked examples from the live pricing engine, Construction rate card:</p>
+    <div class="tablewrap">
     <table>
       <tr><th>Scenario</th><th>Assessment and Plan</th><th>OMP review</th><th>Total</th></tr>
       <tr><td>120 employees, 8 job categories, 150 medicals a year with Care Net, signed Plan</td><td>FREE (client benefit)</td><td>R2,500</td><td><strong>R2,500</strong></td></tr>
       <tr><td>Same company, working draft only</td><td>FREE (client benefit)</td><td>none</td><td><strong>R0</strong></td></tr>
       <tr><td>50 employees, 5 job categories, new to Care Net, signed Plan</td><td>R8,500</td><td>R2,500</td><td><strong>R11,000</strong></td></tr>
     </table>
+    </div>
     <p class="muted">Pricing is indicative until confirmed on your invoice. Unknown industries always route to a consultant, never to a guessed price.</p>
     <a class="btn" href="/shop.html">Get your own quotation</a>
   </div>
@@ -141,7 +147,7 @@
 
   <div class="step" style="border-left-color:#1A1A1A">
     <h2 style="color:#1A1A1A">Ready to run it for real?</h2>
-    <a class="btn" href="/account.html">Sign in or create your company</a>
+    <a class="btn" href="/">Sign in or create your company</a>
     <a class="btn secondary" href="/shop.html">Packages and pricing</a>
   </div>
 </main>

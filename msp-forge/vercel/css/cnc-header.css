@@ -93,9 +93,13 @@
   height:2px;background:var(--cnc-red)}
 
 /* ---- Hamburger ----
-   The live site switches at 1024px, but these menu labels are longer ("The
-   Care Net Method", "Packages and pricing"), so the desktop row needs about
-   1120px before it stops squeezing. Switching at 1160px keeps a margin. ---- */
+   The live site switches at 1024px, but these menu labels are much longer
+   ("Start your journey", "The Care Net Method", "Packages and pricing"), so
+   the desktop row measures 1157px before it starts squeezing. An earlier
+   1160px breakpoint left only 3px and sub-pixel rounding tipped method.html
+   into a 1px sideways scroll. 1220px keeps roughly 60px of headroom, which
+   also absorbs the way different browsers and platforms render Montserrat
+   at slightly different widths. Re-measure if a menu label changes. ---- */
 .cnc-burger{display:none;flex-direction:column;justify-content:center;gap:5px;
   width:46px;height:42px;padding:0 11px;border:1px solid var(--cnc-line);border-radius:9px;
   background:#fff;cursor:pointer;flex:0 0 auto;margin:0}
@@ -106,11 +110,11 @@
 .cnc-mainnav.open .cnc-burger span:nth-child(2){opacity:0}
 .cnc-mainnav.open .cnc-burger span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 
-@media (min-width:1160px){
+@media (min-width:1220px){
   .cnc-mainnav .mobile-only{display:none}
 }
 
-@media (max-width:1159px){
+@media (max-width:1219px){
   .cnc-burger{display:flex}
   .cnc-mainnav .mwrap{flex-wrap:wrap;gap:12px}
   .cnc-mainnav .logo-link{order:1}
