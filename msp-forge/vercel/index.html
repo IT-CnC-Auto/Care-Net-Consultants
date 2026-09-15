@@ -20,18 +20,26 @@
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
   body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
-  /* Hero banner: the all-industries photograph, full bleed and unobscured.
-     The heading used to sit on top of it with a dark scrim; both moved out
-     below the image on Kc's instruction, so the photograph now reads clean. */
+  /* Hero banner: the all-industries photograph, full bleed, with the dark
+     gradient over it. The heading moved out below the image, but the gradient
+     stays: it is part of the look, not scaffolding for the text. */
   .hero { position: relative; overflow: hidden; background: #0c0c0f; line-height: 0; }
-  .hero > img { display: block; width: 100%; height: clamp(220px, 30vw, 420px); object-fit: cover; object-position: center 30%; }
+  .hero > img { display: block; width: 100%; height: clamp(280px, 38vw, 460px); object-fit: cover; object-position: center; }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,15,.92) 0%, rgba(12,12,15,.78) 34%, rgba(12,12,15,.42) 62%, rgba(12,12,15,.12) 84%, transparent 100%); }
+  @media (max-width: 700px) {
+    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.62) 0%, rgba(12,12,15,.82) 55%, rgba(12,12,15,.94) 100%); }
+  }
 
   /* Heading band, sitting between the hero and the pattern strip. */
   .titleband { max-width: 960px; margin: 0 auto; padding: 30px 16px 24px; }
 
-  /* Africa pattern strip, the page break used across the main Care Net site. */
-  .pattern-strip { line-height: 0; }
-  .pattern-strip img { display: block; width: 100%; height: auto; }
+  /* Africa pattern strip, the page break used across the main Care Net site.
+     Tiled horizontally at its own proportions rather than stretched: the file
+     is 1200px wide and stretching it to a desktop viewport softened it badly.
+     The artwork has a white ground baked in, which showed as a white band
+     against this page, so multiply blending drops it to the page colour and
+     leaves the pattern's own colours alone. */
+  .pattern-strip { height: 48px; background-image: url("https://img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png"); background-repeat: repeat-x; background-position: center center; background-size: auto 100%; mix-blend-mode: multiply; }
 
   /* Page title block, in the site's own heading style now that the banner
      carries only the logo and the menu. */
@@ -107,9 +115,7 @@
 </div>
 
 <!-- Africa pattern strip, the same page break the main site uses. -->
-<div class="pattern-strip" aria-hidden="true">
-  <img src="https://img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png" alt="" width="1200" height="60" loading="lazy" decoding="async">
-</div>
+<div class="pattern-strip" role="presentation"></div>
 
 <main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
