@@ -2,16 +2,30 @@
 <html lang="en-ZA">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CNC Medical Surveillance Plans</title>
+<!-- Care Net house faces and the shared site header. Both are front end only:
+     no endpoints, no data handling, nothing that touches the app's plumbing. -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  header { background: var(--charcoal); color: #fff; padding: 40px 16px; text-align: center; }
-  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; font-size: 24px; }
-  header h1 { font-size: 20px; font-weight: normal; margin: 12px 0 4px; }
-  header .tagline { font-size: 13px; opacity: .85; font-style: italic; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
+  /* Page title block, in the site's own heading style now that the banner
+     carries only the logo and the menu. */
+  .pagehead { margin: 0 0 22px; }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(32px, 5vw, 50px); line-height: .98; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
+  .pagehead h1 .r { color: var(--red); }
+  /* The header is sticky, so anything linked to sits clear of it. */
+  :target { scroll-margin-top: 180px; }
   main { max-width: 960px; margin: 0 auto; padding: 26px 16px 70px; }
   .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   @media (max-width: 760px) { .paths { grid-template-columns: 1fr; } }
@@ -29,19 +43,60 @@
   .hp { position: absolute; left: -9999px; }
   .steps { font-size: 13px; color: #555; padding-left: 18px; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
-  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
-  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 0 9px; display: inline-block; padding: 3px 0; }
-  nav.mainnav a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
-  <h1>Medical Surveillance Plan Assessment</h1>
-  <div class="tagline">Your Partner in Workplace Health</div>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, the page menu, and the two calls to
+     action. Styling lives in /css/cnc-header.css, menu behaviour in
+     /js/cnc-header.js. Both are presentation only.
+
+     NOTE for Kc: "Book a callback" opens WhatsApp on the main Care Net line
+     with a short request prefilled, the same number as the live site's social
+     rail and footer. It is wired this way on purpose: it needs no page on
+     another domain and no endpoint here, so it cannot break. A real callback
+     form inside this app, one that logs the lead to Supabase or GHL, needs a
+     back-end hook from Od.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+
+  <div class="cnc-utilbar">
+    <div class="uwrap">
+      <a class="uphone" href="tel:+27600702723">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66A2 2 0 0 1 22 16.92z"></path></svg>
+        <span>+27 60 070 2723</span>
+      </a>
+      <div class="cnc-navcta">
+        <a class="btn btn-out" href="https://wa.me/27600702723?text=Hello%20Care%20Net%2C%20please%20call%20me%20back%20about%20a%20Medical%20Surveillance%20Plan." target="_blank" rel="noopener">Book a callback</a>
+        <a class="btn btn-red" href="/#quote">Get a quote</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li class="active"><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+        <li><a href="/account.html">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/sample.html">Sample Plan</a><a href="/account.html">Sign in</a></nav>
-<main>
+<main id="main">
+  <div class="pagehead">
+    <span class="eyebrow">Your partner in workplace health</span>
+    <h1>Medical Surveillance Plan <span class="r">Assessment</span></h1>
+  </div>
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
   <div class="paths">
     <div class="card">
@@ -56,7 +111,7 @@
         <div class="result" id="signon-result"></div>
       </form>
     </div>
-    <div class="card">
+    <div class="card" id="quote">
       <h2>New to Care Net: instant quotation</h2>
       <p>Tell us about your company and receive a quotation now. On payment you receive your secure assessment link, and your Plan follows the same clinical review as every Care Net engagement.</p>
       <form id="quote">
@@ -155,5 +210,6 @@ document.getElementById('quote').onsubmit = async ev => {
   }
 };
 </script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>
