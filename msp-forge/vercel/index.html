@@ -25,9 +25,9 @@
      stays: it is part of the look, not scaffolding for the text. */
   .hero { position: relative; overflow: hidden; background: #0c0c0f; line-height: 0; }
   .hero > img { display: block; width: 100%; height: clamp(280px, 38vw, 460px); object-fit: cover; object-position: center; }
-  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,15,.92) 0%, rgba(12,12,15,.78) 34%, rgba(12,12,15,.42) 62%, rgba(12,12,15,.12) 84%, transparent 100%); }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,15,.55) 0%, rgba(12,12,15,.40) 34%, rgba(12,12,15,.22) 62%, rgba(12,12,15,.08) 84%, transparent 100%); }
   @media (max-width: 700px) {
-    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.62) 0%, rgba(12,12,15,.82) 55%, rgba(12,12,15,.94) 100%); }
+    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.30) 0%, rgba(12,12,15,.45) 55%, rgba(12,12,15,.58) 100%); }
   }
 
   /* Heading band, sitting between the hero and the pattern strip. */
@@ -107,15 +107,15 @@
   <img src="https://img.carenetcdn.com/medical-surveillance/cnc-medical-surveillance-hero-all-industries.webp-v2.png" alt="Care Net Consultants occupational health teams across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
 </section>
 
+<!-- Africa pattern strip, the same page break the main site uses. -->
+<div class="pattern-strip" role="presentation"></div>
+
 <div class="titleband">
   <div class="pagehead">
     <span class="eyebrow">Your partner in workplace health</span>
     <h1>Medical Surveillance Plan <span class="r">Assessment</span></h1>
   </div>
 </div>
-
-<!-- Africa pattern strip, the same page break the main site uses. -->
-<div class="pattern-strip" role="presentation"></div>
 
 <main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>

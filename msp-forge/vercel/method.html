@@ -11,11 +11,14 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preload" as="image" fetchpriority="high" href="https://img.carenetcdn.com/medical-surveillance/cnc-medical-surveillance-digital-results-review.webp.png">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915a">
 <style>
   :root { --red: #C5141B; --red-on-dark: #FF6B70; --charcoal: #1E1E1E; }
   * { box-sizing: border-box; }
@@ -83,11 +86,29 @@
   <a href="#roles">Job Roles</a>
   <a href="#protocols">Medical Protocols</a>
 </nav>
-<main id="main">
-  <div class="pagehead">
-    <span class="eyebrow">Your partner in workplace health</span>
-    <h1>The Care Net <span class="r">Method</span></h1>
+<!-- ============ C1 :: Hero, matching the band on carenetconsultants.co.za ============
+     Copy is this page's own heading and meta description, nothing newly
+     written. Styling lives in /css/cnc-hero.css, shared by every page here.
+     ================================================================== -->
+<section class="cnc-hero">
+  <div class="hwrap">
+    <div>
+      <span class="eyebrow">The Care Net Method</span>
+      <h1>The Care Net <span class="r">Method</span></h1>
+      <p class="lede">How Care Net builds a Medical Surveillance Plan: verified South African law per industry, mapped job roles, prescribed assessments, and a registered practitioner signature before anything is released.</p>
+      <div class="chips">
+        <a class="chip" href="/pilot.html">How it works</a>
+        <a class="chip" href="/shop.html">Packages and pricing</a>
+        <a class="chip" href="/sample.html">Sample Plan</a>
+      </div>
+    </div>
+    <div class="heroimg">
+      <img src="https://img.carenetcdn.com/medical-surveillance/cnc-medical-surveillance-digital-results-review.webp.png" alt="A registered practitioner reviewing assessment results on screen" width="1920" height="1080" fetchpriority="high" decoding="async">
+    </div>
   </div>
+</section>
+
+<main id="main">
   <section id="method">
     <h2>Why your Plan holds up when it matters</h2>
     <p>A Medical Surveillance Plan is only as strong as the law behind it. Most plans are written once, copied often, and quietly go stale while the regulations move on. The Care Net Method is our answer: a maintained, versioned body of South African occupational health law that every Plan is built against, reviewed monthly, and ratified by a registered Occupational Medical Practitioner.</p>
@@ -233,6 +254,19 @@
   </div>
 </div>
 
+<!-- ============ Right-side navigator band ============
+     The band from the right edge of carenetconsultants.co.za. Here its links
+     go to the other pages, so clicking one takes you to that page. Styling in
+     /css/cnc-secnav.css, current-page marking in /js/cnc-secnav.js.
+     ================================================== -->
+<nav class="cnc-secnav" aria-label="Go to another page">
+  <a href="/">Start your journey</a>
+  <a href="/pilot.html">How it works</a>
+  <a href="/method.html">The Care Net Method</a>
+  <a href="/shop.html">Packages and pricing</a>
+  <a href="/sample.html">Sample Plan</a>
+</nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915a" defer></script>
 </body>
 </html>
