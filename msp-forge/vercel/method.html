@@ -17,14 +17,13 @@
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
-<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
 <style>
   :root { --red: #C5141B; --red-on-dark: #FF6B70; --charcoal: #1E1E1E; }
   * { box-sizing: border-box; }
   body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  nav { background: var(--red); text-align: center; padding: 10px 8px; }
-  nav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 2px 3px; display: inline-block; padding: 11px 13px; min-height: 44px; line-height: 22px; }
   main { max-width: 960px; margin: 0 auto; padding: 30px 16px 70px; }
   section { background: #fff; border-radius: 8px; padding: 24px 26px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 20px; scroll-margin-top: 16px; }
   h2 { color: var(--red); font-size: 18px; margin-top: 0; }
@@ -79,13 +78,6 @@
     </div>
   </nav>
 </header>
-<nav>
-  <a href="#method">The Method</a>
-  <a href="#instruments">The Law We Verify</a>
-  <a href="#industries">Industries</a>
-  <a href="#roles">Job Roles</a>
-  <a href="#protocols">Medical Protocols</a>
-</nav>
 <!-- ============ C1 :: Hero, matching the band on carenetconsultants.co.za ============
      Copy is this page's own heading and meta description, nothing newly
      written. Styling lives in /css/cnc-hero.css, shared by every page here.
@@ -107,6 +99,9 @@
     </div>
   </div>
 </section>
+
+<!-- Africa pattern strip, closing the hero off, as on the landing page. -->
+<div class="pattern-strip" role="presentation"></div>
 
 <main id="main">
   <section id="method">
@@ -255,18 +250,18 @@
 </div>
 
 <!-- ============ Right-side navigator band ============
-     The band from the right edge of carenetconsultants.co.za. Here its links
-     go to the other pages, so clicking one takes you to that page. Styling in
-     /css/cnc-secnav.css, current-page marking in /js/cnc-secnav.js.
+     The band from the right edge of carenetconsultants.co.za. Its items are
+     this page's own section headings, and each one scrolls to that section.
+     Styling in /css/cnc-secnav.css, behaviour in /js/cnc-secnav.js.
      ================================================== -->
-<nav class="cnc-secnav" aria-label="Go to another page">
-  <a href="/">Start your journey</a>
-  <a href="/pilot.html">How it works</a>
-  <a href="/method.html">The Care Net Method</a>
-  <a href="/shop.html">Packages and pricing</a>
-  <a href="/sample.html">Sample Plan</a>
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#method"><span>The Method</span></a>
+  <a href="#instruments"><span>The Law We Verify</span></a>
+  <a href="#industries"><span>Industries</span></a>
+  <a href="#roles"><span>Job Roles</span></a>
+  <a href="#protocols"><span>Medical Protocols</span></a>
 </nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
-<script src="/js/cnc-secnav.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915b" defer></script>
 </body>
 </html>

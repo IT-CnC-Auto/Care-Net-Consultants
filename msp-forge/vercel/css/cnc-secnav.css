@@ -27,9 +27,21 @@
 }
 .cnc-secnav a:hover,.cnc-secnav a:focus-visible{background:var(--cnc-red);color:#fff}
 .cnc-secnav a:focus-visible{outline:none}
-/* The page you are on is marked, and is not a link to itself. */
+/* The page you are on, or the section you are reading, is marked. */
 .cnc-secnav a.is-current{color:var(--cnc-red);cursor:default}
 .cnc-secnav a.is-current:hover{background:#FDECEE;color:var(--cnc-red)}
+.cnc-secnav a.is-active{color:var(--cnc-red)}
+.cnc-secnav a.is-active::before{
+  content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;background:var(--cnc-red);
+}
+.cnc-secnav a.is-active:hover,.cnc-secnav a.is-active:focus-visible{color:#fff}
+.cnc-secnav a.is-active:hover::before{background:#fff}
+/* A step number sits ahead of its label on the numbered journey. */
+.cnc-secnav a i{
+  font-style:normal;font-family:'Bebas Neue','Montserrat',Arial,sans-serif;
+  font-size:14px;color:var(--cnc-red);margin-right:8px;min-width:9px;
+}
+.cnc-secnav a:hover i,.cnc-secnav a:focus-visible i{color:#fff}
 /* A live figure sits above its label where the page supplies one. */
 .cnc-secnav a b{
   font-family:'Bebas Neue','Montserrat',Arial,sans-serif;font-weight:400;

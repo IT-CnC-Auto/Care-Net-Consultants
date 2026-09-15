@@ -16,7 +16,9 @@
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
@@ -96,9 +98,12 @@
   </div>
 </section>
 
+<!-- Africa pattern strip, closing the hero off, as on the landing page. -->
+<div class="pattern-strip" role="presentation"></div>
+
 <main id="main">
   <div class="grid">
-    <div class="card">
+    <div class="card" id="working-draft">
       <h2>Working draft</h2>
       <p>The full structured assessment and an engine drafted Plan against the verified regulatory kernel for your industry, delivered as a watermarked working draft for internal planning.</p>
       <ul>
@@ -109,7 +114,7 @@
       <p class="price-line">From the industry rate card <span class="tag">indicative pricing</span></p>
       <p class="muted">Free for clients under an active service level agreement or doing 100 or more occupational medicals a year with Care Net.</p>
     </div>
-    <div class="card">
+    <div class="card" id="omp-signed">
       <h2>OMP reviewed and signed</h2>
       <p>Everything in the working draft, plus review by a registered Occupational Medical Practitioner: clinical recommendations, ratification of the surveillance battery, and signature. The released, board ready Plan, hosted with revision control.</p>
       <ul>
@@ -122,7 +127,7 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="quotation">
     <h2>Get your quotation</h2>
     <p class="muted">The quotation prices your chosen package from the industry rate card, applies the free tool qualification automatically, and routes unknown industries to a consultant rather than guessing.</p>
     <form id="quote">
@@ -165,7 +170,7 @@
     <p class="muted">Already a client? <a href="/" style="color:var(--red);font-weight:bold">Sign in</a> and your service level agreement or medicals volume applies automatically. Payment is by invoice while the payment gateway is being connected; your secure assessment link is issued on payment confirmation.</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="samples">
     <h2>See what you get: sample Plans with fictitious data</h2>
     <p class="muted">Every sample is produced by the Care Net Method from entirely fictitious company data, drafted against the real verified regulatory framework for the industry, and watermarked on every page. Your own Plan carries your branding alongside the Care Net band on every page.</p>
     <table>
@@ -175,7 +180,7 @@
     <p class="muted">Samples are demonstration documents. They are watermarked, unsigned, and viewable on screen only, so what you see is what the method produces rather than a template to fill in.</p>
   </div>
 
-  <div class="card">
+  <div class="card" id="journey">
     <h2>How your journey works</h2>
     <ol class="muted" style="padding-left:18px">
       <li><a href="/" style="color:var(--red)">Sign in or create your company</a>: your service level agreement or medicals volume is checked automatically.</li>
@@ -226,6 +231,19 @@ document.getElementById('quote').onsubmit = async ev => {
   }
 };
 </script>
+<!-- ============ Right-side navigator band ============
+     The band from the right edge of carenetconsultants.co.za. Its items are
+     this page's own section headings, and each one scrolls to that section.
+     Styling in /css/cnc-secnav.css, behaviour in /js/cnc-secnav.js.
+     ================================================== -->
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#working-draft"><span>Working draft</span></a>
+  <a href="#omp-signed"><span>OMP reviewed and signed</span></a>
+  <a href="#quotation"><span>Get your quotation</span></a>
+  <a href="#samples"><span>Sample Plans</span></a>
+  <a href="#journey"><span>How your journey works</span></a>
+</nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915b" defer></script>
 </body>
 </html>

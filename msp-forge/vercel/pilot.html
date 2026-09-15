@@ -17,17 +17,13 @@
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
 <style>
   :root { --red: #C5141B; --red-on-dark: #FF6B70; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
   body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  .stats { max-width: 960px; margin: -18px auto 0; padding: 0 16px; position: relative; }
-  .stats-inner { background: var(--red); color: #fff; border-radius: 8px; padding: 12px 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; font-size: 13px; }
-  .stats-inner a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; text-align: center; transition: background .15s; }
-  .stats-inner a:hover, .stats-inner a:focus { background: rgba(255,255,255,.18); text-decoration: underline; }
-  .stats-inner strong { font-size: 17px; display: block; text-align: center; }
-  .stats-hint { text-align: center; font-size: 11px; color: #6B6B6B; margin: 6px 0 0; }
   main { max-width: 960px; margin: 0 auto; padding: 30px 16px 70px; }
   .step { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 18px; border-left: 5px solid var(--red); }
   .step h2 { color: var(--red); font-size: 17px; margin-top: 0; }
@@ -83,13 +79,6 @@
     </div>
   </nav>
 </header>
-<div class="stats"><div class="stats-inner" id="stats">
-  <a href="/method.html#method"><strong id="s-version">&nbsp;</strong>The Care Net Method</a>
-  <a href="/method.html#instruments"><strong id="s-instruments">&nbsp;</strong>verified legal instruments</a>
-  <a href="/method.html#industries"><strong id="s-industries">&nbsp;</strong>industries covered</a>
-  <a href="/method.html#roles"><strong id="s-roles">&nbsp;</strong>job roles mapped</a>
-  <a href="/method.html#protocols"><strong id="s-protocols">&nbsp;</strong>medical protocols</a>
-</div><p class="stats-hint">Every figure above is live from our maintained framework. Click any of them to see exactly what sits behind it.</p></div>
 <!-- ============ C1 :: Hero, matching the band on carenetconsultants.co.za ============
      Copy is this page's own heading and meta description, nothing newly
      written. Styling lives in /css/cnc-hero.css, shared by every page here.
@@ -112,16 +101,19 @@
   </div>
 </section>
 
+<!-- Africa pattern strip, closing the hero off, as on the landing page. -->
+<div class="pattern-strip" role="presentation"></div>
+
 <main id="main">
   <p style="font-size:14px;line-height:1.6">This page is the complete journey, live. Every step below links into the real system: the same account flow, the same assessment, the same engine, and the same clinical review your Plan goes through. Walk it end to end in about ten minutes.</p>
 
-  <div class="step">
+  <div class="step" id="step-1">
     <h2><span class="n">1</span>Sign in or create your company</h2>
     <p>One door for everyone: enter your work email, receive a secure sign in link, and either land on your company's status or register a new company on the spot. The moment you are signed in, the system checks two things automatically: an active service level agreement with Care Net, and whether you do 100 or more occupational medicals a year with us. Either one makes the assessment tool free.</p>
     <a class="btn" href="/">Try the real sign in</a>
   </div>
 
-  <div class="step">
+  <div class="step" id="step-2">
     <h2><span class="n">2</span>Choose your package and see your price</h2>
     <p>Two packages: the watermarked working draft, or the OMP reviewed and signed Plan (the released, board ready document). Three worked examples from the live pricing engine, Construction rate card:</p>
     <div class="tablewrap">
@@ -136,14 +128,14 @@
     <a class="btn" href="/shop.html">Get your own quotation</a>
   </div>
 
-  <div class="step">
+  <div class="step" id="step-3">
     <h2><span class="n">3</span>Complete the smart assessment</h2>
     <p>Eleven sections capture everything the engine needs: your sites and contacts, regulatory context, risk assessment and hygiene results, workforce profile, every job category with its hazards and controls, current surveillance arrangements, incident history, your industry from the governed list, your branding (your logo joins the Care Net band on every page of your Plan), POPIA consent, and the declaration. Roughly 30 to 45 minutes with your risk assessment at hand.</p>
     <p class="muted">The real form opens below in demo preview: everything is visible, nothing is stored, and submission is disabled. Clients receive a secure single use link instead.</p>
     <a class="btn" href="/assess.html?demo=1">Preview the real assessment</a>
   </div>
 
-  <div class="step">
+  <div class="step" id="step-4">
     <h2><span class="n">4</span>The engine drafts your Plan</h2>
     <p>Your answers run through <a href="/method.html" style="color:var(--red);font-weight:bold">the Care Net Method</a>: our maintained, triple verified body of South African occupational health law. It classifies your operation, frames the exact legal instruments that govern it, profiles every job against the hazard map, prescribes the surveillance battery with a legal basis for every test, composes the document, and then checks its own work. Nine checks must pass before a draft exists at all, among them:</p>
     <ul class="muted">
@@ -154,12 +146,12 @@
     </ul>
   </div>
 
-  <div class="step">
+  <div class="step" id="step-5">
     <h2><span class="n">5</span>A registered OMP reviews, recommends, and signs</h2>
     <p>No Plan releases without a registered Occupational Medical Practitioner. The OMP reviews the draft in the clinical interface, records recommendations, and signs with name and HPCSA number. This gate is enforced in the database itself: there is no pathway to a released document around it. On the working draft package the document stays watermarked and unsigned.</p>
   </div>
 
-  <div class="step">
+  <div class="step" id="step-6">
     <h2><span class="n">6</span>Delivery, hosting, and revisions</h2>
     <p>Your signed Plan is delivered for download and hosted securely with revision numbers. When your operations or the law change, the revision runs through the same method and the same clinical review. Below is a real sample, generated from entirely fictitious company data and watermarked on every page:</p>
     <a class="btn secondary" href="/sample.html">View the sample Plan for your industry</a>
@@ -207,6 +199,20 @@
     });
 })();
 </script>
+<!-- ============ Right-side navigator band ============
+     The band from the right edge of carenetconsultants.co.za. Its items are
+     this page's own section headings, and each one scrolls to that section.
+     Styling in /css/cnc-secnav.css, behaviour in /js/cnc-secnav.js.
+     ================================================== -->
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#step-1"><i aria-hidden="true">1</i><span>Sign in or create</span></a>
+  <a href="#step-2"><i aria-hidden="true">2</i><span>Package and price</span></a>
+  <a href="#step-3"><i aria-hidden="true">3</i><span>Smart assessment</span></a>
+  <a href="#step-4"><i aria-hidden="true">4</i><span>Engine drafts your Plan</span></a>
+  <a href="#step-5"><i aria-hidden="true">5</i><span>OMP reviews and signs</span></a>
+  <a href="#step-6"><i aria-hidden="true">6</i><span>Delivery and revisions</span></a>
+</nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915b" defer></script>
 </body>
 </html>
