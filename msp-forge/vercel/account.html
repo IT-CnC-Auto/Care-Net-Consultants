@@ -4,13 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Care Net Company Account</title>
+<!-- Care Net house faces and the shared site header. Both are front end only:
+     no endpoints, no data handling, nothing that touches the app's plumbing. -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  header { background: var(--charcoal); color: #fff; padding: 30px 16px; text-align: center; }
-  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; font-size: 22px; }
-  header h1 { font-size: 18px; font-weight: normal; margin: 10px 0 0; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
   main { max-width: 640px; margin: 0 auto; padding: 26px 16px 70px; }
   .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 18px; }
   .card h2 { color: var(--red); font-size: 17px; margin-top: 0; }
@@ -25,18 +33,49 @@
   .status.err { background: #fdeaea; border: 1px solid var(--red); }
   .muted { font-size: 13px; color: #555; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
-  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
-  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 0 9px; display: inline-block; padding: 3px 0; }
-  nav.mainnav a:hover { text-decoration: underline; }
+
+  /* Page title block, in the site's own heading style now that the banner
+     carries only the logo and the menu. */
+  .pagehead { margin: 0 0 22px; }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
+  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(30px, 4.6vw, 46px); line-height: .99; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
+  .pagehead h1 .r { color: var(--cnc-red); }
+  /* The header is sticky, so anything linked to sits clear of it. */
+  :target { scroll-margin-top: 130px; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
-  <h1>Company account</h1>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
+     presentation only. Every page in this app shares those two files, so the
+     banner is changed in one place, never page by page.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+        <li class="active"><a href="/account.html" aria-current="page">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/sample.html">Sample Plan</a><a href="/account.html">Sign in</a></nav>
-<main>
+<main id="main">
+  <div class="pagehead">
+    <span class="eyebrow">Your partner in workplace health</span>
+    <h1>Company <span class="r">account</span></h1>
+  </div>
   <div class="card" id="signin-card">
     <h2>Sign in or create your company</h2>
     <p class="muted">One journey for both: enter your work email and we send a secure sign in link. New here? Sign in first, then register your company below and start your assessment straight away; returning clients land on their account with the assessment one click away.</p>
@@ -67,6 +106,19 @@
   </div>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb = createClient('https://pboebfnujzffgwctsplw.supabase.co', 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj');
@@ -143,5 +195,6 @@ $('register').onclick = async () => {
 sb.auth.getSession().then(({ data: { session } }) => { if (session) loadAccount(session); });
 sb.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) loadAccount(session); });
 </script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>

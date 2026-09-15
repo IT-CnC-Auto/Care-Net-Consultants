@@ -36,6 +36,18 @@
   padding:12px 18px;border-radius:0 0 var(--cnc-radius) 0;text-decoration:none}
 .cnc-skip:focus{left:0}
 
+/* ---- Host page isolation ----
+   These pages carry loose element selectors from before the header existed,
+   for example method.html has `nav a { margin: 2px 3px; padding: 11px 13px }`
+   for its own section nav. A bare `nav a` rule outreaches nothing here, but it
+   does reach anything the component rules below leave unset, and that quietly
+   widened the menu past the viewport on method.html. So the header resets its
+   own elements first and then sets what it needs. Keep this block above the
+   component rules. ---- */
+.cnc-sitehead nav,.cnc-sitehead ul,.cnc-sitehead li,.cnc-sitehead a,
+.cnc-sitehead img,.cnc-sitehead button,.cnc-sitehead div{margin:0;min-height:0}
+.cnc-sitehead nav{background:none;padding:0;text-align:left}
+
 /* ---- Shell: the whole banner sticks as one unit ---- */
 .cnc-sitehead{position:sticky;top:0;z-index:300;background:#fff}
 .cnc-sitehead *{box-sizing:border-box}
@@ -70,7 +82,7 @@
 .cnc-mainnav .logo-img{width:223px;height:auto;display:block;max-width:100%}
 .cnc-mainnav ul{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:2px}
 .cnc-mainnav li{position:relative}
-.cnc-mainnav > .mwrap > ul > li > a{display:flex;align-items:center;gap:5px;padding:16px 13px;
+.cnc-mainnav > .mwrap > ul > li > a{display:flex;align-items:center;gap:5px;padding:16px 13px;line-height:1.2;
   font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;
   text-transform:uppercase;color:var(--cnc-ink);text-decoration:none;white-space:nowrap;transition:color .15s}
 .cnc-mainnav > .mwrap > ul > li > a:hover,

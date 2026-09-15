@@ -9,21 +9,41 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
-<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preload" as="image" fetchpriority="high" href="https://img.carenetcdn.com/medical-surveillance/cnc-medical-surveillance-hero-all-industries.webp-v2.png">
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
   body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
+  /* Hero banner, modelled on the hero-banner block on carenetconsultants.co.za:
+     a full-bleed photograph, a dark scrim from the left so the copy stays
+     readable whatever the image does, and the heading in Bebas over the top. */
+  .hero { position: relative; overflow: hidden; background: #0c0c0f; display: flex; align-items: center; min-height: clamp(280px, 38vw, 460px); }
+  .hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(12,12,15,.92) 0%, rgba(12,12,15,.78) 34%, rgba(12,12,15,.42) 62%, rgba(12,12,15,.12) 84%, transparent 100%); }
+  .hero .hero-inner { position: relative; z-index: 2; width: 100%; max-width: 960px; margin: 0 auto; padding: 40px 16px; }
+  .hero .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
+  .hero h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(34px, 5.4vw, 58px); line-height: .97; margin: 10px 0 0; color: #fff; text-transform: uppercase; max-width: 22ch; }
+  .hero h1 .r { color: var(--cnc-red); }
+  /* On a phone the scrim goes top-to-bottom instead of left-to-right, because
+     there is no longer a left third for the copy to sit in. */
+  @media (max-width: 700px) {
+    .hero { min-height: 0; }
+    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.62) 0%, rgba(12,12,15,.82) 55%, rgba(12,12,15,.94) 100%); }
+    .hero .hero-inner { padding: 34px 16px 30px; }
+    .hero h1 { max-width: none; }
+  }
   /* Page title block, in the site's own heading style now that the banner
      carries only the logo and the menu. */
   .pagehead { margin: 0 0 22px; }
-  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red); }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
   .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(32px, 5vw, 50px); line-height: .98; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
-  .pagehead h1 .r { color: var(--red); }
+  .pagehead h1 .r { color: var(--cnc-red); }
   /* The header is sticky, so anything linked to sits clear of it. */
   :target { scroll-margin-top: 180px; }
   main { max-width: 960px; margin: 0 auto; padding: 26px 16px 70px; }
@@ -73,11 +93,16 @@
     </div>
   </nav>
 </header>
-<main id="main">
-  <div class="pagehead">
+<!-- Hero banner. Photograph is the all-industries hero from R2. -->
+<section class="hero">
+  <img src="https://img.carenetcdn.com/medical-surveillance/cnc-medical-surveillance-hero-all-industries.webp-v2.png" alt="Care Net Consultants occupational health medicals across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
+  <div class="hero-inner">
     <span class="eyebrow">Your partner in workplace health</span>
     <h1>Medical Surveillance Plan <span class="r">Assessment</span></h1>
   </div>
+</section>
+
+<main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
   <div class="paths">
     <div class="card">
@@ -145,6 +170,19 @@
   </div>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
 <script>
 const fmtZAR = n => 'R' + Number(n).toLocaleString('en-ZA', { maximumFractionDigits: 0 }).replace(/ /g, ',').replace(/ /g, ',');
 

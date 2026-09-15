@@ -5,14 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Walk the whole Medical Surveillance Plan journey end to end: what Care Net asks you, what the framework does with it, what the practitioner reviews, and what you receive.">
 <title>Care Net Pilot Journey</title>
+<!-- Care Net house faces and the shared site header. Both are front end only:
+     no endpoints, no data handling, nothing that touches the app's plumbing. -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
 <style>
   :root { --red: #C5141B; --red-on-dark: #FF6B70; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  header { background: var(--charcoal); color: #fff; padding: 34px 16px; text-align: center; }
-  header .brand { color: var(--red-on-dark); font-weight: bold; letter-spacing: 1px; font-size: 22px; }
-  header h1 { font-size: 19px; font-weight: normal; margin: 10px 0 4px; }
-  header .tagline { font-size: 13px; opacity: .85; font-style: italic; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
   .stats { max-width: 960px; margin: -18px auto 0; padding: 0 16px; position: relative; }
   .stats-inner { background: var(--red); color: #fff; border-radius: 8px; padding: 12px 18px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; font-size: 13px; }
   .stats-inner a { color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; text-align: center; transition: background .15s; }
@@ -32,18 +39,44 @@
   .muted { font-size: 13px; color: #555; }
   .check { color: #2A7D4E; font-weight: bold; }
   footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
-  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
-  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 2px 3px; display: inline-block; padding: 11px 13px; min-height: 44px; line-height: 22px; }
-  nav.mainnav a:hover { text-decoration: underline; }
+
+  /* Page title block, in the site's own heading style now that the banner
+     carries only the logo and the menu. */
+  .pagehead { margin: 0 0 22px; }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
+  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(30px, 4.6vw, 46px); line-height: .99; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
+  .pagehead h1 .r { color: var(--cnc-red); }
+  /* The header is sticky, so anything linked to sits clear of it. */
+  :target { scroll-margin-top: 130px; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
-  <h1>The pilot journey: from sign up to a signed Medical Surveillance Plan</h1>
-  <div class="tagline">Your Partner in Workplace Health</div>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
+     presentation only. Every page in this app shares those two files, so the
+     banner is changed in one place, never page by page.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li class="active"><a href="/pilot.html" aria-current="page">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+        <li><a href="/account.html">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/sample.html">Sample Plan</a><a href="/account.html">Sign in</a></nav>
 <div class="stats"><div class="stats-inner" id="stats">
   <a href="/method.html#method"><strong id="s-version">&nbsp;</strong>The Care Net Method</a>
   <a href="/method.html#instruments"><strong id="s-instruments">&nbsp;</strong>verified legal instruments</a>
@@ -51,7 +84,11 @@
   <a href="/method.html#roles"><strong id="s-roles">&nbsp;</strong>job roles mapped</a>
   <a href="/method.html#protocols"><strong id="s-protocols">&nbsp;</strong>medical protocols</a>
 </div><p class="stats-hint">Every figure above is live from our maintained framework. Click any of them to see exactly what sits behind it.</p></div>
-<main>
+<main id="main">
+  <div class="pagehead">
+    <span class="eyebrow">Your partner in workplace health</span>
+    <h1>The pilot journey: <span class="r">from sign up to a signed Medical Surveillance Plan</span></h1>
+  </div>
   <p style="font-size:14px;line-height:1.6">This page is the complete journey, live. Every step below links into the real system: the same account flow, the same assessment, the same engine, and the same clinical review your Plan goes through. Walk it end to end in about ten minutes.</p>
 
   <div class="step">
@@ -109,6 +146,19 @@
   </div>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
 <script>
 /* Live framework figures, read straight from the public marketing view with the
    publishable key. No server environment variables required, no secrets on the page. */
@@ -131,5 +181,6 @@
     });
 })();
 </script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>
