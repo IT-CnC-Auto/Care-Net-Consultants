@@ -49,32 +49,13 @@
 <a class="cnc-skip" href="#main">Skip to main content</a>
 
 <!-- ============ Site header, matching carenetconsultants.co.za ============
-     Red band, the Care Net logo from R2, the page menu, and the two calls to
-     action. Styling lives in /css/cnc-header.css, menu behaviour in
-     /js/cnc-header.js. Both are presentation only.
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
+     presentation only.
 
-     NOTE for Kc: "Book a callback" opens WhatsApp on the main Care Net line
-     with a short request prefilled, the same number as the live site's social
-     rail and footer. It is wired this way on purpose: it needs no page on
-     another domain and no endpoint here, so it cannot break. A real callback
-     form inside this app, one that logs the lead to Supabase or GHL, needs a
-     back-end hook from Od.
      ======================================================================= -->
 <header class="cnc-sitehead">
   <div class="band"></div>
-
-  <div class="cnc-utilbar">
-    <div class="uwrap">
-      <a class="uphone" href="tel:+27600702723">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.31 1.85.53 2.81.66A2 2 0 0 1 22 16.92z"></path></svg>
-        <span>+27 60 070 2723</span>
-      </a>
-      <div class="cnc-navcta">
-        <a class="btn btn-out" href="https://wa.me/27600702723?text=Hello%20Care%20Net%2C%20please%20call%20me%20back%20about%20a%20Medical%20Surveillance%20Plan." target="_blank" rel="noopener">Book a callback</a>
-        <a class="btn btn-red" href="/#quote">Get a quote</a>
-      </div>
-    </div>
-  </div>
 
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">

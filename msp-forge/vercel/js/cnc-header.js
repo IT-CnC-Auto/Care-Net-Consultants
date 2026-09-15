@@ -35,7 +35,10 @@
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   });
 
-  /* The desktop buttons are hidden on a phone, so mirror them into the menu */
+  /* If the header carries call to action buttons, mirror them into the mobile
+     menu so they are not out of reach on a phone. The utility row that held
+     them was removed on Kc's instruction, so this is a no-op as things stand
+     and costs nothing; it starts working again the moment buttons come back. */
   function addAction(btn, opts) {
     if (!btn) return;
     opts = opts || {};

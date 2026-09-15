@@ -41,18 +41,11 @@
 .cnc-sitehead *{box-sizing:border-box}
 .cnc-sitehead .band{height:6px;background:var(--cnc-red)}
 
-/* ---- Utility row: contact line left, the two calls to action right ---- */
-.cnc-utilbar{background:#fff;border-bottom:1px solid var(--cnc-line)}
-.cnc-utilbar .uwrap{max-width:var(--cnc-head-maxw);margin:0 auto;padding:9px 22px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.cnc-utilbar .uphone{display:inline-flex;align-items:center;gap:8px;
-  font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:600;font-size:13px;
-  color:var(--cnc-muted);text-decoration:none;transition:color .15s}
-.cnc-utilbar .uphone:hover{color:var(--cnc-red)}
-.cnc-utilbar .uphone svg{width:15px;height:15px;color:var(--cnc-red);flex:0 0 auto}
-.cnc-navcta{display:flex;align-items:center;gap:10px;margin-left:auto}
-
-/* ---- Buttons: same geometry and weights as the live site ---- */
+/* ---- Buttons: parked, not currently used ----
+   The utility row that carried "Book a callback" and "Get a quote" was
+   removed on Kc's instruction. These rules stay so those buttons can be put
+   back with markup alone, no CSS work. Delete this block if the header is
+   never going to carry a button again. ---- */
 .cnc-sitehead .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
   font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:14px;letter-spacing:.01em;
   border:2px solid transparent;border-radius:var(--cnc-radius);padding:11px 18px;
@@ -118,7 +111,7 @@
   .cnc-mainnav > .mwrap > ul > li:last-child{border-bottom:none}
   .cnc-mainnav > .mwrap > ul > li > a{padding:15px 22px;font-size:14px;justify-content:space-between}
   .cnc-mainnav > .mwrap > ul > li.active > a::after{left:22px;right:auto;width:26px;bottom:11px}
-  /* The desktop CTAs fold into the menu, so nothing is out of reach on a phone */
+  /* Kept for the mirrored CTA rows, should the buttons ever come back */
   .cnc-mainnav li.nav-action{border-bottom:none}
   .cnc-mainnav li.nav-action-top{border-top:2px solid var(--cnc-line);margin-top:6px;padding-top:6px}
   .cnc-mainnav > .mwrap > ul > li.nav-action > a{font-weight:700}
@@ -132,12 +125,6 @@
    once the bar is genuinely narrow. */
 @media (max-width:700px){
   .cnc-mainnav .logo-img{width:167px}
-}
-
-/* Below 640px the utility row keeps only the phone line; the CTAs live in the menu */
-@media (max-width:640px){
-  .cnc-navcta{display:none}
-  .cnc-utilbar .uwrap{justify-content:center;padding:8px 22px}
 }
 
 @media (prefers-reduced-motion:reduce){
