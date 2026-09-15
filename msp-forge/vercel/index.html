@@ -2,21 +2,59 @@
 <html lang="en-ZA">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CNC Medical Surveillance Plans</title>
+<!-- Care Net house faces and the shared site header. Both are front end only:
+     no endpoints, no data handling, nothing that touches the app's plumbing. -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/hero-all-industries%20v2.webp">
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  header { background: var(--charcoal); color: #fff; padding: 40px 16px; text-align: center; }
-  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; font-size: 24px; }
-  header h1 { font-size: 20px; font-weight: normal; margin: 12px 0 4px; }
-  header .tagline { font-size: 13px; opacity: .85; font-style: italic; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
+  /* Hero banner: the all-industries photograph, full bleed, with the dark
+     gradient over it. The heading moved out below the image, but the gradient
+     stays: it is part of the look, not scaffolding for the text. */
+  .hero { position: relative; overflow: hidden; background: #0c0c0f; line-height: 0; }
+  .hero > img { display: block; width: 100%; height: clamp(280px, 38vw, 460px); object-fit: cover; object-position: center; }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,15,.55) 0%, rgba(12,12,15,.40) 34%, rgba(12,12,15,.22) 62%, rgba(12,12,15,.08) 84%, transparent 100%); }
+  @media (max-width: 700px) {
+    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.30) 0%, rgba(12,12,15,.45) 55%, rgba(12,12,15,.58) 100%); }
+  }
+
+  /* Heading band, sitting between the hero and the pattern strip. */
+  .titleband { max-width: 960px; margin: 0 auto; padding: 30px 16px 24px; }
+
+
+  /* Page title block, in the site's own heading style now that the banner
+     carries only the logo and the menu. */
+  .pagehead { margin: 0; }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
+  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(32px, 5vw, 50px); line-height: .98; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
+  .pagehead h1 .r { color: var(--cnc-red); }
+  /* The header is sticky, so anything linked to sits clear of it. */
+  :target { scroll-margin-top: 180px; }
   main { max-width: 960px; margin: 0 auto; padding: 26px 16px 70px; }
-  .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  @media (max-width: 760px) { .paths { grid-template-columns: 1fr; } }
   .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   .card h2 { color: var(--red); font-size: 17px; margin-top: 0; }
+  /* Carried over from account.html with the sign in journey. */
+  a.button { display: block; text-align: center; background: var(--red); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; width: 100%; font-size: 14px; text-decoration: none; }
+  a.button.big { font-size: 16px; padding: 16px 20px; }
+  a.linklike { color: var(--red); font-weight: bold; text-decoration: none; }
+  .status { padding: 12px 14px; border-radius: 6px; font-size: 14px; margin-top: 12px; }
+  .status.good { background: #e8f7ec; border: 1px solid #2e8b57; }
+  .status.info { background: #eef3fb; border: 1px solid #4a6fb5; }
+  .status.err { background: #fdeaea; border: 1px solid var(--red); }
+  .muted { font-size: 13px; color: #555; }
   .card p { font-size: 14px; line-height: 1.5; }
   label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; }
   input, select { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; }
@@ -29,79 +67,83 @@
   .hp { position: absolute; left: -9999px; }
   .steps { font-size: 13px; color: #555; padding-left: 18px; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
-  nav.mainnav { background: var(--red); text-align: center; padding: 9px 8px; }
-  nav.mainnav a { color: #fff; font-weight: bold; font-size: 13px; text-decoration: none; margin: 0 9px; display: inline-block; padding: 3px 0; }
-  nav.mainnav a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
-  <h1>Medical Surveillance Plan Assessment</h1>
-  <div class="tagline">Your Partner in Workplace Health</div>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
+     presentation only.
+
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li class="active"><a href="/" aria-current="page">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-<nav class="mainnav"><a href="/">Home</a><a href="/pilot.html">How it works</a><a href="/method.html">The Care Net Method</a><a href="/shop.html">Packages and pricing</a><a href="/sample.html">Sample Plan</a><a href="/account.html">Sign in</a></nav>
-<main>
+<!-- Hero banner: the all-industries photograph from R2, no text over it. -->
+<section class="hero">
+  <img src="https://img.carenetcdn.com/medical-surveillance/hero-all-industries%20v2.webp" alt="Care Net Consultants occupational health teams across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
+</section>
+
+<!-- Africa pattern strip, the same page break the main site uses. -->
+<div class="pattern-strip" role="presentation"></div>
+
+<div class="titleband">
+  <div class="pagehead">
+    <span class="eyebrow">Your partner in workplace health</span>
+    <h1>Medical Surveillance Plan <span class="r">Assessment</span></h1>
+  </div>
+</div>
+
+<main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
-  <div class="paths">
-    <div class="card">
-      <h2>I am a Care Net client</h2>
-      <p>The assessment is included in your service. Sign on below; your Care Net consultant approves your access and you receive your secure assessment link by email.</p>
-      <form id="signon">
-        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
-        <label>Company name</label><input name="company_name" required>
-        <label>Contact person</label><input name="contact_name" required>
-        <label>Email</label><input name="contact_email" type="email" required>
-        <button type="submit">Request my assessment access</button>
-        <div class="result" id="signon-result"></div>
-      </form>
+  <div class="card" id="signin-card">
+    <h2>Start your journey</h2>
+    <p class="muted">One journey for both: enter your work email and we send a secure sign in link. New here? Sign in first, then register your company below and start your assessment straight away; returning clients land on their account with the assessment one click away.</p>
+    <label for="email">Work email</label><input id="email" type="email" autocomplete="email">
+    <button id="send-link">Email me a sign in link</button>
+    <div class="status" id="signin-status" style="display:none"></div>
+  </div>
+
+  <div class="card" id="account-card" style="display:none">
+    <h2>Your account</h2>
+    <div id="account-body"></div>
+    <div id="register-body" style="display:none">
+      <p class="muted">Your email is verified but no company is registered against it yet. Register your company and your assessment opens immediately.</p>
+      <label for="reg-company">Company name</label><input id="reg-company">
+      <label for="reg-contact">Contact person</label><input id="reg-contact">
+      <button id="register">Register my company and start</button>
     </div>
-    <div class="card">
-      <h2>New to Care Net: instant quotation</h2>
-      <p>Tell us about your company and receive a quotation now. On payment you receive your secure assessment link, and your Plan follows the same clinical review as every Care Net engagement.</p>
-      <form id="quote">
-        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
-        <label>Company name</label><input name="company_name" required>
-        <label>Contact person</label><input name="contact_name" required>
-        <label>Email</label><input name="contact_email" type="email" required>
-        <label>Industry</label>
-        <select name="industry_code">
-          <option value="CONSTR">Construction</option>
-          <option value="MANU">Manufacturing</option>
-          <option value="MINING">Mining and quarrying</option>
-          <option value="TRANS">Transport and logistics</option>
-          <option value="AGRI">Agriculture and forestry</option>
-          <option value="HEALTH">Healthcare and laboratories</option>
-          <option value="UTIL">Utilities and energy</option>
-          <option value="SEC">Security services</option>
-          <option value="CLEAN">Cleaning and hygiene services</option>
-          <option value="RETAIL">Retail and wholesale</option>
-          <option value="HOSP">Hospitality and food service</option>
-          <option value="WASTE">Waste management</option>
-          <option value="TEL">Telecommunications and tower work</option>
-          <option value="PETRO">Petrochemical and fuel retail</option>
-          <option value="GOV">Government and municipal</option>
-          <option value="EDU">Education</option>
-          <option value="OFFICE">Office and professional services</option>
-          <option value="OTHER">Other (a consultant will contact you)</option>
-        </select>
-        <label>Company size</label>
-        <select name="company_size">
-          <option>1 to 20</option><option>21 to 50</option><option>51 to 200</option><option>201 to 500</option><option>More than 500</option>
-        </select>
-        <label>Number of employees to be covered</label><input name="employee_count" type="number" min="1" required>
-        <label>Number of distinct job descriptions</label><input name="job_category_count" type="number" min="1" required>
-        <label>Occupational medicals per year with Care Net (0 if none yet)</label><input name="annual_medicals_estimate" type="number" min="0" value="0">
-        <p style="font-size:12px;color:#555;margin:6px 0 0">Companies doing 100 or more occupational medicals a year with Care Net receive this assessment tool free. A consultant confirms the volume before the waiver is finalised.</p>
-        <button type="submit">Get my quotation</button>
-        <div class="result" id="quote-result"></div>
-      </form>
+    <div id="start-body" style="display:none">
+      <p>Your Medical Surveillance Plan assessment is ready. It takes about twenty minutes, and you can add sites, job categories and substances as you go. Have your risk assessment to hand if you have one.</p>
+      <a class="button big" id="start-link" href="#">Start your assessment</a>
+      <p class="muted" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
     </div>
+    <div class="status" id="account-status" style="display:none"></div>
+    <p class="muted" style="margin-top:14px">
+      Also see <a class="linklike" href="/shop.html">packages, pricing, and samples</a>.
+    </p>
   </div>
   <div class="card" style="margin-top:18px">
     <h2>How it works</h2>
     <ol class="steps">
-      <li>Sign on as a Care Net client, or accept your quotation and complete payment.</li>
+      <li>Enter your work email above and follow the secure sign in link. If you are new, register your company and your assessment opens immediately.</li>
       <li>Receive your secure, single use assessment link and complete the structured assessment (roughly 30 to 45 minutes with your risk assessment at hand).</li>
       <li>Care Net's engine drafts your Plan against the verified regulatory framework for your industry, and a registered Occupational Medical Practitioner reviews, recommends, and signs.</li>
       <li>Your approved Plan is delivered for download and hosted securely with revision numbers; updates and revisions follow the same review whenever your operations change.</li>
@@ -109,51 +151,103 @@
   </div>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
-<script>
-const fmtZAR = n => 'R' + Number(n).toLocaleString('en-ZA', { maximumFractionDigits: 0 }).replace(/ /g, ',').replace(/ /g, ',');
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
 
-document.getElementById('signon').onsubmit = async ev => {
-  ev.preventDefault();
-  const f = ev.target, out = document.getElementById('signon-result');
-  const data = Object.fromEntries(new FormData(f));
-  const r = await fetch('/api/signon', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(x => x.json()).catch(() => null);
+<script type="module">
+/* The sign in journey, moved here from account.html so the whole flow lives
+   on one page. Untouched apart from the redirect target below.
+
+   ONE THING FOR OD: emailRedirectTo now points at the site root instead of
+   /account.html. That URL has to be on the allow list in Supabase under
+   Authentication, URL Configuration, Redirect URLs. Until it is added the
+   sign in email will fail. account.html is kept as a redirect so any link
+   already issued still lands correctly. */
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const sb = createClient('https://pboebfnujzffgwctsplw.supabase.co', 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj');
+
+const $ = id => document.getElementById(id);
+function show(el, cls, msg) { el.className = 'status ' + cls; el.style.display = 'block'; el.textContent = msg; }
+function hide(el) { el.style.display = 'none'; }
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+$('send-link').onclick = async () => {
+  const email = $('email').value.trim();
+  const st = $('signin-status');
+  if (!email) { show(st, 'err', 'Please enter your work email.'); return; }
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/' } });
+  if (error) show(st, 'err', 'The sign in link could not be sent: ' + error.message);
+  else show(st, 'good', 'Check your inbox: your secure sign in link is on its way to ' + email + '.');
+};
+
+function renderReady(email, r) {
+  const body = $('account-body');
+  const st = $('account-status');
+  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(email) + '</strong>.</p>'
+    + '<p>Company: <strong>' + esc(r.company_name) + '</strong></p>';
+  hide($('register-body'));
+  if (r.declined || !r.assessment_url) {
+    hide($('start-body'));
+    show(st, 'err', 'Please contact Care Net about your account status before starting an assessment.');
+    return;
+  }
+  $('start-link').href = r.assessment_url;
+  $('start-body').style.display = 'block';
+  hide(st);
+}
+
+async function loadAccount(session) {
+  hide($('signin-card'));
+  $('account-card').style.display = 'block';
+  const body = $('account-body');
+  const st = $('account-status');
+  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>. Checking your company...</p>';
+  try {
+    const r = await fetch('/api/company-lookup', { headers: { Authorization: 'Bearer ' + session.access_token } }).then(x => x.json());
+    if (!r.found) {
+      body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>.</p>';
+      hide($('start-body'));
+      $('register-body').style.display = 'block';
+      return;
+    }
+    renderReady(session.user.email, r);
+  } catch (e) {
+    show(st, 'err', 'Your company status could not be loaded. Please try again.');
+  }
+}
+
+$('register').onclick = async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  const st = $('account-status');
+  const company = $('reg-company').value.trim();
+  const contact = $('reg-contact').value.trim();
+  if (!company || !contact) { show(st, 'err', 'Company name and contact person are required.'); return; }
+  const btn = $('register'); btn.disabled = true; btn.textContent = 'Registering...';
+  const r = await fetch('/api/signon', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ company_name: company, contact_name: contact, contact_email: session.user.email }),
+  }).then(x => x.json()).catch(() => null);
+  btn.disabled = false; btn.textContent = 'Register my company and start';
   if (r && r.status === 'received') {
-    out.className = 'result ok';
-    out.textContent = 'Thank you. Your sign on has been received. Your Care Net consultant will approve your access and your secure assessment link will be emailed to you.';
-    f.querySelectorAll('input,button').forEach(el => el.disabled = true);
+    renderReady(session.user.email, r);
   } else {
-    out.className = 'result err';
-    out.textContent = (r && r.error) || 'The sign on could not be recorded. Please try again.';
+    show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
   }
 };
 
-document.getElementById('quote').onsubmit = async ev => {
-  ev.preventDefault();
-  const f = ev.target, out = document.getElementById('quote-result');
-  const data = Object.fromEntries(new FormData(f));
-  data.employee_count = parseInt(data.employee_count, 10);
-  data.job_category_count = parseInt(data.job_category_count, 10);
-  data.annual_medicals_estimate = parseInt(data.annual_medicals_estimate || '0', 10);
-  const r = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(x => x.json()).catch(() => null);
-  if (r && r.reference && r.price_status === 'free_qualifying') {
-    out.className = 'result ok';
-    out.innerHTML = 'Quotation <strong>' + r.reference + '</strong>: <span class="price">FREE</span> under the Care Net client benefit for companies with 100 or more occupational medicals a year.<br><br>A Care Net consultant will confirm your medicals volume and email your secure assessment link to <strong>' + data.contact_email + '</strong>.';
-    f.querySelectorAll('input,select,button').forEach(el => el.disabled = true);
-  } else if (r && r.reference) {
-    out.className = 'result ok';
-    out.innerHTML = 'Quotation <strong>' + r.reference + '</strong>: <span class="price">' + fmtZAR(r.price_zar) + '</span>' +
-      (r.price_status === 'indicative' ? ' <em>(indicative, confirmed with your invoice)</em>' : '') +
-      '. Valid until ' + r.valid_until + '.<br><br>A Care Net consultant will send your invoice and payment instructions to <strong>' + data.contact_email +
-      '</strong>. On payment confirmation your secure assessment link is issued automatically.';
-    f.querySelectorAll('input,select,button').forEach(el => el.disabled = true);
-  } else if (r && r.status === 'consultant') {
-    out.className = 'result ok';
-    out.textContent = r.message;
-  } else {
-    out.className = 'result err';
-    out.textContent = (r && r.error) || 'The quotation could not be prepared. Please try again.';
-  }
-};
+sb.auth.getSession().then(({ data: { session } }) => { if (session) loadAccount(session); });
+sb.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) loadAccount(session); });
 </script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>

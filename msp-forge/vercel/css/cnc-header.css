@@ -1,0 +1,150 @@
+/* =====================================================================
+   cnc-header.css :: Care Net Consultants site header, MSP FORGE edition
+   Version: 1.0 | Owner: Kc (CNC brand and front end)
+   Purpose: gives the MSP FORGE pages the same top banner as
+   carenetconsultants.co.za, so a visitor moving between the main site and
+   this app never feels the seam.
+
+   FRONT END ONLY. This file contains no data handling, no endpoints and no
+   configuration. Nothing in here can change what the app stores or sends.
+
+   Carried across from the live site header (C13 + .cnc-mainnav):
+     6px red band, sticky white bars, Bebas and Montserrat faces, the
+     223px logo, uppercase Montserrat nav links, grow-on-hover buttons,
+     and the sub 1025px hamburger that folds the CTAs into the menu.
+
+   Tokens are namespaced --cnc-* so a host page's own --red or --ink
+   cannot repaint the header by accident.
+   ===================================================================== */
+
+:root{
+  --cnc-red:#ED1B24;        /* CNC brand red */
+  --cnc-red-deep:#B7141A;   /* pressed and hover state */
+  --cnc-red-tint:#FDECEE;   /* submenu and focus wash */
+  --cnc-ink:#0F0F0F;
+  --cnc-ink-2:#1A1A1A;
+  --cnc-line:#E5E5E5;
+  --cnc-line-soft:#F0F0F0;
+  --cnc-muted:#4d4d4d;
+  --cnc-radius:8px;
+  --cnc-head-maxw:1200px;
+}
+
+/* ---- Skip link: keyboard and screen reader users get past the nav ---- */
+.cnc-skip{position:absolute;left:-9999px;top:0;z-index:400;background:var(--cnc-red);color:#fff;
+  font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;
+  padding:12px 18px;border-radius:0 0 var(--cnc-radius) 0;text-decoration:none}
+.cnc-skip:focus{left:0}
+
+/* ---- Host page isolation ----
+   These pages carry loose element selectors from before the header existed,
+   for example method.html has `nav a { margin: 2px 3px; padding: 11px 13px }`
+   for its own section nav. A bare `nav a` rule outreaches nothing here, but it
+   does reach anything the component rules below leave unset, and that quietly
+   widened the menu past the viewport on method.html. So the header resets its
+   own elements first and then sets what it needs. Keep this block above the
+   component rules. ---- */
+.cnc-sitehead nav,.cnc-sitehead ul,.cnc-sitehead li,.cnc-sitehead a,
+.cnc-sitehead img,.cnc-sitehead button,.cnc-sitehead div{margin:0;min-height:0}
+.cnc-sitehead nav{background:none;padding:0;text-align:left}
+
+/* ---- Shell: the whole banner sticks as one unit ---- */
+.cnc-sitehead{position:sticky;top:0;z-index:300;background:#fff}
+.cnc-sitehead *{box-sizing:border-box}
+.cnc-sitehead .band{height:6px;background:var(--cnc-red)}
+
+/* ---- Buttons: parked, not currently used ----
+   The utility row that carried "Book a callback" and "Get a quote" was
+   removed on Kc's instruction. These rules stay so those buttons can be put
+   back with markup alone, no CSS work. Delete this block if the header is
+   never going to carry a button again. ---- */
+.cnc-sitehead .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:14px;letter-spacing:.01em;
+  border:2px solid transparent;border-radius:var(--cnc-radius);padding:11px 18px;
+  min-height:44px;line-height:1;cursor:pointer;text-decoration:none;width:auto;margin:0;
+  transition:transform .25s ease,background .15s,color .15s,border-color .15s;will-change:transform}
+.cnc-sitehead .btn-red{background:var(--cnc-red);color:#fff;border-color:var(--cnc-red)}
+.cnc-sitehead .btn-red:hover{background:var(--cnc-red-deep);border-color:var(--cnc-red-deep);color:#fff}
+.cnc-sitehead .btn-out{background:transparent;color:var(--cnc-ink);border-color:var(--cnc-ink)}
+.cnc-sitehead .btn-out:hover{background:var(--cnc-ink);color:#fff;border-color:var(--cnc-ink)}
+/* Grow on hover, matching elementor-animation-grow on the live site */
+.cnc-sitehead .btn:hover,.cnc-sitehead .btn:focus-visible{transform:scale(1.06)}
+.cnc-sitehead .btn:active{transform:scale(1.02) translateY(1px)}
+.cnc-sitehead .btn:focus{outline:none}
+.cnc-sitehead .btn:focus-visible{outline:3px solid var(--cnc-red);outline-offset:3px}
+
+/* ---- Main navigation row: logo left, links right ---- */
+.cnc-mainnav{background:#fff;border-bottom:1px solid var(--cnc-line);box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.cnc-mainnav .mwrap{max-width:var(--cnc-head-maxw);margin:0 auto;padding:6px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px}
+.cnc-mainnav .logo-link{display:inline-flex;align-items:center;flex:0 0 auto}
+.cnc-mainnav .logo-link:focus-visible{outline:3px solid var(--cnc-red);outline-offset:3px;border-radius:4px}
+.cnc-mainnav .logo-img{width:223px;height:auto;display:block;max-width:100%}
+.cnc-mainnav ul{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:2px}
+.cnc-mainnav li{position:relative}
+.cnc-mainnav > .mwrap > ul > li > a{display:flex;align-items:center;gap:5px;padding:16px 13px;line-height:1.2;
+  font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--cnc-ink);text-decoration:none;white-space:nowrap;transition:color .15s}
+.cnc-mainnav > .mwrap > ul > li > a:hover,
+.cnc-mainnav > .mwrap > ul > li.active > a{color:var(--cnc-red)}
+.cnc-mainnav > .mwrap > ul > li > a:focus-visible{outline:3px solid var(--cnc-red);outline-offset:-3px;border-radius:4px}
+/* The current page keeps a red underline, so people always know where they are */
+.cnc-mainnav > .mwrap > ul > li.active > a::after{content:"";position:absolute;left:13px;right:13px;bottom:8px;
+  height:2px;background:var(--cnc-red)}
+
+/* ---- Hamburger ----
+   The live site switches at 1024px, but these menu labels are much longer
+   ("Start your journey", "The Care Net Method", "Packages and pricing"), so
+   the desktop row measures 1157px before it starts squeezing. An earlier
+   1160px breakpoint left only 3px and sub-pixel rounding tipped method.html
+   into a 1px sideways scroll. 1220px keeps roughly 60px of headroom, which
+   also absorbs the way different browsers and platforms render Montserrat
+   at slightly different widths. Re-measure if a menu label changes. ---- */
+.cnc-burger{display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:46px;height:42px;padding:0 11px;border:1px solid var(--cnc-line);border-radius:9px;
+  background:#fff;cursor:pointer;flex:0 0 auto;margin:0}
+.cnc-burger span{display:block;height:2.5px;width:100%;background:var(--cnc-ink);border-radius:2px;
+  transition:transform .2s ease,opacity .2s ease}
+.cnc-burger:focus-visible{outline:3px solid var(--cnc-red);outline-offset:3px}
+.cnc-mainnav.open .cnc-burger span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.cnc-mainnav.open .cnc-burger span:nth-child(2){opacity:0}
+.cnc-mainnav.open .cnc-burger span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+@media (min-width:1220px){
+  .cnc-mainnav .mobile-only{display:none}
+}
+
+@media (max-width:1219px){
+  .cnc-burger{display:flex}
+  .cnc-mainnav .mwrap{flex-wrap:wrap;gap:12px}
+  .cnc-mainnav .logo-link{order:1}
+  .cnc-mainnav .cnc-burger{order:2}
+  .cnc-mainnav > .mwrap > ul{order:3;flex-basis:100%;flex-direction:column;align-items:stretch;gap:0;
+    display:none;margin:8px -22px 0;padding:4px 0 6px;border-top:1px solid var(--cnc-line);
+    max-height:calc(100vh - 170px);overflow-y:auto;overflow-x:hidden}
+  .cnc-mainnav.open > .mwrap > ul{display:flex}
+  .cnc-mainnav > .mwrap > ul > li{border-bottom:1px solid var(--cnc-line-soft)}
+  .cnc-mainnav > .mwrap > ul > li:last-child{border-bottom:none}
+  .cnc-mainnav > .mwrap > ul > li > a{padding:15px 22px;font-size:14px;justify-content:space-between}
+  .cnc-mainnav > .mwrap > ul > li.active > a::after{left:22px;right:auto;width:26px;bottom:11px}
+  /* Kept for the mirrored CTA rows, should the buttons ever come back */
+  .cnc-mainnav li.nav-action{border-bottom:none}
+  .cnc-mainnav li.nav-action-top{border-top:2px solid var(--cnc-line);margin-top:6px;padding-top:6px}
+  .cnc-mainnav > .mwrap > ul > li.nav-action > a{font-weight:700}
+  .cnc-mainnav > .mwrap > ul > li.nav-action-btn > a{margin:8px 22px 2px;padding:14px;
+    background:var(--cnc-red);color:#fff;border-radius:9px;justify-content:center}
+  .cnc-mainnav > .mwrap > ul > li.nav-action-btn > a:hover{background:var(--cnc-red-deep);color:#fff}
+  .cnc-mainnav > .mwrap > ul > li.nav-action-btn > a::after{display:none}
+}
+
+/* The logo holds full size while there is room for it; it only steps down
+   once the bar is genuinely narrow. */
+@media (max-width:700px){
+  .cnc-mainnav .logo-img{width:167px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .cnc-sitehead .btn{transition:background .15s,color .15s,border-color .15s}
+  .cnc-sitehead .btn:hover,.cnc-sitehead .btn:focus-visible,.cnc-sitehead .btn:active{transform:none}
+  .cnc-burger span{transition:none}
+}

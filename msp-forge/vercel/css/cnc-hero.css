@@ -1,0 +1,68 @@
+/* =====================================================================
+   cnc-hero.css :: C1 hero band, MSP FORGE edition
+   Version: 1.0 | Owner: Kc (CNC brand and front end)
+
+   The two-column hero from carenetconsultants.co.za (company-overview.html
+   and its siblings): dark gradient ground, copy on the left, a 16:9
+   photograph in a rounded card on the right.
+
+   FRONT END ONLY. No endpoints, no data handling.
+
+   Tokens are namespaced --cnc-* so a host page's own --red cannot repaint it.
+   ===================================================================== */
+
+.cnc-hero{
+  --cnc-red:#ED1B24;
+  background:linear-gradient(135deg,#0F0F0F 0%,#1A1A1A 58%,#2a1113 100%);
+  color:#fff;position:relative;overflow:hidden;
+  font-family:'Inter',Arial,Helvetica,sans-serif;
+}
+.cnc-hero *{box-sizing:border-box}
+/* The soft red bloom top right, same as the live site's hero. */
+.cnc-hero::after{
+  content:"";position:absolute;right:-160px;top:-160px;width:520px;height:520px;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(237,27,36,.16),transparent 65%);
+}
+.cnc-hero .hwrap{
+  position:relative;z-index:2;max-width:1180px;margin:0 auto;
+  padding:46px 22px 44px;
+  display:grid;grid-template-columns:1.15fr .85fr;gap:42px;align-items:center;
+}
+.cnc-hero .eyebrow{
+  display:block;margin-bottom:9px;
+  font-family:'Montserrat',Arial,sans-serif;font-weight:800;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--cnc-red);
+}
+.cnc-hero h1{
+  font-family:'Bebas Neue','Montserrat',Arial,sans-serif;font-weight:400;
+  letter-spacing:.02em;font-size:clamp(34px,4.8vw,58px);line-height:.97;
+  margin:0;color:#fff;text-transform:uppercase;
+}
+.cnc-hero h1 .r{color:var(--cnc-red)}
+.cnc-hero .lede{font-size:16.5px;line-height:1.55;color:#d6d6d8;margin:18px 0 0;max-width:56ch}
+.cnc-hero .chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}
+.cnc-hero .chip{
+  font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+  border-radius:30px;padding:7px 13px;text-decoration:none;
+}
+.cnc-hero .chip:hover{background:rgba(255,255,255,.16)}
+
+/* The 16:9 photograph card on the right. */
+.cnc-hero .heroimg{
+  position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 32px rgba(0,0,0,.35);
+  background:repeating-linear-gradient(45deg,#191919 0 14px,#151515 14px 28px);
+}
+.cnc-hero .heroimg img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;margin:0;max-width:none;
+}
+
+/* Below 880px the photograph drops under the copy, as it does on the
+   live site, and keeps the same card treatment. */
+@media (max-width:880px){
+  .cnc-hero .hwrap{grid-template-columns:minmax(0,1fr);gap:26px;padding:38px 22px 34px}
+  .cnc-hero h1{overflow-wrap:break-word}
+}

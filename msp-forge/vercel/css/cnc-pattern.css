@@ -1,0 +1,24 @@
+/* =====================================================================
+   cnc-pattern.css :: Africa pattern strip
+   Version: 1.0 | Owner: Kc (CNC brand and front end)
+
+   The page break used across carenetconsultants.co.za. Shared by every
+   page here, so it is changed in one place.
+
+   FRONT END ONLY. No endpoints, no data handling.
+
+   Tiled horizontally at its own proportions rather than stretched: the file
+   is 1200px wide and forcing it to a desktop viewport softened it badly.
+   The artwork has a white ground baked in, which read as a white band
+   against the page, so multiply blending drops that ground to the page
+   colour and leaves the pattern's own colours alone.
+   ===================================================================== */
+
+.pattern-strip{
+  height:48px;
+  background-image:url("https://img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png");
+  background-repeat:repeat-x;
+  background-position:center center;
+  background-size:auto 100%;
+  mix-blend-mode:multiply;
+}

@@ -1,0 +1,48 @@
+/* =====================================================================
+   cnc-footer.css :: AutoHive brand stamp
+   Version: 1.0 | Owner: Kc (CNC brand and front end)
+
+   The credit strip that closes every page on carenetconsultants.co.za,
+   reproduced here so the MSP app signs off the same way.
+
+   FRONT END ONLY. No endpoints, no data handling.
+
+   Taken from the live footer's .ah-row block: the same dark gradient,
+   the gold bee, the middot separators and the gold wordmark. Shared by
+   every page in this app, so the stamp changes in one place.
+   ===================================================================== */
+
+.ah-stamp{
+  background:linear-gradient(135deg,#0F0F0F 0%,#1A1A1A 58%,#2a1113 100%);
+  border-top:1px solid rgba(255,255,255,.10);
+  font-family:'Montserrat',Arial,Helvetica,sans-serif;
+}
+.ah-stamp *{box-sizing:border-box}
+.ah-row{
+  max-width:1280px;margin:0 auto;padding:16px 20px;
+  display:flex;align-items:center;justify-content:center;
+  gap:14px 22px;flex-wrap:wrap;
+  font-size:13px;color:#d6d6d8;
+}
+.ah-credit-link{
+  display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;
+  justify-content:center;
+  color:inherit;font-size:12.5px;line-height:1.5;
+  text-decoration:none;transition:color .15s ease;
+}
+.ah-credit-link:hover{color:#fff}
+.ah-credit-link:focus-visible{outline:2px solid #F0A32B;outline-offset:3px;border-radius:4px}
+.ah-credit-link b{font-weight:600;color:#F0A32B}
+/* Separators: dimmed, and not read out as words by a screen reader */
+.ah-credit-link i{font-style:normal;opacity:.55;margin:0 2px}
+.ah-credit-link .ah-bee{
+  flex:0 0 auto;width:22px;height:22px;
+  object-fit:contain;display:block;max-width:none;margin:0;
+}
+@media (max-width:760px){
+  .ah-row{text-align:center;padding:14px 20px}
+  .ah-credit-link{font-size:11.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ah-credit-link{transition:none}
+}
