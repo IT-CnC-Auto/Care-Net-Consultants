@@ -2,16 +2,46 @@
 <html lang="en-ZA">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CNC Medical Surveillance Onboarding</title>
+<!-- Care Net house faces, the shared site header and the shared footer stamp.
+     All presentation only: no endpoints, no data handling, nothing that
+     touches the app's plumbing. -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/cnc-medical-surveillance-hero-all-industries.webp">
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="preconnect" href="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260916a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260916a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260916a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f7f7f7; }
-  header { background: var(--charcoal); color: #fff; padding: 28px 16px; text-align: center; }
-  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; font-size: 22px; }
-  header .tagline { font-size: 13px; opacity: .85; margin-top: 6px; font-style: italic; }
-  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f7f7f7; -webkit-font-smoothing: antialiased; }
+  /* No bare header rule here any more: the shared site header is a <header>
+     element, and a bare selector would paint over it. */
+
+  /* Hero banner, the same treatment as the landing page. */
+  .hero { position: relative; overflow: hidden; background: #0c0c0f; line-height: 0;
+          padding: 0; margin: 0; border-radius: 0; box-shadow: none; }
+  .hero > img { display: block; width: 100%; height: clamp(220px, 30vw, 380px); object-fit: cover; object-position: center; }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,15,.55) 0%, rgba(12,12,15,.40) 34%, rgba(12,12,15,.22) 62%, rgba(12,12,15,.08) 84%, transparent 100%); }
+  @media (max-width: 700px) {
+    .hero::after { background: linear-gradient(180deg, rgba(12,12,15,.30) 0%, rgba(12,12,15,.45) 55%, rgba(12,12,15,.58) 100%); }
+  }
+  .titleband { max-width: 860px; margin: 0 auto; padding: 28px 16px 20px; }
+  .pagehead { margin: 0; }
+  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red, var(--red)); }
+  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(32px, 5vw, 50px); line-height: .98; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
+  .pagehead h1 .r { color: var(--cnc-red, var(--red)); }
+  :target { scroll-margin-top: 180px; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 4px 16px 80px; }
   section { background: #fff; border-radius: 8px; padding: 20px 24px; margin: 18px 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   h2 { color: var(--red); font-size: 17px; border-bottom: 2px solid var(--red); padding-bottom: 8px; }
   h3 { font-size: 14px; margin: 18px 0 8px; }
@@ -34,24 +64,182 @@
   .notice.err { background: #fdeaea; border: 1px solid var(--red); display: block; }
   .hp { position: absolute; left: -9999px; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 24px; }
+
+  /* ---- Opening copy. Short, with the one rule that matters kept visible. ---- */
+  .lede { margin: 0 0 18px; }
+  .lede p { font-size: 15px; line-height: 1.55; margin: 0; }
+  .lede .warn { margin-top: 12px; font-size: 13.5px; line-height: 1.5; color: #4a3c3e;
+                background: #fdf3f3; border-left: 3px solid var(--red);
+                border-radius: 0 5px 5px 0; padding: 11px 14px; }
+
+  /* ---- Section by section: one section on screen at a time ---- */
+  .progress { background: #fff; border-radius: 8px; padding: 15px 18px 16px;
+              box-shadow: 0 1px 3px rgba(0,0,0,.08); margin: 0 0 18px; }
+  .progress-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .pcount { font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800;
+            letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+  .pname { font-size: 14px; font-weight: 600; color: #333; }
+  .pbar { height: 5px; border-radius: 3px; background: #ececec; margin-top: 11px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--red);
+            transition: width .25s ease; }
+  .pdots { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 13px 0 0; padding: 0; }
+  .pdots button { width: 30px; height: 30px; padding: 0; margin: 0; border-radius: 50%;
+                  border: 1px solid #d7d7d7; background: #fff; color: #6b6b6b;
+                  font-size: 12.5px; font-weight: bold; cursor: pointer; font-family: inherit; }
+  .pdots button:hover { border-color: var(--red); color: var(--red); }
+  .pdots li.done button { background: #fdeaea; border-color: #f2b8bb; color: #B7141A; }
+  .pdots li.here button { background: var(--red); border-color: var(--red); color: #fff; }
+  @media (max-width: 700px) { .pdots { display: none; } }
+
+  #intake.stepped section.step { display: none; }
+  #intake.stepped section.step.here { display: block; }
+
+  /* ---- Save on the left, Back and Next on the right ---- */
+  .stepnav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+             margin: 18px 0 0; }
+  .stepnav .spacer { flex: 1 1 auto; }
+  .stepnav button { width: auto; margin: 0; font-family: inherit; }
+  .stepnav .save { background: #fff; color: var(--red); border: 1px solid var(--red);
+                   border-radius: 5px; padding: 11px 18px; font-size: 13.5px; font-weight: bold;
+                   cursor: pointer; }
+  .stepnav .save:hover { background: var(--red); color: #fff; }
+  .stepnav .back { background: #fff; color: #555; border: 1px solid #ccc; border-radius: 5px;
+                   padding: 11px 20px; font-size: 14px; font-weight: bold; cursor: pointer; }
+  .stepnav .back:hover { border-color: #999; color: #222; }
+  .stepnav .next { background: var(--red); color: #fff; border: none; border-radius: 5px;
+                   padding: 12px 28px; font-size: 14px; font-weight: bold; cursor: pointer; }
+  .stepnav [hidden] { display: none !important; }
+  .saved-note { flex: 1 1 100%; font-size: 12.5px; color: #6b6b6b; margin: 0; }
+  .saved-note.ok { color: #2e7d4f; font-weight: 600; }
+  .saved-note.bad { color: #B7141A; font-weight: 600; }
+  @media (max-width: 520px) {
+    .stepnav { gap: 10px; }
+    .stepnav .spacer { display: none; }
+    .stepnav .save { flex: 1 1 100%; order: 3; }
+    .stepnav .back { flex: 1 1 auto; order: 1; }
+    .stepnav .next { flex: 2 1 auto; order: 2; }
+  }
+  .submit-bar[hidden] { display: none !important; }
+
+  /* Checkbox questions sit on one line: question on the left, box on the
+     right. The question text is clickable now that each box has an id for
+     its label to point at. */
+  .field.checkrow { display: flex; flex-wrap: wrap; align-items: center;
+                    justify-content: space-between; gap: 8px 16px; margin: 14px 0; }
+  /* flex-basis 0 with min-width 0 lets the question wrap its own text
+     instead of pushing the box onto the next line. The box never drops
+     below the wording, at any width. */
+  .field.checkrow > label:first-child { flex: 1 1 0; min-width: 0; margin: 0;
+                                       line-height: 1.45; cursor: pointer; }
+  .field.checkrow .check { flex: 0 0 auto; margin: 0; display: inline-flex; align-items: center; cursor: pointer; }
+  .field.checkrow .check > span:empty { display: none; }
+  .field.checkrow input[type=checkbox] { width: 22px; height: 22px; margin: 0;
+                                         accent-color: var(--red); cursor: pointer; }
+  .field.checkrow .why { flex: 1 1 100%; }
+
+  /* The step field error marker, kinder than a list of raw field names. */
+  .field.bad input, .field.bad textarea, .field.bad select { border-color: var(--red); background: #fffafa; }
+  .field .why { display: none; font-size: 12.5px; color: #B7141A; margin: 5px 0 0; font-weight: 600; }
+  .field.bad .why { display: block; }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand">CARE NET CONSULTANTS (PTY) LTD</div>
-  <div>Medical Surveillance Plan: Client Onboarding</div>
-  <div class="tagline">Your Partner in Workplace Health</div>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. No menu item is
+     marked current: the assessment is reached from a private link, not from
+     the menu, so the menu here is only a way back out.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
-<main>
-  <p>This form gathers the information Care Net Consultants (Pty) Ltd requires to design an accurate, client specific Medical Surveillance Plan for your organisation. Care Net designs your Plan based entirely on the information you provide here and does not independently conduct your workplace risk assessment. Do not enter any employee identity number, any name linked to a medical condition, or other personal information about an identifiable individual anywhere in this form.</p>
-  <form id="intake" novalidate>
+
+<section class="hero">
+  <img src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/cnc-medical-surveillance-hero-all-industries.webp" alt="Care Net Consultants occupational health teams across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
+</section>
+
+<div class="pattern-strip" role="presentation"></div>
+
+<div class="titleband">
+  <div class="pagehead">
+    <span class="eyebrow">Medical Surveillance Plan</span>
+    <h1>Client <span class="r">Onboarding</span></h1>
+  </div>
+</div>
+
+<main id="main">
+  <div class="lede">
+    <p>Eleven short sections, about thirty to forty five minutes with your risk assessment to hand. Your answers save as you go, so you can stop and come back.</p>
+    <p class="warn">No employee identity numbers, no names linked to a medical condition, and no personal information about an identifiable person, anywhere in this form. Care Net designs your Plan from what you enter here and does not conduct your workplace risk assessment itself.</p>
+  </div>
+  <!-- Draft bar. Reports what is remembered and offers a way out of it.
+     Hidden until there is something to say. -->
+<div id="draft-bar" style="display:none;background:#eef3fb;border:1px solid #4a6fb5;border-radius:6px;padding:11px 14px;font-size:13.5px;margin-bottom:16px;display:none">
+  <span id="draft-msg"></span>
+  <button type="button" id="draft-discard" style="background:none;border:none;color:#B7141A;font-weight:bold;text-decoration:underline;cursor:pointer;font-size:13px;padding:0;margin-left:8px;width:auto">Discard the saved draft</button>
+</div>
+<form id="intake" novalidate>
     <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">
-    <section><h2>1. COMPANY AND SITE DETAILS</h2><div class="field"><label for="company_registered_name">Registered company name <em>(required)</em></label><input type="text" name="company_registered_name" data-required="1"></div><div class="field"><label for="company_trading_name">Trading name (if different)</label><input type="text" name="company_trading_name"></div><div class="field"><label for="company_registration_number">Company registration number <em>(required)</em></label><input type="text" name="company_registration_number" data-required="1"></div><div class="field"><label for="company_vat_number">VAT registration number</label><input type="text" name="company_vat_number"></div><div class="field"><label for="company_head_office_address">Registered or head office address <em>(required)</em></label><textarea name="company_head_office_address" rows="3" data-required="1"></textarea></div><div class="field"><label for="company_core_industry_freetext">Core industry or nature of business <em>(required)</em></label><input type="text" name="company_core_industry_freetext" data-required="1"></div><div class="field"><label for="company_years_operating">Years operating at the listed sites <em>(required)</em></label><input type="number" name="company_years_operating" min="0" data-required="1"></div><h3>Sites covered by this Plan (one block per site; leave unused blocks blank)</h3><div class="repeat" data-prefix="site" data-max="4"><fieldset class="repeat-block" data-index="1"><legend>site 1</legend><div class="field"><label for="site_1_name">Site name</label><input type="text" name="site_1_name"></div><div class="field"><label for="site_1_address">Site address</label><input type="text" name="site_1_address"></div><div class="field"><label for="site_1_activity">Nature of activity at this site</label><input type="text" name="site_1_activity"></div><div class="field"><label for="site_1_headcount">Approximate number of employees</label><input type="number" name="site_1_headcount" min="0"></div></fieldset></div><button type="button" class="add" data-target="site">Add another</button><h3>Primary contacts</h3><div class="repeat" data-prefix="contact" data-max="3"><fieldset class="repeat-block" data-index="1"><legend>contact 1</legend><div class="field"><label for="contact_1_role">Role (for example SHE Officer, HR Manager)</label><input type="text" name="contact_1_role"></div><div class="field"><label for="contact_1_name">Full name</label><input type="text" name="contact_1_name"></div><div class="field"><label for="contact_1_position">Position</label><input type="text" name="contact_1_position"></div><div class="field"><label for="contact_1_email">Email</label><input type="text" name="contact_1_email"></div><div class="field"><label for="contact_1_phone">Telephone</label><input type="text" name="contact_1_phone"></div></fieldset></div><button type="button" class="add" data-target="contact">Add another</button></section><section><h2>2. REGULATORY AND COMPLIANCE CONTEXT</h2><p class="intro">Tick every regulation that applies to your operations. This is not an exhaustive list; add any other sector specific regulation in the space provided.</p><div class="field"><label for="reg_ohsa">Occupational Health and Safety Act 85 of 1993 (General Safety and General Administrative Regulations)</label><label class="check"><input type="checkbox" name="reg_ohsa" value="true"><span></span></label></div><div class="field"><label for="reg_construction">Construction Regulations, 2014</label><label class="check"><input type="checkbox" name="reg_construction" value="true"><span></span></label></div><div class="field"><label for="reg_mhsa">Mine Health and Safety Act 29 of 1996</label><label class="check"><input type="checkbox" name="reg_mhsa" value="true"><span></span></label></div><div class="field"><label for="reg_hca">Hazardous Chemical Agents Regulations, 2021</label><label class="check"><input type="checkbox" name="reg_hca" value="true"><span></span></label></div><div class="field"><label for="reg_noise">Noise-Induced Hearing Loss Regulations / Noise Exposure Regulations</label><label class="check"><input type="checkbox" name="reg_noise" value="true"><span></span></label></div><div class="field"><label for="reg_asbestos">Asbestos Abatement Regulations</label><label class="check"><input type="checkbox" name="reg_asbestos" value="true"><span></span></label></div><div class="field"><label for="reg_lead">Lead Regulations</label><label class="check"><input type="checkbox" name="reg_lead" value="true"><span></span></label></div><div class="field"><label for="reg_hba">Hazardous Biological Agents Regulations</label><label class="check"><input type="checkbox" name="reg_hba" value="true"><span></span></label></div><div class="field"><label for="reg_ergonomics">Ergonomics Regulations, 2019</label><label class="check"><input type="checkbox" name="reg_ergonomics" value="true"><span></span></label></div><div class="field"><label for="reg_nrta_prdp">National Road Traffic Act and Professional Driving Permit requirements</label><label class="check"><input type="checkbox" name="reg_nrta_prdp" value="true"><span></span></label></div><div class="field"><label for="reg_nightwork_code">Code of Good Practice: Arrangement of Working Time (night or shift work)</label><label class="check"><input type="checkbox" name="reg_nightwork_code" value="true"><span></span></label></div><div class="field"><label for="reg_other_detail">Other applicable regulations, please specify</label><textarea name="reg_other_detail" rows="3"></textarea></div><div class="field"><label for="coida_registered">Registered for COIDA (tick if yes)</label><label class="check"><input type="checkbox" name="coida_registered" value="true"><span></span></label></div><div class="field"><label for="coida_class_tariff_number">COIDA class, tariff, or assessment number if known</label><input type="text" name="coida_class_tariff_number"></div><div class="field"><label for="enforcement_notice_3yr">Any enforcement, prohibition, or improvement notice from a regulator in the past three years (tick if yes)</label><label class="check"><input type="checkbox" name="enforcement_notice_3yr" value="true"><span></span></label></div><div class="field"><label for="enforcement_notice_detail">If yes: date, issuing authority, nature of notice, resolution status</label><textarea name="enforcement_notice_detail" rows="3"></textarea></div><div class="field"><label for="third_party_cert_required">Any principal contractor, client, or third party requiring a specific medical certificate format or validity period (tick if yes)</label><label class="check"><input type="checkbox" name="third_party_cert_required" value="true"><span></span></label></div><div class="field"><label for="third_party_cert_detail">If yes: the third party, the certificate requirement, and the validity period</label><textarea name="third_party_cert_detail" rows="3"></textarea></div></section><section><h2>3. EXISTING RISK ASSESSMENT AND OCCUPATIONAL HYGIENE INFORMATION</h2><p class="intro">This section is the foundation of your Medical Surveillance Plan. Care Net relies on the information and documents provided here. Attach the documents referred to.</p><div class="field"><label for="ra_exists">Current workplace health and safety risk assessment in place (tick if yes)</label><label class="check"><input type="checkbox" name="ra_exists" value="true"><span></span></label></div><div class="field"><label for="ra_date">Date the risk assessment was conducted</label><input type="date" name="ra_date"></div><div class="field"><label for="ra_conducted_by">Conducted by (name and company or Approved Inspection Authority)</label><input type="text" name="ra_conducted_by"></div><div class="field"><label for="ra_assessor_accreditation">Qualification or accreditation of the assessor</label><input type="text" name="ra_assessor_accreditation"></div><div class="field"><label for="ra_next_review_date">Date of next scheduled risk assessment review</label><input type="date" name="ra_next_review_date"></div><div class="field"><label for="ra_file">Attach the risk assessment</label><input type="file" name="ra_file" data-file="1"></div><div class="field"><label for="hygiene_results_exist">Occupational hygiene monitoring results available (tick if yes)</label><label class="check"><input type="checkbox" name="hygiene_results_exist" value="true"><span></span></label></div><div class="field"><label for="hygiene_date">Date of the most recent hygiene survey</label><input type="date" name="hygiene_date"></div><div class="field"><label for="hygiene_conducted_by">Conducted by (name and company, accreditation)</label><input type="text" name="hygiene_conducted_by"></div><div class="field"><label for="hygiene_file">Attach the hygiene monitoring results</label><input type="file" name="hygiene_file" data-file="1"></div><div class="field"><label for="process_change_since_ra">Any change in process, plant, materials, or job content since the last risk assessment (tick if yes)</label><label class="check"><input type="checkbox" name="process_change_since_ra" value="true"><span></span></label></div><div class="field"><label for="process_change_detail">If yes, describe the change</label><textarea name="process_change_detail" rows="3"></textarea></div><div class="field"><label for="sds_files">Attach Safety Data Sheets</label><input type="file" name="sds_files" data-file="1"></div><h3>Quantified exposure levels, if known (one block per measurement)</h3><div class="repeat" data-prefix="exposure" data-max="6"><fieldset class="repeat-block" data-index="1"><legend>exposure 1</legend><div class="field"><label for="exposure_1_hazard_location">Hazard and location</label><input type="text" name="exposure_1_hazard_location"></div><div class="field"><label for="exposure_1_measured_level">Measured level</label><input type="text" name="exposure_1_measured_level"></div><div class="field"><label for="exposure_1_unit">Unit</label><input type="text" name="exposure_1_unit"></div><div class="field"><label for="exposure_1_stated_oel">Occupational Exposure Limit, if known</label><input type="text" name="exposure_1_stated_oel"></div><div class="field"><label for="exposure_1_date_measured">Date measured</label><input type="date" name="exposure_1_date_measured"></div></fieldset></div><button type="button" class="add" data-target="exposure">Add another</button></section><section><h2>4. WORKFORCE PROFILE</h2><div class="field"><label for="workforce_total">Total number of employees covered by this Plan <em>(required)</em></label><input type="number" name="workforce_total" min="0" data-required="1"></div><div class="field"><label for="workforce_permanent">Permanent employees</label><input type="number" name="workforce_permanent" min="0"></div><div class="field"><label for="workforce_contract">Contract employees</label><input type="number" name="workforce_contract" min="0"></div><div class="field"><label for="workforce_temporary">Temporary or seasonal employees</label><input type="number" name="workforce_temporary" min="0"></div><div class="field"><label for="shift_night_work">Employees work rotating shifts or night work (tick if yes)</label><label class="check"><input type="checkbox" name="shift_night_work" value="true"><span></span></label></div><div class="field"><label for="shift_pattern_detail">If yes, describe the shift pattern</label><textarea name="shift_pattern_detail" rows="3"></textarea></div><div class="field"><label for="nightwork_medical_current">Night work medicals currently conducted per the Code of Good Practice (tick if yes)</label><label class="check"><input type="checkbox" name="nightwork_medical_current" value="true"><span></span></label></div><div class="field"><label for="nightwork_medical_interval">Current night work medical repeat interval</label><input type="text" name="nightwork_medical_interval"></div><div class="field"><label for="employees_under_18">Any employees under the age of 18 (tick if yes)</label><label class="check"><input type="checkbox" name="employees_under_18" value="true"><span></span></label></div><div class="field"><label for="pregnancy_exposed_roles">Any employees currently pregnant or breastfeeding in a role with occupational exposure (tick if yes)</label><label class="check"><input type="checkbox" name="pregnancy_exposed_roles" value="true"><span></span></label></div><div class="field"><label for="hs_committee_present">Active health and safety committee or union representation on site (tick if yes)</label><label class="check"><input type="checkbox" name="hs_committee_present" value="true"><span></span></label></div><div class="field"><label for="chronic_flag_present">At an aggregate level, employees in exposed high risk roles with chronic conditions that could cause sudden incapacity (tick if yes; never name any individual)</label><label class="check"><input type="checkbox" name="chronic_flag_present" value="true"><span></span></label></div><div class="field"><label for="chronic_flag_categories">If yes, list the affected job categories only. Do not name any person and do not enter any identity number.</label><textarea name="chronic_flag_categories" rows="3"></textarea></div></section><section><h2>5. JOB CATEGORIES AND EXPOSURE IDENTIFICATION</h2><p class="intro">Complete one block per job title or category. Hazard key: A Noise. B Dust or respirable crystalline silica. C Hazardous chemicals (specify in notes). D Biological agents. E Working at height above 1.5m. F Confined spaces. G Vibration. H Heat or thermal stress. I Manual handling or ergonomic strain. J Driving (licence or PrDP class in notes). K Shift or night work. L Ionising or non ionising radiation. M Electrical hazard. N Psychosocial hazard. O Other (specify in notes).</p><div class="field"><label for="hazard_additional_detail">Additional detail on specific hazards not captured above (known noise or dust levels, height of work, vehicle classes, and so on)</label><textarea name="hazard_additional_detail" rows="3"></textarea></div><h3>Job categories (at least one is required; one block per category, leave unused blocks blank)</h3><div class="repeat" data-prefix="job" data-max="10"><fieldset class="repeat-block" data-index="1"><legend>job 1</legend><div class="field"><label for="job_1_title">Job title or category <em>(required)</em></label><input type="text" name="job_1_title" data-required="1"></div><div class="field"><label for="job_1_headcount">Number of employees</label><input type="number" name="job_1_headcount" min="0"></div><div class="field"><label for="job_1_duties">Brief description of duties</label><textarea name="job_1_duties" rows="3"></textarea></div><div class="field"><label for="job_1_hazards">Hazard letters from the key, separated by commas (for example A, B, E) <em>(required)</em></label><input type="text" name="job_1_hazards" data-required="1"></div><div class="field"><label for="job_1_controls">Existing controls (engineering, administrative, PPE)</label><textarea name="job_1_controls" rows="3"></textarea></div><div class="field"><label for="job_1_physical_demands">Physical demands of the job itself (for example lifting, standing, climbing)</label><textarea name="job_1_physical_demands" rows="3"></textarea></div><div class="field"><label for="job_1_sensory_cognitive_demands">Sensory and cognitive demands (for example vision, hearing, concentration)</label><textarea name="job_1_sensory_cognitive_demands" rows="3"></textarea></div><div class="field"><label for="job_1_statutory_requirement">Statutory or competency requirement (for example PrDP class, heights ticket)</label><input type="text" name="job_1_statutory_requirement"></div><div class="field"><label for="job_1_rpe_issued">RPE issued (state type, or None)</label><input type="text" name="job_1_rpe_issued"></div><div class="field"><label for="job_1_rpe_fit_tested">RPE fit tested (Yes, No, or Not applicable)</label><input type="text" name="job_1_rpe_fit_tested"></div><div class="field"><label for="job_1_rpe_fit_test_interval">Fit test interval</label><input type="text" name="job_1_rpe_fit_test_interval"></div><div class="field"><label for="job_1_other_ppe">Other PPE issued and inspection interval</label><input type="text" name="job_1_other_ppe"></div></fieldset></div><button type="button" class="add" data-target="job">Add another</button><h3>Chemical and hazardous substance register (one block per substance; attach SDS rather than retyping)</h3><div class="repeat" data-prefix="chem" data-max="8"><fieldset class="repeat-block" data-index="1"><legend>chem 1</legend><div class="field"><label for="chem_1_substance_name">Chemical or substance name</label><input type="text" name="chem_1_substance_name"></div><div class="field"><label for="chem_1_sds_reference">SDS reference number</label><input type="text" name="chem_1_sds_reference"></div><div class="field"><label for="chem_1_task_process">Task or process</label><input type="text" name="chem_1_task_process"></div><div class="field"><label for="chem_1_frequency">Frequency of use</label><input type="text" name="chem_1_frequency"></div><div class="field"><label for="chem_1_quantity_per_use">Quantity per use</label><input type="text" name="chem_1_quantity_per_use"></div><div class="field"><label for="chem_1_controls">Control measures in place</label><input type="text" name="chem_1_controls"></div></fieldset></div><button type="button" class="add" data-target="chem">Add another</button></section><section><h2>6. CURRENT MEDICAL SURVEILLANCE ARRANGEMENTS</h2><div class="field"><label for="current_medicals_exist">Employees currently undergo occupational medical examinations (tick if yes)</label><label class="check"><input type="checkbox" name="current_medicals_exist" value="true"><span></span></label></div><div class="field"><label for="current_provider">Current service provider, if any</label><input type="text" name="current_provider"></div><div class="field"><label for="last_cycle_date">Date of the most recent medical surveillance cycle</label><input type="date" name="last_cycle_date"></div><div class="field"><label for="current_tests_detail">Tests currently performed and how often, if known</label><textarea name="current_tests_detail" rows="3"></textarea></div><div class="field"><label for="outstanding_referrals">Outstanding referrals or unresolved abnormal findings from a previous provider (tick if yes)</label><label class="check"><input type="checkbox" name="outstanding_referrals" value="true"><span></span></label></div><div class="field"><label for="records_format">Current medical records format</label><input type="text" name="records_format"></div></section><section><h2>7. INCIDENT AND OCCUPATIONAL DISEASE HISTORY</h2><div class="field"><label for="injuries_3yr">Reported work related injuries in the past three years (tick if yes)</label><label class="check"><input type="checkbox" name="injuries_3yr" value="true"><span></span></label></div><div class="field"><label for="coida_claims_3yr">COIDA claims submitted in the past three years for an occupational disease (tick if yes)</label><label class="check"><input type="checkbox" name="coida_claims_3yr" value="true"><span></span></label></div><div class="field"><label for="modified_duties_current">Any employees currently on modified or restricted duties for health reasons (tick if yes)</label><label class="check"><input type="checkbox" name="modified_duties_current" value="true"><span></span></label></div><div class="field"><label for="incident_history_detail">Brief details for any yes answer above (no individual names, no identity numbers)</label><textarea name="incident_history_detail" rows="3"></textarea></div></section><section><h2>8. INDUSTRY AND SUBINDUSTRY SELECTION</h2><p class="intro">Choose your industry, then the area of work that best describes your operation. If none fits, choose Other and describe your business below; an Other selection routes to human review and never auto generates.</p><div class="field"><label for="industry_code">Industry <em>(required)</em></label><select name="industry_code" id="industry_code" data-required="1"><option value="">Select your industry</option></select></div><div class="field"><label for="subindustry_code">Area of work <em>(required)</em></label><select name="subindustry_code" id="subindustry_code" data-required="1"><option value="">Select your industry first</option></select></div><div class="field"><label for="industry_other_detail">If OTHER, describe your industry and core activities</label><textarea name="industry_other_detail" rows="3"></textarea></div></section><section><h2>9. BRANDING AND DELIVERY</h2><div class="field"><label for="client_logo">Company logo upload (PNG or SVG, minimum 600 pixels wide, transparent background preferred) <em>(required)</em></label><input type="file" name="client_logo" data-file="1" data-required="1"></div><div class="field"><label for="brand_colour_hex">Brand colour, if you have one (hex value, for example #003366)</label><input type="text" name="brand_colour_hex"></div><div class="field"><label for="certificate_format_preference">Preferred certificate format, if any</label><textarea name="certificate_format_preference" rows="3"></textarea></div><div class="field"><label for="delivery_contact_name">Delivery contact full name <em>(required)</em></label><input type="text" name="delivery_contact_name" data-required="1"></div><div class="field"><label for="delivery_contact_email">Delivery contact email <em>(required)</em></label><input type="text" name="delivery_contact_email" data-required="1"></div></section><section><h2>10. DATA PROTECTION AND CONSENT</h2><p class="intro">Care Net Consultants (Pty) Ltd processes the information in this questionnaire for the sole specified purpose of designing your organisation's medical surveillance programme, in accordance with the Protection of Personal Information Act 4 of 2013. You may withdraw consent at any time by contacting the Care Net Information Officer. This form must not contain any employee's identity number, medical condition, or other personal information about an identifiable individual.</p><div class="field"><label for="information_officer_name">Your organisation's Information Officer or Deputy Information Officer <em>(required)</em></label><input type="text" name="information_officer_name" data-required="1"></div><div class="field"><label for="information_officer_contact">Email or telephone for the Information Officer <em>(required)</em></label><input type="text" name="information_officer_contact" data-required="1"></div><div class="field"><label for="employees_informed_before_exam">Employees will be informed of this programme and their POPIA rights before their first examination (tick to confirm) <em>(required)</em></label><label class="check"><input type="checkbox" name="employees_informed_before_exam" value="true" data-required="1"><span></span></label></div><div class="field"><label for="consent_processing">REQUIRED: I consent to Care Net Consultants (Pty) Ltd processing the information in this questionnaire for the sole purpose of designing our medical surveillance programme, under the Protection of Personal Information Act 4 of 2013. Withdrawal: contact the Care Net Information Officer. <em>(required)</em></label><label class="check"><input type="checkbox" name="consent_processing" value="true" data-required="1"><span></span></label></div><div class="field"><label for="consent_marketing">OPTIONAL and separate: I consent to Care Net Consultants (Pty) Ltd sending our organisation information about related occupational health services. This is not required for your Plan and is off unless ticked.</label><label class="check"><input type="checkbox" name="consent_marketing" value="true"><span></span></label></div><div class="field"><label for="popia_use_cnc_forms">Tick to use Care Net's standard POPIA employee notice and consent forms; leave blank to provide your own</label><label class="check"><input type="checkbox" name="popia_use_cnc_forms" value="true"><span></span></label></div></section><section><h2>11. DECLARATION</h2><p class="intro">I confirm that the information provided in this questionnaire, and any documents attached to it, is accurate and complete to the best of my knowledge at the date of signature. I understand that Care Net Consultants (Pty) Ltd will design the organisation's Medical Surveillance Plan based on this information and any risk assessment or hygiene monitoring documents attached, and that Care Net does not independently conduct the underlying workplace risk assessment as part of this process. I undertake to notify Care Net promptly of any change in process, plant, materials, job content, or risk assessment findings that may affect the accuracy of the resulting Plan.</p><div class="field"><label for="declarant_full_name">Full name <em>(required)</em></label><input type="text" name="declarant_full_name" data-required="1"></div><div class="field"><label for="declarant_position">Position <em>(required)</em></label><input type="text" name="declarant_position" data-required="1"></div><div class="field"><label for="declarant_company">Company <em>(required)</em></label><input type="text" name="declarant_company" data-required="1"></div><div class="field"><label for="client_signature">Signature <em>(required)</em></label><input type="text" name="client_signature" placeholder="Type your full name as signature" data-required="1"></div><div class="field"><label for="declaration_date">Date <em>(required)</em></label><input type="date" name="declaration_date" data-required="1"></div></section>
+    <!-- Where you are. Built from the section headings themselves, so there is
+         no second copy of the titles to drift out of step. -->
+    <div class="progress" id="progress" hidden>
+      <div class="progress-head">
+        <span class="pcount" id="p-count">&nbsp;</span>
+        <span class="pname" id="p-name">&nbsp;</span>
+      </div>
+      <div class="pbar" role="presentation"><i id="p-fill"></i></div>
+      <ol class="pdots" id="p-dots"></ol>
+    </div>
+    <section class="step"><h2>1. COMPANY AND SITE DETAILS</h2><div class="field"><label for="company_registered_name">Registered company name <em>(required)</em></label><input type="text" name="company_registered_name" data-required="1"></div><div class="field"><label for="company_trading_name">Trading name (if different)</label><input type="text" name="company_trading_name"></div><div class="field"><label for="company_registration_number">Company registration number <em>(required)</em></label><input type="text" name="company_registration_number" data-required="1"></div><div class="field"><label for="company_vat_number">VAT registration number</label><input type="text" name="company_vat_number"></div><div class="field"><label for="company_head_office_address">Registered or head office address <em>(required)</em></label><textarea name="company_head_office_address" rows="3" data-required="1"></textarea></div><div class="field"><label for="company_core_industry_freetext">Core industry or nature of business <em>(required)</em></label><input type="text" name="company_core_industry_freetext" data-required="1"></div><div class="field"><label for="company_years_operating">Years operating at the listed sites <em>(required)</em></label><input type="number" name="company_years_operating" min="0" data-required="1"></div><h3>Sites covered by this Plan (one block per site; leave unused blocks blank)</h3><div class="repeat" data-prefix="site" data-max="4"><fieldset class="repeat-block" data-index="1"><legend>site 1</legend><div class="field"><label for="site_1_name">Site name</label><input type="text" name="site_1_name"></div><div class="field"><label for="site_1_address">Site address</label><input type="text" name="site_1_address"></div><div class="field"><label for="site_1_activity">Nature of activity at this site</label><input type="text" name="site_1_activity"></div><div class="field"><label for="site_1_headcount">Approximate number of employees</label><input type="number" name="site_1_headcount" min="0"></div></fieldset></div><button type="button" class="add" data-target="site">Add another</button><h3>Primary contacts</h3><div class="repeat" data-prefix="contact" data-max="3"><fieldset class="repeat-block" data-index="1"><legend>contact 1</legend><div class="field"><label for="contact_1_role">Role (for example SHE Officer, HR Manager)</label><input type="text" name="contact_1_role"></div><div class="field"><label for="contact_1_name">Full name</label><input type="text" name="contact_1_name"></div><div class="field"><label for="contact_1_position">Position</label><input type="text" name="contact_1_position"></div><div class="field"><label for="contact_1_email">Email</label><input type="text" name="contact_1_email"></div><div class="field"><label for="contact_1_phone">Telephone</label><input type="text" name="contact_1_phone"></div></fieldset></div><button type="button" class="add" data-target="contact">Add another</button></section><section class="step"><h2>2. REGULATORY AND COMPLIANCE CONTEXT</h2><p class="intro">The regulations below start out ticked. Untick anything that does not apply to your operations. The list is not exhaustive, so add any other sector specific regulation in the space provided.</p><div class="field checkrow"><label for="reg_ohsa">Occupational Health and Safety Act 85 of 1993 (General Safety and General Administrative Regulations)</label><label class="check"><input type="checkbox" name="reg_ohsa" id="reg_ohsa" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_construction">Construction Regulations, 2014</label><label class="check"><input type="checkbox" name="reg_construction" id="reg_construction" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_mhsa">Mine Health and Safety Act 29 of 1996</label><label class="check"><input type="checkbox" name="reg_mhsa" id="reg_mhsa" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_hca">Hazardous Chemical Agents Regulations, 2021</label><label class="check"><input type="checkbox" name="reg_hca" id="reg_hca" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_noise">Noise-Induced Hearing Loss Regulations / Noise Exposure Regulations</label><label class="check"><input type="checkbox" name="reg_noise" id="reg_noise" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_asbestos">Asbestos Abatement Regulations</label><label class="check"><input type="checkbox" name="reg_asbestos" id="reg_asbestos" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_lead">Lead Regulations</label><label class="check"><input type="checkbox" name="reg_lead" id="reg_lead" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_hba">Hazardous Biological Agents Regulations</label><label class="check"><input type="checkbox" name="reg_hba" id="reg_hba" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_ergonomics">Ergonomics Regulations, 2019</label><label class="check"><input type="checkbox" name="reg_ergonomics" id="reg_ergonomics" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_nrta_prdp">National Road Traffic Act and Professional Driving Permit requirements</label><label class="check"><input type="checkbox" name="reg_nrta_prdp" id="reg_nrta_prdp" value="true" checked><span></span></label></div><div class="field checkrow"><label for="reg_nightwork_code">Code of Good Practice: Arrangement of Working Time (night or shift work)</label><label class="check"><input type="checkbox" name="reg_nightwork_code" id="reg_nightwork_code" value="true" checked><span></span></label></div><div class="field"><label for="reg_other_detail">Other applicable regulations, please specify</label><textarea name="reg_other_detail" rows="3"></textarea></div><div class="field checkrow"><label for="coida_registered">Registered for COIDA (tick if yes)</label><label class="check"><input type="checkbox" name="coida_registered" id="coida_registered" value="true"><span></span></label></div><div class="field"><label for="coida_class_tariff_number">COIDA class, tariff, or assessment number if known</label><input type="text" name="coida_class_tariff_number"></div><div class="field checkrow"><label for="enforcement_notice_3yr">Any enforcement, prohibition, or improvement notice from a regulator in the past three years (tick if yes)</label><label class="check"><input type="checkbox" name="enforcement_notice_3yr" id="enforcement_notice_3yr" value="true"><span></span></label></div><div class="field"><label for="enforcement_notice_detail">If yes: date, issuing authority, nature of notice, resolution status</label><textarea name="enforcement_notice_detail" rows="3"></textarea></div><div class="field checkrow"><label for="third_party_cert_required">Any principal contractor, client, or third party requiring a specific medical certificate format or validity period (tick if yes)</label><label class="check"><input type="checkbox" name="third_party_cert_required" id="third_party_cert_required" value="true"><span></span></label></div><div class="field"><label for="third_party_cert_detail">If yes: the third party, the certificate requirement, and the validity period</label><textarea name="third_party_cert_detail" rows="3"></textarea></div></section><section class="step"><h2>3. EXISTING RISK ASSESSMENT AND OCCUPATIONAL HYGIENE INFORMATION</h2><p class="intro">This section is the foundation of your Medical Surveillance Plan. Care Net relies on the information and documents provided here. Attach the documents referred to.</p><div class="field checkrow"><label for="ra_exists">Current workplace health and safety risk assessment in place (tick if yes)</label><label class="check"><input type="checkbox" name="ra_exists" id="ra_exists" value="true"><span></span></label></div><div class="field"><label for="ra_date">Date the risk assessment was conducted</label><input type="date" name="ra_date"></div><div class="field"><label for="ra_conducted_by">Conducted by (name and company or Approved Inspection Authority)</label><input type="text" name="ra_conducted_by"></div><div class="field"><label for="ra_assessor_accreditation">Qualification or accreditation of the assessor</label><input type="text" name="ra_assessor_accreditation"></div><div class="field"><label for="ra_next_review_date">Date of next scheduled risk assessment review</label><input type="date" name="ra_next_review_date"></div><div class="field"><label for="ra_file">Attach the risk assessment</label><input type="file" name="ra_file" data-file="1"></div><div class="field checkrow"><label for="hygiene_results_exist">Occupational hygiene monitoring results available (tick if yes)</label><label class="check"><input type="checkbox" name="hygiene_results_exist" id="hygiene_results_exist" value="true"><span></span></label></div><div class="field"><label for="hygiene_date">Date of the most recent hygiene survey</label><input type="date" name="hygiene_date"></div><div class="field"><label for="hygiene_conducted_by">Conducted by (name and company, accreditation)</label><input type="text" name="hygiene_conducted_by"></div><div class="field"><label for="hygiene_file">Attach the hygiene monitoring results</label><input type="file" name="hygiene_file" data-file="1"></div><div class="field checkrow"><label for="process_change_since_ra">Any change in process, plant, materials, or job content since the last risk assessment (tick if yes)</label><label class="check"><input type="checkbox" name="process_change_since_ra" id="process_change_since_ra" value="true"><span></span></label></div><div class="field"><label for="process_change_detail">If yes, describe the change</label><textarea name="process_change_detail" rows="3"></textarea></div><div class="field"><label for="sds_files">Attach Safety Data Sheets</label><input type="file" name="sds_files" data-file="1"></div><h3>Quantified exposure levels, if known (one block per measurement)</h3><div class="repeat" data-prefix="exposure" data-max="6"><fieldset class="repeat-block" data-index="1"><legend>exposure 1</legend><div class="field"><label for="exposure_1_hazard_location">Hazard and location</label><input type="text" name="exposure_1_hazard_location"></div><div class="field"><label for="exposure_1_measured_level">Measured level</label><input type="text" name="exposure_1_measured_level"></div><div class="field"><label for="exposure_1_unit">Unit</label><input type="text" name="exposure_1_unit"></div><div class="field"><label for="exposure_1_stated_oel">Occupational Exposure Limit, if known</label><input type="text" name="exposure_1_stated_oel"></div><div class="field"><label for="exposure_1_date_measured">Date measured</label><input type="date" name="exposure_1_date_measured"></div></fieldset></div><button type="button" class="add" data-target="exposure">Add another</button></section><section class="step"><h2>4. WORKFORCE PROFILE</h2><div class="field"><label for="workforce_total">Total number of employees covered by this Plan <em>(required)</em></label><input type="number" name="workforce_total" min="0" data-required="1"></div><div class="field"><label for="workforce_permanent">Permanent employees</label><input type="number" name="workforce_permanent" min="0"></div><div class="field"><label for="workforce_contract">Contract employees</label><input type="number" name="workforce_contract" min="0"></div><div class="field"><label for="workforce_temporary">Temporary or seasonal employees</label><input type="number" name="workforce_temporary" min="0"></div><div class="field checkrow"><label for="shift_night_work">Employees work rotating shifts or night work (tick if yes)</label><label class="check"><input type="checkbox" name="shift_night_work" id="shift_night_work" value="true"><span></span></label></div><div class="field"><label for="shift_pattern_detail">If yes, describe the shift pattern</label><textarea name="shift_pattern_detail" rows="3"></textarea></div><div class="field checkrow"><label for="nightwork_medical_current">Night work medicals currently conducted per the Code of Good Practice (tick if yes)</label><label class="check"><input type="checkbox" name="nightwork_medical_current" id="nightwork_medical_current" value="true"><span></span></label></div><div class="field"><label for="nightwork_medical_interval">Current night work medical repeat interval</label><input type="text" name="nightwork_medical_interval"></div><div class="field checkrow"><label for="employees_under_18">Any employees under the age of 18 (tick if yes)</label><label class="check"><input type="checkbox" name="employees_under_18" id="employees_under_18" value="true"><span></span></label></div><div class="field checkrow"><label for="pregnancy_exposed_roles">Any employees currently pregnant or breastfeeding in a role with occupational exposure (tick if yes)</label><label class="check"><input type="checkbox" name="pregnancy_exposed_roles" id="pregnancy_exposed_roles" value="true"><span></span></label></div><div class="field checkrow"><label for="hs_committee_present">Active health and safety committee or union representation on site (tick if yes)</label><label class="check"><input type="checkbox" name="hs_committee_present" id="hs_committee_present" value="true"><span></span></label></div><div class="field checkrow"><label for="chronic_flag_present">At an aggregate level, employees in exposed high risk roles with chronic conditions that could cause sudden incapacity (tick if yes; never name any individual)</label><label class="check"><input type="checkbox" name="chronic_flag_present" id="chronic_flag_present" value="true"><span></span></label></div><div class="field"><label for="chronic_flag_categories">If yes, list the affected job categories only. Do not name any person and do not enter any identity number.</label><textarea name="chronic_flag_categories" rows="3"></textarea></div></section><section class="step"><h2>5. JOB CATEGORIES AND EXPOSURE IDENTIFICATION</h2><p class="intro">Complete one block per job title or category. Hazard key: A Noise. B Dust or respirable crystalline silica. C Hazardous chemicals (specify in notes). D Biological agents. E Working at height above 1.5m. F Confined spaces. G Vibration. H Heat or thermal stress. I Manual handling or ergonomic strain. J Driving (licence or PrDP class in notes). K Shift or night work. L Ionising or non ionising radiation. M Electrical hazard. N Psychosocial hazard. O Other (specify in notes).</p><div class="field"><label for="hazard_additional_detail">Additional detail on specific hazards not captured above (known noise or dust levels, height of work, vehicle classes, and so on)</label><textarea name="hazard_additional_detail" rows="3"></textarea></div><h3>Job categories (at least one is required; one block per category, leave unused blocks blank)</h3><div class="repeat" data-prefix="job" data-max="10"><fieldset class="repeat-block" data-index="1"><legend>job 1</legend><div class="field"><label for="job_1_title">Job title or category <em>(required)</em></label><input type="text" name="job_1_title" data-required="1"></div><div class="field"><label for="job_1_headcount">Number of employees</label><input type="number" name="job_1_headcount" min="0"></div><div class="field"><label for="job_1_duties">Brief description of duties</label><textarea name="job_1_duties" rows="3"></textarea></div><div class="field"><label for="job_1_hazards">Hazard letters from the key, separated by commas (for example A, B, E) <em>(required)</em></label><input type="text" name="job_1_hazards" data-required="1"></div><div class="field"><label for="job_1_controls">Existing controls (engineering, administrative, PPE)</label><textarea name="job_1_controls" rows="3"></textarea></div><div class="field"><label for="job_1_physical_demands">Physical demands of the job itself (for example lifting, standing, climbing)</label><textarea name="job_1_physical_demands" rows="3"></textarea></div><div class="field"><label for="job_1_sensory_cognitive_demands">Sensory and cognitive demands (for example vision, hearing, concentration)</label><textarea name="job_1_sensory_cognitive_demands" rows="3"></textarea></div><div class="field"><label for="job_1_statutory_requirement">Statutory or competency requirement (for example PrDP class, heights ticket)</label><input type="text" name="job_1_statutory_requirement"></div><div class="field"><label for="job_1_rpe_issued">RPE issued (state type, or None)</label><input type="text" name="job_1_rpe_issued"></div><div class="field"><label for="job_1_rpe_fit_tested">RPE fit tested (Yes, No, or Not applicable)</label><input type="text" name="job_1_rpe_fit_tested"></div><div class="field"><label for="job_1_rpe_fit_test_interval">Fit test interval</label><input type="text" name="job_1_rpe_fit_test_interval"></div><div class="field"><label for="job_1_other_ppe">Other PPE issued and inspection interval</label><input type="text" name="job_1_other_ppe"></div></fieldset></div><button type="button" class="add" data-target="job">Add another</button><h3>Chemical and hazardous substance register (one block per substance; attach SDS rather than retyping)</h3><div class="repeat" data-prefix="chem" data-max="8"><fieldset class="repeat-block" data-index="1"><legend>chem 1</legend><div class="field"><label for="chem_1_substance_name">Chemical or substance name</label><input type="text" name="chem_1_substance_name"></div><div class="field"><label for="chem_1_sds_reference">SDS reference number</label><input type="text" name="chem_1_sds_reference"></div><div class="field"><label for="chem_1_task_process">Task or process</label><input type="text" name="chem_1_task_process"></div><div class="field"><label for="chem_1_frequency">Frequency of use</label><input type="text" name="chem_1_frequency"></div><div class="field"><label for="chem_1_quantity_per_use">Quantity per use</label><input type="text" name="chem_1_quantity_per_use"></div><div class="field"><label for="chem_1_controls">Control measures in place</label><input type="text" name="chem_1_controls"></div></fieldset></div><button type="button" class="add" data-target="chem">Add another</button></section><section class="step"><h2>6. CURRENT MEDICAL SURVEILLANCE ARRANGEMENTS</h2><div class="field checkrow"><label for="current_medicals_exist">Employees currently undergo occupational medical examinations (tick if yes)</label><label class="check"><input type="checkbox" name="current_medicals_exist" id="current_medicals_exist" value="true"><span></span></label></div><div class="field"><label for="current_provider">Current service provider, if any</label><input type="text" name="current_provider"></div><div class="field"><label for="last_cycle_date">Date of the most recent medical surveillance cycle</label><input type="date" name="last_cycle_date"></div><div class="field"><label for="current_tests_detail">Tests currently performed and how often, if known</label><textarea name="current_tests_detail" rows="3"></textarea></div><div class="field checkrow"><label for="outstanding_referrals">Outstanding referrals or unresolved abnormal findings from a previous provider (tick if yes)</label><label class="check"><input type="checkbox" name="outstanding_referrals" id="outstanding_referrals" value="true"><span></span></label></div><div class="field"><label for="records_format">Current medical records format</label><input type="text" name="records_format"></div></section><section class="step"><h2>7. INCIDENT AND OCCUPATIONAL DISEASE HISTORY</h2><div class="field checkrow"><label for="injuries_3yr">Reported work related injuries in the past three years (tick if yes)</label><label class="check"><input type="checkbox" name="injuries_3yr" id="injuries_3yr" value="true"><span></span></label></div><div class="field checkrow"><label for="coida_claims_3yr">COIDA claims submitted in the past three years for an occupational disease (tick if yes)</label><label class="check"><input type="checkbox" name="coida_claims_3yr" id="coida_claims_3yr" value="true"><span></span></label></div><div class="field checkrow"><label for="modified_duties_current">Any employees currently on modified or restricted duties for health reasons (tick if yes)</label><label class="check"><input type="checkbox" name="modified_duties_current" id="modified_duties_current" value="true"><span></span></label></div><div class="field"><label for="incident_history_detail">Brief details for any yes answer above (no individual names, no identity numbers)</label><textarea name="incident_history_detail" rows="3"></textarea></div></section><section class="step"><h2>8. INDUSTRY AND SUBINDUSTRY SELECTION</h2><p class="intro">Choose your industry, then the area of work that best describes your operation. If none fits, choose Other and describe your business below; an Other selection routes to human review and never auto generates.</p><div class="field"><label for="industry_code">Industry <em>(required)</em></label><select name="industry_code" id="industry_code" data-required="1"><option value="">Select your industry</option></select></div><div class="field"><label for="subindustry_code">Area of work <em>(required)</em></label><select name="subindustry_code" id="subindustry_code" data-required="1"><option value="">Select your industry first</option></select></div><div class="field"><label for="industry_other_detail">If OTHER, describe your industry and core activities</label><textarea name="industry_other_detail" rows="3"></textarea></div></section><section class="step"><h2>9. BRANDING AND DELIVERY</h2><div class="field"><label for="client_logo">Company logo upload (PNG or SVG, minimum 600 pixels wide, transparent background preferred)</label><input type="file" name="client_logo" id="client_logo" data-file="1"></div><div class="field"><label for="brand_colour_hex">Brand colour, if you have one (hex value, for example #003366)</label><input type="text" name="brand_colour_hex"></div><div class="field"><label for="certificate_format_preference">Preferred certificate format, if any</label><textarea name="certificate_format_preference" rows="3"></textarea></div><div class="field"><label for="delivery_contact_name">Delivery contact full name <em>(required)</em></label><input type="text" name="delivery_contact_name" data-required="1"></div><div class="field"><label for="delivery_contact_email">Delivery contact email <em>(required)</em></label><input type="text" name="delivery_contact_email" data-required="1"></div></section><section class="step"><h2>10. DATA PROTECTION AND CONSENT</h2><p class="intro">Care Net Consultants (Pty) Ltd processes the information in this questionnaire for the sole specified purpose of designing your organisation's medical surveillance programme, in accordance with the Protection of Personal Information Act 4 of 2013. You may withdraw consent at any time by contacting the Care Net Information Officer. This form must not contain any employee's identity number, medical condition, or other personal information about an identifiable individual.</p><div class="field"><label for="information_officer_name">Your organisation's Information Officer or Deputy Information Officer <em>(required)</em></label><input type="text" name="information_officer_name" data-required="1"></div><div class="field"><label for="information_officer_contact">Email or telephone for the Information Officer <em>(required)</em></label><input type="text" name="information_officer_contact" data-required="1"></div><div class="field checkrow"><label for="employees_informed_before_exam">Employees will be informed of this programme and their POPIA rights before their first examination (tick to confirm) <em>(required)</em></label><label class="check"><input type="checkbox" name="employees_informed_before_exam" id="employees_informed_before_exam" value="true" data-required="1"><span></span></label></div><div class="field checkrow"><label for="consent_processing">REQUIRED: I consent to Care Net Consultants (Pty) Ltd processing the information in this questionnaire for the sole purpose of designing our medical surveillance programme, under the Protection of Personal Information Act 4 of 2013. Withdrawal: contact the Care Net Information Officer. <em>(required)</em></label><label class="check"><input type="checkbox" name="consent_processing" id="consent_processing" value="true" data-required="1"><span></span></label></div><div class="field checkrow"><label for="consent_marketing">OPTIONAL and separate: I consent to Care Net Consultants (Pty) Ltd sending our organisation information about related occupational health services. This is not required for your Plan and is off unless ticked.</label><label class="check"><input type="checkbox" name="consent_marketing" id="consent_marketing" value="true"><span></span></label></div><div class="field checkrow"><label for="popia_use_cnc_forms">Tick to use Care Net's standard POPIA employee notice and consent forms; leave blank to provide your own</label><label class="check"><input type="checkbox" name="popia_use_cnc_forms" id="popia_use_cnc_forms" value="true"><span></span></label></div></section><section class="step"><h2>11. DECLARATION</h2><p class="intro">I confirm that the information provided in this questionnaire, and any documents attached to it, is accurate and complete to the best of my knowledge at the date of signature. I understand that Care Net Consultants (Pty) Ltd will design the organisation's Medical Surveillance Plan based on this information and any risk assessment or hygiene monitoring documents attached, and that Care Net does not independently conduct the underlying workplace risk assessment as part of this process. I undertake to notify Care Net promptly of any change in process, plant, materials, job content, or risk assessment findings that may affect the accuracy of the resulting Plan.</p><div class="field"><label for="declarant_full_name">Full name <em>(required)</em></label><input type="text" name="declarant_full_name" data-required="1"></div><div class="field"><label for="declarant_position">Position <em>(required)</em></label><input type="text" name="declarant_position" data-required="1"></div><div class="field"><label for="declarant_company">Company <em>(required)</em></label><input type="text" name="declarant_company" data-required="1"></div><div class="field"><label for="client_signature">Signature <em>(required)</em></label><input type="text" name="client_signature" placeholder="Type your full name as signature" data-required="1"></div><div class="field"><label for="declaration_date">Date <em>(required)</em></label><input type="date" name="declaration_date" data-required="1"></div></section>
     <div id="notice" class="notice"></div>
-    <div class="submit-bar"><button class="submit" type="submit">Submit onboarding form</button></div>
+
+    <!-- Save on the left, Back and Next on the right. Shown only once the
+         section by section view is running, so the form still works in full
+         if the script does not. -->
+    <div class="stepnav" id="stepnav" hidden>
+      <button type="button" class="save" id="step-save">Save and finish later</button>
+      <span class="spacer"></span>
+      <button type="button" class="back" id="step-back">Back</button>
+      <button type="button" class="next" id="step-next">Next</button>
+      <p class="saved-note" id="saved-note"></p>
+    </div>
+
+    <div class="submit-bar" id="submit-bar"><span id="draft-state" style="display:block;font-size:12.5px;color:#6b6b6b;margin-bottom:8px"></span>
+      <button class="submit" type="submit">Submit onboarding form</button></div>
   </form>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-journey.js?v=20260916a"></script>
 <script>
 (function () {
   var ACCESS_TOKEN = new URLSearchParams(location.search).get('token') || '';
@@ -141,8 +329,192 @@
     });
   });
 
+  /* ==================================================================
+     Draft: pre-fill, save, restore, discard
+     Front end only. Everything below lives in this browser's localStorage
+     via /js/cnc-journey.js and never reaches an endpoint.
+     ================================================================== */
+  var J = window.CNCJourney;
+  var draftForm = document.getElementById('intake');
+  var bar = document.getElementById('draft-bar');
+  var barMsg = document.getElementById('draft-msg');
+  var state = document.getElementById('draft-state');
+
+  /* The submit bar is out of sight until the last section, so the running
+     draft message is mirrored into the section footer as well. */
+  function say(msg) {
+    if (state) state.textContent = msg;
+    var n = document.getElementById('saved-note');
+    if (n) { n.className = 'saved-note'; n.textContent = msg; }
+  }
+  function showBar(html) { if (!bar) return; barMsg.innerHTML = html; bar.style.display = 'block'; }
+
+  /* Fields that must never be remembered: the honeypot, and file inputs,
+     which a browser will not let a page re-populate anyway. */
+  function savable(el) {
+    return el.name && el.name !== 'website' && el.type !== 'file';
+  }
+
+  /* How many repeat blocks each group currently has on the page. */
+  function blockCounts() {
+    var counts = {};
+    document.querySelectorAll('.repeat[data-prefix]').forEach(function (wrap) {
+      counts[wrap.getAttribute('data-prefix')] = wrap.querySelectorAll('.repeat-block').length;
+    });
+    return counts;
+  }
+
+  /* Grow a group to the saved number of blocks by pressing its own Add
+     button, so the blocks are built by exactly the same code that builds
+     them when someone clicks. No duplicate markup to keep in step. */
+  function growTo(prefix, want) {
+    var wrap = document.querySelector('.repeat[data-prefix="' + prefix + '"]');
+    var btn = document.querySelector('button.add[data-target="' + prefix + '"]');
+    if (!wrap || !btn) return;
+    var guard = 0;
+    while (wrap.querySelectorAll('.repeat-block').length < want && guard++ < 40) btn.click();
+  }
+
+  function collect() {
+    var values = {}, filled = 0;
+    draftForm.querySelectorAll('input, textarea, select').forEach(function (el) {
+      if (!savable(el)) return;
+      /* Both states are recorded. A box that starts out ticked has to be
+         able to stay unticked after a save, and "values" is the only thing
+         the restore reads. Only a ticked box counts as an answer. */
+      if (el.type === 'checkbox') { values[el.name] = el.checked; if (el.checked) filled++; return; }
+      var v = el.value;
+      if (v !== '' && v != null) { values[el.name] = v; filled++; }
+    });
+    return { values: values, filled: filled };
+  }
+
+  function apply(values, overwrite) {
+    Object.keys(values).forEach(function (name) {
+      var el = draftForm.querySelector('[name="' + name.replace(/"/g, '\\"') + '"]');
+      if (!el || !savable(el)) return;
+      if (el.type === 'checkbox') { el.checked = !!values[name]; return; }
+      if (!overwrite && el.value !== '') return;   /* never clobber typing */
+      el.value = values[name];
+      /* The industry select drives the sub-industry list, so let it rebuild. */
+      if (el.tagName === 'SELECT') el.dispatchEvent(new Event('change'));
+    });
+  }
+
+  /* Which section is on screen. Saved with the draft so coming back lands
+     you where you stopped, and set by the section by section code below. */
+  var STEP = 1;
+  var revealField = null;   /* assigned below; brings a field's section on screen */
+
+  /* The human label for a field, for messages that name what is missing. */
+  function fieldLabel(el) {
+    var f = el.closest ? el.closest('.field') : null;
+    var l = f ? f.querySelector('label') : null;
+    if (!l) return el.name;
+    return l.textContent.replace(/\(required\)/i, '').replace(/^REQUIRED:\s*/i, '')
+            .replace(/\s+/g, ' ').trim();
+  }
+
+  var saveTimer = null;
+  function save() {
+    if (!ACCESS_TOKEN || window.MSP_DEMO) return;     /* nothing to key on, or a demo */
+    var got = collect();
+    var ok = J && J.saveDraft(ACCESS_TOKEN, {
+      counts: blockCounts(),
+      values: got.values,
+      company: got.values.company_registered_name || got.values.company_trading_name || '',
+      filled: got.filled,
+      step: STEP,
+    });
+    say(ok ? 'Draft saved on this device, ' + got.filled + ' answer' + (got.filled === 1 ? '' : 's') + ' remembered.'
+           : 'This browser will not let the page save a draft, so keep the tab open until you submit.');
+  }
+  function queueSave() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 800); }
+
+  if (J && !window.MSP_DEMO && ACCESS_TOKEN) {
+    if (!J.available()) {
+      showBar('<strong>This browser will not let the page save a draft.</strong> '
+            + 'Keep this tab open until you submit, or the answers will be lost.');
+    } else {
+      var existing = J.getDraft(ACCESS_TOKEN);
+
+      if (existing && existing.values && Object.keys(existing.values).length) {
+        /* Rebuild the repeat blocks first, then put the answers back. */
+        Object.keys(existing.counts || {}).forEach(function (pre) { growTo(pre, existing.counts[pre]); });
+        apply(existing.values, true);
+        showBar('<strong>Welcome back.</strong> Your answers from ' + J.ago(existing.savedAt)
+              + ' have been restored, saved on this device only. Any documents you attached need attaching again.');
+        say('Draft restored, ' + Object.keys(existing.values).length + ' answers.');
+      } else {
+        /* Nothing saved yet: pre-fill what was given on the landing page,
+           so nobody types their company and their own name twice. */
+        var d = J.getDetails();
+        if (d) {
+          apply({
+            company_registered_name: d.company_name || '',
+            contact_1_name: d.contact_name || '',
+            contact_1_email: d.contact_email || '',
+            contact_1_phone: d.phone || '',
+          }, false);
+          showBar('<strong>Your details are filled in already</strong>, from what you gave us when you signed in. '
+                + 'Change anything that is not right. From here on your answers save on this device as you go, '
+                + 'so you can close the page and come back.');
+        } else {
+          showBar('<strong>Your answers save as you go</strong>, on this device, so you can close the page and '
+                + 'come back to finish. Documents you attach are the exception and need attaching again.');
+        }
+      }
+
+      draftForm.addEventListener('input', queueSave);
+      draftForm.addEventListener('change', queueSave);
+      /* A click on Add creates blank fields; record the new shape straight away. */
+      document.querySelectorAll('button.add').forEach(function (b) { b.addEventListener('click', queueSave); });
+    }
+  }
+
+  var discard = document.getElementById('draft-discard');
+  if (discard) discard.addEventListener('click', function () {
+    if (!window.confirm('Discard the saved draft and empty this form? This cannot be undone.')) return;
+    if (J) J.clearDraft(ACCESS_TOKEN);
+    clearTimeout(saveTimer);
+    location.reload();
+  });
+
   var form = document.getElementById('intake');
   var notice = document.getElementById('notice');
+
+  function esc(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  /* The industries with a published sample Plan, kept in step with the list
+     in sample.html. OTHER has no sample and is not offered one. */
+  var SAMPLES = {
+    AGRI: 'Agriculture and forestry', CLEAN: 'Cleaning and hygiene services',
+    CONSTR: 'Construction', EDU: 'Education', GOV: 'Government and municipal',
+    HEALTH: 'Healthcare and laboratories', HOSP: 'Hospitality and food service',
+    MANU: 'Manufacturing', MINING: 'Mining and quarrying',
+    OFFICE: 'Office and professional services', PETRO: 'Petrochemical and fuel retail',
+    RETAIL: 'Retail and wholesale', SEC: 'Security services',
+    TEL: 'Telecommunications and tower work', TRANS: 'Transport and logistics',
+    UTIL: 'Utilities and energy', WASTE: 'Waste management',
+  };
+
+  /* The sample is the published one for that industry, from fictitious company
+     data, watermarked on every page. It is not this client's Plan: that is
+     drafted from this submission and signed by a registered Occupational
+     Medical Practitioner first. The wording says so plainly. */
+  function sampleOffer(code) {
+    var name = SAMPLES[code];
+    if (!name) return '';
+    return '<p style="margin:10px 0 0">While your Plan is drafted, you can '
+      + '<a href="/sample.html?code=' + encodeURIComponent(code) + '" target="_blank" rel="noopener" '
+      + 'style="color:#B7141A;font-weight:bold">view the sample Plan for ' + esc(name) + '</a>. '
+      + 'It is built from fictitious company data, watermarked on every page, and for viewing only. '
+      + 'Your own Plan carries your branding and is signed by a registered Occupational Medical '
+      + 'Practitioner before it reaches you.</p>';
+  }
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
     notice.className = 'notice';
@@ -153,12 +525,15 @@
       if (el.type === 'checkbox') { data[el.name] = el.checked ? 'true' : ''; return; }
       if (el.type === 'file') { return; }
       data[el.name] = el.value.trim();
-      if (el.getAttribute('data-required') && !el.value.trim()) missing.push(el.name);
+      if (el.getAttribute('data-required') && !el.value.trim()) missing.push(el);
     });
     if (form.querySelector('.hp input, input.hp') && form.querySelector('input[name=website]').value) return;
     if (missing.length) {
+      /* A missing field can be in a section that is not on screen, so open
+         its section before saying anything about it. */
+      if (revealField) revealField(missing[0]);
       notice.className = 'notice err';
-      notice.textContent = 'Please complete the required fields: ' + missing.join(', ');
+      notice.textContent = 'Please complete: ' + missing.map(fieldLabel).join('; ') + '.';
       window.scrollTo({ top: notice.offsetTop - 80, behavior: 'smooth' });
       return;
     }
@@ -181,9 +556,19 @@
         btn.disabled = false;
         if (res.ok && res.j.reference) {
           notice.className = 'notice ok';
-          notice.textContent = 'Thank you. Your submission has been received under reference ' + res.j.reference +
-            (res.j.status === 'triage' ? '. A Care Net consultant will contact you to confirm some details before your Plan is drafted.' : '. Your Medical Surveillance Plan drafting process has begun.');
+          notice.innerHTML = '<p style="margin:0">Thank you. Your submission has been received under reference <strong>'
+            + esc(res.j.reference) + '</strong>'
+            + (res.j.status === 'triage'
+                ? '. A Care Net consultant will contact you to confirm some details before your Plan is drafted.'
+                : '. Your Medical Surveillance Plan drafting process has begun.')
+            + '</p>' + sampleOffer(data.industry_code);
           form.querySelectorAll('input, textarea, select, button').forEach(function (el) { el.disabled = true; });
+          /* Submitted: the draft and the landing page details have done their
+             job and should not linger on the device. */
+          if (J) { J.clearDraft(ACCESS_TOKEN); J.clearDetails(); }
+          clearTimeout(saveTimer);
+          say('Submitted. The saved draft has been cleared from this device.');
+          if (bar) bar.style.display = 'none';
         } else if (res.ok && res.j.status === 'rejected') {
           notice.className = 'notice err';
           notice.textContent = 'Your submission could not be accepted: ' + (res.j.reason || 'it appears to contain personal information that must not be entered here, or required consent is missing. Please review and resubmit.');
@@ -199,6 +584,187 @@
         notice.textContent = 'A network error occurred. Please try again.';
       });
   });
+
+  /* ================= Section by section =================
+     One <form>, submitted exactly as before. All this does is show one
+     section at a time with Back and Next, put a Save button on the left, and
+     remember which section you were on. If this script never runs, the form
+     falls back to the full scrolling page it has always been: every section
+     stays visible and Submit still works.
+     ====================================================== */
+  (function () {
+    var steps = Array.prototype.slice.call(document.querySelectorAll('section.step'));
+    if (steps.length < 2) return;
+
+    var prog    = document.getElementById('progress');
+    var nav     = document.getElementById('stepnav');
+    var subBar  = document.getElementById('submit-bar');
+    var elCount = document.getElementById('p-count');
+    var elName  = document.getElementById('p-name');
+    var elFill  = document.getElementById('p-fill');
+    var elDots  = document.getElementById('p-dots');
+    var btnBack = document.getElementById('step-back');
+    var btnNext = document.getElementById('step-next');
+    var btnSave = document.getElementById('step-save');
+    var note    = document.getElementById('saved-note');
+    if (!prog || !nav || !btnNext) return;
+
+    /* Section names come off the headings themselves, so there is no second
+       copy of the titles to drift out of step. */
+    var titles = steps.map(function (sec, i) {
+      var h = sec.querySelector('h2');
+      if (!h) return 'Section ' + (i + 1);
+      var t = h.textContent.replace(/^\s*\d+\.\s*/, '').trim();
+      return t.charAt(0) + t.slice(1).toLowerCase();
+    });
+
+    steps.forEach(function (sec, i) { sec.id = 'section-' + (i + 1); });
+
+    /* The jump dots, one per section. Free movement on purpose: people fill
+       these in out of order, and Submit still checks everything. */
+    titles.forEach(function (t, i) {
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = String(i + 1);
+      b.title = t;
+      b.setAttribute('aria-label', 'Section ' + (i + 1) + ', ' + t);
+      b.addEventListener('click', function () { go(i, false); });
+      li.appendChild(b);
+      elDots.appendChild(li);
+    });
+
+    function headerOffset() {
+      var h = document.querySelector('.cnc-sitehead');
+      return (h ? h.getBoundingClientRect().height : 0) + 14;
+    }
+
+    function requiredIn(sec) {
+      /* File inputs are left out to match the submit handler, which does not
+         check them either. See the note to Od about uploads. */
+      return Array.prototype.slice.call(sec.querySelectorAll('[data-required="1"]'))
+        .filter(function (el) { return el.type !== 'file'; });
+    }
+
+    function markBad(el, bad) {
+      var f = el.closest ? el.closest('.field') : null;
+      if (!f) return;
+      f.classList.toggle('bad', bad);
+      if (bad && !f.querySelector('.why')) {
+        var w = document.createElement('p');
+        w.className = 'why';
+        w.textContent = el.type === 'checkbox'
+          ? 'Please tick this to carry on.'
+          : 'Please fill this in to carry on.';
+        f.appendChild(w);
+      }
+    }
+
+    function firstEmpty(sec) {
+      var out = null;
+      requiredIn(sec).forEach(function (el) {
+        var empty = el.type === 'checkbox' ? !el.checked : !String(el.value).trim();
+        markBad(el, empty);
+        if (empty && !out) out = el;
+      });
+      return out;
+    }
+
+    var current = 0;
+
+    function paint() {
+      steps.forEach(function (sec, i) { sec.classList.toggle('here', i === current); });
+      STEP = current + 1;
+
+      elCount.textContent = 'Section ' + (current + 1) + ' of ' + steps.length;
+      elName.textContent = titles[current];
+      elFill.style.width = Math.round(((current + 1) / steps.length) * 100) + '%';
+
+      Array.prototype.forEach.call(elDots.children, function (li, i) {
+        li.className = i === current ? 'here' : (i < current ? 'done' : '');
+      });
+
+      btnBack.hidden = current === 0;
+      var last = current === steps.length - 1;
+      btnNext.hidden = last;
+      if (subBar) subBar.hidden = !last;
+    }
+
+    function go(n, validateFirst) {
+      if (validateFirst) {
+        var bad = firstEmpty(steps[current]);
+        if (bad) {
+          note.className = 'saved-note bad';
+          note.textContent = 'Before moving on, please complete: ' + fieldLabel(bad) + '.';
+          try { bad.focus(); } catch (e) {}
+          var y = bad.getBoundingClientRect().top + window.pageYOffset - headerOffset() - 20;
+          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+          return false;
+        }
+        note.className = 'saved-note';
+        note.textContent = '';
+      }
+      current = Math.max(0, Math.min(steps.length - 1, n));
+      paint();
+      var top = prog.getBoundingClientRect().top + window.pageYOffset - headerOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      if (!window.MSP_DEMO && ACCESS_TOKEN) queueSave();
+      return true;
+    }
+
+    btnNext.addEventListener('click', function () { go(current + 1, true); });
+    btnBack.addEventListener('click', function () { go(current - 1, false); });
+
+    /* Clearing the marker as soon as someone starts typing in the field. */
+    document.getElementById('intake').addEventListener('input', function (ev) {
+      var f = ev.target.closest ? ev.target.closest('.field.bad') : null;
+      if (f) f.classList.remove('bad');
+    });
+
+    btnSave.addEventListener('click', function () {
+      if (window.MSP_DEMO) {
+        note.className = 'saved-note bad';
+        note.textContent = 'This is the demo preview, so nothing is saved.';
+        return;
+      }
+      if (!ACCESS_TOKEN) {
+        note.className = 'saved-note bad';
+        note.textContent = 'This page has no assessment link, so there is nothing to save against.';
+        return;
+      }
+      if (!J || !J.available()) {
+        note.className = 'saved-note bad';
+        note.textContent = 'This browser will not let the page save a draft. Keep the tab open until you submit.';
+        return;
+      }
+      clearTimeout(saveTimer);
+      save();
+      note.className = 'saved-note ok';
+      note.textContent = 'Saved on this device. Close the page whenever you like, then open your '
+        + 'assessment link again and you will come back to this section.';
+    });
+
+    /* Called by the submit handler when a required field sits in a section
+       that is not on screen. */
+    revealField = function (el) {
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].contains(el)) { current = i; paint(); break; }
+      }
+      markBad(el, true);
+    };
+
+    /* Open on the section the draft was left on. */
+    var start = 0;
+    if (J && ACCESS_TOKEN && !window.MSP_DEMO) {
+      var d = J.getDraft(ACCESS_TOKEN);
+      if (d && d.step > 1 && d.step <= steps.length) start = d.step - 1;
+    }
+    current = start;
+    document.getElementById('intake').classList.add('stepped');
+    paint();
+    prog.hidden = false;
+    nav.hidden = false;
+  })();
 })();
 </script>
 </body>
