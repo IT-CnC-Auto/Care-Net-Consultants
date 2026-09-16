@@ -1,0 +1,10 @@
+# Operating system litter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local dependencies and environment files (never commit secrets)
+node_modules/
+.env
+.env.*
+.vercel/
