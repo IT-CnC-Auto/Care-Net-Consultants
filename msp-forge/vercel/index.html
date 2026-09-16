@@ -55,6 +55,32 @@
   .status.info { background: #eef3fb; border: 1px solid #4a6fb5; }
   .status.err { background: #fdeaea; border: 1px solid var(--red); }
   .muted { font-size: 13px; color: #555; }
+  /* Sign in form: a little breathing room and a hint under each field, so
+     nobody has to guess why we are asking. */
+  .fld { margin-top: 14px; }
+  .fld:first-of-type { margin-top: 0; }
+  .fld label { margin: 0 0 4px; }
+  .hint { font-size: 12px; color: #6b6b6b; margin: 5px 0 0; }
+  .opt { font-weight: normal; color: #6b6b6b; font-size: 12px; }
+  .privacy { font-size: 12px; color: #6b6b6b; margin: 14px 0 0; }
+  /* The panel that replaces the form once the link is on its way. */
+  .inbox { text-align: center; padding: 8px 0 4px; }
+  .inbox .tick { width: 46px; height: 46px; border-radius: 50%; background: #e8f7ec;
+                 color: #2e8b57; display: grid; place-items: center; margin: 0 auto 12px;
+                 font-size: 24px; font-weight: bold; }
+  .inbox b { display: block; font-size: 16px; margin-bottom: 6px; }
+  .inbox p { font-size: 14px; color: #555; margin: 0 auto; max-width: 42ch; }
+  .inbox .again { background: none; border: none; color: var(--red); font-weight: bold;
+                  font-size: 13px; text-decoration: underline; cursor: pointer;
+                  margin-top: 16px; width: auto; padding: 4px; }
+  /* Account summary rows once someone is signed in. */
+  .acct { list-style: none; padding: 0; margin: 0 0 4px; }
+  .acct li { display: flex; gap: 10px; flex-wrap: wrap; font-size: 14px; padding: 5px 0;
+             border-bottom: 1px solid #f0f0f0; }
+  .acct li:last-child { border-bottom: none; }
+  .acct .k { color: #6b6b6b; min-width: 8.5rem; }
+  .acct .v { font-weight: bold; }
+  .alsosee { font-size: 13px; color: #555; margin-top: 14px; }
   .card p { font-size: 14px; line-height: 1.5; }
   label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; }
   input, select { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; }
@@ -115,35 +141,69 @@
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
   <div class="card" id="signin-card">
     <h2>Start your journey</h2>
-    <p class="muted">One journey for both: enter your work email and we send a secure sign in link. New here? Sign in first, then register your company below and start your assessment straight away; returning clients land on their account with the assessment one click away.</p>
-    <label for="email">Work email</label><input id="email" type="email" autocomplete="email">
-    <button id="send-link">Email me a sign in link</button>
+    <p class="muted">Tell us who you are and we will email you a secure sign in link. No password to remember, and the same journey whether you are a Care Net client already or new to us.</p>
+
+    <div class="fld">
+      <label for="email">Work email</label>
+      <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@yourcompany.co.za">
+      <p class="hint">Your secure sign in link goes here.</p>
+    </div>
+    <div class="fld">
+      <label for="company">Company name</label>
+      <input id="company" type="text" autocomplete="organization" placeholder="Your company, as it should appear on the Plan">
+    </div>
+    <div class="fld">
+      <label for="contact">Your name</label>
+      <input id="contact" type="text" autocomplete="name">
+    </div>
+    <div class="fld">
+      <label for="phone">Contact number <span class="opt">optional</span></label>
+      <input id="phone" type="tel" autocomplete="tel" placeholder="+27 ...">
+      <p class="hint">Only so a consultant can reach you if there is a question about your Plan.</p>
+    </div>
+
+    <button id="send-link">Email me my secure sign in link</button>
     <div class="status" id="signin-status" style="display:none"></div>
+    <p class="privacy">Care Net uses these details to prepare your Medical Surveillance Plan and to contact you about it. They are processed in line with POPIA and are not used for anything else.</p>
+  </div>
+
+  <div class="card" id="inbox-card" style="display:none">
+    <h2>Check your inbox</h2>
+    <div class="inbox">
+      <div class="tick" aria-hidden="true">&#10003;</div>
+      <b id="inbox-email">&nbsp;</b>
+      <p>Your secure sign in link is on its way. Open it on this device and your assessment is ready and waiting, with your details already filled in.</p>
+      <p class="hint" style="margin-top:10px">Nothing after a minute or two? Check your spam folder, or send it again.</p>
+      <button class="again" id="inbox-again">Use a different email address</button>
+    </div>
   </div>
 
   <div class="card" id="account-card" style="display:none">
     <h2>Your account</h2>
     <div id="account-body"></div>
     <div id="register-body" style="display:none">
-      <p class="muted">Your email is verified but no company is registered against it yet. Register your company and your assessment opens immediately.</p>
-      <label for="reg-company">Company name</label><input id="reg-company">
-      <label for="reg-contact">Contact person</label><input id="reg-contact">
+      <p class="muted">Your email is verified. Add your company and your assessment opens immediately.</p>
+      <div class="fld"><label for="reg-company">Company name</label><input id="reg-company" type="text" autocomplete="organization"></div>
+      <div class="fld"><label for="reg-contact">Your name</label><input id="reg-contact" type="text" autocomplete="name"></div>
+      <div class="fld"><label for="reg-phone">Contact number <span class="opt">optional</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
       <button id="register">Register my company and start</button>
     </div>
     <div id="start-body" style="display:none">
       <p>Your Medical Surveillance Plan assessment is ready. It takes about twenty minutes, and you can add sites, job categories and substances as you go. Have your risk assessment to hand if you have one.</p>
       <a class="button big" id="start-link" href="#">Start your assessment</a>
-      <p class="muted" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
+      <p class="hint" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
     </div>
     <div class="status" id="account-status" style="display:none"></div>
-    <p class="muted" style="margin-top:14px">
-      Also see <a class="linklike" href="/shop.html">packages, pricing, and samples</a>.
+    <p class="alsosee">
+      Also see <a class="linklike" href="/shop.html">Packages and pricing</a>
+      and <a class="linklike" href="/sample.html">Samples</a>.
     </p>
   </div>
+
   <div class="card" style="margin-top:18px">
     <h2>How it works</h2>
     <ol class="steps">
-      <li>Enter your work email above and follow the secure sign in link. If you are new, register your company and your assessment opens immediately.</li>
+      <li>Enter your details above and follow the secure sign in link we email you. Your assessment is ready the moment you arrive.</li>
       <li>Receive your secure, single use assessment link and complete the structured assessment (roughly 30 to 45 minutes with your risk assessment at hand).</li>
       <li>Care Net's engine drafts your Plan against the verified regulatory framework for your industry, and a registered Occupational Medical Practitioner reviews, recommends, and signs.</li>
       <li>Your approved Plan is delivered for download and hosted securely with revision numbers; updates and revisions follow the same review whenever your operations change.</li>
@@ -165,14 +225,30 @@
 </div>
 
 <script type="module">
-/* The sign in journey, moved here from account.html so the whole flow lives
-   on one page. Untouched apart from the redirect target below.
+/* The sign in journey. The details someone types before requesting their link
+   are carried across so that clicking the link lands them on "Start your
+   assessment" rather than on a second form.
 
-   ONE THING FOR OD: emailRedirectTo now points at the site root instead of
-   /account.html. That URL has to be on the allow list in Supabase under
-   Authentication, URL Configuration, Redirect URLs. Until it is added the
-   sign in email will fail. account.html is kept as a redirect so any link
-   already issued still lands correctly. */
+   How the details survive the round trip, two ways on purpose:
+     1. sessionStorage, which covers opening the link in the same browser.
+     2. Supabase user metadata via signInWithOtp options.data, which survives
+        opening the link on another device. Supabase only records metadata on
+        a first sign up, so this is the backstop, not the primary.
+   If neither is there, which is what happens for a returning visitor on a new
+   device, the register form appears exactly as it did before. Nothing breaks,
+   it just asks once.
+
+   FOR OD, one gap and one heads up:
+     1. The contact number has nowhere to live. api/signon accepts only
+        company_name, contact_name, contact_email and notes, and the
+        msp_client_signon RPC behind it takes the same four. So the number is
+        passed inside notes, clearly labelled. It would be better as its own
+        contact_number column on the RPC and the table, and then this becomes
+        a one line change.
+     2. A company record is now created when someone opens their sign in link,
+        not when they press a second button. Same endpoint, same payload, one
+        step earlier in the journey.
+*/
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const sb = createClient('https://pboebfnujzffgwctsplw.supabase.co', 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj');
 
@@ -181,20 +257,71 @@ function show(el, cls, msg) { el.className = 'status ' + cls; el.style.display =
 function hide(el) { el.style.display = 'none'; }
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
+const STASH = 'cnc_signon_details';
+
+/* sessionStorage throws in a private window with site data blocked, so every
+   access is wrapped and the journey carries on without it. */
+function stash(d) { try { sessionStorage.setItem(STASH, JSON.stringify(d)); } catch (e) {} }
+function unstash() {
+  try { return JSON.parse(sessionStorage.getItem(STASH) || 'null'); } catch (e) { return null; }
+}
+function clearStash() { try { sessionStorage.removeItem(STASH); } catch (e) {} }
+
+/* The contact number has no column of its own yet, so it travels in notes
+   where a consultant can still read it. See the note to Od above. */
+function noteFor(phone) { return phone ? 'Contact number: ' + phone : null; }
+
+/* ---------------------------------------------------------- request a link */
 $('send-link').onclick = async () => {
-  const email = $('email').value.trim();
+  const email   = $('email').value.trim();
+  const company = $('company').value.trim();
+  const contact = $('contact').value.trim();
+  const phone   = $('phone').value.trim();
   const st = $('signin-status');
-  if (!email) { show(st, 'err', 'Please enter your work email.'); return; }
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/' } });
-  if (error) show(st, 'err', 'The sign in link could not be sent: ' + error.message);
-  else show(st, 'good', 'Check your inbox: your secure sign in link is on its way to ' + email + '.');
+
+  if (!email || email.indexOf('@') < 1) { show(st, 'err', 'Please enter your work email.'); $('email').focus(); return; }
+  if (!company) { show(st, 'err', 'Please add your company name.'); $('company').focus(); return; }
+  if (!contact) { show(st, 'err', 'Please add your name.'); $('contact').focus(); return; }
+
+  const btn = $('send-link');
+  btn.disabled = true; btn.textContent = 'Sending your link...';
+  hide(st);
+
+  const details = { company_name: company, contact_name: contact, phone: phone, contact_email: email };
+  stash(details);
+
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: location.origin + '/',
+      data: { company_name: company, contact_name: contact, contact_phone: phone },
+    },
+  });
+
+  btn.disabled = false; btn.textContent = 'Email me my secure sign in link';
+
+  if (error) { show(st, 'err', 'The sign in link could not be sent: ' + error.message); return; }
+  $('inbox-email').textContent = email;
+  hide($('signin-card'));
+  $('inbox-card').style.display = 'block';
 };
 
-function renderReady(email, r) {
+$('inbox-again').onclick = () => {
+  hide($('inbox-card'));
+  $('signin-card').style.display = 'block';
+  $('email').focus();
+};
+
+/* -------------------------------------------------------- signed in states */
+function renderReady(email, r, details) {
   const body = $('account-body');
   const st = $('account-status');
-  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(email) + '</strong>.</p>'
-    + '<p>Company: <strong>' + esc(r.company_name) + '</strong></p>';
+  const phone = (details && details.phone) || '';
+  body.innerHTML = '<ul class="acct">'
+    + '<li><span class="k">Signed in as</span><span class="v">' + esc(email) + '</span></li>'
+    + '<li><span class="k">Company</span><span class="v">' + esc(r.company_name) + '</span></li>'
+    + (phone ? '<li><span class="k">Contact number</span><span class="v">' + esc(phone) + '</span></li>' : '')
+    + '</ul>';
   hide($('register-body'));
   if (r.declined || !r.assessment_url) {
     hide($('start-body'));
@@ -206,21 +333,66 @@ function renderReady(email, r) {
   hide(st);
 }
 
+function askToRegister(email, details) {
+  $('account-body').innerHTML = '<ul class="acct"><li><span class="k">Signed in as</span>'
+    + '<span class="v">' + esc(email) + '</span></li></ul>';
+  if (details) {
+    $('reg-company').value = details.company_name || '';
+    $('reg-contact').value = details.contact_name || '';
+    $('reg-phone').value   = details.phone || '';
+  }
+  hide($('start-body'));
+  $('register-body').style.display = 'block';
+}
+
+async function signon(payload) {
+  return fetch('/api/signon', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).then(x => x.json());
+}
+
 async function loadAccount(session) {
-  hide($('signin-card'));
+  hide($('signin-card')); hide($('inbox-card'));
   $('account-card').style.display = 'block';
+  const email = session.user.email;
   const body = $('account-body');
   const st = $('account-status');
-  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>. Checking your company...</p>';
+  body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(email) + '</strong>. Checking your company...</p>';
+
+  /* Details from this browser first, then from the auth user as a backstop. */
+  const meta = session.user.user_metadata || {};
+  const details = unstash() || (meta.company_name && meta.contact_name
+    ? { company_name: meta.company_name, contact_name: meta.contact_name, phone: meta.contact_phone || '' }
+    : null);
+
   try {
-    const r = await fetch('/api/company-lookup', { headers: { Authorization: 'Bearer ' + session.access_token } }).then(x => x.json());
-    if (!r.found) {
-      body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(session.user.email) + '</strong>.</p>';
-      hide($('start-body'));
-      $('register-body').style.display = 'block';
+    const r = await fetch('/api/company-lookup', {
+      headers: { Authorization: 'Bearer ' + session.access_token },
+    }).then(x => x.json());
+
+    if (r.found) { clearStash(); renderReady(email, r, details); return; }
+
+    /* No company yet. If the details came through, register them now so the
+       person lands on their assessment instead of filling a second form. */
+    if (details && details.company_name && details.contact_name) {
+      body.innerHTML = '<p class="muted">Signed in as <strong>' + esc(email) + '</strong>. '
+        + 'Setting up ' + esc(details.company_name) + '...</p>';
+      const reg = await signon({
+        company_name: details.company_name,
+        contact_name: details.contact_name,
+        contact_email: email,
+        notes: noteFor(details.phone),
+      });
+      if (reg && reg.status === 'received') { clearStash(); renderReady(email, reg, details); return; }
+      /* Could not register automatically: show the form with the values kept,
+         so nothing typed earlier is lost. */
+      askToRegister(email, details);
+      show(st, 'err', (reg && reg.error) || 'Your company could not be registered automatically. Please check the details and try again.');
       return;
     }
-    renderReady(session.user.email, r);
+
+    askToRegister(email, details);
   } catch (e) {
     show(st, 'err', 'Your company status could not be loaded. Please try again.');
   }
@@ -231,18 +403,16 @@ $('register').onclick = async () => {
   const st = $('account-status');
   const company = $('reg-company').value.trim();
   const contact = $('reg-contact').value.trim();
-  if (!company || !contact) { show(st, 'err', 'Company name and contact person are required.'); return; }
+  const phone   = $('reg-phone').value.trim();
+  if (!company || !contact) { show(st, 'err', 'Company name and your name are both needed.'); return; }
   const btn = $('register'); btn.disabled = true; btn.textContent = 'Registering...';
-  const r = await fetch('/api/signon', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ company_name: company, contact_name: contact, contact_email: session.user.email }),
-  }).then(x => x.json()).catch(() => null);
+  const r = await signon({
+    company_name: company, contact_name: contact,
+    contact_email: session.user.email, notes: noteFor(phone),
+  }).catch(() => null);
   btn.disabled = false; btn.textContent = 'Register my company and start';
-  if (r && r.status === 'received') {
-    renderReady(session.user.email, r);
-  } else {
-    show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
-  }
+  if (r && r.status === 'received') { clearStash(); renderReady(session.user.email, r, { phone: phone }); }
+  else show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
 };
 
 sb.auth.getSession().then(({ data: { session } }) => { if (session) loadAccount(session); });
