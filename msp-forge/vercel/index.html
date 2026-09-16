@@ -68,7 +68,7 @@
   .inbox .tick { width: 46px; height: 46px; border-radius: 50%; background: #e8f7ec;
                  color: #2e8b57; display: grid; place-items: center; margin: 0 auto 12px;
                  font-size: 24px; font-weight: bold; }
-  .inbox b { display: block; font-size: 16px; margin-bottom: 6px; }
+  .inbox b { display: block; font-size: 16px; margin-bottom: 6px; overflow-wrap: anywhere; }
   .inbox p { font-size: 14px; color: #555; margin: 0 auto; max-width: 42ch; }
   .inbox .again { background: none; border: none; color: var(--red); font-weight: bold;
                   font-size: 13px; text-decoration: underline; cursor: pointer;
@@ -180,26 +180,6 @@
     <p class="privacy">Care Net uses these details to prepare your Medical Surveillance Plan and to contact you about it. They are processed in line with POPIA and are not used for anything else.</p>
   </div>
 
-  <div class="card resume" id="resume-card">
-    <h2>Pick up where you left off</h2>
-    <p class="muted">An assessment already under way? Carry on from where you stopped.</p>
-    <div id="resume-found" style="display:none">
-      <div class="draftbox">
-        <b id="resume-company">Your assessment</b>
-        <span class="when" id="resume-when">&nbsp;</span>
-      </div>
-      <a class="button big" id="resume-link" href="#" style="margin-top:14px">Carry on with my assessment</a>
-      <p class="hint" style="margin-top:10px">Saved on this device as you went. Any documents you attached need attaching again.</p>
-      <button type="button" class="discard" id="resume-discard">Discard this saved draft</button>
-    </div>
-    <div id="resume-none">
-      <p class="nodraft">Nothing saved in this browser. Your answers are kept on the device you started on, so use that same computer, or sign in on the left and start again.</p>
-      <p class="hint" style="margin-top:10px">A saved draft never leaves your own device, which is why it cannot follow you to another one.</p>
-    </div>
-  </div>
-
-  </div>
-
   <div class="card" id="inbox-card" style="display:none">
     <h2>Check your inbox</h2>
     <div class="inbox">
@@ -231,6 +211,26 @@
       Also see <a class="linklike" href="/shop.html">Packages and pricing</a>
       and <a class="linklike" href="/sample.html">Samples</a>.
     </p>
+  </div>
+
+  <div class="card resume" id="resume-card">
+    <h2>Pick up where you left off</h2>
+    <p class="muted">An assessment already under way? Carry on from where you stopped.</p>
+    <div id="resume-found" style="display:none">
+      <div class="draftbox">
+        <b id="resume-company">Your assessment</b>
+        <span class="when" id="resume-when">&nbsp;</span>
+      </div>
+      <a class="button big" id="resume-link" href="#" style="margin-top:14px">Carry on with my assessment</a>
+      <p class="hint" style="margin-top:10px">Saved on this device as you went. Any documents you attached need attaching again.</p>
+      <button type="button" class="discard" id="resume-discard">Discard this saved draft</button>
+    </div>
+    <div id="resume-none">
+      <p class="nodraft">Nothing saved in this browser. Your answers are kept on the device you started on, so use that same computer, or sign in on the left and start again.</p>
+      <p class="hint" style="margin-top:10px">A saved draft never leaves your own device, which is why it cannot follow you to another one.</p>
+    </div>
+  </div>
+
   </div>
 
   <div class="card" style="margin-top:18px">

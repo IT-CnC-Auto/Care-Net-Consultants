@@ -67,6 +67,9 @@
         savedAt: new Date().toISOString(),
         counts: payload.counts || {},
         values: payload.values || {},
+        /* Which section of the assessment was on screen, so coming back
+           opens there. Older drafts have no step and start at the first. */
+        step: payload.step || 1,
       };
       if (!write(DRAFT + token, entry)) return false;
 
