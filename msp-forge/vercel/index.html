@@ -81,6 +81,18 @@
   .acct .k { color: #6b6b6b; min-width: 8.5rem; }
   .acct .v { font-weight: bold; }
   .alsosee { font-size: 13px; color: #555; margin-top: 14px; }
+  /* Two ways in, side by side: begin, or carry on. */
+  .twoways { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 860px) { .twoways { grid-template-columns: 1fr; } }
+  .twoways .card { margin-bottom: 0; }
+  .resume .draftbox { background: #f7f9fc; border: 1px solid #d8e0ec; border-radius: 6px;
+                      padding: 14px 16px; margin: 14px 0 0; }
+  .resume .draftbox b { display: block; font-size: 15px; margin-bottom: 2px; }
+  .resume .draftbox .when { font-size: 12.5px; color: #6b6b6b; }
+  .resume .nodraft { font-size: 13.5px; color: #555; }
+  .resume .discard { background: none; border: none; color: var(--red); font-weight: bold;
+                     font-size: 12.5px; text-decoration: underline; cursor: pointer;
+                     width: auto; padding: 4px 0; margin-top: 10px; }
   .card p { font-size: 14px; line-height: 1.5; }
   label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; }
   input, select { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; }
@@ -139,6 +151,7 @@
 
 <main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
+  <div class="twoways">
   <div class="card" id="signin-card">
     <h2>Start your journey</h2>
     <p class="muted">Tell us who you are and we will email you a secure sign in link. No password to remember, and the same journey whether you are a Care Net client already or new to us.</p>
@@ -165,6 +178,26 @@
     <button id="send-link">Email me my secure sign in link</button>
     <div class="status" id="signin-status" style="display:none"></div>
     <p class="privacy">Care Net uses these details to prepare your Medical Surveillance Plan and to contact you about it. They are processed in line with POPIA and are not used for anything else.</p>
+  </div>
+
+  <div class="card resume" id="resume-card">
+    <h2>Pick up where you left off</h2>
+    <p class="muted">An assessment already under way? Carry on from where you stopped.</p>
+    <div id="resume-found" style="display:none">
+      <div class="draftbox">
+        <b id="resume-company">Your assessment</b>
+        <span class="when" id="resume-when">&nbsp;</span>
+      </div>
+      <a class="button big" id="resume-link" href="#" style="margin-top:14px">Carry on with my assessment</a>
+      <p class="hint" style="margin-top:10px">Saved on this device as you went. Any documents you attached need attaching again.</p>
+      <button type="button" class="discard" id="resume-discard">Discard this saved draft</button>
+    </div>
+    <div id="resume-none">
+      <p class="nodraft">Nothing saved in this browser. Your answers are kept on the device you started on, so use that same computer, or sign in on the left and start again.</p>
+      <p class="hint" style="margin-top:10px">A saved draft never leaves your own device, which is why it cannot follow you to another one.</p>
+    </div>
+  </div>
+
   </div>
 
   <div class="card" id="inbox-card" style="display:none">
@@ -257,15 +290,14 @@ function show(el, cls, msg) { el.className = 'status ' + cls; el.style.display =
 function hide(el) { el.style.display = 'none'; }
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-const STASH = 'cnc_signon_details';
-
-/* sessionStorage throws in a private window with site data blocked, so every
-   access is wrapped and the journey carries on without it. */
-function stash(d) { try { sessionStorage.setItem(STASH, JSON.stringify(d)); } catch (e) {} }
-function unstash() {
-  try { return JSON.parse(sessionStorage.getItem(STASH) || 'null'); } catch (e) { return null; }
-}
-function clearStash() { try { sessionStorage.removeItem(STASH); } catch (e) {} }
+/* The details live in localStorage through /js/cnc-journey.js rather than in
+   sessionStorage, because the assessment opens in its own tab and
+   sessionStorage does not travel between tabs. The assessment clears them
+   once it is submitted. */
+const J = window.CNCJourney;
+function stash(d) { return J && J.setDetails(d); }
+function unstash() { return J ? J.getDetails() : null; }
+function clearStash() { if (J) J.clearDetails(); }
 
 /* The contact number has no column of its own yet, so it travels in notes
    where a consultant can still read it. See the note to Od above. */
@@ -371,7 +403,7 @@ async function loadAccount(session) {
       headers: { Authorization: 'Bearer ' + session.access_token },
     }).then(x => x.json());
 
-    if (r.found) { clearStash(); renderReady(email, r, details); return; }
+    if (r.found) { renderReady(email, r, details); return; }
 
     /* No company yet. If the details came through, register them now so the
        person lands on their assessment instead of filling a second form. */
@@ -384,7 +416,7 @@ async function loadAccount(session) {
         contact_email: email,
         notes: noteFor(details.phone),
       });
-      if (reg && reg.status === 'received') { clearStash(); renderReady(email, reg, details); return; }
+      if (reg && reg.status === 'received') { renderReady(email, reg, details); return; }
       /* Could not register automatically: show the form with the values kept,
          so nothing typed earlier is lost. */
       askToRegister(email, details);
@@ -411,13 +443,37 @@ $('register').onclick = async () => {
     contact_email: session.user.email, notes: noteFor(phone),
   }).catch(() => null);
   btn.disabled = false; btn.textContent = 'Register my company and start';
-  if (r && r.status === 'received') { clearStash(); renderReady(session.user.email, r, { phone: phone }); }
+  if (r && r.status === 'received') { renderReady(session.user.email, r, { phone: phone }); }
   else show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
 };
+
+/* ---- Pick up where you left off ----
+   A draft is remembered by the assessment page in this browser. If one is
+   here, offer it directly; nobody should need an email to carry on with work
+   that is sitting on their own machine. */
+(function () {
+  const found = $('resume-found'), none = $('resume-none');
+  if (!J || !found) return;
+  const d = J.latestDraft();
+  if (!d) return;
+  $('resume-company').textContent = d.company || 'Your assessment';
+  $('resume-when').textContent = 'Last saved ' + J.ago(d.savedAt)
+    + (d.filled ? ', ' + d.filled + ' answer' + (d.filled === 1 ? '' : 's') + ' so far' : '');
+  $('resume-link').href = '/assess.html?token=' + encodeURIComponent(d.token);
+  found.style.display = 'block';
+  none.style.display = 'none';
+  $('resume-discard').onclick = () => {
+    if (!window.confirm('Discard the saved draft on this device? This cannot be undone.')) return;
+    J.clearDraft(d.token);
+    found.style.display = 'none';
+    none.style.display = 'block';
+  };
+})();
 
 sb.auth.getSession().then(({ data: { session } }) => { if (session) loadAccount(session); });
 sb.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && session) loadAccount(session); });
 </script>
+<script src="/js/cnc-journey.js?v=20260916a"></script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
 </body>
 </html>
