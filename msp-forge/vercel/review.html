@@ -3,17 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>CNC MSP FORGE Review</title>
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<!-- The shared site header, footer stamp and pattern strip, the same as the
+     client facing pages. Presentation only: no endpoints, no data handling. -->
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
-  body { font-family: Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
-  header { background: var(--charcoal); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; }
-  header .brand { color: var(--red); font-weight: bold; letter-spacing: 1px; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
+  /* The staff strip under the shared header. The old dark banner's job. */
+  .adminbar { background: var(--charcoal); color: #fff; }
+  .adminbar .awrap { max-width: 1100px; margin: 0 auto; padding: 11px 16px;
+                     display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px;
+                     font-size: 13px; }
+  .adminbar b { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400;
+                letter-spacing: .06em; text-transform: uppercase; font-size: 17px; }
+  .adminbar .spacer { flex: 1 1 auto; }
+  .adminbar .adminlink { color: #fff; font-size: 12px; font-weight: bold; text-decoration: underline; }
+  .adminbar .muted { color: #bdbdbd; font-size: 12px; overflow-wrap: anywhere; }
   main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
-  nav { margin: 16px 0; }
-  nav button { background: #fff; border: 1px solid #ccc; padding: 9px 16px; margin-right: 6px; border-radius: 5px; cursor: pointer; font-size: 13px; }
-  nav button.active { background: var(--red); color: #fff; border-color: var(--red); }
+  #app nav { margin: 16px 0; }
+  #app nav button { background: #fff; border: 1px solid #ccc; padding: 9px 16px; margin-right: 6px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+  #app nav button.active { background: var(--red); color: #fff; border-color: var(--red); }
   .card { background: #fff; border-radius: 8px; padding: 18px 20px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   .card h3 { margin: 0 0 8px; font-size: 15px; }
   table { border-collapse: collapse; width: 100%; font-size: 13px; }
@@ -36,10 +53,43 @@
 </style>
 </head>
 <body>
-<header>
-  <div><span class="brand">CARE NET CONSULTANTS</span> · MSP FORGE Review</div>
-  <div><a href="/settings.html" style="color:#fff;font-size:12px;margin-right:14px">Settings</a><span id="who" class="muted"></span></div>
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. No menu item is
+     marked current: this is a staff tool, not a page in the site menu.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
+
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+      </ul>
+    </div>
+  </nav>
 </header>
+
+<div class="pattern-strip" role="presentation"></div>
+
+<!-- The strip the old dark banner used to carry: which tool this is, who is
+     signed in, and the way across to the other one. #who is still filled by
+     this page's own script. -->
+<div class="adminbar">
+  <div class="awrap">
+    <b>MSP Forge Review</b>
+    <span class="spacer"></span>
+    <a class="adminlink" href="/settings.html">Settings</a>
+    <span id="who" class="muted"></span>
+  </div>
+</div>
 <main>
   <div id="login" class="card">
     <h3>Reviewer sign in</h3>
@@ -249,5 +299,18 @@ async function show(tab) {
 supabase.auth.onAuthStateChange(() => boot());
 boot();
 </script>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+<script src="/js/cnc-header.js?v=20260918a" defer></script>
 </body>
 </html>

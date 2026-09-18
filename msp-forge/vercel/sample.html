@@ -46,19 +46,20 @@
   .chooser .sub { font-size: 14px; color: #555; margin: 0 0 20px; max-width: 62ch; }
   .icongrid { list-style: none; margin: 0; padding: 0;
               display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-  .icongrid a { display: flex; flex-direction: column; align-items: center; gap: 10px;
-                text-decoration: none; color: var(--charcoal); text-align: center;
-                border: 1px solid #e4e4e4; border-radius: 8px; padding: 16px 12px 14px;
+  .icongrid a { display: grid; grid-template-rows: 76px 1fr; justify-items: center; align-items: center;
+                gap: 8px; text-decoration: none; color: var(--charcoal); text-align: center;
+                border: 1px solid #e4e4e4; border-radius: 8px; padding: 14px 10px 14px;
                 background: #fff; height: 100%; transition: border-color .15s, box-shadow .15s, transform .15s; }
   .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red);
                 box-shadow: 0 3px 10px rgba(0,0,0,.10); transform: translateY(-2px); }
   .icongrid a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
-  .icongrid img { width: 68px; height: 68px; object-fit: contain; display: block;
-                  pointer-events: none; }
-  .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; }
+  .icongrid img { width: 72px; height: 72px; object-fit: contain; object-position: center;
+                  display: block; pointer-events: none; }
+  .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; align-self: start; }
   @media (max-width: 420px) {
     .icongrid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
-    .icongrid img { width: 54px; height: 54px; }
+    .icongrid a { grid-template-rows: 60px 1fr; padding: 12px 8px; }
+    .icongrid img { width: 56px; height: 56px; }
   }
 
   /* ---- Viewing one sample ---- */
