@@ -83,6 +83,14 @@
 <link rel="preload" href="/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/Montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/BebasNeue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<!-- The shared site header, footer stamp, pattern strip and section band.
+     Presentation only: no endpoints, no data handling. -->
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260918a">
 <!-- CNC:END id=fonts -->
 
 <!-- CNC:SECTION id=org_schema v=1 lock=false -->
@@ -246,6 +254,8 @@ a{color:inherit}
 
 /* Sections */
 section{padding:64px 0}
+/* The shared header is sticky, so anything linked to sits clear of it. */
+:target,[id]{scroll-margin-top:180px}
 .sec-head{max-width:800px;margin:0 0 30px}
 .sec-head h2{margin-top:8px}
 .sec-head p{color:var(--ink-2);font-size:17px}
@@ -363,46 +373,37 @@ footer.foot .base img{height:46px;width:auto}
 <body>
 <a class="skip" href="#main">Skip to main content</a>
 
-<div class="util">
-  <div class="wrap">
-    <ul>
-      <li><a href="tel:+27600702723">Call us</a></li>
-      <li><a href="mailto:salesdesk@carenetconsultants.co.za">Email</a></li>
-      <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
-      <li><a href="https://www.carenetconsultants.co.za/fixed-clinic-medicals">Clinic locator</a></li>
-      <li><a href="https://www.carenetconsultants.co.za/faq">FAQ</a></li>
-    </ul>
-    <ul>
-      <li><a href="https://www.linkedin.com/company/care-net-consultants-south-africa" target="_blank" rel="noopener">LinkedIn</a></li>
-      <li><a href="https://www.youtube.com/@carenetconsultantsSouthAfrica" target="_blank" rel="noopener">YouTube</a></li>
-      <li><a href="https://www.facebook.com/CareNetConsultantsSouthAfrica" target="_blank" rel="noopener">Facebook</a></li>
-      <li><a href="https://www.instagram.com/carenetconsultantssouthafrica/" target="_blank" rel="noopener">Instagram</a></li>
-    </ul>
-  </div>
-</div>
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. This page's own
+     sections moved to the band on the right, the same as the other pages.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
 
-<header class="nav">
-  <div class="wrap">
-    <a href="https://www.carenetconsultants.co.za/" aria-label="Care Net Consultants home">
-      <img decoding="async" loading="eager" width="200" height="58" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-Basic.webp" alt="Care Net Consultants logo">
-    </a>
-    <nav class="nav-links" aria-label="Main">
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
       <ul>
-        <li><a href="https://www.carenetconsultants.co.za/about">About</a></li>
-        <li><a href="https://www.carenetconsultants.co.za/medicals">Medicals</a></li>
-        <li><a href="#industries">Industries</a></li>
-        <li><a href="#how">How it works</a></li>
-        <li><a href="#packages">Packages</a></li>
-        <li><a href="https://www.carenetconsultants.co.za/my-clinic-online">My Clinic Online</a></li>
-        <li><a href="#faq">FAQ</a></li>
+        <li><a href="/">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
-    </nav>
-    <div class="nav-cta">
-      <a class="btn btn-ghost-dark" href="/sample.html">See a sample Plan</a>
-      <a class="btn btn-red" href="#quote">Get a quote</a>
     </div>
-  </div>
+  </nav>
 </header>
+
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#how"><i aria-hidden="true">1</i><span>How it works</span></a>
+  <a href="#industries"><i aria-hidden="true">2</i><span>Industries</span></a>
+  <a href="#packages"><i aria-hidden="true">3</i><span>Packages</span></a>
+  <a href="#faq"><i aria-hidden="true">4</i><span>Questions</span></a>
+  <a href="#quote"><i aria-hidden="true">5</i><span>Get a quote</span></a>
+</nav>
 
 <main id="main">
 
@@ -427,6 +428,8 @@ footer.foot .base img{height:46px;width:auto}
       </div>
     </div>
   </section>
+
+  <div class="pattern-strip" role="presentation"></div>
   <!-- CNC:END id=hero -->
 
   <div class="kpis">
@@ -834,6 +837,18 @@ footer.foot .base img{height:46px;width:auto}
     </div>
   </div>
 </footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
 
 <!-- CNC:SECTION id=consent_form v=1 lock=false -->
 <div class="consent" id="consent" role="dialog" aria-label="Cookie and privacy notice">
@@ -882,5 +897,7 @@ footer.foot .base img{height:46px;width:auto}
     .catch(function(){});
 })();
 </script>
+<script src="/js/cnc-header.js?v=20260918a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260918a" defer></script>
 </body>
 </html>
