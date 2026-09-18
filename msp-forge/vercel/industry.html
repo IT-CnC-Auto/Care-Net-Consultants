@@ -34,6 +34,14 @@
 <link rel="preload" href="/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/Montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/BebasNeue.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<!-- The shared site header, footer stamp, pattern strip and section band.
+     Presentation only: no endpoints, no data handling. -->
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260918a">
 <style>
 /* Care Net house faces, self hosted. Latin subset only, which is all an en-ZA
    page needs. Inter and Montserrat are variable fonts, so one file covers every
@@ -79,6 +87,8 @@ a{color:inherit}
 .nav a:hover{color:var(--red-ink)}
 .nav-links{display:flex;align-items:center;gap:22px}
 @media(max-width:980px){.nav-links ul{display:none}}
+/* The shared header is sticky, so anything linked to sits clear of it. */
+:target,[id]{scroll-margin-top:180px}
 .hero{background:radial-gradient(1100px 520px at 78% -8%,#2a0508 0%,#16161a 52%,#0c0c0f 100%);color:#fff;padding:56px 0 48px}
 .hero .lede{color:#d9d9e0;font-size:17px;max-width:60ch}
 /* The eyebrow grows from "Your industry" to the full Act name, which wraps to
@@ -152,37 +162,36 @@ footer.foot .base img{height:44px;width:auto}
 <body>
 <a class="skip" href="#main">Skip to main content</a>
 
-<div class="util">
-  <div class="wrap">
-    <ul>
-      <li><a href="tel:+27600702723">Call us</a></li>
-      <li><a href="mailto:salesdesk@carenetconsultants.co.za">Email</a></li>
-      <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
-    </ul>
-    <ul>
-      <li><a href="/medical-surveillance-plans.html">Medical Surveillance Plans</a></li>
-      <li><a href="/method.html">The Care Net Method</a></li>
-    </ul>
-  </div>
-</div>
+<!-- ============ Site header, matching carenetconsultants.co.za ============
+     Red band, the Care Net logo from R2, and the page menu. Styling lives in
+     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. This page's own
+     sections moved to the band on the right, the same as the other pages.
+     ======================================================================= -->
+<header class="cnc-sitehead">
+  <div class="band"></div>
 
-<header class="nav">
-  <div class="wrap">
-    <a href="https://www.carenetconsultants.co.za/" aria-label="Care Net Consultants home">
-      <img decoding="async" loading="eager" width="200" height="58" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-Basic.webp" alt="Care Net Consultants logo">
-    </a>
-    <nav class="nav-links" aria-label="Main">
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
       <ul>
-        <li><a href="/medical-surveillance-plans.html">Surveillance Plans</a></li>
-        <li><a href="#law">The law</a></li>
-        <li><a href="#jobs">Jobs we map</a></li>
-        <li><a href="#medicals">The medicals</a></li>
-        <li><a href="#journey">Your journey</a></li>
+        <li><a href="/">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
-    </nav>
-    <div class="nav-cta"><a class="btn btn-red" href="/shop.html">Get a quote</a></div>
-  </div>
+    </div>
+  </nav>
 </header>
+
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#law"><i aria-hidden="true">1</i><span>The law</span></a>
+  <a href="#jobs"><i aria-hidden="true">2</i><span>Jobs we map</span></a>
+  <a href="#medicals"><i aria-hidden="true">3</i><span>The medicals</span></a>
+  <a href="#journey"><i aria-hidden="true">4</i><span>Your journey</span></a>
+</nav>
 
 <main id="main">
   <section class="hero" aria-labelledby="h1">
@@ -197,6 +206,8 @@ footer.foot .base img{height:44px;width:auto}
       </div>
     </div>
   </section>
+
+  <div class="pattern-strip" role="presentation"></div>
 
   <div class="livebar">
     <div class="wrap" id="livebar">
@@ -336,6 +347,18 @@ footer.foot .base img{height:44px;width:auto}
     </div>
   </div>
 </footer>
+<!-- ============ AutoHive brand stamp ============
+     The credit strip that closes every page on the main Care Net site.
+     Styling lives in /css/cnc-footer.css and is shared by every page here.
+     ============================================== -->
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -430,5 +453,7 @@ footer.foot .base img{height:44px;width:auto}
   load();
 })();
 </script>
+<script src="/js/cnc-header.js?v=20260918a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260918a" defer></script>
 </body>
 </html>

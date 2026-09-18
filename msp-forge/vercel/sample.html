@@ -23,6 +23,9 @@
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
+  /* .chosen and .bar are flex, and a class rule beats the browser's own
+     [hidden] rule, so state them here. */
+  [hidden] { display: none !important; }
   html, body { margin: 0; background: #f4f4f4; color: var(--charcoal); font-family: 'Inter', Arial, Helvetica, sans-serif; }
   body { -webkit-user-select: none; user-select: none; }
   main { max-width: 900px; margin: 0 auto; padding: 22px 12px 70px; }
@@ -31,6 +34,42 @@
   .bar select { padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; min-width: 280px; }
   .bar .note { font-size: 13px; color: #555; max-width: 460px; }
   .bar .note strong { color: var(--red); }
+  /* ---- Choose your industry: the icon grid that replaced the dropdown ----
+     Each tile is a real link to ?industry=<slug>, so a choice can be shared,
+     bookmarked and opened in a new tab, and the browser's back button
+     returns to the grid. */
+  .chooser { background: #fff; border-radius: 8px; padding: 22px 20px 24px;
+             box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .chooser h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400;
+                letter-spacing: .03em; text-transform: uppercase; font-size: clamp(24px, 3.4vw, 32px);
+                line-height: 1; margin: 0 0 6px; color: var(--charcoal); }
+  .chooser .sub { font-size: 14px; color: #555; margin: 0 0 20px; max-width: 62ch; }
+  .icongrid { list-style: none; margin: 0; padding: 0;
+              display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .icongrid a { display: flex; flex-direction: column; align-items: center; gap: 10px;
+                text-decoration: none; color: var(--charcoal); text-align: center;
+                border: 1px solid #e4e4e4; border-radius: 8px; padding: 16px 12px 14px;
+                background: #fff; height: 100%; transition: border-color .15s, box-shadow .15s, transform .15s; }
+  .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red);
+                box-shadow: 0 3px 10px rgba(0,0,0,.10); transform: translateY(-2px); }
+  .icongrid a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .icongrid img { width: 68px; height: 68px; object-fit: contain; display: block;
+                  pointer-events: none; }
+  .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; }
+  @media (max-width: 420px) {
+    .icongrid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+    .icongrid img { width: 54px; height: 54px; }
+  }
+
+  /* ---- Viewing one sample ---- */
+  .chosen { background: #fff; border-radius: 8px; padding: 14px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+            display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .chosen img { width: 40px; height: 40px; object-fit: contain; flex: 0 0 auto; }
+  .chosen b { font-size: 15px; flex: 1 1 auto; min-width: 0; }
+  .chosen .back { font-size: 13px; font-weight: bold; color: var(--red); text-decoration: none;
+                  border: 1px solid var(--red); border-radius: 5px; padding: 8px 14px; flex: 0 0 auto; }
+  .chosen .back:hover { background: var(--red); color: #fff; }
+
   .pages { margin-top: 18px; }
   .page { position: relative; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.14); margin: 0 auto 16px; max-width: 794px; }
   .page img { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-select: none; }
@@ -111,16 +150,25 @@
 <div class="pattern-strip" role="presentation"></div>
 
 <main id="main">
-  <div class="bar">
-    <div>
-      <label for="pick">Industry</label>
-      <select id="pick"><option>Loading industries</option></select>
-    </div>
+  <!-- The grid, shown when no industry has been chosen yet. -->
+  <div class="chooser" id="chooser" hidden>
+    <h2>Choose your industry</h2>
+    <p class="sub">Pick your industry to open its sample Plan. Every sample is produced by the Care Net Method from entirely fictitious company data and is watermarked on every page, for viewing only.</p>
+    <ul class="icongrid" id="icongrid"></ul>
+  </div>
+
+  <!-- Which one is open, and the way back to the grid. -->
+  <div class="chosen" id="chosen" hidden>
+    <img id="chosen-icon" src="" alt="" width="40" height="40" decoding="async">
+    <b id="chosen-name">&nbsp;</b>
+    <a class="back" href="/sample.html">Choose a different industry</a>
+  </div>
+  <div class="bar" id="bar" hidden>
     <div class="note"><strong>Sample for viewing only.</strong> Produced by the Care Net Method from entirely fictitious company data and watermarked on every page. It cannot be downloaded or printed. Your own Plan is delivered as a signed document with your branding.</div>
   </div>
-  <div id="status" class="status">Loading the sample.</div>
+  <div id="status" class="status" hidden>Loading the sample.</div>
   <div id="pages" class="pages"></div>
-  <div class="cta">
+  <div class="cta" id="cta" hidden>
     <p>This is what your Plan looks like. Yours is built from your own sites, job categories and measured exposures, and reviewed by a registered Occupational Medical Practitioner before release.</p>
     <a class="btn" href="/">Start your assessment</a>
     <a class="btn secondary" href="/shop.html">Packages and pricing</a>
@@ -143,6 +191,15 @@
 
 <script>
 (function () {
+  /* Viewing only: no context menu, no drag, no save or print shortcuts.
+     Bound first, because the grid path below returns early. */
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+  document.addEventListener('keydown', function (e) {
+    var k = (e.key || '').toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'p' || k === 'u')) { e.preventDefault(); }
+  });
+
   var INDUSTRIES = [
     ["agriculture-and-forestry","AGRI","Agriculture and forestry"],
     ["cleaning-and-hygiene-services","CLEAN","Cleaning and hygiene services"],
@@ -162,49 +219,69 @@
     ["utilities-and-energy","UTIL","Utilities and energy"],
     ["waste-management","WASTE","Waste management"]
   ];
+  var ICONS = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
+  function iconFor(slug) { return ICONS + 'cnc-medical-surveillance-' + slug + '-icon.svg'; }
+
   var q = new URLSearchParams(location.search);
   var want = (q.get('industry') || '').toLowerCase();
   var code = (q.get('code') || '').toUpperCase();
-  var cur = INDUSTRIES.filter(function (i) { return i[0] === want || i[1] === code; })[0] || INDUSTRIES[2];
+  var cur = INDUSTRIES.filter(function (i) { return i[0] === want || i[1] === code; })[0] || null;
 
-  var pick = document.getElementById('pick');
-  pick.innerHTML = INDUSTRIES.map(function (i) {
-    return '<option value="' + i[0] + '"' + (i[0] === cur[0] ? ' selected' : '') + '>' + i[2] + '</option>';
-  }).join('');
-  pick.onchange = function () { location.search = '?industry=' + this.value; };
+  var elChooser = document.getElementById('chooser');
+  var elChosen  = document.getElementById('chosen');
+  var elBar     = document.getElementById('bar');
+  var elStatus  = document.getElementById('status');
+  var elPages   = document.getElementById('pages');
+  var elCta     = document.getElementById('cta');
+  var elTitle   = document.getElementById('title');
 
+  /* ---------------------------------------------- nothing chosen: the grid */
+  if (!cur) {
+    document.title = 'Sample Medical Surveillance Plan by industry | Care Net Consultants';
+    elTitle.textContent = 'Sample Medical Surveillance Plan';
+
+    var grid = document.getElementById('icongrid');
+    grid.innerHTML = INDUSTRIES.map(function (i) {
+      return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '">'
+           + '<img src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
+           + '<span>' + i[2] + '</span></a></li>';
+    }).join('');
+    elChooser.hidden = false;
+    return;
+  }
+
+  /* ------------------------------------------- one chosen: show its sample */
   document.title = cur[2] + ' sample Medical Surveillance Plan | Care Net Consultants';
-  document.getElementById('title').textContent = cur[2] + ': sample Medical Surveillance Plan';
+  elTitle.textContent = cur[2] + ': sample Medical Surveillance Plan';
 
-  var s = document.createElement('script');
-  s.src = '/samples/data/' + cur[0] + '.js?v=2';
-  s.onload = function () {
+  document.getElementById('chosen-icon').src = iconFor(cur[0]);
+  document.getElementById('chosen-name').textContent = cur[2];
+  elChosen.hidden = false;
+  elBar.hidden = false;
+  elStatus.hidden = false;
+
+  var sc = document.createElement('script');
+  sc.src = '/samples/data/' + cur[0] + '.js?v=2';
+  sc.onload = function () {
     var d = window.__MSP_SAMPLE;
     if (!d || !d.pages || !d.pages.length) { fail(); return; }
-    var host = document.getElementById('pages');
-    host.innerHTML = d.pages.map(function (src, i) {
+    elPages.innerHTML = d.pages.map(function (src, i) {
       return '<div class="page"><img alt="Sample Plan page ' + (i + 1) + ' of ' + d.pages.length + '" src="' + src + '" draggable="false">'
         + '<div class="shield"></div><span class="n">Page ' + (i + 1) + ' of ' + d.pages.length + '</span></div>';
     }).join('');
-    document.getElementById('status').style.display = 'none';
+    elStatus.hidden = true;
+    elCta.hidden = false;
     window.__MSP_SAMPLE = null;
   };
-  s.onerror = fail;
-  document.body.appendChild(s);
+  sc.onerror = fail;
+  document.body.appendChild(sc);
 
   function fail() {
-    var st = document.getElementById('status');
-    st.className = 'status err';
-    st.textContent = 'The sample could not be loaded just now. Please try again, or request a quotation and a sales executive will walk you through a Plan.';
+    elStatus.hidden = false;
+    elStatus.className = 'status err';
+    elStatus.textContent = 'The sample could not be loaded just now. Please try again, or request a quotation and a sales executive will walk you through a Plan.';
   }
 
-  /* Viewing only: no context menu, no drag, no save or print shortcuts. */
-  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
-  document.addEventListener('dragstart', function (e) { e.preventDefault(); });
-  document.addEventListener('keydown', function (e) {
-    var k = (e.key || '').toLowerCase();
-    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'p' || k === 'u')) { e.preventDefault(); }
-  });
 })();
 </script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
