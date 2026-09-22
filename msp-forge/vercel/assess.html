@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev" crossorigin>
 <link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260916a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260916a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260916a">
 <style>
@@ -164,7 +164,7 @@
         <li><a href="/">Start your journey</a></li>
         <li><a href="/pilot.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/shop.html">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
     </div>
@@ -559,7 +559,7 @@
           notice.innerHTML = '<p style="margin:0">Thank you. Your submission has been received under reference <strong>'
             + esc(res.j.reference) + '</strong>'
             + (res.j.status === 'triage'
-                ? '. A Care Net consultant will contact you to confirm some details before your Plan is drafted.'
+                ? '. A Care Net sales executive will contact you to confirm some details before your Plan is drafted.'
                 : '. Your Medical Surveillance Plan drafting process has begun.')
             + '</p>' + sampleOffer(data.industry_code);
           form.querySelectorAll('input, textarea, select, button').forEach(function (el) { el.disabled = true; });
@@ -574,7 +574,7 @@
           notice.textContent = 'Your submission could not be accepted: ' + (res.j.reason || 'it appears to contain personal information that must not be entered here, or required consent is missing. Please review and resubmit.');
         } else {
           notice.className = 'notice err';
-          notice.textContent = 'A processing error occurred. Please try again, or contact your Care Net consultant.';
+          notice.textContent = 'A processing error occurred. Please try again, or contact your Care Net sales executive.';
         }
         window.scrollTo({ top: notice.offsetTop - 80, behavior: 'smooth' });
       })

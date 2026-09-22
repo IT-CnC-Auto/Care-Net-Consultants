@@ -86,7 +86,9 @@
   font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;
   text-transform:uppercase;color:var(--cnc-ink);text-decoration:none;white-space:nowrap;transition:color .15s}
 .cnc-mainnav > .mwrap > ul > li > a:hover,
-.cnc-mainnav > .mwrap > ul > li.active > a{color:var(--cnc-red)}
+/* The current page's link is text on white, so it takes the deeper ink (5.9:1);
+   the red underline beneath it stays the brand red. */
+.cnc-mainnav > .mwrap > ul > li.active > a{color:var(--cnc-red-deep)}
 .cnc-mainnav > .mwrap > ul > li > a:focus-visible{outline:3px solid var(--cnc-red);outline-offset:-3px;border-radius:4px}
 /* The current page keeps a red underline, so people always know where they are */
 .cnc-mainnav > .mwrap > ul > li.active > a::after{content:"";position:absolute;left:13px;right:13px;bottom:8px;

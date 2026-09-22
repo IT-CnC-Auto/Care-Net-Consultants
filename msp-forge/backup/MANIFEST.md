@@ -44,6 +44,14 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 036_msp_ai_identity_limits.sql (5321 bytes)
 - 037_msp_env_ai_grant_lockdown.sql (3862 bytes)
 - 038_msp_audit_schedule_dedup.sql (2246 bytes)
+- 039_msp_client_signon.sql (2912 bytes)
+- 040_msp_self_service_access.sql (5534 bytes)
+- 041_msp_gap_safe_reference.sql (1425 bytes)
+- 042_msp_legislation_currency_2026_09.sql (40893 bytes)
+- 043_msp_client_contact_number.sql (4161 bytes)
+- 044_msp_intake_draft.sql (6521 bytes)
+- 045_msp_review_fee_bands.sql (9024 bytes)
+- 046_msp_public_instrument_register.sql (1511 bytes)
 
 ## Not SQL, and therefore not in the rebuild script
 

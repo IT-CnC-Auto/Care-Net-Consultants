@@ -45,7 +45,7 @@ This document records the state of the engine at the completion of the phased bu
 
 | Item | What is needed |
 | --- | --- |
-| CR-13.14 | Real rate card per industry; quotes stay indicative until supplied |
+| CR-13.14 | Retired 11/09/2026: the Plan is free to build, so there is no rate card. Replaced by the review bands in the parameter store (migration 045) |
 | CR-13.13 | Payment gateway selection and credentials |
 | CR-13.12 | MyClinicOnline API or filing mechanism for hosted packs, revisions, and the in app review link |
 | CR-12.7 follow up | Supabase Auth user with the forge_omp role so the OMP can approve the pilot pack |
