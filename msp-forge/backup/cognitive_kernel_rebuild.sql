@@ -1,10 +1,6 @@
--- Care Net medical surveillance framework | full rebuild script | regenerated 15/08/2026
--- Concatenation of every migration in order. Replaying this into an empty
--- Supabase project rebuilds the entire framework, workflows, policies, seed
--- content, the runtime parameter store and the assistant connection tables.
--- Canonical source: supabase/migrations/ in this repository.
--- The assistant edge function itself is not SQL and lives at
--- supabase/functions/msp-assistant/index.ts.
+-- Care Net medical surveillance framework | full rebuild script | regenerated 22/09/2026
+-- Concatenation of every migration in order. Canonical source: supabase/migrations/.
+-- The assistant edge function lives at supabase/functions/msp-assistant/index.ts.
 
 
 ------------------------------------------------------------------------------
@@ -6568,3 +6564,1241 @@ $$;
 
 revoke all on function msp_agent_reschedule() from public, anon;
 grant execute on function msp_agent_reschedule() to authenticated;
+
+------------------------------------------------------------------------------
+-- 039_msp_client_signon.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | FRM-GATE-01 v1.1.0 | Client sign-on write path 09/09/2026
+-- Defect: signon.js was the only endpoint writing with a raw PostgREST table
+-- insert. msp_client_account (migration 009) has RLS enabled with SELECT and
+-- UPDATE policies but NO INSERT policy, so the applicant row could never be
+-- written and every company registration failed with the generic
+-- "sign on could not be recorded". Every other write path in this build goes
+-- through a security definer function; this brings sign-on into line.
+--
+-- The function also makes re-submission idempotent: a repeat sign-on for an
+-- email that already has an account returns that account instead of dead-ending,
+-- so a second attempt never errors.
+
+create or replace function msp_client_signon(p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_company text := btrim(coalesce(p->>'company_name',''));
+  v_contact text := btrim(coalesce(p->>'contact_name',''));
+  v_email   text := lower(btrim(coalesce(p->>'contact_email','')));
+  v_notes   text := nullif(btrim(coalesce(p->>'notes','')), '');
+  v_id uuid;
+  v_kind text;
+begin
+  if v_company = '' or v_contact = '' or v_email = '' then
+    raise exception 'company name, contact name, and email are required';
+  end if;
+
+  select id, account_kind into v_id, v_kind
+    from msp_client_account
+   where lower(contact_email) = v_email
+   order by created_at desc
+   limit 1;
+
+  if v_id is not null then
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_signon_repeat',
+            jsonb_build_object('client_account_id', v_id, 'email', v_email));
+    return jsonb_build_object('status', 'received', 'reference', v_id,
+                             'account_kind', v_kind, 'existing', true);
+  end if;
+
+  insert into msp_client_account (company_name, contact_name, contact_email, notes)
+  values (v_company, v_contact, v_email, v_notes)
+  returning id, account_kind into v_id, v_kind;
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values ('signon', 'client_signon',
+          jsonb_build_object('client_account_id', v_id, 'company', v_company, 'email', v_email));
+
+  return jsonb_build_object('status', 'received', 'reference', v_id,
+                           'account_kind', v_kind, 'existing', false);
+end;
+$$;
+
+-- Mirror the grant pattern of the other server-side RPCs (msp_company_lookup,
+-- msp_create_quote): callable only by the service role that the Vercel
+-- endpoints authenticate with, never by a browser.
+revoke execute on function msp_client_signon(jsonb) from public, anon, authenticated;
+
+comment on function msp_client_signon is 'Server side only: records a landing-page company sign-on as an applicant (account_kind defaults to applicant; a forge_admin approves in the review interface). Idempotent on contact_email. Replaces the raw table insert that RLS refused.';
+
+------------------------------------------------------------------------------
+-- 040_msp_self_service_access.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | FRM-GATE-01 v1.2.0 | Self-service assessment access 11/09/2026
+-- MD ruling (31/08/2026, restated 11/09/2026): the Medical Surveillance Plan is free
+-- for every client who books medicals, and the OMP sign-off is the paid tier. The
+-- consultant approval gate on client accounts therefore no longer serves a purpose,
+-- and in practice it had no user interface at all: msp_grant_access is server-side
+-- only and settings.html has no client-accounts tab, so every registration stalled
+-- at "your registration is with a consultant for approval".
+--
+-- This migration removes the wait:
+--   1. msp_client_start_assessment(p_email) approves the account on demand and
+--      returns a live single-use assessment token, reusing an unused, unexpired
+--      token when one already exists so a page refresh never mints a second one.
+--   2. msp_client_signon now returns that token in the same call, so a client who
+--      has just registered is handed their assessment link immediately.
+--
+-- Nothing in the schema changes. account_kind keeps its enum (applicant,
+-- approved_client, declined); declined accounts are still refused; the token,
+-- expiry and one-token-one-assessment rule from migration 009 are unchanged.
+
+create or replace function msp_client_start_assessment(p_email text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account%rowtype;
+  v_token text;
+  v_grant jsonb;
+begin
+  select * into v_acc
+    from msp_client_account
+   where lower(contact_email) = lower(btrim(coalesce(p_email, '')))
+   order by created_at desc
+   limit 1;
+
+  if v_acc.id is null then
+    return jsonb_build_object('found', false);
+  end if;
+
+  if v_acc.account_kind = 'declined' then
+    return jsonb_build_object('found', true, 'declined', true,
+                              'company_name', v_acc.company_name);
+  end if;
+
+  -- Self-service approval: the account is approved the moment it asks to start.
+  if v_acc.account_kind <> 'approved_client' then
+    update msp_client_account
+       set account_kind = 'approved_client',
+           approved_by  = 'self-service',
+           approved_at  = now()
+     where id = v_acc.id;
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_self_approved',
+            jsonb_build_object('client_account_id', v_acc.id, 'company', v_acc.company_name));
+  end if;
+
+  -- Reuse a live token if one exists; otherwise mint one through the existing grant path.
+  select token into v_token
+    from msp_form_access
+   where client_account_id = v_acc.id
+     and used_by_intake is null
+     and expires_at > now()
+   order by created_at desc
+   limit 1;
+
+  if v_token is null then
+    v_grant := msp_grant_access('approved_client', v_acc.company_name, null, v_acc.id);
+    v_token := v_grant->>'token';
+  end if;
+
+  return jsonb_build_object(
+    'found', true,
+    'declined', false,
+    'company_name', v_acc.company_name,
+    'account_kind', 'approved_client',
+    'sla_status', v_acc.sla_status,
+    'tool_free', true,
+    'token', v_token);
+end;
+$$;
+revoke execute on function msp_client_start_assessment(text) from public, anon, authenticated;
+comment on function msp_client_start_assessment is 'Server side only: approves the signed-in contact''s account on demand and returns a live single-use assessment token (reusing an unused, unexpired one). Replaces the manual consultant approval step per the MD ruling of 31/08/2026.';
+
+create or replace function msp_client_signon(p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_company text := btrim(coalesce(p->>'company_name',''));
+  v_contact text := btrim(coalesce(p->>'contact_name',''));
+  v_email   text := lower(btrim(coalesce(p->>'contact_email','')));
+  v_notes   text := nullif(btrim(coalesce(p->>'notes','')), '');
+  v_id uuid;
+  v_existing boolean := false;
+  v_start jsonb;
+begin
+  if v_company = '' or v_contact = '' or v_email = '' then
+    raise exception 'company name, contact name, and email are required';
+  end if;
+
+  select id into v_id
+    from msp_client_account
+   where lower(contact_email) = v_email
+   order by created_at desc
+   limit 1;
+
+  if v_id is not null then
+    v_existing := true;
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_signon_repeat',
+            jsonb_build_object('client_account_id', v_id, 'email', v_email));
+  else
+    insert into msp_client_account (company_name, contact_name, contact_email, notes)
+    values (v_company, v_contact, v_email, v_notes)
+    returning id into v_id;
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_signon',
+            jsonb_build_object('client_account_id', v_id, 'company', v_company, 'email', v_email));
+  end if;
+
+  v_start := msp_client_start_assessment(v_email);
+
+  return jsonb_build_object(
+    'status', 'received',
+    'reference', v_id,
+    'existing', v_existing,
+    'company_name', v_start->>'company_name',
+    'account_kind', v_start->>'account_kind',
+    'declined', coalesce((v_start->>'declined')::boolean, false),
+    'token', v_start->>'token');
+end;
+$$;
+revoke execute on function msp_client_signon(jsonb) from public, anon, authenticated;
+comment on function msp_client_signon is 'Server side only: records a landing-page company sign-on, approves it immediately (self-service, MD ruling 31/08/2026) and returns the assessment token. Idempotent on contact_email.';
+
+notify pgrst, 'reload schema';
+
+------------------------------------------------------------------------------
+-- 041_msp_gap_safe_reference.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | FRM-INT-01 v1.1.1 | Gap-safe engagement reference 14/09/2026
+-- Defect: msp_next_reference (migration 006) numbered a day's engagements as
+-- count(today) + 1. After any deletion the count falls behind the highest number
+-- in use, the next intake is assigned a reference that already exists, and
+-- msp_ingest_intake fails on the unique reference (seen 14/09/2026 after a
+-- test-data clear: CNC-MSP-2026-0914-003 assigned twice).
+-- Fix: next number = highest existing number for the day + 1. The advisory lock
+-- still serialises concurrent intakes so two submissions never share a number.
+
+create or replace function msp_next_reference()
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_prefix text := 'CNC-MSP-' || to_char(current_date, 'YYYY-MMDD') || '-';
+  v_n int;
+begin
+  perform pg_advisory_xact_lock(hashtext('msp_engagement_reference'));
+  select coalesce(max(substring(reference from '(\d{3})$')::int), 0) + 1 into v_n
+    from msp_engagement
+   where reference like v_prefix || '%';
+  return v_prefix || lpad(v_n::text, 3, '0');
+end;
+$$;
+revoke execute on function msp_next_reference() from public, anon, authenticated;
+comment on function msp_next_reference is 'CNC-MSP-YYYY-MMDD-NNN. NNN = highest existing number for the day + 1 (gap-safe; count+1 collided after a test-data deletion on 14/09/2026). Advisory lock serialises concurrent intakes.';
+
+------------------------------------------------------------------------------
+-- 042_msp_legislation_currency_2026_09.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | KRN-LEG-02 v1.1.0 | Legislation currency release 16/09/2026
+-- Kernel learning update per SOP-KERNEL-AGENT.md section 3 leg 2, worked from the
+-- Care Net Consultants OH Value Chain Regulatory Instrument Pack dated 15/09/2026
+-- (primary Gazette texts, dual URL corroborated, currency checked on that date) on
+-- the MD's instruction of 16/09/2026 relayed by Odendaal. Documentary verification by
+-- the IT maintenance agent, subject to OMP ratification of release 1.1.0.
+--
+-- What changes:
+--   1. The noise transition scheduled by RULE-NOISE-TRANSITION is executed in the
+--      kernel: the NIHL Regulations, 2003 are superseded (repealed 06/09/2026 by
+--      regulation 18 of the Noise Exposure Regulations, 2024) and every protocol
+--      that cited them now cites the 2024 Regulations.
+--   2. The Physical Agents Regulations, 2024 (GN 5952, GG 52226) enter as verified
+--      with the Table 1 values read from the Gazette text; the Environmental
+--      Regulations for Workplaces, 1987 are superseded (repealed 06/09/2026 by
+--      regulation 21); heat and vibration citations move across; the 2024
+--      Regulations are mapped to every industry.
+--   3. The Code of Practice for Audiometry and SANS 10083 leave pending: verified
+--      (the Code from the Gazette bundle, SANS 10083:2023 Ed 6.01 from the licensed
+--      copy CNC now holds). SANS 451:2008 (spirometry, licensed copy) enters verified.
+--   4. Circular Instruction 171 (COIDA, hearing loss disablement), POPIA, the Health
+--      Professions Act and the Nursing Act enter as verified instruments. The
+--      Asbestos Abatement Regulations, 2020 enter as verified and are mapped to the
+--      industries where asbestos work occurs.
+--   5. Currency checks of 15/09/2026 are appended to the pack instruments already
+--      verified (OHS Act, Construction, HCA, HBA, Lead, GAR, GSR incl. the 2025
+--      amendment notice, COIDA, EEA, NER).
+--   6. Register: CR-12.3 and CR-13.9 appended; CR-14.1 to CR-14.5 opened. Release
+--      1.1.0 cut for OMP ratification; learning update logged.
+-- Idempotent: every insert is guarded by not exists, every update is keyed by name.
+-- Repository and database must agree: commit this file and apply it in one action.
+
+-- 0. Preflight ------------------------------------------------------------------
+
+do $$
+begin
+  if not exists (select 1 from msp_legal_instrument where short_name = 'Noise Exposure Regulations, 2024' and status = 'verified') then
+    raise exception 'preflight: Noise Exposure Regulations, 2024 must be verified before the transition can execute';
+  end if;
+  if exists (select 1 from msp_kernel_version where semver = '1.1.0') then
+    raise exception 'preflight: kernel release 1.1.0 already exists; migration 042 has been applied';
+  end if;
+end $$;
+
+-- 1. Noise transition executed --------------------------------------------------
+
+update msp_legal_instrument
+   set status = 'superseded',
+       amendment_history = coalesce(amendment_history, '') || ' Repealed with effect from 06/09/2026 by regulation 18 of the Noise Exposure Regulations, 2024 (GN 5953, GG 52226). Superseded in the kernel on 16/09/2026; retained for packs generated before the transition date and for legacy compensation claims. Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.7): repeal effective.'
+ where short_name = 'NIHL Regulations, 2003'
+   and status = 'verified';
+
+update msp_test_protocol
+   set legal_basis_id = (select id from msp_legal_instrument where short_name = 'Noise Exposure Regulations, 2024' and status = 'verified')
+ where legal_basis_id = (select id from msp_legal_instrument where short_name = 'NIHL Regulations, 2003');
+
+update msp_hazard
+   set oel_instrument = 'Noise Exposure Regulations, 2024 (GN 5953, GG 52226, 6 March 2025), the sole operative noise instrument from 06/09/2026: 85 dB(A) noise rating limit retained; action level of 82 dB(A) continuous and 135 dB(C) impulse where ototoxic chemical or whole body vibration co exposure exists; audiometry per the Code of Practice for Audiometry published with the Regulations',
+       oel_basis = '8 hour rating level, the noise rating limit (regulation 1 definitions)'
+ where code = 'A';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Transition complete: from 06/09/2026 the sole operative noise instrument; the NIHL Regulations, 2003 are repealed. Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.3, gov.za and labour.gov.za texts): in force, no amendment located.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'Noise Exposure Regulations, 2024';
+
+update msp_kernel_rule
+   set description = description || ' Transition executed in the kernel on 16/09/2026: the NIHL Regulations, 2003 row is superseded and every audiometry protocol cites the Noise Exposure Regulations, 2024. The engagement date test remains for packs dated before 06/09/2026.'
+ where rule_code = 'RULE-NOISE-TRANSITION';
+
+update msp_industry_instrument ii
+   set applicability_note = 'Repealed 06/09/2026 by the Noise Exposure Regulations, 2024; cited only in packs dated before the transition'
+  from msp_legal_instrument li
+ where li.id = ii.instrument_id and li.short_name = 'NIHL Regulations, 2003';
+
+-- Every industry that carried the 2003 Regulations must carry the 2024 Regulations.
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select ii.industry_id,
+       (select id from msp_legal_instrument where short_name = 'Noise Exposure Regulations, 2024' and status = 'verified'),
+       'Operative noise instrument from 06/09/2026: noise exposure risk assessment, monitoring, hearing conservation, medical screening and surveillance, audiometry per the Code of Practice'
+  from msp_industry_instrument ii
+  join msp_legal_instrument old on old.id = ii.instrument_id and old.short_name = 'NIHL Regulations, 2003'
+ where not exists (
+   select 1 from msp_industry_instrument x
+    join msp_legal_instrument n on n.id = x.instrument_id and n.short_name = 'Noise Exposure Regulations, 2024'
+   where x.industry_id = ii.industry_id);
+
+-- 2. Physical Agents Regulations, 2024 in; Environmental Regulations, 1987 out ---
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'Physical Agents Regulations, 2024',
+ 'Physical Agents Regulations, 2024, GN 5952, Government Gazette 52226, 6 March 2025, made under section 43 of the Occupational Health and Safety Act 85 of 1993. Cover cold stress, heat stress, illumination, indoor air quality, vibration and occupational non-ionising radiation: exposure risk assessment (regulation 6), exposure monitoring (regulation 7), medical screening and medical surveillance (regulation 8), records kept for 40 years (regulation 18).',
+ 'regulation', 'GN 5952, GG 52226', '2025-03-06',
+ 'Promulgated 6 March 2025 with GN 5953 (Noise Exposure Regulations, 2024) and GN 5954 (General Safety Regulations amendment). Regulation 21 repeals the Environmental Regulations for Workplaces, 1987 (GN R.2281 of 16 October 1987) 18 months after promulgation, with effect from 06/09/2026. Table 1 values read from the Gazette text: heat stress WBGT index action level 27 and occupational exposure limit 30 degrees Celsius (1 hour); hand arm vibration action value 2,5 and exposure limit 5 metres per square second (8 hours); whole body vibration action value 0,5 and exposure limit 1,15 metres per square second (8 hours); ultraviolet radiation 0,1 microwatt per square centimetre.',
+ 'GN 5952 in Government Gazette 52226 of 6 March 2025, Gazette text (gov.za mirror of GG 52226 held in the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, 01-Acts-and-Regulations/PAR-2024-GN5952-GG52226.pdf)',
+ 'Department of Employment and Labour publication of the 2025 OHS regulation set (labour.gov.za); CNC pack INDEX item 2.1.5 dual URL check across gov.za and labour.gov.za',
+ 'Currency check 15/09/2026: in force; regulation 21 repeal of the Environmental Regulations for Workplaces, 1987 effective 06/09/2026; no amendment located',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Physical Agents Regulations, 2024%');
+
+update msp_legal_instrument
+   set status = 'superseded',
+       amendment_history = coalesce(amendment_history, '') || ' Repealed with effect from 06/09/2026 by regulation 21 of the Physical Agents Regulations, 2024 (GN 5952, GG 52226). Superseded in the kernel on 16/09/2026; retained for packs generated before the transition date. Currency check 15/09/2026 (CNC regulatory instrument pack, LIVE_FETCH_LOG): repeal effective.'
+ where short_name = 'Environmental Regulations for Workplaces, 1987'
+   and status = 'verified';
+
+-- Heat stress citations move to the 2024 Regulations (regulation 10 and Table 1).
+update msp_test_protocol
+   set legal_basis_id = (select id from msp_legal_instrument where short_name = 'Physical Agents Regulations, 2024' and status = 'verified')
+ where legal_basis_id = (select id from msp_legal_instrument where short_name = 'Environmental Regulations for Workplaces, 1987');
+
+update msp_hazard
+   set oel_value = 30,
+       oel_unit = 'WBGT index, degrees Celsius',
+       oel_basis = 'Occupational exposure limit for heat stress, wet bulb globe temperature index, 1 hour reference period; action level 27 (Physical Agents Regulations, 2024, Table 1)',
+       oel_instrument = 'Physical Agents Regulations, 2024, GN 5952, GG 52226, regulation 10 (heat stress) and Table 1; replaces the Environmental Regulations for Workplaces, 1987 from 06/09/2026',
+       verification_status = 'verified'
+ where code = 'H';
+
+-- Vibration: the 2024 Regulations are the specific instrument (regulation 13). The
+-- hazard carries two limits (hand arm and whole body), so the numeric field stays
+-- null and exceedance assessment stays with the OMP; the values are recorded.
+update msp_test_protocol
+   set legal_basis_id = (select id from msp_legal_instrument where short_name = 'Physical Agents Regulations, 2024' and status = 'verified')
+ where test_name = 'Vibration and musculoskeletal screen'
+   and hazard_id = (select id from msp_hazard where code = 'G');
+
+update msp_hazard
+   set oel_basis = 'Physical Agents Regulations, 2024, Table 1: hand arm vibration action value 2,5 and exposure limit 5 metres per square second (8 hours); whole body vibration action value 0,5 and exposure limit 1,15 metres per square second (8 hours). Two limits on one hazard key, so the numeric field stays null and the exceedance assessment is the OMP determination against the applicable limit',
+       oel_instrument = 'Physical Agents Regulations, 2024, GN 5952, GG 52226, regulation 13 (vibration) and Table 1; Ergonomics Regulations, 2019 for the musculoskeletal effect'
+ where code = 'G';
+
+-- Non-ionising radiation (ultraviolet) protocol without a basis gains one.
+update msp_test_protocol
+   set legal_basis_id = (select id from msp_legal_instrument where short_name = 'Physical Agents Regulations, 2024' and status = 'verified')
+ where legal_basis_id is null
+   and hazard_id = (select id from msp_hazard where code = 'L')
+   and test_name ilike '%ultraviolet%';
+
+update msp_hazard
+   set oel_instrument = oel_instrument || '; occupational non-ionising radiation including ultraviolet per the Physical Agents Regulations, 2024, regulation 14 and Table 1 (ultraviolet 0,1 microwatt per square centimetre)'
+ where code = 'L'
+   and oel_instrument not ilike '%Physical Agents Regulations, 2024%';
+
+update msp_industry_instrument ii
+   set applicability_note = 'Repealed 06/09/2026 by the Physical Agents Regulations, 2024; cited only in packs dated before the transition'
+  from msp_legal_instrument li
+ where li.id = ii.instrument_id and li.short_name = 'Environmental Regulations for Workplaces, 1987';
+
+-- The 2024 Regulations apply to every industry (thermal environment, illumination,
+-- indoor air quality, vibration and non-ionising radiation are not sector specific).
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select i.id,
+       (select id from msp_legal_instrument where short_name = 'Physical Agents Regulations, 2024' and status = 'verified'),
+       'Cold stress, heat stress, illumination, indoor air quality, vibration and non-ionising radiation: exposure risk assessment, monitoring and medical surveillance under regulation 8; replaces the Environmental Regulations for Workplaces, 1987 from 06/09/2026'
+  from msp_industry i
+ where not exists (
+   select 1 from msp_industry_instrument x
+    join msp_legal_instrument n on n.id = x.instrument_id and n.short_name = 'Physical Agents Regulations, 2024'
+   where x.industry_id = i.id);
+
+-- 3. Code of Practice for Audiometry and the SANS standards ---------------------
+
+do $$
+declare
+  v_id uuid;
+begin
+  select id into v_id from msp_legal_instrument
+   where short_name = 'Code of Practice for Audiometry, 2025' and status = 'pending' limit 1;
+  if v_id is not null then
+    update msp_legal_instrument
+       set full_citation = 'Code of Practice for Audiometry with Explanatory Notes, published with the Noise Exposure Regulations, 2024 (GN 5953, Government Gazette 52226, 6 March 2025) and incorporated under regulation 15 of those Regulations; governs baseline, periodic, diagnostic and exit audiometry, audiometer calibration (electro acoustic, biological and daily checks) and the acoustic test environment',
+           gazette_reference = 'GG 52226, published with GN 5953',
+           effective_date = '2025-03-06'
+     where id = v_id;
+    perform msp_verify_instrument(
+      v_id,
+      'Code of Practice for Audiometry, Gazette text in Government Gazette 52226 following GN 5953 (gov.za mirror in the CNC regulatory instrument pack of 15/09/2026, 01-Acts-and-Regulations/PAR-2024-GN5952-GG52226.pdf from its page 114) and the Department of Employment and Labour bundle NER-2024-CoP-Audiometry-Explanatory-labour.pdf',
+      'Department of Employment and Labour publication of the Noise Exposure Regulations bundle with the Code and Explanatory Notes (labour.gov.za); CNC pack INDEX item 2.1.4',
+      'Currency check 15/09/2026: in force and incorporated under the Noise Exposure Regulations, 2024, which became the sole operative noise instrument on 06/09/2026',
+      'Published 6 March 2025 with the Noise Exposure Regulations, 2024. Governs audiometric method from the transition date 06/09/2026.',
+      'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+      '2027-09-15');
+  end if;
+
+  select id into v_id from msp_legal_instrument
+   where short_name = 'SANS 10083' and status = 'pending' limit 1;
+  if v_id is not null then
+    update msp_legal_instrument
+       set short_name = 'SANS 10083:2023',
+           full_citation = 'SANS 10083:2023 Edition 6.1, The measurement and assessment of occupational noise for hearing conservation purposes (SABS, approved 4 November 2023, replaces edition 6 of 2021), the measurement standard for noise exposure monitoring under the Noise Exposure Regulations, 2024',
+           gazette_reference = 'SABS ISBN 978-626-0-42488-6',
+           effective_date = '2023-11-04'
+     where id = v_id;
+    perform msp_verify_instrument(
+      v_id,
+      'SANS 10083:2023 Edition 6.1, licensed copy held by Care Net Consultants (supplied by the MD 16/09/2026; copyright SABS, not reproduced)',
+      'SABS store product metadata read live 15/09/2026 (store.sabs.co.za: edition 6.01, approved 4 November 2023, ISBN 978-626-0-42488-6); CNC pack SANS_CATALOGUE.md section 1.1',
+      'Currency check 15/09/2026: edition 6.01 of 2023 is the current edition on the SABS store and replaces edition 6 of 2021',
+      'Edition 6.1 approved 4 November 2023 replaces edition 6 of 2021. Referenced by the Noise Exposure Regulations, 2024 for noise measurement.',
+      'Claude Code maintenance agent (IT), documentary verification against the licensed copy and the SABS store, subject to OMP ratification',
+      '2027-09-15');
+  end if;
+end $$;
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'SANS 451:2008',
+ 'SANS 451:2008 Edition 1, Spirometry: generation of acceptable and repeatable spirograms (SABS), the method standard for lung function testing in the Care Net medical examinations matrix',
+ 'sans', 'SABS ISBN 978-0-626-21783-9', '2008-01-01',
+ 'Edition 1 of 2008. No later edition located on the SABS store at the check date.',
+ 'SANS 451:2008 Edition 1, licensed copy held by Care Net Consultants (supplied by the MD 16/09/2026; copyright SABS, not reproduced)',
+ 'Care Net Consultants medical examinations matrix (published service definition citing SANS 451 for spirometry); SABS store listing',
+ 'Currency check 15/09/2026: edition 1 of 2008 current; no replacement edition located',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the licensed copy and the SABS store, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%SANS 451%');
+
+-- Audiometry code and SANS 10083 travel with the Noise Exposure Regulations; SANS 451 with every industry.
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select ii.industry_id, c.id, 'Audiometric method, calibration and test environment for every audiometry protocol under the Noise Exposure Regulations, 2024'
+  from msp_industry_instrument ii
+  join msp_legal_instrument n on n.id = ii.instrument_id and n.short_name = 'Noise Exposure Regulations, 2024'
+  join msp_legal_instrument c on c.short_name = 'Code of Practice for Audiometry, 2025' and c.status = 'verified'
+ where not exists (select 1 from msp_industry_instrument x where x.industry_id = ii.industry_id and x.instrument_id = c.id);
+
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select ii.industry_id, s.id, 'Noise measurement and assessment standard for exposure monitoring under the Noise Exposure Regulations, 2024'
+  from msp_industry_instrument ii
+  join msp_legal_instrument n on n.id = ii.instrument_id and n.short_name = 'Noise Exposure Regulations, 2024'
+  join msp_legal_instrument s on s.short_name = 'SANS 10083:2023' and s.status = 'verified'
+ where not exists (select 1 from msp_industry_instrument x where x.industry_id = ii.industry_id and x.instrument_id = s.id);
+
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select i.id, s.id, 'Spirometry method standard for every lung function test in the programme'
+  from msp_industry i
+  join msp_legal_instrument s on s.short_name = 'SANS 451:2008' and s.status = 'verified'
+ where not exists (select 1 from msp_industry_instrument x where x.industry_id = i.id and x.instrument_id = s.id);
+
+-- 4. New verified instruments from the pack ---------------------------------------
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'Circular Instruction 171 (COIDA)',
+ 'Circular Instruction No. 171 under the Compensation for Occupational Injuries and Diseases Act 130 of 1993: the determination of permanent disablement resulting from hearing loss caused by exposure to excessive noise and trauma (GN 422, Government Gazette 22296, 16 May 2001); the percentage loss of hearing (PLH) method for noise induced hearing loss claims',
+ 'circular', 'GN 422, GG 22296', '2001-05-16',
+ 'In force and in use for PLH determination at the check date.',
+ 'Circular Instruction 171 text (third party PDF mirror held in the CNC regulatory instrument pack of 15/09/2026, 02-COIDA-Compensation/Instruction-171-PLH.pdf)',
+ 'SAFLII consolidated regulation text of Circular Instruction 171; Compensation Fund practice; CNC pack INDEX item 2.2.4',
+ 'Currency check 15/09/2026: in force; still applied to noise induced hearing loss claims; no replacement instruction located',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Circular Instruction No. 171%' or short_name ilike '%Instruction 171%');
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'POPIA',
+ 'Protection of Personal Information Act 4 of 2013 (Government Gazette 37067, 26 November 2013): health information is special personal information (section 26); processing by medical practitioners and for employment purposes under sections 27 and 32; the lawful basis for the POPIA notice, consent and retention blocks in every Plan',
+ 'act', null, '2020-07-01',
+ 'Main processing provisions commenced 1 July 2020; in force at the check date.',
+ 'Act text as published (gov.za mirror held in the CNC regulatory instrument pack of 15/09/2026, 01-Acts-and-Regulations/POPIA-Act-4-of-2013.pdf)',
+ 'Information Regulator publications (inforegulator.org.za); CNC pack INDEX item 2.3.1',
+ 'Currency check 15/09/2026: in force; no amendment affecting health information processing located',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Protection of Personal Information Act%');
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'Health Professions Act',
+ 'Health Professions Act 56 of 1974 (enacted as the Medical, Dental and Supplementary Health Service Professions Act; Government Gazette of 16 October 1974), as amended: registration, scope and professional conduct of medical practitioners including the Designated Occupational Medical Practitioner, under the Health Professions Council of South Africa',
+ 'act', null, '1974-10-16',
+ 'Original 1974 text verified; the Act has been amended repeatedly and the consolidated text is administered by the HPCSA. In force at the check date.',
+ 'Act text as published (gov.za mirror held in the CNC regulatory instrument pack of 15/09/2026, 01-Acts-and-Regulations/Health-Professions-Act-56-of-1974.pdf)',
+ 'HPCSA published legislation and ethical rules (hpcsa.co.za); CNC pack INDEX item 2.3.2',
+ 'Currency check 15/09/2026: in force, as amended',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Health Professions Act 56 of 1974%');
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'Nursing Act',
+ 'Nursing Act 33 of 2005 (Government Gazette 28883, 29 May 2006): registration and practice of nurses, including occupational health nurse practitioners who conduct examinations under the programme, under the South African Nursing Council',
+ 'act', 'GG 28883', '2006-05-29',
+ 'In force at the check date.',
+ 'Act text as published (gov.za mirror held in the CNC regulatory instrument pack of 15/09/2026, 01-Acts-and-Regulations/Nursing-Act-33-of-2005.pdf)',
+ 'South African Nursing Council published legislation (sanc.co.za); CNC pack INDEX item 2.3.3',
+ 'Currency check 15/09/2026: in force',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Nursing Act 33 of 2005%');
+
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, gazette_reference, effective_date,
+   amendment_history, source_one, source_two, source_three,
+   verified_on, verified_by, review_due, status)
+select
+ 'Asbestos Abatement Regulations, 2020',
+ 'Asbestos Abatement Regulations, 2020, GN R.1196, Government Gazette 43893, 10 November 2020, made under the Occupational Health and Safety Act 85 of 1993, as amended by GN R.2092 of 20 May 2022 (Government Gazette 46380): asbestos risk assessment, inventory and management plan, air monitoring, medical surveillance of exposed employees, and 40 year record keeping',
+ 'regulation', 'GN R.1196, GG 43893', '2020-11-10',
+ 'Amended by GN R.2092 of 20 May 2022 (amendment text catalogued, not held in the pack). In force at the check date.',
+ 'GN R.1196 Gazette text (gov.za mirror held in the CNC regulatory instrument pack of 15/09/2026, 01-Acts-and-Regulations/Asbestos-Abatement-Regs-2020-GG43893.pdf)',
+ 'lawlibrary.org.za consolidated text and the 2022 amendment notice (akn/za/act/gn/2022/r2092); CNC pack INDEX items 2.1.9 and 2.1.10',
+ 'Currency check 15/09/2026: in force as amended 2022; no later amendment located',
+ current_date,
+ 'Claude Code maintenance agent (IT), documentary verification against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026, subject to OMP ratification',
+ '2027-09-15', 'verified'
+where not exists (select 1 from msp_legal_instrument where full_citation ilike '%Asbestos Abatement Regulations%');
+
+-- Maps: COIDA circular travels with the noise instrument; POPIA, the practitioner
+-- Acts go to every industry; asbestos to the industries where asbestos work occurs.
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select ii.industry_id, c.id, 'Percentage loss of hearing determination for noise induced hearing loss compensation claims'
+  from msp_industry_instrument ii
+  join msp_legal_instrument n on n.id = ii.instrument_id and n.short_name = 'Noise Exposure Regulations, 2024'
+  join msp_legal_instrument c on c.short_name = 'Circular Instruction 171 (COIDA)' and c.status = 'verified'
+ where not exists (select 1 from msp_industry_instrument x where x.industry_id = ii.industry_id and x.instrument_id = c.id);
+
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select i.id, li.id, m.note
+  from msp_industry i
+  join (values
+    ('POPIA', 'Lawful processing of employee health information; the POPIA notice, consent and retention blocks in the Plan'),
+    ('Health Professions Act', 'Registration and conduct of the Designated Occupational Medical Practitioner who approves the Plan and determines fitness'),
+    ('Nursing Act', 'Registration and practice of the occupational health nurse practitioners who conduct examinations')
+  ) as m(short_name, note) on true
+  join msp_legal_instrument li on li.short_name = m.short_name and li.status = 'verified'
+ where not exists (select 1 from msp_industry_instrument x where x.industry_id = i.id and x.instrument_id = li.id);
+
+insert into msp_industry_instrument (industry_id, instrument_id, applicability_note)
+select i.id, li.id,
+       'Applies where asbestos containing materials are present, disturbed or removed: risk assessment, inventory, air monitoring and medical surveillance of exposed employees; the battery is set by the OMP per engagement (CR-14.3)'
+  from msp_industry i
+  join msp_legal_instrument li on li.short_name = 'Asbestos Abatement Regulations, 2020' and li.status = 'verified'
+ where i.code in ('CONSTR', 'MANU', 'MINING', 'WASTE', 'UTIL', 'GOV', 'PETRO')
+   and not exists (select 1 from msp_industry_instrument x where x.industry_id = i.id and x.instrument_id = li.id);
+
+-- 5. Currency checks appended to pack instruments already verified ----------------
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.1 and 2.1.2, gov.za and labour.gov.za texts): in force, as amended.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'OHS Act' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.15): in force.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'Construction Regulations, 2014' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.8, gov.za and lawlibrary.org.za texts): in force.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'HCA Regulations, 2021' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.13, GN R.1887 in GG 46051 of 16 March 2022): in force; records including the risk assessment kept a minimum of 40 years.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'HBA Regulations, 2022' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.11 and 2.1.12): in force. A Draft Lead Regulation was published for comment on 1 March 2024 (GN R.4437, GG 50203) and is not promulgated; the 2001 Regulations remain the operative instrument (standing watch CR-14.2).',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-03-15')
+ where short_name = 'Lead Regulations, 2001' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.14): in force.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'General Administrative Regulations, 2003' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Amended by GN 5954 in Government Gazette 52226 of 6 March 2025 (notice regarding amendment to the General Safety Regulations, published with the Noise Exposure and Physical Agents Regulations). Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.1.6): in force as amended.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'General Safety Regulations, 1986' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.2.1 to 2.2.3): Amendment Act 10 of 2022 (GG 48431, 17 April 2023) commenced by Proclamation 306 of 2026 (GG 53990, 23 January 2026) on 23 January 2026 for all sections except section 1(g) and part of 1(h), on 1 February 2026 for sections 3 to 6, and on 1 April 2026 for sections 19(a) and (b), 20(c), 28(c), 36(1), 50(3), 52 and 54(1) and (2); the excepted definitions remain uncommenced.'
+ where short_name = 'COIDA' and status = 'verified';
+
+update msp_legal_instrument
+   set amendment_history = coalesce(amendment_history, '') || ' Currency check 15/09/2026 (CNC regulatory instrument pack, INDEX 2.3.4): section 7 in force, unchanged.',
+       review_due = greatest(coalesce(review_due, current_date), date '2027-09-15')
+ where short_name = 'EEA section 7' and status = 'verified';
+
+-- 6. Register ----------------------------------------------------------------------
+
+update msp_confirmation_item
+   set description = description || ' Update 16/09/2026: Care Net now holds licensed copies of SANS 10083:2023 Edition 6.1 (noise measurement) and SANS 451:2008 Edition 1 (spirometry), both verified into the kernel. SANS 10182:2006 (audiometric acoustic environment) and SANS 10154-1 and 10154-2:2012 (audiometer verification) remain catalogue entries only, editions confirmed on the SABS store 15/09/2026, licensed copies not yet held.'
+ where item_code = 'CR-12.3';
+
+update msp_confirmation_item
+   set description = description || ' Update 16/09/2026: the General Safety Regulations, 1986 (with the 2025 amendment notice), the General Administrative Regulations, 2003 and the Driven Machinery Regulations are verified; the General Machinery Regulations remain pending and uncitable, with the draft General Machinery Regulation, 2025 replacement on the standing watch.'
+ where item_code = 'CR-13.9';
+
+insert into msp_confirmation_item (item_code, kind, description, status)
+select v.code, v.kind, v.descr, 'open'
+  from (values
+    ('CR-14.1', 'confirm',
+     'Kernel release 1.1.0 (16/09/2026): the noise transition executed (NIHL Regulations, 2003 superseded, audiometry cites the Noise Exposure Regulations, 2024), the Physical Agents Regulations, 2024 verified with Table 1 values and mapped to every industry, the Environmental Regulations for Workplaces, 1987 superseded, the Code of Practice for Audiometry, SANS 10083:2023 and SANS 451:2008 verified, Circular Instruction 171, POPIA, the Health Professions Act, the Nursing Act and the Asbestos Abatement Regulations, 2020 verified. Documentary verification by the IT maintenance agent against the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026. OMP ratification of release 1.1.0 required (Dr C. P. Green-Thompson, HPCSA MP 0195952).'),
+    ('CR-14.2', 'confirm',
+     'Standing watch: the Draft Lead Regulation published for comment on 1 March 2024 (GN R.4437, GG 50203) is not promulgated; the Lead Regulations, 2001 remain operative. When promulgated, verify the new instrument, move the C-PB hazard and the two lead protocols across, and supersede the 2001 row. Review due 15/03/2027 on the 2001 row.'),
+    ('CR-14.3', 'confirm',
+     'Asbestos Abatement Regulations, 2020 are verified and mapped to Construction, Manufacturing, Mining, Waste, Utilities, Government and Petrochemical, but no asbestos specific test protocol exists in the kernel: asbestos exposed categories currently receive the hazard C chemical battery. The OMP to confirm the asbestos medical surveillance battery (respiratory questionnaire, spirometry, chest radiograph per the OMP protocol) and its interval before a protocol row is added.'),
+    ('CR-14.4', 'confirm',
+     'Physical Agents Regulations, 2024: hazard H (heat stress) now carries the verified WBGT limit of 30 and action level 27 from Table 1, so measured heat exposures are assessed by the engine. Hazard G (vibration) carries two limits (hand arm 5, whole body 1,15 metres per square second, action values 2,5 and 0,5) on one hazard key, so its numeric field stays null and exceedance stays with the OMP. Confirm whether hazard G should split into G-HAV and G-WBV so the engine can assess vibration exceedances.'),
+    ('CR-14.5', 'confirm',
+     'Compensation Fund guidance in the pack (CompEasy employer and health care provider claim registration manuals, COIDA Service Book version 23) is reference material for the claims process and is not entered as kernel instruments; the claims workflow narrative in packs may cite COIDA and Circular Instruction 171 only. Confirm whether the assistant should carry the CompEasy process as a client explanation.')
+  ) as v(code, kind, descr)
+ where not exists (select 1 from msp_confirmation_item c where c.item_code = v.code);
+
+-- 7. Release 1.1.0 and the learning update record ----------------------------------
+
+insert into msp_kernel_version (semver, change_summary, kernel_counts, created_by)
+values ('1.1.0',
+        'Legislation currency release 16/09/2026 from the CNC OH Value Chain Regulatory Instrument Pack of 15/09/2026: noise transition executed (NIHL 2003 superseded, NER 2024 cited by every audiometry protocol); Physical Agents Regulations, 2024 verified with Table 1 values and mapped to all industries; Environmental Regulations for Workplaces, 1987 superseded; Code of Practice for Audiometry, SANS 10083:2023 and SANS 451:2008 verified; Circular Instruction 171, POPIA, Health Professions Act, Nursing Act and Asbestos Abatement Regulations, 2020 verified; currency checks appended to ten instruments; register items CR-14.1 to CR-14.5 opened. Subject to OMP ratification.',
+        msp_kernel_counts(),
+        'Claude Code maintenance agent (IT), migration 042');
+
+insert into msp_kernel_agent_run (kind, report, outcome)
+values ('learning_update',
+        jsonb_build_object(
+          'run_on', current_date,
+          'source', 'CNC OH Value Chain Regulatory Instrument Pack, 15/09/2026',
+          'superseded', jsonb_build_array('NIHL Regulations, 2003', 'Environmental Regulations for Workplaces, 1987'),
+          'verified_new', jsonb_build_array('Physical Agents Regulations, 2024', 'Code of Practice for Audiometry, 2025', 'SANS 10083:2023', 'SANS 451:2008', 'Circular Instruction 171 (COIDA)', 'POPIA', 'Health Professions Act', 'Nursing Act', 'Asbestos Abatement Regulations, 2020'),
+          'currency_checked', jsonb_build_array('OHS Act', 'Construction Regulations, 2014', 'HCA Regulations, 2021', 'HBA Regulations, 2022', 'Lead Regulations, 2001', 'General Administrative Regulations, 2003', 'General Safety Regulations, 1986', 'COIDA', 'EEA section 7', 'Noise Exposure Regulations, 2024'),
+          'register_opened', jsonb_build_array('CR-14.1', 'CR-14.2', 'CR-14.3', 'CR-14.4', 'CR-14.5'),
+          'release', '1.1.0',
+          'counts', msp_kernel_counts()),
+        'findings');
+
+insert into msp_audit (actor, event_type, event_detail)
+values ('Claude Code maintenance agent (IT), migration 042', 'kernel_release',
+        jsonb_build_object('semver', '1.1.0', 'summary', 'Legislation currency release 16/09/2026; OMP ratification pending', 'counts', msp_kernel_counts()));
+
+-- 8. Gates -----------------------------------------------------------------------------
+
+do $$
+declare
+  v_bad int;
+  v_missing int;
+  v_dash int;
+begin
+  select count(*) into v_bad
+    from msp_test_protocol p
+    join msp_legal_instrument li on li.id = p.legal_basis_id
+   where li.status <> 'verified';
+  if v_bad > 0 then
+    raise exception 'gate: % protocols still cite a non verified instrument', v_bad;
+  end if;
+
+  select count(*) into v_missing
+    from msp_industry i
+   where not exists (
+     select 1 from msp_industry_instrument ii
+      join msp_legal_instrument li on li.id = ii.instrument_id
+     where ii.industry_id = i.id and li.short_name = 'Physical Agents Regulations, 2024');
+  if v_missing > 0 then
+    raise exception 'gate: % industries without the Physical Agents Regulations, 2024 mapping', v_missing;
+  end if;
+
+  select count(*) into v_missing
+    from msp_industry_instrument ii
+    join msp_legal_instrument old on old.id = ii.instrument_id and old.short_name = 'NIHL Regulations, 2003'
+   where not exists (
+     select 1 from msp_industry_instrument x
+      join msp_legal_instrument n on n.id = x.instrument_id and n.short_name = 'Noise Exposure Regulations, 2024'
+     where x.industry_id = ii.industry_id);
+  if v_missing > 0 then
+    raise exception 'gate: % industries carry the 2003 noise regulations without the 2024 successor', v_missing;
+  end if;
+
+  select count(*) into v_dash
+    from msp_legal_instrument
+   where amendment_history ~ '—|–' or full_citation ~ '—|–' or source_one ~ '—|–' or source_two ~ '—|–' or source_three ~ '—|–';
+  if v_dash > 0 then
+    raise exception 'gate: dash punctuation found in % instrument rows', v_dash;
+  end if;
+
+  raise notice 'migration 042 applied: release 1.1.0, counts %', msp_kernel_counts();
+end $$;
+
+------------------------------------------------------------------------------
+-- 043_msp_client_contact_number.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | FRM-GATE-01 v1.3.0 | Client contact number 16/09/2026
+-- Cassandra's back-end ask 3 (16/09/2026): the landing page now collects a contact
+-- number with the company name and contact person, but the client record had no
+-- column for it, so the front end has been carrying it inside notes as
+-- "Contact number: +27 ...". That is readable by a consultant but cannot be
+-- searched, sorted or dialled from.
+--
+-- This migration:
+--   1. adds msp_client_account.contact_number (free text, trimmed; the front end
+--      already validates the shape, and numbers arrive in several formats);
+--   2. teaches msp_client_signon to read p->>'contact_number', store it on a new
+--      account, fill it in on a repeat sign-on when the account has none, and
+--      return it;
+--   3. backfills the column from any note that still carries the interim wording.
+-- notes stays as it is for anything else a consultant wants to record.
+
+alter table msp_client_account add column if not exists contact_number text;
+comment on column msp_client_account.contact_number is 'Client contact telephone number as given on the landing page (free text, trimmed). Added 16/09/2026.';
+
+-- Backfill from the interim "Contact number: ..." note written by the landing page
+-- between 16/09/2026 and this migration. The note is left in place.
+update msp_client_account
+   set contact_number = btrim(substring(notes from 'Contact number:\s*([^;\n]+)'))
+ where contact_number is null
+   and notes ~ 'Contact number:\s*\S';
+
+create or replace function msp_client_signon(p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_company text := btrim(coalesce(p->>'company_name',''));
+  v_contact text := btrim(coalesce(p->>'contact_name',''));
+  v_email   text := lower(btrim(coalesce(p->>'contact_email','')));
+  v_notes   text := nullif(btrim(coalesce(p->>'notes','')), '');
+  v_number  text := nullif(btrim(coalesce(p->>'contact_number','')), '');
+  v_id uuid;
+  v_existing boolean := false;
+  v_start jsonb;
+begin
+  if v_company = '' or v_contact = '' or v_email = '' then
+    raise exception 'company name, contact name, and email are required';
+  end if;
+  if v_number is not null and length(v_number) > 40 then
+    raise exception 'contact number is too long';
+  end if;
+
+  select id into v_id
+    from msp_client_account
+   where lower(contact_email) = v_email
+   order by created_at desc
+   limit 1;
+
+  if v_id is not null then
+    v_existing := true;
+    -- A repeat sign-on may bring a number the account never had.
+    if v_number is not null then
+      update msp_client_account
+         set contact_number = v_number
+       where id = v_id and contact_number is null;
+    end if;
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_signon_repeat',
+            jsonb_build_object('client_account_id', v_id, 'email', v_email));
+  else
+    insert into msp_client_account (company_name, contact_name, contact_email, contact_number, notes)
+    values (v_company, v_contact, v_email, v_number, v_notes)
+    returning id into v_id;
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('signon', 'client_signon',
+            jsonb_build_object('client_account_id', v_id, 'company', v_company, 'email', v_email));
+  end if;
+
+  v_start := msp_client_start_assessment(v_email);
+
+  return jsonb_build_object(
+    'status', 'received',
+    'reference', v_id,
+    'existing', v_existing,
+    'company_name', v_start->>'company_name',
+    'contact_number', (select contact_number from msp_client_account where id = v_id),
+    'account_kind', v_start->>'account_kind',
+    'declined', coalesce((v_start->>'declined')::boolean, false),
+    'token', v_start->>'token');
+end;
+$$;
+revoke execute on function msp_client_signon(jsonb) from public, anon, authenticated;
+comment on function msp_client_signon is 'Server side only: records a landing-page company sign-on (company, contact, email, optional contact_number, notes), approves it immediately (self-service, MD ruling 31/08/2026) and returns the assessment token. Idempotent on contact_email.';
+
+notify pgrst, 'reload schema';
+
+------------------------------------------------------------------------------
+-- 044_msp_intake_draft.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | FRM-DRAFT-01 v1.0.0 | Server-side assessment drafts 16/09/2026
+-- Cassandra's back-end ask 4 (16/09/2026): the assessment page saves a draft in the
+-- visitor's browser (cnc-journey.js), which holds up on one machine but cannot
+-- follow the same emailed link to a second one. This migration gives a draft a
+-- home on the server, one row per access token, so the link opens the
+-- part-finished assessment anywhere and the browser copy becomes the fallback.
+--
+-- Rules
+--   * The access token is the only key. A draft can be saved or read only while
+--     msp_check_access says the token is live (unknown, used or expired tokens are
+--     refused with the same reasons the assessment page already shows).
+--   * One row per token; saving again replaces the payload.
+--   * The payload is the form's own field map plus the repeat-block counts, the
+--     section the client was on and the running answer count. The server does not
+--     interpret it. Size is capped at 256 KB (a full assessment is well under 50 KB).
+--   * When the token is consumed by a submission the draft is deleted by trigger,
+--     so nothing lingers once the intake exists. msp_draft_purge() removes drafts
+--     whose token has expired; run it from the agent schedule or by hand.
+--   * POPIA: a draft holds company details, named contacts and workplace hazards,
+--     never clinical results (the form forbids them). RLS is on with no policies,
+--     so only the service role (the Vercel endpoints) can touch the table.
+
+create table if not exists msp_intake_draft (
+  id uuid primary key default gen_random_uuid(),
+  access_id uuid not null unique references msp_form_access(id) on delete cascade,
+  payload jsonb not null default '{}'::jsonb,
+  step int not null default 1,
+  filled int not null default 0,
+  company text,
+  saved_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  constraint msp_intake_draft_payload_size check (pg_column_size(payload) <= 262144)
+);
+comment on table msp_intake_draft is 'Part-finished assessment answers, one row per live access token, saved from assess.html so the same emailed link resumes on any machine. Deleted when the token is consumed. Service role only.';
+alter table msp_intake_draft enable row level security;
+revoke all on msp_intake_draft from public, anon, authenticated;
+
+-- Save (upsert) a draft against a live token.
+create or replace function msp_draft_save(p_token text, p_payload jsonb, p_step int default 1, p_filled int default 0, p_company text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_check jsonb;
+  v_access uuid;
+  v_saved timestamptz;
+begin
+  v_check := msp_check_access(p_token);
+  if not coalesce((v_check->>'valid')::boolean, false) then
+    return jsonb_build_object('saved', false, 'reason', v_check->>'reason');
+  end if;
+  v_access := (v_check->>'access_id')::uuid;
+
+  insert into msp_intake_draft (access_id, payload, step, filled, company, saved_at)
+  values (v_access, coalesce(p_payload, '{}'::jsonb), greatest(coalesce(p_step, 1), 1),
+          greatest(coalesce(p_filled, 0), 0), nullif(btrim(coalesce(p_company, '')), ''), now())
+  on conflict (access_id) do update
+     set payload  = excluded.payload,
+         step     = excluded.step,
+         filled   = excluded.filled,
+         company  = coalesce(excluded.company, msp_intake_draft.company),
+         saved_at = now()
+  returning saved_at into v_saved;
+
+  return jsonb_build_object('saved', true, 'saved_at', v_saved);
+end;
+$$;
+revoke execute on function msp_draft_save(text, jsonb, int, int, text) from public, anon, authenticated;
+comment on function msp_draft_save is 'Server side only: upserts the part-finished assessment for a live access token. Refuses unknown, used or expired tokens with the msp_check_access reason.';
+
+-- Read a draft back for a live token.
+create or replace function msp_draft_get(p_token text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_check jsonb;
+  d msp_intake_draft%rowtype;
+begin
+  v_check := msp_check_access(p_token);
+  if not coalesce((v_check->>'valid')::boolean, false) then
+    return jsonb_build_object('found', false, 'valid', false, 'reason', v_check->>'reason');
+  end if;
+
+  select * into d from msp_intake_draft where access_id = (v_check->>'access_id')::uuid;
+  if d.id is null then
+    return jsonb_build_object('found', false, 'valid', true, 'company_name', v_check->>'company_name');
+  end if;
+
+  return jsonb_build_object(
+    'found', true, 'valid', true,
+    'company_name', v_check->>'company_name',
+    'payload', d.payload, 'step', d.step, 'filled', d.filled,
+    'company', d.company, 'saved_at', d.saved_at);
+end;
+$$;
+revoke execute on function msp_draft_get(text) from public, anon, authenticated;
+comment on function msp_draft_get is 'Server side only: returns the saved draft for a live access token, or found=false.';
+
+-- Discard a draft (the Discard button).
+create or replace function msp_draft_clear(p_token text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare v_n int;
+begin
+  delete from msp_intake_draft d
+   using msp_form_access f
+   where f.id = d.access_id and f.token = p_token;
+  get diagnostics v_n = row_count;
+  return jsonb_build_object('cleared', v_n > 0);
+end;
+$$;
+revoke execute on function msp_draft_clear(text) from public, anon, authenticated;
+
+-- A consumed token has no draft to keep.
+create or replace function msp_intake_draft_on_consume()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.used_by_intake is not null and old.used_by_intake is null then
+    delete from msp_intake_draft where access_id = new.id;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists msp_form_access_consume_draft on msp_form_access;
+create trigger msp_form_access_consume_draft
+  after update of used_by_intake on msp_form_access
+  for each row execute function msp_intake_draft_on_consume();
+
+-- Housekeeping: drafts whose token has expired.
+create or replace function msp_draft_purge()
+returns int
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare v_n int;
+begin
+  delete from msp_intake_draft d
+   using msp_form_access f
+   where f.id = d.access_id and f.expires_at < now();
+  get diagnostics v_n = row_count;
+  return v_n;
+end;
+$$;
+revoke execute on function msp_draft_purge() from public, anon, authenticated;
+
+notify pgrst, 'reload schema';
+
+------------------------------------------------------------------------------
+-- 045_msp_review_fee_bands.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | COM-02 v1.0.0 | The Plan is free, the review is banded 11/09/2026
+-- Applied to the live project on 11/09/2026 (recorded there as 039_msp_review_fee_bands).
+-- Numbered 045 in this repository because 039 to 044 were taken by the sign on,
+-- self service, reference, legislation currency, contact number and draft work
+-- that reached main first. The order of application in the live project was
+-- 039 fee bands (11/09), then 040 self service (11/09) onward; nothing here
+-- depends on those and nothing there depends on this.
+-- The commercial model changes. The Plan itself is no longer priced from a rate
+-- card: a company builds it at no charge and receives it watermarked. The only
+-- charge is the practitioner review that lifts it into a document you can put in
+-- front of an auditor or an inspector, and that is calculated per person on the
+-- report with a floor for small jobs and a lower rate for large ones.
+--
+-- No price is published anywhere. The only number a visitor ever sees is the one
+-- the calculator returns for the headcount they entered.
+
+insert into msp_env_parameter (key, value, value_type, min_value, max_value, category, description) values
+  ('commercial.omp_review_rate_zar', '150', 'decimal', 0, 10000, 'commercial',
+   'Practitioner review, rand per person on the report, standard rate.'),
+  ('commercial.omp_review_rate_high_zar', '120', 'decimal', 0, 10000, 'commercial',
+   'Practitioner review, rand per person, for reports above the high volume threshold.'),
+  ('commercial.omp_review_high_threshold', '150', 'integer', 1, 100000, 'commercial',
+   'Headcount above which the lower per person rate applies.'),
+  ('commercial.omp_review_mid_threshold', '50', 'integer', 1, 100000, 'commercial',
+   'Upper bound of the middle band, which carries a smaller surcharge.'),
+  ('commercial.omp_review_small_threshold', '10', 'integer', 1, 100000, 'commercial',
+   'Headcount below which the small job surcharge applies.'),
+  ('commercial.omp_review_surcharge_small_zar', '1000', 'decimal', 0, 100000, 'commercial',
+   'Surcharge added below the small threshold, because a short report still takes the practitioner a full sitting.'),
+  ('commercial.omp_review_surcharge_mid_zar', '500', 'decimal', 0, 100000, 'commercial',
+   'Surcharge added across the middle band.')
+on conflict (key) do nothing;
+
+-- The calculation, in one place, reading the bands every time so a change to a
+-- parameter changes the next quotation with nothing redeployed.
+create or replace function msp_review_fee(p_people int)
+returns numeric
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_rate      numeric := msp_env_get_numeric('commercial.omp_review_rate_zar');
+  v_rate_high numeric := msp_env_get_numeric('commercial.omp_review_rate_high_zar');
+  v_high      int     := msp_env_get_int('commercial.omp_review_high_threshold');
+  v_mid       int     := msp_env_get_int('commercial.omp_review_mid_threshold');
+  v_small     int     := msp_env_get_int('commercial.omp_review_small_threshold');
+  v_sur_small numeric := msp_env_get_numeric('commercial.omp_review_surcharge_small_zar');
+  v_sur_mid   numeric := msp_env_get_numeric('commercial.omp_review_surcharge_mid_zar');
+begin
+  if p_people is null or p_people < 1 then
+    raise exception 'the review fee needs a headcount of at least one';
+  end if;
+  if p_people > v_high then
+    return round(p_people * v_rate_high, 2);
+  elsif p_people > v_mid then
+    return round(p_people * v_rate, 2);
+  elsif p_people >= v_small then
+    return round(p_people * v_rate + v_sur_mid, 2);
+  else
+    return round(p_people * v_rate + v_sur_small, 2);
+  end if;
+end;
+$$;
+comment on function msp_review_fee is
+  'Practitioner review fee for a report covering this many people. Bands live in the parameter store, not in this function.';
+
+-- The public face of the calculator. It returns the answer for the headcount
+-- asked about and nothing else: no rate, no band table, no price list.
+create or replace function msp_public_review_fee(p_people int)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+begin
+  if p_people is null or p_people < 1 or p_people > 100000 then
+    return jsonb_build_object('ok', false, 'reason', 'headcount out of range');
+  end if;
+  return jsonb_build_object('ok', true, 'people', p_people, 'fee_zar', msp_review_fee(p_people));
+end;
+$$;
+comment on function msp_public_review_fee is
+  'Calculator endpoint for the website. Deliberately anonymous: it answers for one headcount and never discloses the bands behind the answer.';
+
+revoke all on function msp_public_review_fee(int) from public;
+grant execute on function msp_public_review_fee(int) to anon, authenticated;
+revoke all on function msp_review_fee(int) from public, anon, authenticated;
+
+-- Packages restated. The Plan is free; the review is what is bought.
+alter table msp_package drop constraint if exists msp_package_fee_status_check;
+alter table msp_package add constraint msp_package_fee_status_check
+  check (fee_status in ('placeholder', 'confirmed', 'calculated'));
+
+update msp_package set
+  name = 'Your Plan, free to build',
+  description = 'The full assessment and your Medical Surveillance Plan drafted against the verified law for your industry, delivered watermarked as your working copy. The watermark lifts for Care Net clients and when medicals are booked with Care Net.',
+  omp_review_fee_zar = 0,
+  fee_status = 'confirmed'
+ where package_code = 'DRAFT_PLAN';
+
+update msp_package set
+  name = 'Reviewed and signed by the practitioner',
+  description = 'Your Plan read line by line and signed by a registered Occupational Medical Practitioner, which is what makes it defensible in front of an auditor, an inspector or a client. Charged per person on the report.',
+  omp_review_fee_zar = null,
+  fee_status = 'calculated'
+ where package_code = 'SIGNED_PLAN';
+
+-- The quotation follows the same model: the Plan costs nothing, the review is
+-- banded on headcount, and the free qualification now only ever affects the
+-- watermark, because there is no longer a Plan price to waive.
+create or replace function msp_create_quote(p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_pkg msp_package%rowtype;
+  v_omp numeric := 0;
+  v_status text;
+  v_ref text;
+  v_id uuid;
+  v_emp int := coalesce((p->>'employee_count')::int, 0);
+  v_jobs int := coalesce((p->>'job_category_count')::int, 0);
+  v_medicals int := coalesce((p->>'annual_medicals_estimate')::int, 0);
+  v_free boolean;
+begin
+  if coalesce(p->>'company_name','') = '' or coalesce(p->>'contact_email','') = '' then
+    raise exception 'company name and contact email are required';
+  end if;
+  if v_emp < 1 then
+    raise exception 'the headcount to be covered must be at least one';
+  end if;
+
+  select * into v_pkg from msp_package
+   where package_code = upper(coalesce(p->>'package_code', 'SIGNED_PLAN'));
+  if v_pkg.id is null then
+    raise exception 'unknown package %', p->>'package_code';
+  end if;
+
+  v_free := v_medicals >= msp_env_get_int('commercial.free_medicals_threshold')
+            or exists (select 1 from msp_client_account
+                        where lower(contact_email) = lower(p->>'contact_email')
+                          and sla_status = 'active_sla');
+
+  if v_pkg.includes_omp_review then
+    v_omp := msp_review_fee(v_emp);
+  end if;
+
+  v_status := case when v_omp = 0 then 'free_qualifying' else 'firm' end;
+
+  v_ref := 'CNC-QTE-' || to_char(current_date, 'YYYY-MMDD') || '-' || lpad(nextval('msp_quote_seq')::text, 3, '0');
+  insert into msp_quote (quote_reference, company_name, contact_name, contact_email,
+                         industry_code, company_size, employee_count, job_category_count,
+                         annual_medicals_estimate, package_code, omp_review_fee_zar,
+                         price_zar, price_status)
+  values (v_ref, p->>'company_name', p->>'contact_name', p->>'contact_email',
+          upper(coalesce(p->>'industry_code','OTHER')), p->>'company_size', v_emp, v_jobs,
+          v_medicals, v_pkg.package_code, v_omp, v_omp, v_status)
+  returning id into v_id;
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values ('msp_create_quote', 'quote_created',
+          jsonb_build_object('reference', v_ref, 'package', v_pkg.package_code,
+                             'people', v_emp, 'review_fee_zar', v_omp,
+                             'price_status', v_status, 'watermark_free', v_free));
+
+  return jsonb_build_object('quote_id', v_id, 'reference', v_ref,
+                            'package_name', v_pkg.name,
+                            'plan_zar', 0,
+                            'omp_review_fee_zar', v_omp,
+                            'price_zar', v_omp,
+                            'price_status', v_status,
+                            'watermark_free', v_free,
+                            'valid_until', (current_date + msp_env_get_int('commercial.quote_validity_days'))::text);
+end;
+$$;
+
+------------------------------------------------------------------------------
+-- 046_msp_public_instrument_register.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | KRN-PUB-02 v1.0.0 | Public legislation register 20/09/2026
+-- Applied to the live project on 20/09/2026 (recorded there as
+-- 040_msp_public_instrument_register). The website's Build your Plan page shows
+-- the industries covered and every legal instrument the engine drafts from, with
+-- its full citation, so a visitor can see what the Plan is built on before they
+-- build one. This view is that register: verified instruments only, with the
+-- industries each one applies to, readable by the anonymous key like the other
+-- msp_public_* views. Nothing pending, nothing internal, nothing about clients.
+
+create or replace view msp_public_instrument_register as
+select li.short_name,
+       li.full_citation,
+       li.instrument_type,
+       li.gazette_reference,
+       li.effective_date,
+       li.amendment_history,
+       li.verified_on,
+       li.review_due,
+       (select coalesce(json_agg(json_build_object('code', i.code, 'name', i.name) order by i.name), '[]'::json)
+          from msp_industry_instrument ii
+          join msp_industry i on i.id = ii.industry_id
+         where ii.instrument_id = li.id) as industries
+  from msp_legal_instrument li
+ where li.status = 'verified'
+ order by li.short_name;
+
+comment on view msp_public_instrument_register is
+  'The legislation register as published on the website: verified instruments with full citation and the industries each applies to. Anonymous read.';
+
+grant select on msp_public_instrument_register to anon, authenticated;
