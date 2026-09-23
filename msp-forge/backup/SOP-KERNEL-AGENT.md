@@ -1,4 +1,4 @@
-# Care Net Cognitive Kernel | Agent SOP | v1.1.0 | 15/08/2026
+# Care Net Cognitive Kernel | Agent SOP | v1.2.0 | 23/09/2026
 
 Standard operating procedure for maintaining the Care Net Cognitive Kernel as a living, versioned product, and for building and linking the smart agents that keep it correct. The Cognitive Kernel is a Care Net Consultants product. It lives in the Supabase project (all objects prefixed msp_), and the migrations directory in this repository is its canonical, replayable source.
 
@@ -53,7 +53,8 @@ A Claude agent session (Claude Code, or a scheduled cloud session) runs monthly 
 ## 5. Clients on Supabase Auth and the free qualification rule
 
 - Every client contact links to a Supabase Auth user through `msp_client_account.auth_user_id`; a client sees their own account row, packs, and revisions under their own login, and consultants manage accounts under `forge_admin`.
-- Quotes capture `annual_medicals_estimate`. At 100 or more occupational medicals per year with Care Net, the quote prices at zero with status `free_qualifying`; a consultant verifies the declared volume before the waiver is confirmed (register item CR-13.15). Below the threshold, the rate card applies as before.
+- The Plan itself is free to build and is delivered watermarked. The watermark lifts for clients under an active service level agreement or at 100 or more occupational medicals a year with Care Net (register item CR-13.15); a sales executive verifies the declared volume. The only charge is the practitioner review, calculated per person on the report from bands held in the parameter store (`commercial.omp_review_*`, migration 045), with a surcharge below the small threshold and a lower rate above the high threshold. No amount is published on the site: the calculator on shop.html calls `msp_public_review_fee` and shows the answer for the headcount entered, never the bands.
+- The legislation register is public. `msp_public_instrument_register` (migration 046) lists every verified instrument with its full citation, gazette reference, verification date, next review and the industries it applies to. The Build your Plan page reads it live. The dated PDF and CSV release 1.0.0 under vercel/downloads/ is no longer offered on any page, because it still lists the repealed NIHL Regulations, 2003 and Environmental Regulations for Workplaces, 1987 as verified (HSF-7); the two files stay at their addresses until the Director decides to remove them or a new release is generated from the view (HSF-10). A new release of the register means a new dated file there, generated from the view, and the release line on the page restored.
 - The client journey is transparent by design: the landing page explains the flow (sign on or quotation, secure single use assessment link, HTML assessment form, engine draft against the verified kernel, OMP review and signature, delivery with revision numbers). The HTML forms are self contained and embeddable in any landing page or digital journey, and every document carries the dual brand band: CNC banner plus the client's prepared logo on every page.
 
 ## 6. The runtime parameter store
@@ -87,13 +88,24 @@ What holds the cost:
 
 Two secrets make it work and neither is in this repository or in the database: `ANTHROPIC_API_KEY` in Supabase secrets, and the service role key in the Vercel project.
 
-## 8. Backup and rebuild
+## 8. The kernel API, the Grok bot and HSF FORGE
+
+Migration 050 adds a read only kernel API so that an outside assistant, such as the Grok bot Odendaal is linking, can answer from the kernel without holding a copy of it. The full reference is KERNEL-API.md; the contract is vercel/kernel-api/openapi.yaml; the tool definitions are grok/kernel-tools.json.
+
+- Keys. Only a forge_admin, or the service role, can run `msp_api_client_issue`, one key per bot and per environment. The key is shown once. The database keeps only its SHA-256 hash in `msp_api_client`; the key itself lives only in the bot host's secret store, never in this repository, the parameter store or a message. If a key may have been seen, run `msp_api_client_revoke` and issue a new one.
+- What it answers. Verified kernel content only, and no client, company or worker data. Every answer carries the notice in KERNEL-API.md section 6.
+- Limits and log. Each key has an hourly limit, and every call, refusals included, lands in `msp_api_call_log`. Retention of that log is open (HSF-PORTAL-ARCHITECTURE.md section 8, item 12).
+- Currency holds. `msp_instrument_currency_hold` withholds an instrument from citation even while its kernel row still reads verified. Only the service role writes it, and a hold only ever tightens. Migration 050 holds whichever of these the project still marks verified: the NIHL Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 (both repealed; HSF-7), and the Asbestos Abatement Regulations, 2020 (amendment notice in dispute; HSF-9). On a project where 042 is applied, only the Asbestos hold is needed. The holds apply to the public views, the API and every File citation. Lift a hold only when the kernel row has been corrected and verified again.
+- HSF FORGE. Migrations 047 to 051 add the Health and Safety File element library, company documents with consent, the MCO transfer and File generation. Company documents are staging data, not kernel content: they are not in the kernel backup, and staged bytes are deleted once MCO confirms an identical copy. The lifecycle and the POPIA analysis are in HSF-PORTAL-ARCHITECTURE.md.
+- Status. Migrations 047 to 051 are in the repository and replay cleanly into an empty database; none is applied to the live project, and application waits for the Director's approval. Migration 048 refuses to run on a project that has not had 042 applied (HSF-7).
+
+## 9. Backup and rebuild
 
 - Canonical backup: `supabase/migrations/001` through the latest, in order. Replaying them into an empty Supabase project rebuilds the entire kernel, workflows, policies, and seed content.
 - Convenience backup: `backup/cognitive_kernel_rebuild.sql` is the concatenation of every migration in order, regenerated at each release alongside `backup/MANIFEST.md` (which records the version, migration list, and kernel counts at backup time).
 - Runtime data (intakes, drafts, reviews, audit) is client data under POPIA and is not part of the kernel backup; it is covered by the Supabase project's own backups and the retention framework (40 year house floor for medical surveillance records).
 - After any rebuild, prove it: run the pipeline regression (`agent/run_pipeline.js` with the committed snapshot and synthetic intake) and require 9 of 9 validation checks and 16 of 16 geometry assertions.
 
-## 9. Standing disciplines
+## 10. Standing disciplines
 
 British English; no dash punctuation in prose (statute names keep their official hyphens); ZAR comma format; Arial; the CNC palette; OREP and WASP terminology; locked liability, POPIA, and sign off blocks verbatim; deliverables never carry CONFIRM or ASSUMPTION tags; Care Net screens and does not diagnose; the employer is always the payer; the WARDEN ring fence holds.

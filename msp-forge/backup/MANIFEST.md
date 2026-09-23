@@ -1,6 +1,6 @@
 # Cognitive Kernel backup manifest
 
-Regenerated 15/08/2026. Framework version 1.0.0 plus the productisation, shop journey, public marketing views, runtime parameter store and assistant connection migrations.
+Regenerated 15/08/2026; rebuild script and HSF FORGE section regenerated 23/09/2026. Framework version 1.0.0 plus the productisation, shop journey, public marketing views, runtime parameter store and assistant connection migrations.
 
 Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending and uncitable), 17 industries, 56 of 56 selectable subindustries, 316 roles, 851 hazard links, 30 protocols, 2 shop packages.
 
@@ -52,17 +52,27 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 044_msp_intake_draft.sql (6521 bytes)
 - 045_msp_review_fee_bands.sql (9024 bytes)
 - 046_msp_public_instrument_register.sql (1511 bytes)
+- 047_hsf_core_schema.sql (28593 bytes)
+- 048_hsf_library_seed.sql (140490 bytes)
+- 049_hsf_consent_uploads_transfer.sql (52492 bytes)
+- 050_kernel_api.sql (31573 bytes)
+- 051_hsf_generate_and_compliance.sql (27990 bytes)
 
 ## CNC HSF FORGE
 
-Phase 1 (23/09/2026) is specification only (SPEC.md Part B) and adds no SQL, so the rebuild script is unchanged. HSF tables arrive from Phase 2 as migrations numbered from 047.
+Rebuild script regenerated 23/09/2026 with migrations 047 to 051 (the Health and Safety File engine, company documents with consent, the MCO transfer, the kernel API and File generation). The concatenation reproduces the earlier script for 001 to 046 byte for byte, and was proved by replaying it into an empty database: 256 File elements, 41 appointment types, 49 triggers, 34 element classes, 37 verified instruments, 17 industries, 316 roles, and all 81 HSF core checks passed.
+
+Migrations 047 to 051 are in the repository and are not applied to the live project. Migration 048 refuses to run until 042 is applied (HSF-7). Company documents are staging data, not kernel content, and are never part of this backup.
 
 ## Not SQL, and therefore not in the rebuild script
 
 - supabase/functions/msp-assistant/index.ts, the assistant connection. Deploy it separately.
 - vercel/settings.html, the settings page that reads and writes the parameter store.
 - WIRING.html, the system reference: every page, endpoint, table, function, parameter and scheduled job, read from the live project.
-- Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project.
+- supabase/functions/hsf-mco-transfer/index.ts with supabase/functions/_shared/, the MCO transfer worker. It runs in hold mode until the MCO contract is agreed (HSF-3).
+- vercel/api/ and vercel/lib/ (including hsf-consent.js, hsf-upload.js, hsf-file.js, kernel.js and portal-summary.js), with server/serve.js for hosting outside Vercel.
+- The portal and builder pages (vercel/portal.html, vercel/hsf-builder.html) and the shared scripts under vercel/js/.
+- Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project. The same rule holds for MCO_API_TOKEN (worker secret, once HSF-3 is agreed) and every kernel API key, which lives only in the bot host's secret store; the database keeps a hash. HSF_MCO_ALLOW_FIXTURE is a test switch and is never set in production.
 
 ## Rebuild procedure
 
@@ -72,4 +82,5 @@ Phase 1 (23/09/2026) is specification only (SPEC.md Part B) and adds no SQL, so 
 4. Prove the rebuild: run agent/run_pipeline.js with agent/kernel_snapshot_constr.json and test/normalised_synthetic.json; require 9 of 9 validation checks, then render and require 16 of 16 geometry assertions.
 5. Deploy the assistant connection: supabase/functions/msp-assistant/index.ts, and set ANTHROPIC_API_KEY in the project's function secrets. Without that key the connection answers that it is not configured and records the refusal.
 6. Confirm the schedule: msp_agent_schedule_status() should show job msp_monthly_audit on the day and hour held in the agent parameters.
-7. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent, the parameter store and version control.
+7. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent, the parameter store, the kernel API and version control.
+8. For HSF FORGE, confirm the private hsf-staging bucket exists (migration 049 creates it), deploy the hsf-mco-transfer function, and prove the rebuild with test/sql/hsf_core_checks.sql and test/sql/hsf_flow_checks.sql.

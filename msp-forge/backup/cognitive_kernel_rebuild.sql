@@ -1,4 +1,4 @@
--- Care Net medical surveillance framework | full rebuild script | regenerated 22/09/2026
+-- Care Net medical surveillance framework | full rebuild script | regenerated 23/09/2026
 -- Concatenation of every migration in order. Canonical source: supabase/migrations/.
 -- The assistant edge function lives at supabase/functions/msp-assistant/index.ts.
 
@@ -7802,3 +7802,4141 @@ comment on view msp_public_instrument_register is
   'The legislation register as published on the website: verified instruments with full citation and the industries each applies to. Anonymous read.';
 
 grant select on msp_public_instrument_register to anon, authenticated;
+
+------------------------------------------------------------------------------
+-- 047_hsf_core_schema.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | HSF-SCH-01 v1.0.0 | HSF FORGE core schema 23/09/2026
+-- Anchors HSF-SCH-01 (library), HSF-ENG-01 (engagement), HSF-REV-01 (review and
+-- release) and HSF-KRN-01 (kernel scope). Built to hsf/BUILD-CONTRACT.md section 3
+-- (047) and SPEC.md Part B, B4.3 to B4.9, B5.1 and B5.2. Additive only: every new
+-- object is hsf_ prefixed; the kernel gains two scope columns and msp_audit gains
+-- a nullable file reference.
+--
+-- Access model (contract section 3):
+--   Library tables: select for authenticated; no write policy, so only the
+--   service role (and security definer functions owned by the migration role)
+--   write them.
+--   Engagement tables: a client reads the rows of its own account
+--   (msp_client_account.auth_user_id = auth.uid()); staff read with forge_admin,
+--   forge_omp or forge_safety_reviewer (JWT app_metadata roles, checked with
+--   msp_has_role from migration 002; no database role is created). Writes go
+--   through security definer functions only (migrations 049 and 051).
+--   Everything is revoked from anon and public.
+--
+-- Two additive departures from the letter of SPEC B4.3, both needed to hold data
+-- that SPEC B6 defines and the seed (048) loads:
+--   1. hsf_appointment_type.trigger_code (B6.3.1 gives every appointment type a
+--      trigger; B4.3 had no column for it).
+--   2. hsf_element_class: the course (B6.5.1), licence class (B6.5.2) and
+--      examination class (B6.6, HSF-E-06) items that B9.3.4 expands per File.
+--      hsf_training_requirement stays as B4.3 wrote it and is not seeded, because
+--      its check needs a job role or an appointment and B6.5.1 names neither.
+
+-- 1. Kernel extension (B5.1, B5.2) ---------------------------------------------
+
+alter table msp_legal_instrument
+  add column if not exists scope text not null default 'medical'
+    check (scope in ('medical','safety','both'));
+comment on column msp_legal_instrument.scope is
+  'HSF-KRN-01 (SPEC B5.1). medical: held for Medical Surveillance Plans. safety: a Health and Safety File candidate. both: re verified in full scope for the File provisions it serves. Held instruments move to both only after re verification; candidates enter as safety, status pending.';
+
+alter table msp_industry_instrument
+  add column if not exists scope text not null default 'medical'
+    check (scope in ('medical','safety','both'));
+comment on column msp_industry_instrument.scope is
+  'HSF-KRN-01 (SPEC B5.2). Lets an industry map carry an instrument for safety without implying a medical duty.';
+
+-- B4.8: the published register gains the scope column now that B5.1 has landed.
+-- Same definition as migration 046, with scope appended as the last column.
+-- Migration 050 redefines it once more with the currency hold predicate
+-- (contract 9.4), after msp_instrument_currency_hold exists.
+create or replace view msp_public_instrument_register as
+select li.short_name,
+       li.full_citation,
+       li.instrument_type,
+       li.gazette_reference,
+       li.effective_date,
+       li.amendment_history,
+       li.verified_on,
+       li.review_due,
+       (select coalesce(json_agg(json_build_object('code', i.code, 'name', i.name) order by i.name), '[]'::json)
+          from msp_industry_instrument ii
+          join msp_industry i on i.id = ii.industry_id
+         where ii.instrument_id = li.id) as industries,
+       li.scope
+  from msp_legal_instrument li
+ where li.status = 'verified'
+ order by li.short_name;
+grant select on msp_public_instrument_register to anon, authenticated;
+
+-- 2. Library tables (HSF-SCH-01, B4.3) ------------------------------------------
+
+create table hsf_section (
+  code text primary key check (code ~ '^[A-O]$'),
+  ordinal int unique not null check (ordinal between 1 and 15),
+  name text not null,
+  description text not null,
+  signatory_kind text not null check (signatory_kind in ('omp','safety'))
+);
+comment on table hsf_section is 'HSF-SCH-01. The fifteen sections of the Health and Safety File, A to O. Section E is signed by the OMP; every other section by the safety content signatory (HSF-1).';
+
+create table hsf_department (
+  code text primary key,
+  name text not null,
+  ordinal int unique not null check (ordinal >= 1)
+);
+comment on table hsf_department is 'Contract section 2. The company department a client files an upload under. Every upload carries a department code and a File section code.';
+
+create table hsf_trigger (
+  code text primary key,
+  description text not null
+);
+comment on table hsf_trigger is 'SPEC B9.2 trigger vocabulary. An intake answer or a kernel fact raises a trigger, which switches a conditional element on. Compound rows (A or B, A and B) carry the expressions the library itself uses; the generator evaluates them as hsf/build_samples.py does.';
+
+create table hsf_appointment_type (
+  code text primary key,
+  name text not null,
+  instrument_id uuid references msp_legal_instrument(id),
+  provision text not null,
+  competence_requirement text not null,
+  ratio_rule text,
+  regime text not null default 'BOTH' check (regime in ('OHSA','MHSA','BOTH')),
+  trigger_code text references hsf_trigger(code)
+);
+comment on table hsf_appointment_type is 'HSF-SCH-01 (SPEC B6.3.1). Statutory appointment types, APP-00 to APP-40. Each applicable type yields one HSF-B-06 item. instrument_id is the first basis named; hsf_element_instrument carries the full basis of HSF-B-06.';
+comment on column hsf_appointment_type.trigger_code is 'Additive to SPEC B4.3: the B6.3.1 trigger. Null means every File (U).';
+comment on column hsf_appointment_type.ratio_rule is 'msp_kernel_rule code where the law sets a ratio (for example RULE-HSF-RATIO-FA). The rule itself is loaded in Phase 3 (HSF-RUL-01).';
+
+create table hsf_element (
+  id uuid primary key default gen_random_uuid(),
+  code text unique not null,
+  section_code text not null references hsf_section(code),
+  name text not null,
+  duty text not null,
+  evidence_type text not null check (evidence_type in
+    ('document','register','certificate','appointment','plan','report','permit',
+     'minutes','training_record','medical_certificate','licence','agreement','log')),
+  responsible_appointment text references hsf_appointment_type(code),
+  responsible_role text,
+  review_interval text not null check (review_interval in
+    ('annual','on_change','per_event','per_project','monthly','daily','before_use','on_expiry','statutory')),
+  review_interval_param text,
+  retention_rule text,
+  regime text not null default 'BOTH' check (regime in ('OHSA','MHSA','BOTH')),
+  mhsa_equivalent_id uuid references hsf_element(id),
+  universal boolean not null default true,
+  trigger_code text references hsf_trigger(code),
+  mco_source text check (mco_source in ('mco_medical','mco_training')),
+  basis_state text not null default 'awaiting'
+    check (basis_state in ('verified','awaiting')),
+  status text not null default 'active' check (status in ('active','retired')),
+  created_at timestamptz default now()
+);
+comment on table hsf_element is 'HSF-SCH-01. The element library: SPEC B6 universal elements (universal true) and B7 industry overlay additions (universal false). basis_state moves to verified only when every instrument the element cites is verified (Phase 2 gate).';
+comment on column hsf_element.trigger_code is 'SPEC B9.2 trigger that switches the element on. Null means every File (U), including the per appointment, per course and per class elements that expand through hsf_appointment_type and hsf_element_class.';
+comment on column hsf_element.retention_rule is 'msp_kernel_rule code (RULE-RETAIN-*) once HSF-RUL-01 lands. Until then the seed holds the SPEC B6.1.4 retention class (MED40, INST, LIFE); null means the retention is open under HSF-5.';
+
+create table hsf_element_instrument (
+  element_id uuid references hsf_element(id),
+  instrument_id uuid references msp_legal_instrument(id),
+  provision text not null,
+  primary key (element_id, instrument_id)
+);
+comment on table hsf_element_instrument is 'HSF-SCH-01. The instruments an element cites. provision reads awaiting verification until Phase 2 pins it through the three gates.';
+
+create table hsf_element_industry (
+  element_id uuid references hsf_element(id),
+  industry_id uuid references msp_industry(id),
+  subindustry_id uuid references msp_subindustry(id),
+  applicability text not null check (applicability in ('mandatory','conditional','emphasis')),
+  overlay_note text not null,
+  unique (element_id, industry_id, subindustry_id)
+);
+comment on table hsf_element_industry is 'HSF-SCH-01 (SPEC B7). Industry overlays: the additions of each industry, the universal elements each overlay switches on, and the surveillance protocols the kernel pack emphasises. A null subindustry means the whole industry.';
+
+create table hsf_training_requirement (
+  id uuid primary key default gen_random_uuid(),
+  job_role_id uuid references msp_job_role(id),
+  appointment_code text references hsf_appointment_type(code),
+  competency text not null,
+  unit_standard_or_course text,
+  renewal_months int check (renewal_months is null or renewal_months > 0),
+  renewal_param text,
+  instrument_id uuid references msp_legal_instrument(id),
+  check (job_role_id is not null or appointment_code is not null)
+);
+comment on table hsf_training_requirement is 'HSF-SCH-01. Statutory competency per kernel job role or per appointment type. Unit standard numbers are entered only after verification. Loaded in Phase 3 once the role mapping is data.';
+
+create table hsf_element_class (
+  code text primary key,
+  element_code text not null references hsf_element(code),
+  kind text not null check (kind in ('course','licence','examination')),
+  ordinal int not null check (ordinal >= 1),
+  name text not null,
+  trigger_code text references hsf_trigger(code),
+  instrument_id uuid references msp_legal_instrument(id),
+  provision text not null default 'awaiting verification',
+  mco_source text check (mco_source in ('mco_medical','mco_training')),
+  unique (element_code, ordinal)
+);
+comment on table hsf_element_class is 'Additive to SPEC B4.3. The items an element expands into per File (B9.3.4): courses D04-nn under HSF-D-04 (B6.5.1), licence classes D05-nn under HSF-D-05 (B6.5.2), examination classes E06-nn under HSF-E-06 (B6.6). A null trigger means every File.';
+
+-- 3. Gap safe File reference ------------------------------------------------------
+
+create or replace function hsf_next_reference()
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_prefix text := 'CNC-HSF-' || to_char(current_date, 'YYYY-MMDD') || '-';
+  v_n int;
+begin
+  perform pg_advisory_xact_lock(hashtext('hsf_file_reference'));
+  -- Three digits or more: the thousandth File of a day is NNNN, never a
+  -- truncated repeat of an earlier number (contract 9.6).
+  select coalesce(max(substring(reference from '(\d{3,})$')::int), 0) + 1 into v_n
+    from hsf_file
+   where reference like v_prefix || '%';
+  return v_prefix || lpad(v_n::text, greatest(3, length(v_n::text)), '0');
+end;
+$$;
+revoke execute on function hsf_next_reference() from public, anon, authenticated;
+comment on function hsf_next_reference is 'CNC-HSF-YYYY-MMDD-NNN. NNN = highest existing number for the day + 1 (gap safe, the migration 041 pattern), at least three digits and never truncated (1000 follows 999). Advisory lock serialises concurrent Files.';
+
+-- 4. Engagement tables (HSF-ENG-01, B4.4) ----------------------------------------
+
+create table hsf_file (
+  id uuid primary key default gen_random_uuid(),
+  reference text unique not null default hsf_next_reference(),
+  client_account_id uuid not null references msp_client_account(id),
+  engagement_id uuid references msp_engagement(id),
+  parent_file_id uuid references hsf_file(id),
+  industry_id uuid not null references msp_industry(id),
+  subindustry_id uuid references msp_subindustry(id),
+  regime text not null check (regime in ('OHSA','MHSA')),
+  scope jsonb not null,
+  revision int not null default 1,
+  status text not null default 'draft' check (status in
+    ('draft','generating','in_review','approved','released','live','superseded','archived')),
+  compliance_pct numeric(5,2),
+  created_at timestamptz default now()
+);
+comment on table hsf_file is 'HSF-ENG-01. One Health and Safety File per client engagement scope. reference is CNC-HSF-YYYY-MMDD-NNN from hsf_next_reference(). parent_file_id models construction layering (RULE-HSF-CONSTR-LAYER). compliance_pct is cached by hsf_compute_compliance.';
+
+create table hsf_file_item (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  element_id uuid not null references hsf_element(id),
+  site_ref text,
+  status text not null default 'outstanding' check (status in
+    ('linked_mco','uploaded','outstanding','not_applicable','expired')),
+  reason text,
+  responsible_person text,
+  due_date date,
+  updated_at timestamptz default now(),
+  constraint na_needs_reason check (status <> 'not_applicable' or length(btrim(coalesce(reason,''))) >= 10),
+  unique (file_id, element_id, site_ref)
+);
+comment on table hsf_file_item is 'HSF-ENG-01. One row per applicable element (per site where the element is per site). not_applicable needs a written reason of at least ten characters.';
+
+create table hsf_evidence (
+  id uuid primary key default gen_random_uuid(),
+  file_item_id uuid not null references hsf_file_item(id),
+  version int not null,
+  supersedes_id uuid references hsf_evidence(id),
+  source text not null check (source in ('mco_medical','mco_training','client_upload','engine_generated')),
+  mco_record_ref text,
+  storage_path text,
+  sha256 text not null check (sha256 ~ '^[0-9a-f]{64}$'),
+  supplied_by text not null,
+  supplied_at timestamptz not null default now(),
+  valid_from date,
+  valid_to date,
+  revoked_at timestamptz,
+  upload_id uuid,
+  mco_document_ref text,
+  transferred_at timestamptz,
+  staging_deleted_at timestamptz,
+  unique (file_item_id, version),
+  check (source not like 'mco_%' or mco_record_ref is not null)
+);
+comment on table hsf_evidence is 'HSF-ENG-01. Append only evidence ledger. A replacement is a new row with version n + 1 and supersedes_id; nothing is ever deleted. The only permitted updates are one way: revoked_at once; mco_document_ref with transferred_at once; staging_deleted_at once together with storage_path set to null (contract section 3).';
+comment on column hsf_evidence.storage_path is 'Path in the private hsf-staging bucket while the bytes are held by Care Net; null once the bytes have been transferred to MyClinicOnline and removed from staging. The row and its hash stay for the audit trail.';
+comment on column hsf_evidence.upload_id is 'The hsf_upload row the bytes arrived through. The foreign key is added in migration 049, which creates hsf_upload.';
+
+create or replace function hsf_evidence_guard()
+returns trigger
+language plpgsql
+as $$
+declare
+  v_mutable constant text[] := array['revoked_at','mco_document_ref','transferred_at','staging_deleted_at','storage_path'];
+begin
+  if tg_op = 'DELETE' then
+    raise exception 'hsf_evidence is append only: delete refused';
+  end if;
+  if (to_jsonb(new) - v_mutable) is distinct from (to_jsonb(old) - v_mutable) then
+    raise exception 'hsf_evidence is append only: only revocation, the MyClinicOnline transfer record and the staging deletion may be recorded';
+  end if;
+  if new.revoked_at is distinct from old.revoked_at
+     and (old.revoked_at is not null or new.revoked_at is null) then
+    raise exception 'hsf_evidence: revoked_at is set once and never cleared';
+  end if;
+  if (new.mco_document_ref is distinct from old.mco_document_ref
+      or new.transferred_at is distinct from old.transferred_at)
+     and (old.mco_document_ref is not null or old.transferred_at is not null
+          or new.mco_document_ref is null or new.transferred_at is null) then
+    raise exception 'hsf_evidence: mco_document_ref and transferred_at are set once, together';
+  end if;
+  if new.staging_deleted_at is distinct from old.staging_deleted_at
+     and (old.staging_deleted_at is not null or new.staging_deleted_at is null
+          or new.storage_path is not null) then
+    raise exception 'hsf_evidence: staging_deleted_at is set once, together with storage_path set to null';
+  end if;
+  if new.storage_path is distinct from old.storage_path
+     and not (new.storage_path is null and old.staging_deleted_at is null and new.staging_deleted_at is not null) then
+    raise exception 'hsf_evidence: storage_path changes only to null when the staging deletion is recorded';
+  end if;
+  return new;
+end;
+$$;
+comment on function hsf_evidence_guard is 'Append only guard for hsf_evidence: refuses delete and every update other than the one way transitions named in the contract.';
+
+create trigger hsf_evidence_append_only
+  before update or delete on hsf_evidence
+  for each row execute function hsf_evidence_guard();
+
+create table hsf_person (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  mco_person_ref text,
+  employee_number text,
+  display_name text not null,
+  id_last4 text check (id_last4 ~ '^[0-9]{4}$'),
+  job_role_id uuid references msp_job_role(id),
+  work_restriction text,
+  unique (file_id, mco_person_ref)
+);
+comment on table hsf_person is 'HSF-ENG-01. People on a File. Matched to MyClinicOnline on mco_person_ref only, never on name (B10.3). Last four identity digits only. work_restriction is the placement restriction an employer may hold, never a diagnosis.';
+
+create table hsf_appointment (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  appointment_code text not null references hsf_appointment_type(code),
+  person_id uuid references hsf_person(id),
+  appointee_name text not null,
+  appointed_on date,
+  accepted_on date,
+  acceptance_evidence_id uuid references hsf_evidence(id),
+  competence_evidence_id uuid references hsf_evidence(id)
+);
+comment on table hsf_appointment is 'HSF-ENG-01. Statutory appointments in post on a File, each with its acceptance and competence evidence.';
+
+create table hsf_revision (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  revision int not null,
+  trigger_kind text not null check (trigger_kind in
+    ('change_notification','risk_assessment_update','new_appointment','expiry','kernel_release','client_request')),
+  summary text not null,
+  opened_at timestamptz default now(),
+  closed_at timestamptz,
+  unique (file_id, revision)
+);
+comment on table hsf_revision is 'HSF-ENG-01. The living File: every revision, why it opened and when it closed.';
+
+-- 5. Review and release (HSF-REV-01, B4.5) ---------------------------------------
+
+create table hsf_signoff (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  revision int not null,
+  kind text not null check (kind in ('omp_medical','safety_content','client_16_2_acceptance')),
+  decision text check (decision in ('approved','amended','rejected')),
+  signatory_name text,
+  registration_body text,
+  registration_number text,
+  decided_at timestamptz,
+  notes jsonb,
+  constraint decision_complete check (decision is null or
+    (signatory_name is not null and decided_at is not null
+     and (kind = 'client_16_2_acceptance' or registration_number is not null)))
+);
+comment on table hsf_signoff is 'HSF-REV-01. The three sign offs a release needs: the OMP for Section E only, the safety content signatory (HSF-1) and the client section 16(2) acceptance.';
+
+create table hsf_release (
+  id uuid primary key default gen_random_uuid(),
+  file_id uuid not null references hsf_file(id),
+  revision int not null,
+  pdf_path text not null,
+  evidence_index_path text not null,
+  released_at timestamptz default now(),
+  unique (file_id, revision)
+);
+comment on table hsf_release is 'HSF-REV-01. A released File revision. The hsf_release_gate trigger refuses the insert unless all three sign offs are approved and every instrument the File''s elements name is citable for a File (hsf_element_citable, contract 9.3).';
+
+create or replace function hsf_release_gate()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_kind text;
+  v_unverified text;
+begin
+  foreach v_kind in array array['omp_medical','safety_content','client_16_2_acceptance'] loop
+    if not exists (select 1 from hsf_signoff s
+                    where s.file_id = new.file_id and s.revision = new.revision
+                      and s.kind = v_kind and s.decision = 'approved') then
+      raise exception 'hsf_release_gate: % sign off is not approved for this File revision', v_kind;
+    end if;
+  end loop;
+  -- Contract 9.3: hsf_element_citable (migration 050) is the single definition of
+  -- an instrument a File element may cite: verified, not held, not superseded,
+  -- scope safety or both, and a provision pinned past 'awaiting verification'.
+  -- Every instrument an item's element names must pass it.
+  select string_agg(distinct li.short_name, ', ' order by li.short_name) into v_unverified
+    from hsf_file_item fi
+    join hsf_element_instrument ei on ei.element_id = fi.element_id
+    join msp_legal_instrument li on li.id = ei.instrument_id
+   where fi.file_id = new.file_id
+     and not (hsf_element_citable(fi.element_id) ? li.short_name);
+  if v_unverified is not null then
+    raise exception 'hsf_release_gate: the File cites instruments that are not verified for a File: %', v_unverified;
+  end if;
+  return new;
+end;
+$$;
+revoke execute on function hsf_release_gate() from public, anon, authenticated;
+comment on function hsf_release_gate is 'SPEC B4.5 and B11.2, contract 9.3. Three approved sign offs, and every instrument the File''s elements name citable for a File by hsf_element_citable (defined in migration 050; resolved when the trigger runs). Enforced in the database; the parameter hsf.release_required is display only and does not relax it.';
+
+create trigger hsf_release_gate
+  before insert on hsf_release
+  for each row execute function hsf_release_gate();
+
+create or replace function hsf_file_item_touch()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at := now();
+  return new;
+end;
+$$;
+create trigger hsf_file_item_touch
+  before update on hsf_file_item
+  for each row execute function hsf_file_item_touch();
+
+-- 6. Client account and audit extensions (B4.6, B4.9) ----------------------------
+
+alter table msp_client_account add column if not exists mco_company_ref text unique;
+comment on column msp_client_account.mco_company_ref is 'SPEC B4.6. The MyClinicOnline company reference. Null until the MCO interface contract arrives (HSF-3); the adapter refuses to run for an account without it.';
+
+alter table msp_audit add column if not exists hsf_file_id uuid references hsf_file(id);
+create index if not exists msp_audit_hsf_file_idx on msp_audit(hsf_file_id);
+comment on column msp_audit.hsf_file_id is 'SPEC B4.9 (HSF-4). The Health and Safety File an audit row concerns. A row may carry engagement_id, hsf_file_id, both or neither (kernel events); the msp_audit append only trigger and the existing read policy apply unchanged.';
+
+-- 7. Indexes ----------------------------------------------------------------------
+
+create index hsf_element_section_idx on hsf_element(section_code);
+create index hsf_element_trigger_idx on hsf_element(trigger_code);
+create index hsf_element_instrument_instrument_idx on hsf_element_instrument(instrument_id);
+create index hsf_element_industry_industry_idx on hsf_element_industry(industry_id);
+create index hsf_element_class_element_idx on hsf_element_class(element_code);
+create index hsf_file_client_idx on hsf_file(client_account_id);
+create index hsf_file_parent_idx on hsf_file(parent_file_id);
+create index hsf_file_item_file_idx on hsf_file_item(file_id);
+create index hsf_file_item_element_idx on hsf_file_item(element_id);
+create index hsf_evidence_item_idx on hsf_evidence(file_item_id);
+create index hsf_evidence_upload_idx on hsf_evidence(upload_id);
+create index hsf_person_file_idx on hsf_person(file_id);
+create index hsf_appointment_file_idx on hsf_appointment(file_id);
+create index hsf_revision_file_idx on hsf_revision(file_id);
+create index hsf_signoff_file_idx on hsf_signoff(file_id, revision);
+
+-- 8. Row Level Security -------------------------------------------------------------
+
+create or replace function hsf_is_staff()
+returns boolean
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select public.msp_has_role('forge_admin')
+      or public.msp_has_role('forge_omp')
+      or public.msp_has_role('forge_safety_reviewer');
+$$;
+comment on function hsf_is_staff is 'True for the staff roles that read Health and Safety File engagement data: forge_admin, forge_omp, forge_safety_reviewer.';
+
+create or replace function hsf_can_read_file(p_file_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select hsf_is_staff()
+      or exists (select 1
+                   from hsf_file f
+                   join msp_client_account a on a.id = f.client_account_id
+                  where f.id = p_file_id
+                    and auth.uid() is not null
+                    and a.auth_user_id = auth.uid());
+$$;
+revoke execute on function hsf_can_read_file(uuid) from public, anon;
+grant execute on function hsf_can_read_file(uuid) to authenticated;
+comment on function hsf_can_read_file is 'RLS helper: staff, or the client contact whose account owns the File. Security definer so the policy can see msp_client_account without widening its own policies.';
+
+create or replace function hsf_can_read_item(p_item_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from hsf_file_item fi
+                  where fi.id = p_item_id and hsf_can_read_file(fi.file_id));
+$$;
+revoke execute on function hsf_can_read_item(uuid) from public, anon;
+grant execute on function hsf_can_read_item(uuid) to authenticated;
+comment on function hsf_can_read_item is 'RLS helper for hsf_evidence: readable when the File of the item is readable.';
+
+revoke execute on function hsf_is_staff() from public, anon;
+grant execute on function hsf_is_staff() to authenticated;
+
+do $$
+declare
+  t text;
+begin
+  -- Library tables: authenticated read, no writes except the service role.
+  foreach t in array array['hsf_section','hsf_department','hsf_trigger','hsf_appointment_type',
+                           'hsf_element','hsf_element_instrument','hsf_element_industry',
+                           'hsf_training_requirement','hsf_element_class'] loop
+    execute format('alter table %I enable row level security', t);
+    execute format('revoke all on %I from public, anon, authenticated', t);
+    execute format('grant select on %I to authenticated', t);
+    execute format('grant all on %I to service_role', t);
+    execute format('create policy %I on %I for select to authenticated using (true)', t || '_read', t);
+  end loop;
+  -- Engagement tables: own account or staff; writes only through security definer functions.
+  foreach t in array array['hsf_file','hsf_file_item','hsf_evidence','hsf_person','hsf_appointment',
+                           'hsf_revision','hsf_signoff','hsf_release'] loop
+    execute format('alter table %I enable row level security', t);
+    execute format('revoke all on %I from public, anon, authenticated', t);
+    execute format('grant select on %I to authenticated', t);
+    execute format('grant all on %I to service_role', t);
+  end loop;
+end;
+$$;
+
+create policy hsf_file_read on hsf_file
+  for select to authenticated using (hsf_can_read_file(id));
+create policy hsf_file_item_read on hsf_file_item
+  for select to authenticated using (hsf_can_read_file(file_id));
+create policy hsf_evidence_read on hsf_evidence
+  for select to authenticated using (hsf_can_read_item(file_item_id));
+create policy hsf_person_read on hsf_person
+  for select to authenticated using (hsf_can_read_file(file_id));
+create policy hsf_appointment_read on hsf_appointment
+  for select to authenticated using (hsf_can_read_file(file_id));
+create policy hsf_revision_read on hsf_revision
+  for select to authenticated using (hsf_can_read_file(file_id));
+create policy hsf_signoff_read on hsf_signoff
+  for select to authenticated using (hsf_can_read_file(file_id));
+create policy hsf_release_read on hsf_release
+  for select to authenticated using (hsf_can_read_file(file_id));
+
+grant execute on function hsf_next_reference() to service_role;
+
+------------------------------------------------------------------------------
+-- 048_hsf_library_seed.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | HSF-SEED-01 v1.0.0 | HSF FORGE element library seed 23/09/2026
+-- GENERATED by hsf/build_seed.py from SPEC.md Part B (B6, B6.3.1, B6.5.1, B6.5.2,
+-- B7, B9.2) and the CNC OHS Industry Kernel pack protocols. Do not edit by hand:
+-- change the SPEC or the generator and run  python3 hsf/build_seed.py
+--
+-- Loads: 15 sections, 9 departments, 49 triggers (44 vocabulary, 5 compound),
+-- 41 appointment types, 256 elements (137 universal, 119 overlay), 34 element classes,
+-- 298 element industry rows, 354 element instrument links, and 36 candidate
+-- instruments entered as status pending, scope safety, gates a to c pending.
+-- Every element is awaiting verification; every link reads awaiting verification.
+-- Idempotent. Never updates or deletes an existing msp_legal_instrument row:
+-- candidates are inserted only where no row carries the same short_name.
+
+-- 0. Precondition (SPEC B8.2, HSF-7): the held instruments the library cites must
+--    be in the kernel, or their links would be silently lost. Refuse otherwise.
+do $$
+declare
+  v_missing text;
+begin
+  select string_agg(n, '; ' order by n) into v_missing
+    from unnest(array[
+      'Asbestos Abatement Regulations, 2020',
+      'BCEA night work Code',
+      'COIDA',
+      'Construction Regulations, 2014',
+      'Driven Machinery Regulations',
+      'EEA section 7',
+      'Electrical Machinery and Installation Regulations',
+      'Ergonomics Regulations, 2019',
+      'Facilities Regulations, 2004',
+      'Fitness to Perform Work Guideline (MHSA)',
+      'Food Premises Hygiene Regulations, R638 of 2018',
+      'General Administrative Regulations, 2003',
+      'General Machinery Regulations, 1988',
+      'General Safety Regulations, 1986',
+      'HBA Regulations, 2022',
+      'HCA Regulations, 2021',
+      'HPCSA Booklet 1',
+      'Hazardous Substances Act (radiation control)',
+      'Health Professions Act',
+      'Lead Regulations, 2001',
+      'MHI Regulations, 2022',
+      'MHSA',
+      'NEM Waste Act',
+      'NRTA PrDP medical',
+      'Noise Exposure Regulations, 2024',
+      'Nursing Act',
+      'ODMWA',
+      'OHS Act',
+      'POPIA',
+      'Physical Agents Regulations, 2024',
+      'SANS 3000-4 (RSR)'
+    ]) as n
+   where not exists (select 1 from msp_legal_instrument li where li.short_name = n);
+  if v_missing is not null then
+    raise exception 'HSF seed refused: the kernel does not hold %. Apply migration 042 (release 1.1.0) first (HSF-7).', v_missing;
+  end if;
+end;
+$$;
+
+-- 1. Sections A to O --------------------------------------------------------------
+insert into hsf_section (code, ordinal, name, description, signatory_kind) values
+  ('A', 1, 'Legal and administrative', 'Company identity, the scope of the File, letters of good standing, construction notifications, contractor agreements and the dated legal register.', 'safety'),
+  ('B', 2, 'Policy, organisation and appointments', 'The health and safety policy, chief executive responsibility, the section 16(2) assignment, representatives, the committee and every statutory appointment.', 'safety'),
+  ('C', 3, 'Risk management', 'Baseline, issue based and task based risk assessments, the hazard register, the hierarchy of control, safe work procedures and activity plans.', 'safety'),
+  ('D', 4, 'Training and competence', 'Training needs, the training matrix, inductions, statutory training records, licences and competency assessments.', 'safety'),
+  ('E', 5, 'Medical surveillance and fitness', 'The Medical Surveillance Plan, certificates of fitness, statutory examinations and the handling of medical records. Signed by the occupational medical practitioner only.', 'omp'),
+  ('F', 6, 'Registers and inspections', 'Registers of equipment, installations and workplaces, with their inspection records.', 'safety'),
+  ('G', 7, 'Permits and controls', 'The permit to work system and the permits issued for high risk work.', 'safety'),
+  ('H', 8, 'Emergency preparedness', 'Emergency plans, drills, fire arrangements, medical emergency arrangements and spill response.', 'safety'),
+  ('I', 9, 'Incident management', 'Incident reporting, the incident register, investigations, COIDA records and corrective actions.', 'safety'),
+  ('J', 10, 'Occupational hygiene', 'Occupational hygiene surveys and exposure monitoring.', 'safety'),
+  ('K', 11, 'Contractors, visitors and the public', 'Contractor selection and control, visitor control and the protection of the public.', 'safety'),
+  ('L', 12, 'Communication and consultation', 'Committee minutes, representative inspections, toolbox talks, notices and change notifications.', 'safety'),
+  ('M', 13, 'Environment, welfare and facilities', 'Welfare facilities, the physical environment, environmental management and waste.', 'safety'),
+  ('N', 14, 'Audit, review and improvement', 'Internal and external audits, management review, objectives and corrective actions.', 'safety'),
+  ('O', 15, 'Records and retention', 'The retention schedule, storage and access control, and the POPIA operator agreement.', 'safety')
+on conflict (code) do nothing;
+
+-- 2. Departments (contract section 2) -------------------------------------------------
+insert into hsf_department (code, name, ordinal) values
+  ('EXEC', 'Executive and legal', 1),
+  ('HR', 'Human resources', 2),
+  ('SHE', 'Health and safety', 3),
+  ('OPS', 'Operations', 4),
+  ('ENG', 'Engineering and maintenance', 5),
+  ('PROC', 'Procurement and contractors', 6),
+  ('OH', 'Occupational health and medical', 7),
+  ('TRAIN', 'Training and development', 8),
+  ('FAC', 'Facilities and security', 9)
+on conflict (code) do nothing;
+
+-- 3. Triggers (SPEC B9.2), then the compound expressions the library uses --------------
+insert into hsf_trigger (code, description) values
+  ('T-CONSTR', 'Construction work is carried on'),
+  ('T-CONSTR-NOTIFY', 'Construction work at or above the notification or permit thresholds (thresholds pinned in Phase 2)'),
+  ('T-CONTRACTORS', 'Contractors or mandataries work for the employer'),
+  ('T-HSR', 'The workforce requires designated health and safety representatives'),
+  ('T-COMMITTEE', 'A health and safety committee is required'),
+  ('T-HEIGHT', 'Work at height'),
+  ('T-SCAFFOLD', 'Scaffolding is erected or used'),
+  ('T-EXCAVATION', 'Excavation work'),
+  ('T-DEMOLITION', 'Demolition work'),
+  ('T-TEMPWORKS', 'Temporary works'),
+  ('T-MOBILEPLANT', 'Construction vehicles, forklifts or other mobile plant'),
+  ('T-ELEC', 'Electrical installations or electrical work'),
+  ('T-LIFTING', 'Lifting machines and lifting tackle'),
+  ('T-MACHINERY', 'Machinery that needs guarding and supervision'),
+  ('T-PRESSURE', 'Pressure equipment'),
+  ('T-HCA', 'Hazardous chemical agents are used, stored or produced'),
+  ('T-HBA', 'Exposure to hazardous biological agents'),
+  ('T-LADDERS', 'Ladders are used'),
+  ('T-STACKING', 'Goods are stacked and stored'),
+  ('T-CONFINED', 'Confined spaces are entered'),
+  ('T-EPT', 'Explosive powered tools are used'),
+  ('T-HOTWORK', 'Hot work such as welding, cutting or grinding'),
+  ('T-ASBESTOS', 'Asbestos is present or may be disturbed'),
+  ('T-LEAD', 'Work with lead'),
+  ('T-NOISE', 'Noise exposure identified by the risk assessment'),
+  ('T-RADIATION', 'Ionising radiation sources'),
+  ('T-FOOD', 'Food is prepared, handled or served'),
+  ('T-PRDP', 'Drivers who need a professional driving permit'),
+  ('T-MINING', 'A mine, under the Mine Health and Safety Act regime'),
+  ('T-TASKRA', 'Task based and daily pre task risk assessments are needed'),
+  ('T-TRAFFIC', 'Vehicles and people share space'),
+  ('T-SHIFT', 'Shift or night work'),
+  ('T-VIOLENCE', 'Exposure to violence or aggression'),
+  ('T-MHI', 'Holdings of listed substances at or above the major hazard installation thresholds (pinned in Phase 2)'),
+  ('T-THERMAL', 'Heat or cold exposure'),
+  ('T-WASTE', 'Waste is generated, handled or disposed of'),
+  ('T-ENVIRO', 'Other environmental law applies'),
+  ('T-PTW', 'A permit to work system is needed'),
+  ('T-ROADWORKS', 'Work on or next to public roads'),
+  ('T-SECURITY', 'Private security services are provided'),
+  ('T-ARMED', 'Armed security or firearms are carried'),
+  ('T-LPG', 'Liquefied petroleum gas installations'),
+  ('T-EXPLOSIVES', 'Explosives are used'),
+  ('T-PUBLIC', 'Members of the public may be affected by the work'),
+  ('T-CONSTR and T-ELEC', 'Compound: raised when all of T-CONSTR, T-ELEC are raised'),
+  ('T-HCA or T-LEAD', 'Compound: raised when any of T-HCA, T-LEAD is raised'),
+  ('T-LIFTING or T-MOBILEPLANT', 'Compound: raised when any of T-LIFTING, T-MOBILEPLANT is raised'),
+  ('T-SHIFT or T-VIOLENCE', 'Compound: raised when any of T-SHIFT, T-VIOLENCE is raised'),
+  ('T-WASTE or T-ENVIRO', 'Compound: raised when any of T-WASTE, T-ENVIRO is raised')
+on conflict (code) do nothing;
+
+-- 4. Candidate instruments (SPEC B8.1): pending, scope safety, uncitable until gates a, b and c pass
+insert into msp_legal_instrument
+  (short_name, full_citation, instrument_type, source_one, source_two, source_three, status, scope)
+select v.short_name, v.full_citation, v.instrument_type, 'Gate a pending', 'Gate b pending', 'Gate c pending', 'pending', 'safety'
+  from (values
+    ('BCEA', 'BCEA (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Civil Aviation Act', 'Civil Aviation Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Civil Aviation Regulations', 'Civil Aviation Regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Code of Good Practice on Employment of Persons with Disabilities', 'Code of Good Practice on Employment of Persons with Disabilities (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'code'),
+    ('DMRE mandatory Code guidelines', 'DMRE mandatory Code guidelines (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'guideline'),
+    ('Disaster Management Act', 'Disaster Management Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Electrical Installation Regulations, 2009', 'Electrical Installation Regulations, 2009 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Explosive powered tools regulations', 'Explosive powered tools regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Explosives Regulations', 'Explosives Regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Fire Brigade Services Act', 'Fire Brigade Services Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Firearms Control Act', 'Firearms Control Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Foodstuffs, Cosmetics and Disinfectants Act', 'Foodstuffs, Cosmetics and Disinfectants Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Health Care Waste regulations', 'Health Care Waste regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Local by laws', 'Local by laws (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Local fire by laws', 'Local fire by laws (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('MHSA regulations', 'MHSA regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Merchant Shipping Act', 'Merchant Shipping Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('NEMA and its instruments', 'NEMA and its instruments (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('National Health Act', 'National Health Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('National Road Traffic Act', 'National Road Traffic Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('PSIRA training regulations', 'PSIRA training regulations (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Ports Act', 'Ports Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Pressure Equipment Regulations, 2009', 'Pressure Equipment Regulations, 2009 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('Private Security Industry Regulation Act', 'Private Security Industry Regulation Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Railway Safety Regulator Act', 'Railway Safety Regulator Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Regulations on Hazardous Work by Children, 2010', 'Regulations on Hazardous Work by Children, 2010 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'regulation'),
+    ('SAHPRA provisions', 'SAHPRA provisions (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('SANS 10142', 'SANS 10142 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SANS 10231', 'SANS 10231 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SANS 10232', 'SANS 10232 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SANS 10400', 'SANS 10400 (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SANS 10400 T part', 'SANS 10400 T part (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SANS 3000 series', 'SANS 3000 series (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'sans'),
+    ('SETA unit standards', 'SETA unit standards (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'guideline'),
+    ('Skills Development Act', 'Skills Development Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act'),
+    ('Tobacco Products Control Act', 'Tobacco Products Control Act (Health and Safety File candidate named in the SPEC B6 and B7 element library; full citation pending verification)', 'act')
+       ) as v(short_name, full_citation, instrument_type)
+ where not exists (select 1 from msp_legal_instrument li where li.short_name = v.short_name);
+
+-- 5. Appointment types (SPEC B6.3.1) --------------------------------------------------
+insert into hsf_appointment_type (code, name, instrument_id, provision, competence_requirement, ratio_rule, regime, trigger_code)
+select v.code, v.name, (select li.id from msp_legal_instrument li where li.short_name = v.short_name order by case li.status when 'verified' then 0 when 'pending' then 1 when 'superseded' then 2 else 3 end, li.verified_on desc nulls last, li.id limit 1),
+       'awaiting verification',
+       'Pending: the competence requirement is pinned from the governing provision in Phase 2 (SPEC B8).',
+       v.ratio_rule, v.regime, v.trigger_code
+  from (values
+    ('APP-00', 'Section 16(2) assignee', 'OHS Act', null, 'BOTH', null),
+    ('APP-01', 'Construction manager', 'Construction Regulations, 2014', null, 'BOTH', 'T-CONSTR'),
+    ('APP-02', 'Assistant construction manager', 'Construction Regulations, 2014', null, 'BOTH', 'T-CONSTR'),
+    ('APP-03', 'Construction health and safety officer', 'Construction Regulations, 2014', null, 'BOTH', 'T-CONSTR'),
+    ('APP-04', 'Construction supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-CONSTR'),
+    ('APP-05', 'Risk assessor', 'Construction Regulations, 2014', null, 'BOTH', null),
+    ('APP-06', 'Fall protection planner', 'Construction Regulations, 2014', null, 'BOTH', 'T-HEIGHT'),
+    ('APP-07', 'Scaffold supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-SCAFFOLD'),
+    ('APP-08', 'Scaffold inspector', 'Construction Regulations, 2014', null, 'BOTH', 'T-SCAFFOLD'),
+    ('APP-09', 'Excavation supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-EXCAVATION'),
+    ('APP-10', 'Demolition supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-DEMOLITION'),
+    ('APP-11', 'Temporary works designer', 'Construction Regulations, 2014', null, 'BOTH', 'T-TEMPWORKS'),
+    ('APP-12', 'Temporary works supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-TEMPWORKS'),
+    ('APP-13', 'Construction vehicle and mobile plant operator', 'Construction Regulations, 2014', null, 'BOTH', 'T-MOBILEPLANT'),
+    ('APP-14', 'Construction vehicle and mobile plant supervisor', 'Construction Regulations, 2014', null, 'BOTH', 'T-MOBILEPLANT'),
+    ('APP-15', 'Electrical installation supervisor', 'Electrical Machinery and Installation Regulations', null, 'BOTH', 'T-ELEC'),
+    ('APP-16', 'Construction electrical appointee', 'Construction Regulations, 2014', null, 'BOTH', 'T-CONSTR and T-ELEC'),
+    ('APP-17', 'Lifting machine and lifting tackle inspector', 'Driven Machinery Regulations', null, 'BOTH', 'T-LIFTING'),
+    ('APP-18', 'Lifting machine operator', 'Driven Machinery Regulations', null, 'BOTH', 'T-LIFTING'),
+    ('APP-19', 'General machinery supervisor', 'General Machinery Regulations, 1988', null, 'BOTH', 'T-MACHINERY'),
+    ('APP-20', 'Pressure equipment supervisor', 'Pressure Equipment Regulations, 2009', null, 'BOTH', 'T-PRESSURE'),
+    ('APP-21', 'Hazardous chemical agent controller', 'HCA Regulations, 2021', null, 'BOTH', 'T-HCA'),
+    ('APP-22', 'Ladder inspector', 'General Safety Regulations, 1986', null, 'BOTH', 'T-LADDERS'),
+    ('APP-23', 'Stacking and storage supervisor', 'General Safety Regulations, 1986', null, 'BOTH', 'T-STACKING'),
+    ('APP-24', 'First aiders in the statutory ratio', 'General Safety Regulations, 1986', 'RULE-HSF-RATIO-FA', 'BOTH', null),
+    ('APP-25', 'Fire equipment inspector', 'SANS 10400 T part', null, 'BOTH', null),
+    ('APP-26', 'Fire team', 'Fire Brigade Services Act', null, 'BOTH', null),
+    ('APP-27', 'Emergency coordinator', 'OHS Act', null, 'BOTH', null),
+    ('APP-28', 'Evacuation wardens', 'OHS Act', null, 'BOTH', null),
+    ('APP-29', 'Incident investigator', 'General Administrative Regulations, 2003', null, 'BOTH', null),
+    ('APP-30', 'Confined space supervisor', 'General Safety Regulations, 1986', null, 'BOTH', 'T-CONFINED'),
+    ('APP-31', 'Explosive powered tool operator', 'Explosive powered tools regulations', null, 'BOTH', 'T-EPT'),
+    ('APP-32', 'Explosive powered tool issuer', 'Explosive powered tools regulations', null, 'BOTH', 'T-EPT'),
+    ('APP-33', 'Hot work supervisor', 'General Safety Regulations, 1986', null, 'BOTH', 'T-HOTWORK'),
+    ('APP-34', 'Asbestos work supervisor', 'Asbestos Abatement Regulations, 2020', null, 'BOTH', 'T-ASBESTOS'),
+    ('APP-35', 'Lead work supervisor', 'Lead Regulations, 2001', null, 'BOTH', 'T-LEAD'),
+    ('APP-36', 'Noise zone controller', 'Noise Exposure Regulations, 2024', null, 'BOTH', 'T-NOISE'),
+    ('APP-37', 'Radiation protection officer', 'Hazardous Substances Act (radiation control)', null, 'BOTH', 'T-RADIATION'),
+    ('APP-38', 'Food safety and hygiene supervisor', 'Food Premises Hygiene Regulations, R638 of 2018', null, 'BOTH', 'T-FOOD'),
+    ('APP-39', 'Driver and professional driving permit holder', 'NRTA PrDP medical', null, 'BOTH', 'T-PRDP'),
+    ('APP-40', 'Mine manager and MHSA statutory appointees', 'MHSA', null, 'MHSA', 'T-MINING')
+       ) as v(code, name, short_name, ratio_rule, regime, trigger_code)
+on conflict (code) do nothing;
+
+-- 6. Elements: SPEC B6 universal (137), then B7 overlay additions (119) ------------------
+insert into hsf_element (code, section_code, name, duty, evidence_type, responsible_appointment, responsible_role,
+                         review_interval, retention_rule, regime, universal, trigger_code, mco_source, basis_state)
+select v.code, v.section_code, v.name, v.duty, v.evidence_type, v.responsible_appointment, v.responsible_role,
+       v.review_interval, v.retention_rule, v.regime, v.universal, v.trigger_code, v.mco_source, 'awaiting'
+  from (values
+    ('HSF-A-01', 'A', 'Company legal identity, registration, VAT and the physical address of every site', 'Company legal identity, registration, VAT and the physical address of every site', 'document', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-A-02', 'A', 'Scope of the File: sites, activities, dates, contract or project reference', 'Scope of the File: sites, activities, dates, contract or project reference', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-A-03', 'A', 'COIDA letter of good standing, with expiry', 'COIDA letter of good standing, with expiry', 'certificate', null, 'Chief executive', 'on_expiry', 'INST', 'BOTH', true, null, null),
+    ('HSF-A-04', 'A', 'Copy of the OHS Act and its regulations available at the workplace; MHSA equivalent for mines', 'Copy of the OHS Act and its regulations available at the workplace; MHSA equivalent for mines', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-A-05', 'A', 'Notification of construction work to the Department of Employment and Labour, with acknowledgement', 'Notification of construction work to the Department of Employment and Labour, with acknowledgement', 'document', null, 'Client or client''s agent', 'per_project', 'INST', 'BOTH', true, 'T-CONSTR-NOTIFY', null),
+    ('HSF-A-06', 'A', 'Client health and safety specification', 'Client health and safety specification', 'document', null, 'Client or client''s agent', 'per_project', 'INST', 'BOTH', true, 'T-CONSTR', null),
+    ('HSF-A-07', 'A', 'Contractor health and safety plan with the client''s written approval', 'Contractor health and safety plan with the client''s written approval', 'plan', 'APP-01', null, 'per_project', 'INST', 'BOTH', true, 'T-CONSTR', null),
+    ('HSF-A-08', 'A', 'Section 37(2) agreement with every mandatary and every contractor', 'Section 37(2) agreement with every mandatary and every contractor', 'agreement', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, 'T-CONTRACTORS', null),
+    ('HSF-A-09', 'A', 'Contractor register: each contractor, its File, letter of good standing and appointments', 'Contractor register: each contractor, its File, letter of good standing and appointments', 'register', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, 'T-CONTRACTORS', null),
+    ('HSF-A-10', 'A', 'Legal register for the industry, drawn from the kernel and dated', 'Legal register for the industry, drawn from the kernel and dated', 'register', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-A-11', 'A', 'Document control procedure and the File''s own revision history', 'Document control procedure and the File''s own revision history', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-01', 'B', 'Health and safety policy signed by the chief executive, dated, displayed, reviewed annually', 'Health and safety policy signed by the chief executive, dated, displayed, reviewed annually', 'document', null, 'Chief executive', 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-02', 'B', 'Section 16(1) chief executive responsibility acknowledged', 'Section 16(1) chief executive responsibility acknowledged', 'document', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-03', 'B', 'Section 16(2) assignment in writing, accepted in writing, with its scope', 'Section 16(2) assignment in writing, accepted in writing, with its scope', 'appointment', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-04', 'B', 'Health and safety representatives designated in writing after consultation, in the statutory ratio, with training evidence', 'Health and safety representatives designated in writing after consultation, in the statutory ratio, with training evidence', 'appointment', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, 'T-HSR', null),
+    ('HSF-B-05', 'B', 'Health and safety committee: constitution, membership, minutes', 'Health and safety committee: constitution, membership, minutes', 'minutes', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, 'T-COMMITTEE', null),
+    ('HSF-B-06', 'B', 'Statutory appointments, one item per applicable appointment type (B6.3.1), each in writing, signed, accepted, with competence evidence', 'Statutory appointments, one item per applicable appointment type (B6.3.1), each in writing, signed, accepted, with competence evidence', 'appointment', null, 'Per appointment type', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-07', 'B', 'Organogram of the health and safety structure with every appointee in post', 'Organogram of the health and safety structure with every appointee in post', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-08', 'B', 'Roles and responsibilities per appointment and per kernel job role', 'Roles and responsibilities per appointment and per kernel job role', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-C-01', 'C', 'Baseline hazard identification and risk assessment per site and activity, signed by the risk assessor, with review date', 'Baseline hazard identification and risk assessment per site and activity, signed by the risk assessor, with review date', 'report', 'APP-05', null, 'annual', 'INST', 'BOTH', true, null, null),
+    ('HSF-C-02', 'C', 'Issue based risk assessments for every change, incident, new task or new substance', 'Issue based risk assessments for every change, incident, new task or new substance', 'report', 'APP-05', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-C-03', 'C', 'Continuous, task based and daily or shift pre task assessments', 'Continuous, task based and daily or shift pre task assessments', 'log', null, 'Supervisor', 'daily', null, 'BOTH', true, 'T-TASKRA', null),
+    ('HSF-C-04', 'C', 'Hazard register mapped to the kernel hazard taxonomy per job role', 'Hazard register mapped to the kernel hazard taxonomy per job role', 'register', 'APP-05', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-C-05', 'C', 'Hierarchy of control evidence: eliminated, substituted, engineered, administered, then protected', 'Hierarchy of control evidence: eliminated, substituted, engineered, administered, then protected', 'report', 'APP-05', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-C-06', 'C', 'Safe work procedures and method statements for routine and high risk tasks', 'Safe work procedures and method statements for routine and high risk tasks', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-C-07', 'C', 'Fall protection plan', 'Fall protection plan', 'plan', 'APP-06', null, 'per_project', 'INST', 'BOTH', true, 'T-HEIGHT', null),
+    ('HSF-C-08', 'C', 'Traffic management plan where vehicles and people share space', 'Traffic management plan where vehicles and people share space', 'plan', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, 'T-TRAFFIC', null),
+    ('HSF-C-09', 'C', 'Lifting plans for lifting operations that require one', 'Lifting plans for lifting operations that require one', 'plan', 'APP-17', null, 'per_event', 'INST', 'BOTH', true, 'T-LIFTING', null),
+    ('HSF-C-10', 'C', 'Excavation plan', 'Excavation plan', 'plan', 'APP-09', null, 'per_project', 'INST', 'BOTH', true, 'T-EXCAVATION', null),
+    ('HSF-C-11', 'C', 'Demolition plan', 'Demolition plan', 'plan', 'APP-10', null, 'per_project', 'INST', 'BOTH', true, 'T-DEMOLITION', null),
+    ('HSF-C-12', 'C', 'Confined space plan', 'Confined space plan', 'plan', 'APP-30', null, 'per_event', 'INST', 'BOTH', true, 'T-CONFINED', null),
+    ('HSF-C-13', 'C', 'Hot work plan', 'Hot work plan', 'plan', 'APP-33', null, 'per_event', 'INST', 'BOTH', true, 'T-HOTWORK', null),
+    ('HSF-C-14', 'C', 'Ergonomic risk assessment', 'Ergonomic risk assessment', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, null, null),
+    ('HSF-C-15', 'C', 'Noise zoning and noise risk assessment', 'Noise zoning and noise risk assessment', 'report', 'APP-36', null, 'statutory', 'INST', 'BOTH', true, 'T-NOISE', null),
+    ('HSF-C-16', 'C', 'Hazardous chemical agent risk and exposure assessment', 'Hazardous chemical agent risk and exposure assessment', 'report', 'APP-21', null, 'statutory', 'INST', 'BOTH', true, 'T-HCA', null),
+    ('HSF-C-17', 'C', 'Asbestos risk assessment, inventory and management plan', 'Asbestos risk assessment, inventory and management plan', 'report', 'APP-34', null, 'statutory', 'INST', 'BOTH', true, 'T-ASBESTOS', null),
+    ('HSF-C-18', 'C', 'Lead risk assessment', 'Lead risk assessment', 'report', 'APP-35', null, 'statutory', 'INST', 'BOTH', true, 'T-LEAD', null),
+    ('HSF-C-19', 'C', 'Hazardous biological agent risk assessment', 'Hazardous biological agent risk assessment', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, 'T-HBA', null),
+    ('HSF-C-20', 'C', 'Psychosocial and fatigue risk assessment', 'Psychosocial and fatigue risk assessment', 'report', 'APP-05', null, 'annual', null, 'BOTH', true, 'T-SHIFT or T-VIOLENCE', null),
+    ('HSF-C-21', 'C', 'Major hazard installation risk assessment', 'Major hazard installation risk assessment', 'report', 'APP-00', null, 'statutory', 'INST', 'BOTH', true, 'T-MHI', null),
+    ('HSF-C-22', 'C', 'Physical agents exposure risk assessment (heat, cold, illumination, indoor air, vibration, non ionising radiation)', 'Physical agents exposure risk assessment (heat, cold, illumination, indoor air, vibration, non ionising radiation)', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, null, null),
+    ('HSF-D-01', 'D', 'Training needs analysis per job role from the kernel''s statutory competency requirements', 'Training needs analysis per job role from the kernel''s statutory competency requirements', 'report', 'APP-00', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-D-02', 'D', 'Training matrix: every person, every requirement, date, expiry, evidence (from MCO where Care Net delivered)', 'Training matrix: every person, every requirement, date, expiry, evidence (from MCO where Care Net delivered)', 'register', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-D-03', 'D', 'Site, company and visitor induction records', 'Site, company and visitor induction records', 'training_record', 'APP-00', null, 'per_event', null, 'BOTH', true, null, null),
+    ('HSF-D-04', 'D', 'Statutory and safety critical training records, one item per applicable course (B6.5.1)', 'Statutory and safety critical training records, one item per applicable course (B6.5.1)', 'training_record', 'APP-00', null, 'on_expiry', null, 'BOTH', true, null, 'mco_training'),
+    ('HSF-D-05', 'D', 'Licences and permits held by persons, one item per applicable class (B6.5.2)', 'Licences and permits held by persons, one item per applicable class (B6.5.2)', 'licence', 'APP-00', null, 'on_expiry', null, 'BOTH', true, null, null),
+    ('HSF-D-06', 'D', 'Toolbox talk register and attendance', 'Toolbox talk register and attendance', 'register', null, 'Supervisor', 'per_event', null, 'BOTH', true, null, null),
+    ('HSF-D-07', 'D', 'Competency assessment records where a role requires assessment rather than attendance', 'Competency assessment records where a role requires assessment rather than attendance', 'training_record', 'APP-00', null, 'on_expiry', null, 'BOTH', true, null, null),
+    ('HSF-E-01', 'E', 'The released Medical Surveillance Plan from MSP FORGE', 'The released Medical Surveillance Plan from MSP FORGE', 'document', null, 'OMP', 'annual', 'MED40', 'BOTH', true, null, null),
+    ('HSF-E-02', 'E', 'Certificates of fitness per employee per protocol: baseline, periodic, exit (MCO)', 'Certificates of fitness per employee per protocol: baseline, periodic, exit (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, null, 'mco_medical'),
+    ('HSF-E-03', 'E', 'Construction Regulations Annexure 3 medical certificates of fitness (MCO)', 'Construction Regulations Annexure 3 medical certificates of fitness (MCO)', 'medical_certificate', 'APP-01', null, 'on_expiry', 'MED40', 'BOTH', true, 'T-CONSTR', 'mco_medical'),
+    ('HSF-E-04', 'E', 'Professional driving permit medicals (MCO)', 'Professional driving permit medicals (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, 'T-PRDP', 'mco_medical'),
+    ('HSF-E-05', 'E', 'Mine certificate of fitness per the mandatory Code of Practice (MCO)', 'Mine certificate of fitness per the mandatory Code of Practice (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, 'T-MINING', 'mco_medical'),
+    ('HSF-E-06', 'E', 'Statutory examinations required by specific regulations, one item per applicable class: lead, asbestos, hazardous chemical agents, hazardous biological agents, noise, radiation, heights, confined space, night work, food handling (MCO)', 'Statutory examinations required by specific regulations, one item per applicable class: lead, asbestos, hazardous chemical agents, hazardous biological agents, noise, radiation, heights, confined space, night work, food handling (MCO)', 'medical_certificate', null, 'OMP', 'statutory', 'MED40', 'BOTH', true, null, 'mco_medical'),
+    ('HSF-E-07', 'E', 'Fitness restrictions reflected in job placement, without clinical detail beyond what the employer may hold', 'Fitness restrictions reflected in job placement, without clinical detail beyond what the employer may hold', 'register', null, 'OMP', 'per_event', 'MED40', 'BOTH', true, null, null),
+    ('HSF-E-08', 'E', 'Occupational disease reporting and referral records', 'Occupational disease reporting and referral records', 'report', null, 'OMP', 'per_event', 'MED40', 'BOTH', true, null, null),
+    ('HSF-E-09', 'E', 'First aid: box contents and inspection, first aider list, treatment register', 'First aid: box contents and inspection, first aider list, treatment register', 'register', 'APP-24', null, 'monthly', null, 'BOTH', true, null, null),
+    ('HSF-E-10', 'E', 'Confidentiality and POPIA handling of every medical record: what the employer holds, what Care Net holds, and the lawful basis for each', 'Confidentiality and POPIA handling of every medical record: what the employer holds, what Care Net holds, and the lawful basis for each', 'document', null, 'OMP', 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-F-01', 'F', 'Scaffold register and inspection records', 'Scaffold register and inspection records', 'register', 'APP-08', null, 'statutory', 'INST', 'BOTH', true, 'T-SCAFFOLD', null),
+    ('HSF-F-02', 'F', 'Ladder register and inspections', 'Ladder register and inspections', 'register', 'APP-22', null, 'statutory', null, 'BOTH', true, 'T-LADDERS', null),
+    ('HSF-F-03', 'F', 'Lifting machines and lifting tackle register with load tests and inspections', 'Lifting machines and lifting tackle register with load tests and inspections', 'register', 'APP-17', null, 'statutory', 'INST', 'BOTH', true, 'T-LIFTING', null),
+    ('HSF-F-04', 'F', 'Portable electrical tools and equipment register with inspections', 'Portable electrical tools and equipment register with inspections', 'register', 'APP-15', null, 'statutory', null, 'BOTH', true, null, null),
+    ('HSF-F-05', 'F', 'Electrical installation certificate of compliance and installation inspection register', 'Electrical installation certificate of compliance and installation inspection register', 'certificate', 'APP-15', null, 'statutory', 'INST', 'BOTH', true, null, null),
+    ('HSF-F-06', 'F', 'Fire equipment register with service dates', 'Fire equipment register with service dates', 'register', 'APP-25', null, 'statutory', null, 'BOTH', true, null, null),
+    ('HSF-F-07', 'F', 'Emergency lighting and signage inspections', 'Emergency lighting and signage inspections', 'register', 'APP-25', null, 'statutory', null, 'BOTH', true, null, null),
+    ('HSF-F-08', 'F', 'Pressure equipment register with inspections and certificates', 'Pressure equipment register with inspections and certificates', 'register', 'APP-20', null, 'statutory', 'INST', 'BOTH', true, 'T-PRESSURE', null),
+    ('HSF-F-09', 'F', 'Vehicle and mobile plant register with daily checks and maintenance', 'Vehicle and mobile plant register with daily checks and maintenance', 'register', 'APP-14', null, 'daily', null, 'BOTH', true, 'T-MOBILEPLANT', null),
+    ('HSF-F-10', 'F', 'Excavation inspection register', 'Excavation inspection register', 'register', 'APP-09', null, 'daily', 'INST', 'BOTH', true, 'T-EXCAVATION', null),
+    ('HSF-F-11', 'F', 'Personal protective equipment issue register and inspection', 'Personal protective equipment issue register and inspection', 'register', 'APP-00', null, 'on_change', null, 'BOTH', true, null, null),
+    ('HSF-F-12', 'F', 'Hazardous chemical agent register with safety data sheets, quantities and storage', 'Hazardous chemical agent register with safety data sheets, quantities and storage', 'register', 'APP-21', null, 'on_change', 'INST', 'BOTH', true, 'T-HCA', null),
+    ('HSF-F-13', 'F', 'Asbestos inventory and register', 'Asbestos inventory and register', 'register', 'APP-34', null, 'statutory', 'INST', 'BOTH', true, 'T-ASBESTOS', null),
+    ('HSF-F-14', 'F', 'Machine guarding inspection register', 'Machine guarding inspection register', 'register', 'APP-19', null, 'statutory', null, 'BOTH', true, 'T-MACHINERY', null),
+    ('HSF-F-15', 'F', 'Housekeeping and walkabout inspection records', 'Housekeeping and walkabout inspection records', 'log', null, 'Supervisor', 'monthly', null, 'BOTH', true, null, null),
+    ('HSF-F-16', 'F', 'Stacking and storage inspections', 'Stacking and storage inspections', 'log', 'APP-23', null, 'monthly', null, 'BOTH', true, 'T-STACKING', null),
+    ('HSF-F-17', 'F', 'Fall arrest equipment register and inspections', 'Fall arrest equipment register and inspections', 'register', 'APP-06', null, 'before_use', null, 'BOTH', true, 'T-HEIGHT', null),
+    ('HSF-F-18', 'F', 'Confined space register', 'Confined space register', 'register', 'APP-30', null, 'on_change', null, 'BOTH', true, 'T-CONFINED', null),
+    ('HSF-F-19', 'F', 'Explosive powered tool register', 'Explosive powered tool register', 'register', 'APP-32', null, 'per_event', null, 'BOTH', true, 'T-EPT', null),
+    ('HSF-F-20', 'F', 'Welfare facilities inspection', 'Welfare facilities inspection', 'log', 'APP-00', null, 'monthly', null, 'BOTH', true, null, null),
+    ('HSF-F-21', 'F', 'Lighting, ventilation and thermal environment measurements', 'Lighting, ventilation and thermal environment measurements', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, null, null),
+    ('HSF-F-22', 'F', 'Waste register', 'Waste register', 'register', 'APP-00', null, 'monthly', 'INST', 'BOTH', true, 'T-WASTE', null),
+    ('HSF-G-01', 'G', 'Permit to work system and permit register', 'Permit to work system and permit register', 'register', 'APP-00', null, 'on_change', null, 'BOTH', true, 'T-PTW', null),
+    ('HSF-G-02', 'G', 'Hot work permits', 'Hot work permits', 'permit', 'APP-33', null, 'per_event', null, 'BOTH', true, 'T-HOTWORK', null),
+    ('HSF-G-03', 'G', 'Confined space entry permits', 'Confined space entry permits', 'permit', 'APP-30', null, 'per_event', null, 'BOTH', true, 'T-CONFINED', null),
+    ('HSF-G-04', 'G', 'Excavation permits and service clearances', 'Excavation permits and service clearances', 'permit', 'APP-09', null, 'per_event', null, 'BOTH', true, 'T-EXCAVATION', null),
+    ('HSF-G-05', 'G', 'Working at height permits', 'Working at height permits', 'permit', 'APP-06', null, 'per_event', null, 'BOTH', true, 'T-HEIGHT', null),
+    ('HSF-G-06', 'G', 'Electrical isolation, lockout and tagout records', 'Electrical isolation, lockout and tagout records', 'log', 'APP-15', null, 'per_event', null, 'BOTH', true, 'T-ELEC', null),
+    ('HSF-G-07', 'G', 'Lifting operation permits', 'Lifting operation permits', 'permit', 'APP-17', null, 'per_event', null, 'BOTH', true, 'T-LIFTING', null),
+    ('HSF-G-08', 'G', 'Demolition permits', 'Demolition permits', 'permit', 'APP-10', null, 'per_event', null, 'BOTH', true, 'T-DEMOLITION', null),
+    ('HSF-G-09', 'G', 'Road closure and traffic accommodation approvals', 'Road closure and traffic accommodation approvals', 'permit', 'APP-00', null, 'per_event', null, 'BOTH', true, 'T-ROADWORKS', null),
+    ('HSF-G-10', 'G', 'Radiation work authorisations', 'Radiation work authorisations', 'licence', 'APP-37', null, 'on_expiry', 'INST', 'BOTH', true, 'T-RADIATION', null),
+    ('HSF-H-01', 'H', 'Emergency plan per site: roles, assembly points, contacts, routes', 'Emergency plan per site: roles, assembly points, contacts, routes', 'plan', 'APP-27', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-H-02', 'H', 'Emergency drills: schedule, records, findings, corrective actions', 'Emergency drills: schedule, records, findings, corrective actions', 'report', 'APP-27', null, 'statutory', null, 'BOTH', true, null, null),
+    ('HSF-H-03', 'H', 'Fire risk assessment and fire plan', 'Fire risk assessment and fire plan', 'plan', 'APP-25', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-H-04', 'H', 'Medical emergency arrangements and nearest facilities', 'Medical emergency arrangements and nearest facilities', 'document', 'APP-24', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-H-05', 'H', 'Spill response', 'Spill response', 'plan', 'APP-21', null, 'annual', 'LIFE', 'BOTH', true, 'T-HCA', null),
+    ('HSF-H-06', 'H', 'MHI emergency plan and public information duty', 'MHI emergency plan and public information duty', 'plan', 'APP-00', null, 'statutory', 'INST', 'BOTH', true, 'T-MHI', null),
+    ('HSF-H-07', 'H', 'Security emergency procedures', 'Security emergency procedures', 'document', 'APP-27', null, 'annual', 'LIFE', 'BOTH', true, 'T-SECURITY', null),
+    ('HSF-H-08', 'H', 'Disaster management interface for emergency planning', 'Disaster management interface for emergency planning', 'document', 'APP-27', null, 'annual', 'LIFE', 'BOTH', true, 'T-MHI', null),
+    ('HSF-I-01', 'I', 'Incident and near miss reporting procedure', 'Incident and near miss reporting procedure', 'document', 'APP-00', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-I-02', 'I', 'Incident register', 'Incident register', 'register', 'APP-29', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-I-03', 'I', 'Section 24 reporting and the Annexure 1 recording', 'Section 24 reporting and the Annexure 1 recording', 'report', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-I-04', 'I', 'Investigation reports with root cause and corrective action', 'Investigation reports with root cause and corrective action', 'report', 'APP-29', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-I-05', 'I', 'COIDA claim records and employer''s reports of accidents and diseases', 'COIDA claim records and employer''s reports of accidents and diseases', 'report', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-I-06', 'I', 'Occupational disease notifications', 'Occupational disease notifications', 'report', null, 'OMP', 'per_event', 'MED40', 'BOTH', true, null, null),
+    ('HSF-I-07', 'I', 'Corrective and preventive action register with closure evidence', 'Corrective and preventive action register with closure evidence', 'register', 'APP-00', null, 'monthly', null, 'BOTH', true, null, null),
+    ('HSF-J-01', 'J', 'Occupational hygiene survey programme', 'Occupational hygiene survey programme', 'plan', 'APP-05', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-J-02', 'J', 'Noise survey by an approved inspection authority and the noise zone map', 'Noise survey by an approved inspection authority and the noise zone map', 'report', 'APP-36', null, 'statutory', 'INST', 'BOTH', true, 'T-NOISE', null),
+    ('HSF-J-03', 'J', 'Hazardous chemical agent exposure monitoring by an approved inspection authority', 'Hazardous chemical agent exposure monitoring by an approved inspection authority', 'report', 'APP-21', null, 'statutory', 'INST', 'BOTH', true, 'T-HCA', null),
+    ('HSF-J-04', 'J', 'Illumination survey', 'Illumination survey', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, null, null),
+    ('HSF-J-05', 'J', 'Ventilation and thermal survey', 'Ventilation and thermal survey', 'report', 'APP-05', null, 'statutory', 'INST', 'BOTH', true, 'T-THERMAL', null),
+    ('HSF-J-06', 'J', 'Asbestos air monitoring', 'Asbestos air monitoring', 'report', 'APP-34', null, 'statutory', 'INST', 'BOTH', true, 'T-ASBESTOS', null),
+    ('HSF-J-07', 'J', 'Lead air monitoring', 'Lead air monitoring', 'report', 'APP-35', null, 'statutory', 'INST', 'BOTH', true, 'T-LEAD', null),
+    ('HSF-J-08', 'J', 'Biological monitoring results as they bear on controls, held under medical confidentiality (aggregate only in the File)', 'Biological monitoring results as they bear on controls, held under medical confidentiality (aggregate only in the File)', 'report', null, 'OMP', 'statutory', 'MED40', 'BOTH', true, 'T-HCA or T-LEAD', null),
+    ('HSF-K-01', 'K', 'Contractor selection criteria and evaluation', 'Contractor selection criteria and evaluation', 'document', 'APP-00', null, 'per_project', 'LIFE', 'BOTH', true, 'T-CONTRACTORS', null),
+    ('HSF-K-02', 'K', 'Section 37(2) agreements and contractor Files (cross reference HSF-A-08)', 'Section 37(2) agreements and contractor Files (cross reference HSF-A-08)', 'agreement', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, 'T-CONTRACTORS', null),
+    ('HSF-K-03', 'K', 'Contractor inductions, permits and daily coordination records', 'Contractor inductions, permits and daily coordination records', 'log', 'APP-00', null, 'daily', null, 'BOTH', true, 'T-CONTRACTORS', null),
+    ('HSF-K-04', 'K', 'Visitor control and induction', 'Visitor control and induction', 'log', 'APP-00', null, 'per_event', null, 'BOTH', true, null, null),
+    ('HSF-K-05', 'K', 'Public protection: hoarding, signage, public liability evidence', 'Public protection: hoarding, signage, public liability evidence', 'document', 'APP-00', null, 'per_project', null, 'BOTH', true, 'T-PUBLIC', null),
+    ('HSF-L-01', 'L', 'Committee minutes and action tracking (cross reference HSF-B-05)', 'Committee minutes and action tracking (cross reference HSF-B-05)', 'minutes', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, 'T-COMMITTEE', null),
+    ('HSF-L-02', 'L', 'Representative inspection reports and recommendations', 'Representative inspection reports and recommendations', 'report', 'APP-00', null, 'monthly', null, 'BOTH', true, 'T-HSR', null),
+    ('HSF-L-03', 'L', 'Toolbox talks (cross reference HSF-D-06)', 'Toolbox talks (cross reference HSF-D-06)', 'register', null, 'Supervisor', 'per_event', null, 'BOTH', true, null, null),
+    ('HSF-L-04', 'L', 'Notices displayed: Act and regulations, appointments, emergency numbers, policy', 'Notices displayed: Act and regulations, appointments, emergency numbers, policy', 'log', 'APP-00', null, 'annual', null, 'BOTH', true, null, null),
+    ('HSF-L-05', 'L', 'Change notification records to Care Net for medical surveillance and to the client for construction work', 'Change notification records to Care Net for medical surveillance and to the client for construction work', 'log', 'APP-00', null, 'per_event', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-M-01', 'M', 'Facilities Regulations compliance: sanitation, drinking water, change rooms, eating places, in the statutory ratios', 'Facilities Regulations compliance: sanitation, drinking water, change rooms, eating places, in the statutory ratios', 'report', 'APP-00', null, 'annual', null, 'BOTH', true, null, null),
+    ('HSF-M-02', 'M', 'Physical environment compliance: lighting, ventilation, thermal, housekeeping', 'Physical environment compliance: lighting, ventilation, thermal, housekeeping', 'report', 'APP-00', null, 'annual', 'INST', 'BOTH', true, null, null),
+    ('HSF-M-03', 'M', 'Environmental management where NEM Waste Act or other environmental law applies', 'Environmental management where NEM Waste Act or other environmental law applies', 'document', 'APP-00', null, 'annual', 'INST', 'BOTH', true, 'T-WASTE or T-ENVIRO', null),
+    ('HSF-M-04', 'M', 'Waste manifests and licensed disposal evidence', 'Waste manifests and licensed disposal evidence', 'register', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, 'T-WASTE', null),
+    ('HSF-M-05', 'M', 'Workplace smoking controls', 'Workplace smoking controls', 'document', 'APP-00', null, 'annual', null, 'BOTH', true, null, null),
+    ('HSF-N-01', 'N', 'Internal audit schedule and reports', 'Internal audit schedule and reports', 'report', 'APP-00', null, 'statutory', null, 'BOTH', true, null, null),
+    ('HSF-N-02', 'N', 'External audit reports (client, principal contractor, certification body, inspector)', 'External audit reports (client, principal contractor, certification body, inspector)', 'report', 'APP-00', null, 'per_event', null, 'BOTH', true, null, null),
+    ('HSF-N-03', 'N', 'Management review records', 'Management review records', 'minutes', null, 'Chief executive', 'annual', null, 'BOTH', true, null, null),
+    ('HSF-N-04', 'N', 'Objectives and targets with measurement', 'Objectives and targets with measurement', 'report', null, 'Chief executive', 'annual', null, 'BOTH', true, null, null),
+    ('HSF-N-05', 'N', 'Non conformance and corrective action log with closure evidence', 'Non conformance and corrective action log with closure evidence', 'register', 'APP-00', null, 'monthly', null, 'BOTH', true, null, null),
+    ('HSF-N-06', 'N', 'Kernel legislation release notes applied to this File, with date and change', 'Kernel legislation release notes applied to this File, with date and change', 'log', null, 'Engine', 'per_event', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-O-01', 'O', 'Retention schedule per record type, from the instrument that sets it, including the 40 year retention for medical surveillance records of hazardous exposure', 'Retention schedule per record type, from the instrument that sets it, including the 40 year retention for medical surveillance records of hazardous exposure', 'document', 'APP-00', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-O-02', 'O', 'Storage location and access control per record type', 'Storage location and access control per record type', 'document', 'APP-00', null, 'annual', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-O-03', 'O', 'POPIA operator agreement between the client and Care Net for the records Care Net holds', 'POPIA operator agreement between the client and Care Net for the records Care Net holds', 'agreement', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-OV-AGRI-01', 'C', 'Pesticide and organophosphate handling procedure and register', 'Pesticide and organophosphate handling procedure and register', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-02', 'E', 'Cholinesterase surveillance', 'Cholinesterase surveillance', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-AGRI-03', 'C', 'Tractor and implement guarding inspections', 'Tractor and implement guarding inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-04', 'D', 'Chainsaw and forestry harvesting competencies', 'Chainsaw and forestry harvesting competencies', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-05', 'C', 'Zoonosis controls', 'Zoonosis controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-06', 'C', 'Child labour prohibition on hazardous work', 'Child labour prohibition on hazardous work', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-07', 'C', 'Seasonal worker induction', 'Seasonal worker induction', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-08', 'C', 'Heat exposure controls', 'Heat exposure controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-AGRI-09', 'C', 'Remote site emergency response', 'Remote site emergency response', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-01', 'C', 'Safety data sheets held at every client site', 'Safety data sheets held at every client site', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-02', 'C', 'Facade and high level cleaning method statements', 'Facade and high level cleaning method statements', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-03', 'C', 'Tank and duct confined space entry', 'Tank and duct confined space entry', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-04', 'C', 'Biological agent exposure in healthcare and sanitation cleaning', 'Biological agent exposure in healthcare and sanitation cleaning', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-05', 'C', 'Lone worker and night work controls', 'Lone worker and night work controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CLEAN-06', 'C', 'Multi site client induction records', 'Multi site client induction records', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-01', 'C', 'Construction work permit where the thresholds require it', 'Construction work permit where the thresholds require it', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-02', 'C', 'Designer duties record', 'Designer duties record', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-03', 'C', 'Structures inspections', 'Structures inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-04', 'C', 'Suspended platforms register and inspections', 'Suspended platforms register and inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-05', 'C', 'Use and temporary storage of flammables', 'Use and temporary storage of flammables', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-06', 'C', 'Water environments controls', 'Water environments controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-07', 'C', 'Fire precautions on construction sites', 'Fire precautions on construction sites', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-08', 'C', 'Health and safety file handover to the client on completion', 'Health and safety file handover to the client on completion', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-CONSTR-09', 'E', 'Annexure 3 certificate for every person on site', 'Annexure 3 certificate for every person on site', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-EDU-01', 'C', 'Laboratory and workshop chemical controls', 'Laboratory and workshop chemical controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-EDU-02', 'C', 'Playground and sports equipment inspections', 'Playground and sports equipment inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-EDU-03', 'C', 'Learner transport and professional driving permits', 'Learner transport and professional driving permits', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-EDU-04', 'C', 'Immunisation and biological agent controls in early childhood settings', 'Immunisation and biological agent controls in early childhood settings', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-EDU-05', 'C', 'Emergency plan accounting for learners', 'Emergency plan accounting for learners', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-EDU-06', 'C', 'Child protection interface, referenced only, never adjudicated', 'Child protection interface, referenced only, never adjudicated', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-GOV-01', 'C', 'Water and wastewater confined space controls', 'Water and wastewater confined space controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-GOV-02', 'E', 'Emergency and traffic services fitness', 'Emergency and traffic services fitness', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-GOV-03', 'C', 'Fleet management register', 'Fleet management register', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-GOV-04', 'C', 'Public facility fire and evacuation', 'Public facility fire and evacuation', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-GOV-05', 'C', 'Multi department appointment structure under one accounting officer', 'Multi department appointment structure under one accounting officer', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-GOV-06', 'C', 'Contractor procurement under section 37(2)', 'Contractor procurement under section 37(2)', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-01', 'E', 'Immunisation and post exposure protocols', 'Immunisation and post exposure protocols', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-HEALTH-02', 'C', 'Sharps and healthcare risk waste', 'Sharps and healthcare risk waste', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-03', 'C', 'Radiation protection officer, dose records', 'Radiation protection officer, dose records', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-04', 'C', 'Cytotoxic and anaesthetic gas controls', 'Cytotoxic and anaesthetic gas controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-05', 'C', 'Patient handling ergonomics', 'Patient handling ergonomics', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-06', 'C', 'Violence and psychosocial controls', 'Violence and psychosocial controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-07', 'C', 'Laboratory biosafety level controls', 'Laboratory biosafety level controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HEALTH-08', 'C', 'Clinical workplace professional registration interface, reference only', 'Clinical workplace professional registration interface, reference only', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HOSP-01', 'C', 'Food Premises Hygiene Regulations compliance in full', 'Food Premises Hygiene Regulations compliance in full', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HOSP-02', 'E', 'Food handler fitness', 'Food handler fitness', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-HOSP-03', 'C', 'Kitchen fire and gas installation certificates', 'Kitchen fire and gas installation certificates', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HOSP-04', 'C', 'Slips and burns controls', 'Slips and burns controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HOSP-05', 'C', 'Pool and lifeguard requirements where applicable', 'Pool and lifeguard requirements where applicable', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-HOSP-06', 'C', 'Housekeeping chemical handling', 'Housekeeping chemical handling', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-01', 'C', 'Guarding in full per machine class', 'Guarding in full per machine class', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-02', 'C', 'Process specific chemical controls: solvents, welding fume, isocyanates', 'Process specific chemical controls: solvents, welding fume, isocyanates', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-03', 'C', 'Ergonomics on production lines', 'Ergonomics on production lines', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-04', 'C', 'Confined space in vessels', 'Confined space in vessels', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-05', 'D', 'Forklift competencies', 'Forklift competencies', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MANU-06', 'C', 'Dangerous goods storage and transport', 'Dangerous goods storage and transport', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-MINING-01', 'C', 'Employer duties under the MHSA', 'Employer duties under the MHSA', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-02', 'C', 'Mandatory Codes of Practice per DMRE guideline: fitness to perform work', 'Mandatory Codes of Practice per DMRE guideline: fitness to perform work', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-03', 'C', 'Mandatory Code of Practice: noise', 'Mandatory Code of Practice: noise', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-04', 'C', 'Mandatory Code of Practice: airborne pollutants', 'Mandatory Code of Practice: airborne pollutants', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-05', 'C', 'Mandatory Code of Practice: thermal stress', 'Mandatory Code of Practice: thermal stress', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-06', 'C', 'Mandatory Code of Practice: fatigue', 'Mandatory Code of Practice: fatigue', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-07', 'C', 'Mandatory Code of Practice: trackless mobile machinery', 'Mandatory Code of Practice: trackless mobile machinery', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-08', 'C', 'Mandatory Code of Practice: fall of ground', 'Mandatory Code of Practice: fall of ground', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-09', 'C', 'Mandatory Code of Practice: emergency preparedness', 'Mandatory Code of Practice: emergency preparedness', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-10', 'E', 'Certificate of fitness system', 'Certificate of fitness system', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, 'mco_medical'),
+    ('HSF-OV-MINING-11', 'C', 'ODMWA benefit examinations', 'ODMWA benefit examinations', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-12', 'C', 'Mine health and safety representatives and committees', 'Mine health and safety representatives and committees', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-13', 'C', 'Explosives controls', 'Explosives controls', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-14', 'C', 'Winding and lifting plant', 'Winding and lifting plant', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-15', 'C', 'Ventilation and rescue', 'Ventilation and rescue', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-MINING-16', 'C', 'Mine Health and Safety Inspectorate reporting', 'Mine Health and Safety Inspectorate reporting', 'document', 'APP-00', null, 'annual', 'INST', 'MHSA', false, null, null),
+    ('HSF-OV-OFFICE-01', 'C', 'Display screen work ergonomics', 'Display screen work ergonomics', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-OFFICE-02', 'C', 'Contact centre night work and acoustic exposure', 'Contact centre night work and acoustic exposure', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-OFFICE-03', 'C', 'Lone working and travel', 'Lone working and travel', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-OFFICE-04', 'C', 'Psychosocial hazards', 'Psychosocial hazards', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-01', 'C', 'MHI Regulations in full where thresholds are met', 'MHI Regulations in full where thresholds are met', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-02', 'C', 'Electrical zoning and intrinsically safe equipment', 'Electrical zoning and intrinsically safe equipment', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-03', 'C', 'Dangerous goods transport', 'Dangerous goods transport', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-04', 'C', 'Forecourt and tank farm emergency plans', 'Forecourt and tank farm emergency plans', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-05', 'C', 'Static and grounding controls', 'Static and grounding controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-PETRO-06', 'C', 'Environmental spill controls', 'Environmental spill controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-RETAIL-01', 'C', 'Racking inspections', 'Racking inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-RETAIL-02', 'C', 'Loading dock traffic management', 'Loading dock traffic management', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-RETAIL-03', 'C', 'Cold room and heat exposure', 'Cold room and heat exposure', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-RETAIL-04', 'C', 'Security and robbery exposure controls', 'Security and robbery exposure controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-RETAIL-05', 'C', 'Fire and evacuation for public spaces', 'Fire and evacuation for public spaces', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-01', 'D', 'PSIRA registration and grades', 'PSIRA registration and grades', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-02', 'D', 'Firearm competency and Firearms Control Act compliance', 'Firearm competency and Firearms Control Act compliance', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-03', 'C', 'Cash in transit vehicle and route controls', 'Cash in transit vehicle and route controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-04', 'C', 'Post incident support', 'Post incident support', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-05', 'C', 'Canine unit controls', 'Canine unit controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-06', 'C', 'Control room ergonomics', 'Control room ergonomics', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-SEC-07', 'C', 'Lone posting emergency procedures', 'Lone posting emergency procedures', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TEL-01', 'C', 'Tower rescue plans', 'Tower rescue plans', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TEL-02', 'C', 'Radio frequency exposure controls', 'Radio frequency exposure controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TEL-03', 'C', 'Manhole and data centre plant confined space', 'Manhole and data centre plant confined space', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TEL-04', 'C', 'Remote site emergency response', 'Remote site emergency response', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-01', 'C', 'Fleet compliance under the National Road Traffic Act in full, operator cards and roadworthiness', 'Fleet compliance under the National Road Traffic Act in full, operator cards and roadworthiness', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-02', 'C', 'Dangerous goods where carried', 'Dangerous goods where carried', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-03', 'C', 'Driver fatigue management', 'Driver fatigue management', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-04', 'E', 'Rail safety critical fitness', 'Rail safety critical fitness', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-TRANS-05', 'C', 'Port work regime', 'Port work regime', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-06', 'C', 'Aviation ground handling regime', 'Aviation ground handling regime', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-TRANS-07', 'C', 'Loading and securing of loads', 'Loading and securing of loads', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-01', 'C', 'Electrical Machinery and Installation Regulations in full for generation and distribution', 'Electrical Machinery and Installation Regulations in full for generation and distribution', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-02', 'C', 'Switching and isolation procedures', 'Switching and isolation procedures', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-03', 'C', 'Chlorine and chemical dosing controls', 'Chlorine and chemical dosing controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-04', 'C', 'Arc flash controls', 'Arc flash controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-05', 'C', 'Public safety near assets', 'Public safety near assets', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-UTIL-06', 'C', 'Environmental authorisations', 'Environmental authorisations', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-01', 'D', 'NEM Waste Act licences and manifests', 'NEM Waste Act licences and manifests', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-02', 'C', 'Hazardous and healthcare risk waste handling', 'Hazardous and healthcare risk waste handling', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-03', 'E', 'Immunisation for biological agent exposure', 'Immunisation for biological agent exposure', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-WASTE-04', 'C', 'Landfill gas and confined space', 'Landfill gas and confined space', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-05', 'C', 'Reversing vehicle traffic management', 'Reversing vehicle traffic management', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-06', 'C', 'Needle stick and sharps controls', 'Needle stick and sharps controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-07', 'C', 'Dust and silica at transfer stations', 'Dust and silica at transfer stations', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
+    ('HSF-OV-WASTE-08', 'C', 'Environmental monitoring', 'Environmental monitoring', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null)
+       ) as v(code, section_code, name, duty, evidence_type, responsible_appointment, responsible_role,
+              review_interval, retention_rule, regime, universal, trigger_code, mco_source)
+on conflict (code) do nothing;
+
+-- 7. Element classes: courses (B6.5.1), licence classes (B6.5.2), examination classes (HSF-E-06)
+insert into hsf_element_class (code, element_code, kind, ordinal, name, trigger_code, instrument_id, provision, mco_source)
+select v.code, v.element_code, v.kind, v.ordinal, v.name, v.trigger_code,
+       case when v.short_name is null then null else (select li.id from msp_legal_instrument li where li.short_name = v.short_name order by case li.status when 'verified' then 0 when 'pending' then 1 when 'superseded' then 2 else 3 end, li.verified_on desc nulls last, li.id limit 1) end,
+       'awaiting verification', v.mco_source
+  from (values
+    ('D04-01', 'HSF-D-04', 'course', 1, 'Health and safety representative', null, null, 'mco_training'),
+    ('D04-02', 'HSF-D-04', 'course', 2, 'First aid', null, null, 'mco_training'),
+    ('D04-03', 'HSF-D-04', 'course', 3, 'Fire fighting', null, null, 'mco_training'),
+    ('D04-04', 'HSF-D-04', 'course', 4, 'Working at height and fall arrest', 'T-HEIGHT', null, 'mco_training'),
+    ('D04-05', 'HSF-D-04', 'course', 5, 'Scaffold erection and inspection', 'T-SCAFFOLD', null, 'mco_training'),
+    ('D04-06', 'HSF-D-04', 'course', 6, 'Confined space entry', 'T-CONFINED', null, 'mco_training'),
+    ('D04-07', 'HSF-D-04', 'course', 7, 'Lifting machine and lifting tackle operation', 'T-LIFTING', null, 'mco_training'),
+    ('D04-08', 'HSF-D-04', 'course', 8, 'Forklift and mobile plant', 'T-MOBILEPLANT', null, 'mco_training'),
+    ('D04-09', 'HSF-D-04', 'course', 9, 'Hazard identification and risk assessment', null, null, 'mco_training'),
+    ('D04-10', 'HSF-D-04', 'course', 10, 'Incident investigation', null, null, 'mco_training'),
+    ('D04-11', 'HSF-D-04', 'course', 11, 'Hazardous chemical handling', 'T-HCA', null, 'mco_training'),
+    ('D04-12', 'HSF-D-04', 'course', 12, 'Asbestos awareness', 'T-ASBESTOS', null, 'mco_training'),
+    ('D04-13', 'HSF-D-04', 'course', 13, 'Lead awareness', 'T-LEAD', null, 'mco_training'),
+    ('D04-14', 'HSF-D-04', 'course', 14, 'Hearing conservation', 'T-NOISE', null, 'mco_training'),
+    ('D04-15', 'HSF-D-04', 'course', 15, 'Ergonomics', null, null, 'mco_training'),
+    ('D04-16', 'HSF-D-04', 'course', 16, 'Emergency evacuation', null, null, 'mco_training'),
+    ('D04-17', 'HSF-D-04', 'course', 17, 'Food handler hygiene', 'T-FOOD', null, 'mco_training'),
+    ('D05-01', 'HSF-D-05', 'licence', 1, 'Professional driving permit', 'T-PRDP', 'NRTA PrDP medical', null),
+    ('D05-02', 'HSF-D-05', 'licence', 2, 'Plant and machinery operator certificates', 'T-LIFTING or T-MOBILEPLANT', 'Driven Machinery Regulations', null),
+    ('D05-03', 'HSF-D-05', 'licence', 3, 'Electrical wireman and installation registration', 'T-ELEC', 'Electrical Installation Regulations, 2009', null),
+    ('D05-04', 'HSF-D-05', 'licence', 4, 'Gas practitioner registration', 'T-LPG', 'Pressure Equipment Regulations, 2009', null),
+    ('D05-05', 'HSF-D-05', 'licence', 5, 'Explosives licence', 'T-EXPLOSIVES', 'Explosives Regulations', null),
+    ('D05-06', 'HSF-D-05', 'licence', 6, 'Firearm competency', 'T-ARMED', 'Firearms Control Act', null),
+    ('D05-07', 'HSF-D-05', 'licence', 7, 'PSIRA registration and grade', 'T-SECURITY', 'Private Security Industry Regulation Act', null),
+    ('E06-01', 'HSF-E-06', 'examination', 1, 'Lead', 'T-LEAD', 'Lead Regulations, 2001', 'mco_medical'),
+    ('E06-02', 'HSF-E-06', 'examination', 2, 'Asbestos', 'T-ASBESTOS', 'Asbestos Abatement Regulations, 2020', 'mco_medical'),
+    ('E06-03', 'HSF-E-06', 'examination', 3, 'Hazardous chemical agents', 'T-HCA', 'HCA Regulations, 2021', 'mco_medical'),
+    ('E06-04', 'HSF-E-06', 'examination', 4, 'Hazardous biological agents', 'T-HBA', 'HBA Regulations, 2022', 'mco_medical'),
+    ('E06-05', 'HSF-E-06', 'examination', 5, 'Noise', 'T-NOISE', 'Noise Exposure Regulations, 2024', 'mco_medical'),
+    ('E06-06', 'HSF-E-06', 'examination', 6, 'Radiation', 'T-RADIATION', 'Hazardous Substances Act (radiation control)', 'mco_medical'),
+    ('E06-07', 'HSF-E-06', 'examination', 7, 'Heights', 'T-HEIGHT', 'Construction Regulations, 2014', 'mco_medical'),
+    ('E06-08', 'HSF-E-06', 'examination', 8, 'Confined space', 'T-CONFINED', 'General Safety Regulations, 1986', 'mco_medical'),
+    ('E06-09', 'HSF-E-06', 'examination', 9, 'Night work', 'T-SHIFT', 'BCEA night work Code', 'mco_medical'),
+    ('E06-10', 'HSF-E-06', 'examination', 10, 'Food handling', 'T-FOOD', 'Food Premises Hygiene Regulations, R638 of 2018', 'mco_medical')
+       ) as v(code, element_code, kind, ordinal, name, trigger_code, short_name, mco_source)
+on conflict (code) do nothing;
+
+-- 8. Element instrument links (provision awaiting verification until Phase 2) -------------
+insert into hsf_element_instrument (element_id, instrument_id, provision)
+select e.id, i.id, 'awaiting verification'
+  from (values
+    ('HSF-A-01', 'OHS Act'),
+    ('HSF-A-02', 'OHS Act'),
+    ('HSF-A-02', 'Construction Regulations, 2014'),
+    ('HSF-A-03', 'COIDA'),
+    ('HSF-A-04', 'OHS Act'),
+    ('HSF-A-04', 'MHSA'),
+    ('HSF-A-05', 'Construction Regulations, 2014'),
+    ('HSF-A-06', 'Construction Regulations, 2014'),
+    ('HSF-A-07', 'Construction Regulations, 2014'),
+    ('HSF-A-08', 'OHS Act'),
+    ('HSF-A-09', 'OHS Act'),
+    ('HSF-A-09', 'Construction Regulations, 2014'),
+    ('HSF-A-10', 'OHS Act'),
+    ('HSF-A-11', 'OHS Act'),
+    ('HSF-A-11', 'Construction Regulations, 2014'),
+    ('HSF-B-01', 'OHS Act'),
+    ('HSF-B-02', 'OHS Act'),
+    ('HSF-B-03', 'OHS Act'),
+    ('HSF-B-04', 'OHS Act'),
+    ('HSF-B-04', 'General Administrative Regulations, 2003'),
+    ('HSF-B-05', 'OHS Act'),
+    ('HSF-B-05', 'General Administrative Regulations, 2003'),
+    ('HSF-B-06', 'OHS Act'),
+    ('HSF-B-06', 'Construction Regulations, 2014'),
+    ('HSF-B-06', 'HCA Regulations, 2021'),
+    ('HSF-B-06', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-B-06', 'Driven Machinery Regulations'),
+    ('HSF-B-06', 'General Machinery Regulations, 1988'),
+    ('HSF-B-06', 'Pressure Equipment Regulations, 2009'),
+    ('HSF-B-06', 'General Safety Regulations, 1986'),
+    ('HSF-B-06', 'SANS 10400 T part'),
+    ('HSF-B-06', 'Local fire by laws'),
+    ('HSF-B-06', 'Fire Brigade Services Act'),
+    ('HSF-B-06', 'General Administrative Regulations, 2003'),
+    ('HSF-B-06', 'Explosive powered tools regulations'),
+    ('HSF-B-06', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-B-06', 'Lead Regulations, 2001'),
+    ('HSF-B-06', 'Noise Exposure Regulations, 2024'),
+    ('HSF-B-06', 'Hazardous Substances Act (radiation control)'),
+    ('HSF-B-06', 'Food Premises Hygiene Regulations, R638 of 2018'),
+    ('HSF-B-06', 'NRTA PrDP medical'),
+    ('HSF-B-06', 'National Road Traffic Act'),
+    ('HSF-B-06', 'MHSA'),
+    ('HSF-B-07', 'OHS Act'),
+    ('HSF-B-08', 'OHS Act'),
+    ('HSF-C-01', 'OHS Act'),
+    ('HSF-C-01', 'Construction Regulations, 2014'),
+    ('HSF-C-02', 'OHS Act'),
+    ('HSF-C-03', 'OHS Act'),
+    ('HSF-C-04', 'OHS Act'),
+    ('HSF-C-05', 'OHS Act'),
+    ('HSF-C-05', 'HCA Regulations, 2021'),
+    ('HSF-C-06', 'OHS Act'),
+    ('HSF-C-06', 'Construction Regulations, 2014'),
+    ('HSF-C-07', 'Construction Regulations, 2014'),
+    ('HSF-C-08', 'Construction Regulations, 2014'),
+    ('HSF-C-08', 'General Safety Regulations, 1986'),
+    ('HSF-C-09', 'Driven Machinery Regulations'),
+    ('HSF-C-10', 'Construction Regulations, 2014'),
+    ('HSF-C-11', 'Construction Regulations, 2014'),
+    ('HSF-C-12', 'General Safety Regulations, 1986'),
+    ('HSF-C-13', 'General Safety Regulations, 1986'),
+    ('HSF-C-14', 'Ergonomics Regulations, 2019'),
+    ('HSF-C-15', 'Noise Exposure Regulations, 2024'),
+    ('HSF-C-16', 'HCA Regulations, 2021'),
+    ('HSF-C-17', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-C-18', 'Lead Regulations, 2001'),
+    ('HSF-C-19', 'HBA Regulations, 2022'),
+    ('HSF-C-20', 'BCEA night work Code'),
+    ('HSF-C-20', 'BCEA'),
+    ('HSF-C-21', 'MHI Regulations, 2022'),
+    ('HSF-C-22', 'Physical Agents Regulations, 2024'),
+    ('HSF-D-01', 'OHS Act'),
+    ('HSF-D-01', 'Skills Development Act'),
+    ('HSF-D-02', 'OHS Act'),
+    ('HSF-D-03', 'OHS Act'),
+    ('HSF-D-03', 'Construction Regulations, 2014'),
+    ('HSF-D-04', 'Skills Development Act'),
+    ('HSF-D-04', 'SETA unit standards'),
+    ('HSF-D-05', 'NRTA PrDP medical'),
+    ('HSF-D-05', 'Driven Machinery Regulations'),
+    ('HSF-D-05', 'Electrical Installation Regulations, 2009'),
+    ('HSF-D-05', 'Pressure Equipment Regulations, 2009'),
+    ('HSF-D-05', 'Explosives Regulations'),
+    ('HSF-D-05', 'Firearms Control Act'),
+    ('HSF-D-05', 'Private Security Industry Regulation Act'),
+    ('HSF-D-06', 'OHS Act'),
+    ('HSF-D-07', 'Skills Development Act'),
+    ('HSF-E-02', 'HCA Regulations, 2021'),
+    ('HSF-E-02', 'HBA Regulations, 2022'),
+    ('HSF-E-02', 'Noise Exposure Regulations, 2024'),
+    ('HSF-E-02', 'Lead Regulations, 2001'),
+    ('HSF-E-02', 'Ergonomics Regulations, 2019'),
+    ('HSF-E-03', 'Construction Regulations, 2014'),
+    ('HSF-E-04', 'NRTA PrDP medical'),
+    ('HSF-E-05', 'MHSA'),
+    ('HSF-E-05', 'Fitness to Perform Work Guideline (MHSA)'),
+    ('HSF-E-06', 'Lead Regulations, 2001'),
+    ('HSF-E-06', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-E-06', 'HCA Regulations, 2021'),
+    ('HSF-E-06', 'HBA Regulations, 2022'),
+    ('HSF-E-06', 'Noise Exposure Regulations, 2024'),
+    ('HSF-E-06', 'Hazardous Substances Act (radiation control)'),
+    ('HSF-E-06', 'Construction Regulations, 2014'),
+    ('HSF-E-06', 'General Safety Regulations, 1986'),
+    ('HSF-E-06', 'BCEA night work Code'),
+    ('HSF-E-06', 'Food Premises Hygiene Regulations, R638 of 2018'),
+    ('HSF-E-07', 'EEA section 7'),
+    ('HSF-E-07', 'Code of Good Practice on Employment of Persons with Disabilities'),
+    ('HSF-E-08', 'COIDA'),
+    ('HSF-E-08', 'ODMWA'),
+    ('HSF-E-09', 'General Safety Regulations, 1986'),
+    ('HSF-E-10', 'POPIA'),
+    ('HSF-E-10', 'HPCSA Booklet 1'),
+    ('HSF-F-01', 'Construction Regulations, 2014'),
+    ('HSF-F-02', 'General Safety Regulations, 1986'),
+    ('HSF-F-03', 'Driven Machinery Regulations'),
+    ('HSF-F-04', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-F-04', 'Construction Regulations, 2014'),
+    ('HSF-F-05', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-F-05', 'Electrical Installation Regulations, 2009'),
+    ('HSF-F-05', 'SANS 10142'),
+    ('HSF-F-06', 'SANS 10400 T part'),
+    ('HSF-F-06', 'Local fire by laws'),
+    ('HSF-F-07', 'SANS 10400'),
+    ('HSF-F-08', 'Pressure Equipment Regulations, 2009'),
+    ('HSF-F-09', 'Construction Regulations, 2014'),
+    ('HSF-F-09', 'Driven Machinery Regulations'),
+    ('HSF-F-10', 'Construction Regulations, 2014'),
+    ('HSF-F-11', 'General Safety Regulations, 1986'),
+    ('HSF-F-12', 'HCA Regulations, 2021'),
+    ('HSF-F-13', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-F-14', 'General Machinery Regulations, 1988'),
+    ('HSF-F-15', 'Construction Regulations, 2014'),
+    ('HSF-F-15', 'OHS Act'),
+    ('HSF-F-16', 'General Safety Regulations, 1986'),
+    ('HSF-F-17', 'Construction Regulations, 2014'),
+    ('HSF-F-18', 'General Safety Regulations, 1986'),
+    ('HSF-F-19', 'Explosive powered tools regulations'),
+    ('HSF-F-20', 'Facilities Regulations, 2004'),
+    ('HSF-F-21', 'Physical Agents Regulations, 2024'),
+    ('HSF-F-22', 'NEM Waste Act'),
+    ('HSF-G-01', 'OHS Act'),
+    ('HSF-G-02', 'General Safety Regulations, 1986'),
+    ('HSF-G-03', 'General Safety Regulations, 1986'),
+    ('HSF-G-04', 'Construction Regulations, 2014'),
+    ('HSF-G-05', 'Construction Regulations, 2014'),
+    ('HSF-G-06', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-G-07', 'Driven Machinery Regulations'),
+    ('HSF-G-08', 'Construction Regulations, 2014'),
+    ('HSF-G-09', 'National Road Traffic Act'),
+    ('HSF-G-10', 'Hazardous Substances Act (radiation control)'),
+    ('HSF-H-01', 'OHS Act'),
+    ('HSF-H-01', 'Construction Regulations, 2014'),
+    ('HSF-H-02', 'OHS Act'),
+    ('HSF-H-03', 'SANS 10400 T part'),
+    ('HSF-H-03', 'Fire Brigade Services Act'),
+    ('HSF-H-03', 'Local fire by laws'),
+    ('HSF-H-04', 'General Safety Regulations, 1986'),
+    ('HSF-H-05', 'HCA Regulations, 2021'),
+    ('HSF-H-05', 'NEMA and its instruments'),
+    ('HSF-H-06', 'MHI Regulations, 2022'),
+    ('HSF-H-07', 'Private Security Industry Regulation Act'),
+    ('HSF-H-08', 'Disaster Management Act'),
+    ('HSF-I-01', 'General Administrative Regulations, 2003'),
+    ('HSF-I-02', 'General Administrative Regulations, 2003'),
+    ('HSF-I-03', 'OHS Act'),
+    ('HSF-I-03', 'General Administrative Regulations, 2003'),
+    ('HSF-I-04', 'General Administrative Regulations, 2003'),
+    ('HSF-I-05', 'COIDA'),
+    ('HSF-I-06', 'COIDA'),
+    ('HSF-I-06', 'ODMWA'),
+    ('HSF-I-07', 'OHS Act'),
+    ('HSF-J-01', 'HCA Regulations, 2021'),
+    ('HSF-J-01', 'Physical Agents Regulations, 2024'),
+    ('HSF-J-02', 'Noise Exposure Regulations, 2024'),
+    ('HSF-J-03', 'HCA Regulations, 2021'),
+    ('HSF-J-04', 'Physical Agents Regulations, 2024'),
+    ('HSF-J-05', 'Physical Agents Regulations, 2024'),
+    ('HSF-J-06', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-J-07', 'Lead Regulations, 2001'),
+    ('HSF-J-08', 'Lead Regulations, 2001'),
+    ('HSF-J-08', 'HCA Regulations, 2021'),
+    ('HSF-K-01', 'Construction Regulations, 2014'),
+    ('HSF-K-01', 'OHS Act'),
+    ('HSF-K-02', 'OHS Act'),
+    ('HSF-K-03', 'Construction Regulations, 2014'),
+    ('HSF-K-04', 'OHS Act'),
+    ('HSF-K-05', 'OHS Act'),
+    ('HSF-K-05', 'Construction Regulations, 2014'),
+    ('HSF-L-01', 'OHS Act'),
+    ('HSF-L-02', 'OHS Act'),
+    ('HSF-L-03', 'OHS Act'),
+    ('HSF-L-04', 'OHS Act'),
+    ('HSF-L-04', 'General Administrative Regulations, 2003'),
+    ('HSF-L-05', 'OHS Act'),
+    ('HSF-L-05', 'Construction Regulations, 2014'),
+    ('HSF-M-01', 'Facilities Regulations, 2004'),
+    ('HSF-M-02', 'Physical Agents Regulations, 2024'),
+    ('HSF-M-03', 'NEM Waste Act'),
+    ('HSF-M-03', 'NEMA and its instruments'),
+    ('HSF-M-04', 'NEM Waste Act'),
+    ('HSF-M-05', 'Tobacco Products Control Act'),
+    ('HSF-N-01', 'OHS Act'),
+    ('HSF-N-01', 'Construction Regulations, 2014'),
+    ('HSF-N-02', 'Construction Regulations, 2014'),
+    ('HSF-N-03', 'OHS Act'),
+    ('HSF-N-04', 'OHS Act'),
+    ('HSF-N-05', 'OHS Act'),
+    ('HSF-O-01', 'HCA Regulations, 2021'),
+    ('HSF-O-01', 'HBA Regulations, 2022'),
+    ('HSF-O-01', 'Lead Regulations, 2001'),
+    ('HSF-O-01', 'Asbestos Abatement Regulations, 2020'),
+    ('HSF-O-02', 'POPIA'),
+    ('HSF-O-03', 'POPIA'),
+    ('HSF-OV-AGRI-01', 'HCA Regulations, 2021'),
+    ('HSF-OV-AGRI-02', 'HCA Regulations, 2021'),
+    ('HSF-OV-AGRI-03', 'General Machinery Regulations, 1988'),
+    ('HSF-OV-AGRI-04', 'Skills Development Act'),
+    ('HSF-OV-AGRI-05', 'HBA Regulations, 2022'),
+    ('HSF-OV-AGRI-06', 'Regulations on Hazardous Work by Children, 2010'),
+    ('HSF-OV-AGRI-07', 'OHS Act'),
+    ('HSF-OV-AGRI-08', 'Physical Agents Regulations, 2024'),
+    ('HSF-OV-AGRI-09', 'OHS Act'),
+    ('HSF-OV-CLEAN-01', 'HCA Regulations, 2021'),
+    ('HSF-OV-CLEAN-02', 'Construction Regulations, 2014'),
+    ('HSF-OV-CLEAN-02', 'General Safety Regulations, 1986'),
+    ('HSF-OV-CLEAN-03', 'General Safety Regulations, 1986'),
+    ('HSF-OV-CLEAN-04', 'HBA Regulations, 2022'),
+    ('HSF-OV-CLEAN-05', 'BCEA night work Code'),
+    ('HSF-OV-CLEAN-06', 'OHS Act'),
+    ('HSF-OV-CONSTR-01', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-02', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-03', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-04', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-05', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-06', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-07', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-08', 'Construction Regulations, 2014'),
+    ('HSF-OV-CONSTR-09', 'Construction Regulations, 2014'),
+    ('HSF-OV-EDU-01', 'HCA Regulations, 2021'),
+    ('HSF-OV-EDU-02', 'OHS Act'),
+    ('HSF-OV-EDU-03', 'NRTA PrDP medical'),
+    ('HSF-OV-EDU-04', 'HBA Regulations, 2022'),
+    ('HSF-OV-EDU-05', 'OHS Act'),
+    ('HSF-OV-GOV-01', 'General Safety Regulations, 1986'),
+    ('HSF-OV-GOV-02', 'EEA section 7'),
+    ('HSF-OV-GOV-03', 'National Road Traffic Act'),
+    ('HSF-OV-GOV-04', 'SANS 10400 T part'),
+    ('HSF-OV-GOV-05', 'OHS Act'),
+    ('HSF-OV-GOV-06', 'OHS Act'),
+    ('HSF-OV-HEALTH-01', 'HBA Regulations, 2022'),
+    ('HSF-OV-HEALTH-02', 'National Health Act'),
+    ('HSF-OV-HEALTH-02', 'Health Care Waste regulations'),
+    ('HSF-OV-HEALTH-02', 'NEM Waste Act'),
+    ('HSF-OV-HEALTH-03', 'Hazardous Substances Act (radiation control)'),
+    ('HSF-OV-HEALTH-04', 'HCA Regulations, 2021'),
+    ('HSF-OV-HEALTH-05', 'Ergonomics Regulations, 2019'),
+    ('HSF-OV-HEALTH-06', 'OHS Act'),
+    ('HSF-OV-HEALTH-07', 'HBA Regulations, 2022'),
+    ('HSF-OV-HEALTH-08', 'Nursing Act'),
+    ('HSF-OV-HEALTH-08', 'Health Professions Act'),
+    ('HSF-OV-HEALTH-08', 'SAHPRA provisions'),
+    ('HSF-OV-HOSP-01', 'Food Premises Hygiene Regulations, R638 of 2018'),
+    ('HSF-OV-HOSP-01', 'Foodstuffs, Cosmetics and Disinfectants Act'),
+    ('HSF-OV-HOSP-02', 'Food Premises Hygiene Regulations, R638 of 2018'),
+    ('HSF-OV-HOSP-03', 'Pressure Equipment Regulations, 2009'),
+    ('HSF-OV-HOSP-04', 'OHS Act'),
+    ('HSF-OV-HOSP-05', 'Local by laws'),
+    ('HSF-OV-HOSP-06', 'HCA Regulations, 2021'),
+    ('HSF-OV-MANU-01', 'General Machinery Regulations, 1988'),
+    ('HSF-OV-MANU-02', 'HCA Regulations, 2021'),
+    ('HSF-OV-MANU-03', 'Ergonomics Regulations, 2019'),
+    ('HSF-OV-MANU-04', 'General Safety Regulations, 1986'),
+    ('HSF-OV-MANU-05', 'Driven Machinery Regulations'),
+    ('HSF-OV-MANU-06', 'National Road Traffic Act'),
+    ('HSF-OV-MANU-06', 'SANS 10231'),
+    ('HSF-OV-MANU-06', 'SANS 10232'),
+    ('HSF-OV-MINING-01', 'MHSA'),
+    ('HSF-OV-MINING-02', 'Fitness to Perform Work Guideline (MHSA)'),
+    ('HSF-OV-MINING-03', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-04', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-05', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-06', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-07', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-08', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-09', 'DMRE mandatory Code guidelines'),
+    ('HSF-OV-MINING-10', 'MHSA'),
+    ('HSF-OV-MINING-11', 'ODMWA'),
+    ('HSF-OV-MINING-12', 'MHSA'),
+    ('HSF-OV-MINING-13', 'Explosives Regulations'),
+    ('HSF-OV-MINING-14', 'MHSA regulations'),
+    ('HSF-OV-MINING-15', 'MHSA regulations'),
+    ('HSF-OV-MINING-16', 'MHSA'),
+    ('HSF-OV-OFFICE-01', 'Ergonomics Regulations, 2019'),
+    ('HSF-OV-OFFICE-02', 'BCEA night work Code'),
+    ('HSF-OV-OFFICE-02', 'Noise Exposure Regulations, 2024'),
+    ('HSF-OV-OFFICE-03', 'OHS Act'),
+    ('HSF-OV-OFFICE-04', 'OHS Act'),
+    ('HSF-OV-PETRO-01', 'MHI Regulations, 2022'),
+    ('HSF-OV-PETRO-02', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-OV-PETRO-03', 'National Road Traffic Act'),
+    ('HSF-OV-PETRO-03', 'SANS 10231'),
+    ('HSF-OV-PETRO-03', 'SANS 10232'),
+    ('HSF-OV-PETRO-04', 'MHI Regulations, 2022'),
+    ('HSF-OV-PETRO-05', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-OV-PETRO-06', 'NEMA and its instruments'),
+    ('HSF-OV-RETAIL-01', 'General Safety Regulations, 1986'),
+    ('HSF-OV-RETAIL-02', 'General Safety Regulations, 1986'),
+    ('HSF-OV-RETAIL-03', 'Physical Agents Regulations, 2024'),
+    ('HSF-OV-RETAIL-04', 'OHS Act'),
+    ('HSF-OV-RETAIL-05', 'SANS 10400 T part'),
+    ('HSF-OV-SEC-01', 'Private Security Industry Regulation Act'),
+    ('HSF-OV-SEC-01', 'PSIRA training regulations'),
+    ('HSF-OV-SEC-02', 'Firearms Control Act'),
+    ('HSF-OV-SEC-03', 'Firearms Control Act'),
+    ('HSF-OV-SEC-03', 'National Road Traffic Act'),
+    ('HSF-OV-SEC-04', 'OHS Act'),
+    ('HSF-OV-SEC-05', 'OHS Act'),
+    ('HSF-OV-SEC-06', 'Ergonomics Regulations, 2019'),
+    ('HSF-OV-SEC-07', 'OHS Act'),
+    ('HSF-OV-TEL-01', 'Construction Regulations, 2014'),
+    ('HSF-OV-TEL-02', 'Physical Agents Regulations, 2024'),
+    ('HSF-OV-TEL-03', 'General Safety Regulations, 1986'),
+    ('HSF-OV-TEL-04', 'OHS Act'),
+    ('HSF-OV-TRANS-01', 'National Road Traffic Act'),
+    ('HSF-OV-TRANS-02', 'National Road Traffic Act'),
+    ('HSF-OV-TRANS-02', 'SANS 10231'),
+    ('HSF-OV-TRANS-02', 'SANS 10232'),
+    ('HSF-OV-TRANS-03', 'BCEA'),
+    ('HSF-OV-TRANS-04', 'SANS 3000-4 (RSR)'),
+    ('HSF-OV-TRANS-04', 'Railway Safety Regulator Act'),
+    ('HSF-OV-TRANS-04', 'SANS 3000 series'),
+    ('HSF-OV-TRANS-05', 'Merchant Shipping Act'),
+    ('HSF-OV-TRANS-05', 'Ports Act'),
+    ('HSF-OV-TRANS-06', 'Civil Aviation Act'),
+    ('HSF-OV-TRANS-06', 'Civil Aviation Regulations'),
+    ('HSF-OV-TRANS-07', 'National Road Traffic Act'),
+    ('HSF-OV-UTIL-01', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-OV-UTIL-02', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-OV-UTIL-03', 'HCA Regulations, 2021'),
+    ('HSF-OV-UTIL-04', 'Electrical Machinery and Installation Regulations'),
+    ('HSF-OV-UTIL-05', 'OHS Act'),
+    ('HSF-OV-UTIL-06', 'NEMA and its instruments'),
+    ('HSF-OV-WASTE-01', 'NEM Waste Act'),
+    ('HSF-OV-WASTE-02', 'NEM Waste Act'),
+    ('HSF-OV-WASTE-02', 'Health Care Waste regulations'),
+    ('HSF-OV-WASTE-03', 'HBA Regulations, 2022'),
+    ('HSF-OV-WASTE-04', 'General Safety Regulations, 1986'),
+    ('HSF-OV-WASTE-04', 'HCA Regulations, 2021'),
+    ('HSF-OV-WASTE-05', 'General Safety Regulations, 1986'),
+    ('HSF-OV-WASTE-06', 'HBA Regulations, 2022'),
+    ('HSF-OV-WASTE-07', 'HCA Regulations, 2021'),
+    ('HSF-OV-WASTE-08', 'NEMA and its instruments')
+       ) as v(code, short_name)
+  join hsf_element e on e.code = v.code
+  cross join lateral (select li.id from msp_legal_instrument li where li.short_name = v.short_name order by case li.status when 'verified' then 0 when 'pending' then 1 when 'superseded' then 2 else 3 end, li.verified_on desc nulls last, li.id limit 1) i
+on conflict (element_id, instrument_id) do nothing;
+
+-- 9. Element industry rows: overlay additions, universal elements each overlay switches on,
+--    and the kernel pack surveillance protocols per industry (HSF-E-06 emphasis).
+insert into hsf_element_industry (element_id, industry_id, subindustry_id, applicability, overlay_note)
+select e.id, i.id, null, v.applicability, v.overlay_note
+  from (values
+    ('HSF-A-06', 'CONSTR', 'mandatory', 'Switched on by the Construction overlay through T-CONSTR and every construction trigger raised by the intake.'),
+    ('HSF-A-06', 'GOV', 'conditional', 'Switched on by the Government and municipal overlay through T-CONSTR for public works.'),
+    ('HSF-A-06', 'TEL', 'conditional', 'Switched on by the Telecommunications and tower work overlay through T-CONSTR where towers are built.'),
+    ('HSF-A-06', 'UTIL', 'conditional', 'Switched on by the Utilities and energy overlay through T-CONSTR for renewable installation.'),
+    ('HSF-A-07', 'CONSTR', 'mandatory', 'Switched on by the Construction overlay through T-CONSTR and every construction trigger raised by the intake.'),
+    ('HSF-A-07', 'GOV', 'conditional', 'Switched on by the Government and municipal overlay through T-CONSTR for public works.'),
+    ('HSF-A-07', 'TEL', 'conditional', 'Switched on by the Telecommunications and tower work overlay through T-CONSTR where towers are built.'),
+    ('HSF-A-07', 'UTIL', 'conditional', 'Switched on by the Utilities and energy overlay through T-CONSTR for renewable installation.'),
+    ('HSF-A-08', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONTRACTORS.'),
+    ('HSF-A-08', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONTRACTORS.'),
+    ('HSF-A-09', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONTRACTORS.'),
+    ('HSF-A-09', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONTRACTORS.'),
+    ('HSF-C-07', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HEIGHT.'),
+    ('HSF-C-07', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-HEIGHT.'),
+    ('HSF-C-07', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HEIGHT.'),
+    ('HSF-C-08', 'RETAIL', 'mandatory', 'Switched on by the Retail and wholesale overlay through T-TRAFFIC.'),
+    ('HSF-C-08', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-TRAFFIC.'),
+    ('HSF-C-09', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-LIFTING.'),
+    ('HSF-C-09', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-LIFTING.'),
+    ('HSF-C-12', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONFINED.'),
+    ('HSF-C-12', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONFINED.'),
+    ('HSF-C-12', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-CONFINED.'),
+    ('HSF-C-12', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-CONFINED.'),
+    ('HSF-C-12', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-CONFINED.'),
+    ('HSF-C-12', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-CONFINED.'),
+    ('HSF-C-12', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-CONFINED.'),
+    ('HSF-C-13', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HOTWORK.'),
+    ('HSF-C-15', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-NOISE.'),
+    ('HSF-C-16', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HCA.'),
+    ('HSF-C-16', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HCA.'),
+    ('HSF-C-16', 'EDU', 'conditional', 'Switched on by the Education overlay through T-HCA for laboratories.'),
+    ('HSF-C-16', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HCA.'),
+    ('HSF-C-16', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-HCA.'),
+    ('HSF-C-16', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-HCA.'),
+    ('HSF-C-16', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HCA.'),
+    ('HSF-C-16', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HCA.'),
+    ('HSF-C-16', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HCA.'),
+    ('HSF-C-17', 'MANU', 'conditional', 'Switched on by the Manufacturing overlay through T-ASBESTOS where legacy plant exists.'),
+    ('HSF-C-18', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-LEAD.'),
+    ('HSF-C-19', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HBA.'),
+    ('HSF-C-19', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HBA.'),
+    ('HSF-C-19', 'EDU', 'mandatory', 'Switched on by the Education overlay through T-HBA.'),
+    ('HSF-C-19', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HBA.'),
+    ('HSF-C-19', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HBA.'),
+    ('HSF-C-20', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-SHIFT.'),
+    ('HSF-C-20', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-SHIFT, T-VIOLENCE.'),
+    ('HSF-C-20', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-SHIFT, T-VIOLENCE.'),
+    ('HSF-C-20', 'OFFICE', 'conditional', 'Switched on by the Office and professional services overlay through T-SHIFT for contact centres.'),
+    ('HSF-C-20', 'RETAIL', 'mandatory', 'Switched on by the Retail and wholesale overlay through T-VIOLENCE.'),
+    ('HSF-C-20', 'SEC', 'mandatory', 'Switched on by the Security services overlay through T-SHIFT, T-VIOLENCE.'),
+    ('HSF-C-20', 'TRANS', 'mandatory', 'Switched on by the Transport and logistics overlay through T-SHIFT.'),
+    ('HSF-C-21', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-MHI.'),
+    ('HSF-E-03', 'CONSTR', 'mandatory', 'Switched on by the Construction overlay through T-CONSTR and every construction trigger raised by the intake.'),
+    ('HSF-E-03', 'GOV', 'conditional', 'Switched on by the Government and municipal overlay through T-CONSTR for public works.'),
+    ('HSF-E-03', 'TEL', 'conditional', 'Switched on by the Telecommunications and tower work overlay through T-CONSTR where towers are built.'),
+    ('HSF-E-03', 'UTIL', 'conditional', 'Switched on by the Utilities and energy overlay through T-CONSTR for renewable installation.'),
+    ('HSF-E-04', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-PRDP.'),
+    ('HSF-E-04', 'EDU', 'mandatory', 'Switched on by the Education overlay through T-PRDP.'),
+    ('HSF-E-04', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-PRDP.'),
+    ('HSF-E-04', 'RETAIL', 'mandatory', 'Switched on by the Retail and wholesale overlay through T-PRDP.'),
+    ('HSF-E-04', 'SEC', 'mandatory', 'Switched on by the Security services overlay through T-PRDP.'),
+    ('HSF-E-04', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-PRDP.'),
+    ('HSF-E-04', 'TRANS', 'mandatory', 'Switched on by the Transport and logistics overlay through T-PRDP.'),
+    ('HSF-E-04', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-PRDP.'),
+    ('HSF-E-05', 'MINING', 'mandatory', 'Switched on by the Mining overlay through T-MINING.'),
+    ('HSF-E-06', 'AGRI', 'emphasis', 'Kernel pack surveillance protocols for Agriculture and forestry. Often: Audiometry, Cholinesterase monitoring for pesticide exposure, Zoonosis surveillance per written medical protocol, Heat stress tolerance assessment, Musculoskeletal and ergonomic assessment, Dermatological screen, Vision screening with colour vision and UV skin surveillance. Only if the risk assessment confirms exposure: Spirometry, Respiratory symptom questionnaire, Biological monitoring for specific chemical agents, Confined space medical, Night work medical examination, Biological agent surveillance per written medical protocol. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'CLEAN', 'emphasis', 'Kernel pack surveillance protocols for Cleaning and hygiene services. Often: Dermatological screen, Biological agent surveillance per written medical protocol, Musculoskeletal and ergonomic assessment, Hepatitis B immunity verification and vaccination pathway. Only if the risk assessment confirms exposure: Occupational chemical exposure medical assessment, Biological monitoring for specific chemical agents, Night work medical examination, Respiratory symptom questionnaire, Occupational tuberculosis screening. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'CONSTR', 'emphasis', 'Kernel pack surveillance protocols for Construction. Often: General construction fitness, Audiometry, Heights medical with vertigo and balance screen, Musculoskeletal and ergonomic assessment, Vision screening with colour vision and UV skin surveillance, Heat stress tolerance assessment, Lifting machine operator certificate of fitness, Vibration and musculoskeletal screen, General medical for electrical work. Only if the risk assessment confirms exposure: Spirometry, Respiratory symptom questionnaire, Chest X ray per silica protocol, Confined space medical, Blood lead biological monitoring, Lead exposure clinical examination, Dermatological screen, Night work medical examination. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'EDU', 'emphasis', 'Kernel pack surveillance protocols for Education. Often: General fitness for the inherent requirements of the job, Food handler fitness assessment, Occupational tuberculosis screening, Biological agent surveillance per written medical protocol. Only if the risk assessment confirms exposure: Audiometry, Spirometry, Occupational chemical exposure medical assessment, Dermatological screen, Night work medical examination. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'GOV', 'emphasis', 'Kernel pack surveillance protocols for Government and municipal. Often: Audiometry, Vision screening with colour vision and UV skin surveillance, Night work medical examination, Musculoskeletal and ergonomic assessment, Heat stress tolerance assessment, PrDP statutory medical and vision screen. Only if the risk assessment confirms exposure: Biological agent surveillance per written medical protocol, Confined space medical, Heights medical with vertigo and balance screen, Occupational chemical exposure medical assessment, Spirometry. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'HEALTH', 'emphasis', 'Kernel pack surveillance protocols for Healthcare and laboratories. Often: Biological agent surveillance per written medical protocol, Occupational tuberculosis screening, Hepatitis B immunity verification and vaccination pathway, Night work medical examination, Dermatological screen, Musculoskeletal and ergonomic assessment. Only if the risk assessment confirms exposure: Radiation worker surveillance with dose monitoring, Occupational chemical exposure medical assessment, Spirometry, Vision screening with colour vision and UV skin surveillance, Audiometry. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'HOSP', 'emphasis', 'Kernel pack surveillance protocols for Hospitality and food service. Often: Food handler fitness assessment, Dermatological screen, Musculoskeletal and ergonomic assessment, Night work medical examination. Only if the risk assessment confirms exposure: Heat stress tolerance assessment, Biological agent surveillance per written medical protocol, Hepatitis B immunity verification and vaccination pathway, Vision screening with colour vision and UV skin surveillance. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'MANU', 'emphasis', 'Kernel pack surveillance protocols for Manufacturing. Often: Audiometry, Spirometry, Respiratory symptom questionnaire, Occupational chemical exposure medical assessment, Biological monitoring for specific chemical agents, Dermatological screen, Vibration and musculoskeletal screen, Musculoskeletal and ergonomic assessment, Vision screening with colour vision and UV skin surveillance, Night work medical examination, Lifting machine operator certificate of fitness, Heat stress tolerance assessment. Only if the risk assessment confirms exposure: Blood lead biological monitoring, Lead exposure clinical examination, Confined space medical, Cholinesterase monitoring for pesticide exposure, Food handler fitness assessment, Biological agent surveillance per written medical protocol. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'MINING', 'emphasis', 'Kernel pack surveillance protocols for Mining. Often: Mine certificate of fitness examination, Dust disease examination battery for mine workers, Chest X ray per silica protocol, Heat tolerance screening for hot underground workings, Audiometry, Spirometry, Respiratory symptom questionnaire, Vision screening with colour vision and UV skin surveillance. Only if the risk assessment confirms exposure: Vibration and musculoskeletal screen, Biological monitoring for specific chemical agents, Radiation worker surveillance with dose monitoring, Confined space medical, Night work medical examination. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'OFFICE', 'emphasis', 'Kernel pack surveillance protocols for Office and professional services. Often: Musculoskeletal and ergonomic assessment, Vision screening with colour vision and UV skin surveillance. Only if the risk assessment confirms exposure: Night work medical examination, Audiometry. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'PETRO', 'emphasis', 'Kernel pack surveillance protocols for Petrochemical and fuel retail. Often: Occupational chemical exposure medical assessment, Biological monitoring for specific chemical agents, Spirometry, Respiratory symptom questionnaire, Audiometry, Confined space medical, Night work medical examination, Vision screening with colour vision and UV skin surveillance, Heat stress tolerance assessment, Dermatological screen. Only if the risk assessment confirms exposure: Blood lead biological monitoring, Lead exposure clinical examination, Radiation worker surveillance with dose monitoring, Heights medical with vertigo and balance screen, Lifting machine operator certificate of fitness. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'RETAIL', 'emphasis', 'Kernel pack surveillance protocols for Retail and wholesale. Often: Musculoskeletal and ergonomic assessment, Vision screening with colour vision and UV skin surveillance, Lifting machine operator certificate of fitness, Food handler fitness assessment. Only if the risk assessment confirms exposure: Night work medical examination, Audiometry, Heat stress tolerance assessment, PrDP statutory medical and vision screen, Hepatitis B immunity verification and vaccination pathway, Biological agent surveillance per written medical protocol. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'SEC', 'emphasis', 'Kernel pack surveillance protocols for Security services. Often: Night work medical examination, Vision screening with colour vision and UV skin surveillance, Musculoskeletal and ergonomic assessment, General fitness for the inherent requirements of the job. Only if the risk assessment confirms exposure: PrDP statutory medical and vision screen, Heat stress tolerance assessment, Audiometry, Heights medical with vertigo and balance screen. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'TEL', 'emphasis', 'Kernel pack surveillance protocols for Telecommunications and tower work. Often: Heights medical with vertigo and balance screen, Vision screening with colour vision and UV skin surveillance, Musculoskeletal and ergonomic assessment, Confined space medical, Heat stress tolerance assessment, General medical for electrical work. Only if the risk assessment confirms exposure: Audiometry, Night work medical examination, Radiation worker surveillance with dose monitoring, Spirometry. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'TRANS', 'emphasis', 'Kernel pack surveillance protocols for Transport and logistics. Often: PrDP statutory medical and vision screen, Vision screening with colour vision and UV skin surveillance, Audiometry, Vibration and musculoskeletal screen, Musculoskeletal and ergonomic assessment, Night work medical examination, Lifting machine operator certificate of fitness. Only if the risk assessment confirms exposure: Railway safety critical fitness examination, Confined space medical, Biological monitoring for specific chemical agents, Occupational chemical exposure medical assessment, Heat stress tolerance assessment, Spirometry. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'UTIL', 'emphasis', 'Kernel pack surveillance protocols for Utilities and energy. Often: Audiometry, Confined space medical, General medical for electrical work, Heights medical with vertigo and balance screen, Vision screening with colour vision and UV skin surveillance, Night work medical examination, Biological agent surveillance per written medical protocol, Heat stress tolerance assessment, Musculoskeletal and ergonomic assessment. Only if the risk assessment confirms exposure: Biological monitoring for specific chemical agents, Spirometry, Radiation worker surveillance with dose monitoring, Cholinesterase monitoring for pesticide exposure. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-E-06', 'WASTE', 'emphasis', 'Kernel pack surveillance protocols for Waste management. Often: Biological agent surveillance per written medical protocol, Hepatitis B immunity verification and vaccination pathway, Dermatological screen, Audiometry, Musculoskeletal and ergonomic assessment, Tetanus status within the OMP protocol, Vision screening with colour vision and UV skin surveillance, Heat stress tolerance assessment. Only if the risk assessment confirms exposure: Blood lead biological monitoring, Lead exposure clinical examination, Spirometry, Respiratory symptom questionnaire, Occupational tuberculosis screening, Night work medical examination, Confined space medical, Biological monitoring for specific chemical agents. The CNC OHS Industry Kernel (23/09/2026) is sandbox until OMP and attorney review.'),
+    ('HSF-F-03', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-LIFTING.'),
+    ('HSF-F-03', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-LIFTING.'),
+    ('HSF-F-08', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-PRESSURE.'),
+    ('HSF-F-09', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-MOBILEPLANT.'),
+    ('HSF-F-09', 'RETAIL', 'mandatory', 'Switched on by the Retail and wholesale overlay through T-MOBILEPLANT.'),
+    ('HSF-F-09', 'TRANS', 'mandatory', 'Switched on by the Transport and logistics overlay through T-MOBILEPLANT.'),
+    ('HSF-F-09', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-MOBILEPLANT.'),
+    ('HSF-F-12', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HCA.'),
+    ('HSF-F-12', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HCA.'),
+    ('HSF-F-12', 'EDU', 'conditional', 'Switched on by the Education overlay through T-HCA for laboratories.'),
+    ('HSF-F-12', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HCA.'),
+    ('HSF-F-12', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-HCA.'),
+    ('HSF-F-12', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-HCA.'),
+    ('HSF-F-12', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HCA.'),
+    ('HSF-F-12', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HCA.'),
+    ('HSF-F-12', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HCA.'),
+    ('HSF-F-13', 'MANU', 'conditional', 'Switched on by the Manufacturing overlay through T-ASBESTOS where legacy plant exists.'),
+    ('HSF-F-14', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-MACHINERY.'),
+    ('HSF-F-14', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-MACHINERY.'),
+    ('HSF-F-16', 'RETAIL', 'mandatory', 'Switched on by the Retail and wholesale overlay through T-STACKING.'),
+    ('HSF-F-16', 'TRANS', 'mandatory', 'Switched on by the Transport and logistics overlay through T-STACKING.'),
+    ('HSF-F-17', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HEIGHT.'),
+    ('HSF-F-17', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-HEIGHT.'),
+    ('HSF-F-17', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HEIGHT.'),
+    ('HSF-F-18', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONFINED.'),
+    ('HSF-F-18', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONFINED.'),
+    ('HSF-F-18', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-CONFINED.'),
+    ('HSF-F-18', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-CONFINED.'),
+    ('HSF-F-18', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-CONFINED.'),
+    ('HSF-F-18', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-CONFINED.'),
+    ('HSF-F-18', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-CONFINED.'),
+    ('HSF-F-22', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-WASTE.'),
+    ('HSF-F-22', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-WASTE.'),
+    ('HSF-G-01', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-PTW.'),
+    ('HSF-G-02', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HOTWORK.'),
+    ('HSF-G-03', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONFINED.'),
+    ('HSF-G-03', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONFINED.'),
+    ('HSF-G-03', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-CONFINED.'),
+    ('HSF-G-03', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-CONFINED.'),
+    ('HSF-G-03', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-CONFINED.'),
+    ('HSF-G-03', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-CONFINED.'),
+    ('HSF-G-03', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-CONFINED.'),
+    ('HSF-G-05', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HEIGHT.'),
+    ('HSF-G-05', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-HEIGHT.'),
+    ('HSF-G-05', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HEIGHT.'),
+    ('HSF-G-06', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-ELEC.'),
+    ('HSF-G-06', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-ELEC.'),
+    ('HSF-G-06', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-ELEC.'),
+    ('HSF-G-06', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-ELEC.'),
+    ('HSF-G-07', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-LIFTING.'),
+    ('HSF-G-07', 'TEL', 'mandatory', 'Switched on by the Telecommunications and tower work overlay through T-LIFTING.'),
+    ('HSF-G-10', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-RADIATION.'),
+    ('HSF-H-05', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HCA.'),
+    ('HSF-H-05', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HCA.'),
+    ('HSF-H-05', 'EDU', 'conditional', 'Switched on by the Education overlay through T-HCA for laboratories.'),
+    ('HSF-H-05', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HCA.'),
+    ('HSF-H-05', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-HCA.'),
+    ('HSF-H-05', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-HCA.'),
+    ('HSF-H-05', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HCA.'),
+    ('HSF-H-05', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HCA.'),
+    ('HSF-H-05', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HCA.'),
+    ('HSF-H-06', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-MHI.'),
+    ('HSF-H-07', 'SEC', 'mandatory', 'Switched on by the Security services overlay through T-SECURITY.'),
+    ('HSF-H-08', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-MHI.'),
+    ('HSF-J-02', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-NOISE.'),
+    ('HSF-J-03', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HCA.'),
+    ('HSF-J-03', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HCA.'),
+    ('HSF-J-03', 'EDU', 'conditional', 'Switched on by the Education overlay through T-HCA for laboratories.'),
+    ('HSF-J-03', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HCA.'),
+    ('HSF-J-03', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-HCA.'),
+    ('HSF-J-03', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-HCA.'),
+    ('HSF-J-03', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HCA.'),
+    ('HSF-J-03', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HCA.'),
+    ('HSF-J-03', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HCA.'),
+    ('HSF-J-05', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-THERMAL.'),
+    ('HSF-J-06', 'MANU', 'conditional', 'Switched on by the Manufacturing overlay through T-ASBESTOS where legacy plant exists.'),
+    ('HSF-J-07', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-LEAD.'),
+    ('HSF-J-08', 'AGRI', 'mandatory', 'Switched on by the Agriculture and forestry overlay through T-HCA.'),
+    ('HSF-J-08', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-HCA.'),
+    ('HSF-J-08', 'EDU', 'conditional', 'Switched on by the Education overlay through T-HCA for laboratories.'),
+    ('HSF-J-08', 'HEALTH', 'mandatory', 'Switched on by the Healthcare and laboratories overlay through T-HCA.'),
+    ('HSF-J-08', 'HOSP', 'mandatory', 'Switched on by the Hospitality and food service overlay through T-HCA.'),
+    ('HSF-J-08', 'MANU', 'mandatory', 'Switched on by the Manufacturing overlay through T-HCA, T-LEAD.'),
+    ('HSF-J-08', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-HCA.'),
+    ('HSF-J-08', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-HCA.'),
+    ('HSF-J-08', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-HCA.'),
+    ('HSF-K-01', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONTRACTORS.'),
+    ('HSF-K-01', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONTRACTORS.'),
+    ('HSF-K-02', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONTRACTORS.'),
+    ('HSF-K-02', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONTRACTORS.'),
+    ('HSF-K-03', 'CLEAN', 'mandatory', 'Switched on by the Cleaning and hygiene services overlay through T-CONTRACTORS.'),
+    ('HSF-K-03', 'GOV', 'mandatory', 'Switched on by the Government and municipal overlay through T-CONTRACTORS.'),
+    ('HSF-K-05', 'UTIL', 'mandatory', 'Switched on by the Utilities and energy overlay through T-PUBLIC.'),
+    ('HSF-M-03', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-WASTE.'),
+    ('HSF-M-03', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-WASTE.'),
+    ('HSF-M-04', 'PETRO', 'mandatory', 'Switched on by the Petrochemical and fuel retail overlay through T-WASTE.'),
+    ('HSF-M-04', 'WASTE', 'mandatory', 'Switched on by the Waste management overlay through T-WASTE.'),
+    ('HSF-OV-AGRI-01', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-02', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-03', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-04', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-05', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-06', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-07', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-08', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-AGRI-09', 'AGRI', 'mandatory', 'Addition of the Agriculture and forestry overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-01', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-02', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-03', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-04', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-05', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CLEAN-06', 'CLEAN', 'mandatory', 'Addition of the Cleaning and hygiene services overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-01', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-02', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-03', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-04', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-05', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-06', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-07', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-08', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-CONSTR-09', 'CONSTR', 'mandatory', 'Addition of the Construction overlay (SPEC B7).'),
+    ('HSF-OV-EDU-01', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-EDU-02', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-EDU-03', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-EDU-04', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-EDU-05', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-EDU-06', 'EDU', 'mandatory', 'Addition of the Education overlay (SPEC B7).'),
+    ('HSF-OV-GOV-01', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-GOV-02', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-GOV-03', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-GOV-04', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-GOV-05', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-GOV-06', 'GOV', 'mandatory', 'Addition of the Government and municipal overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-01', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-02', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-03', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-04', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-05', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-06', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-07', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HEALTH-08', 'HEALTH', 'mandatory', 'Addition of the Healthcare and laboratories overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-01', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-02', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-03', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-04', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-05', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-HOSP-06', 'HOSP', 'mandatory', 'Addition of the Hospitality and food service overlay (SPEC B7).'),
+    ('HSF-OV-MANU-01', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MANU-02', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MANU-03', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MANU-04', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MANU-05', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MANU-06', 'MANU', 'mandatory', 'Addition of the Manufacturing overlay (SPEC B7).'),
+    ('HSF-OV-MINING-01', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-02', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-03', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-04', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-05', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-06', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-07', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-08', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-09', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-10', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-11', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-12', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-13', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-14', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-15', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-MINING-16', 'MINING', 'mandatory', 'Addition of the Mining overlay (SPEC B7).'),
+    ('HSF-OV-OFFICE-01', 'OFFICE', 'mandatory', 'Addition of the Office and professional services overlay (SPEC B7).'),
+    ('HSF-OV-OFFICE-02', 'OFFICE', 'mandatory', 'Addition of the Office and professional services overlay (SPEC B7).'),
+    ('HSF-OV-OFFICE-03', 'OFFICE', 'mandatory', 'Addition of the Office and professional services overlay (SPEC B7).'),
+    ('HSF-OV-OFFICE-04', 'OFFICE', 'mandatory', 'Addition of the Office and professional services overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-01', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-02', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-03', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-04', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-05', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-PETRO-06', 'PETRO', 'mandatory', 'Addition of the Petrochemical and fuel retail overlay (SPEC B7).'),
+    ('HSF-OV-RETAIL-01', 'RETAIL', 'mandatory', 'Addition of the Retail and wholesale overlay (SPEC B7).'),
+    ('HSF-OV-RETAIL-02', 'RETAIL', 'mandatory', 'Addition of the Retail and wholesale overlay (SPEC B7).'),
+    ('HSF-OV-RETAIL-03', 'RETAIL', 'mandatory', 'Addition of the Retail and wholesale overlay (SPEC B7).'),
+    ('HSF-OV-RETAIL-04', 'RETAIL', 'mandatory', 'Addition of the Retail and wholesale overlay (SPEC B7).'),
+    ('HSF-OV-RETAIL-05', 'RETAIL', 'mandatory', 'Addition of the Retail and wholesale overlay (SPEC B7).'),
+    ('HSF-OV-SEC-01', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-02', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-03', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-04', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-05', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-06', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-SEC-07', 'SEC', 'mandatory', 'Addition of the Security services overlay (SPEC B7).'),
+    ('HSF-OV-TEL-01', 'TEL', 'mandatory', 'Addition of the Telecommunications and tower work overlay (SPEC B7).'),
+    ('HSF-OV-TEL-02', 'TEL', 'mandatory', 'Addition of the Telecommunications and tower work overlay (SPEC B7).'),
+    ('HSF-OV-TEL-03', 'TEL', 'mandatory', 'Addition of the Telecommunications and tower work overlay (SPEC B7).'),
+    ('HSF-OV-TEL-04', 'TEL', 'mandatory', 'Addition of the Telecommunications and tower work overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-01', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-02', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-03', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-04', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-05', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-06', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-TRANS-07', 'TRANS', 'mandatory', 'Addition of the Transport and logistics overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-01', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-02', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-03', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-04', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-05', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-UTIL-06', 'UTIL', 'mandatory', 'Addition of the Utilities and energy overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-01', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-02', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-03', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-04', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-05', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-06', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-07', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).'),
+    ('HSF-OV-WASTE-08', 'WASTE', 'mandatory', 'Addition of the Waste management overlay (SPEC B7).')
+       ) as v(code, industry_code, applicability, overlay_note)
+  join hsf_element e on e.code = v.code
+  join msp_industry i on i.code = v.industry_code
+ where not exists (select 1 from hsf_element_industry x
+                    where x.element_id = e.id and x.industry_id = i.id and x.subindustry_id is null);
+
+------------------------------------------------------------------------------
+-- 049_hsf_consent_uploads_transfer.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | HSF-UPL-01 v1.0.0 | HSF consent, staging uploads and MCO transfer bookkeeping 23/09/2026
+-- Built to hsf/BUILD-CONTRACT.md section 3 (049) and section 1 (constants).
+--
+-- What this migration does:
+--   1. hsf_consent: three separate POPIA consents per company account
+--      (document_storage, mco_transfer, authority_to_share), wording version
+--      HSF-CONSENT-1.0. A consent row is never deleted; withdrawal stamps
+--      withdrawn_at once.
+--   2. hsf_upload: one row per file a client drops into the builder. The bytes
+--      live in the private Storage bucket hsf-staging (never in the Secrets
+--      store, which holds credentials) until the transfer worker has handed them
+--      to MyClinicOnline, then the bytes are removed and the row stays, with both
+--      SHA 256 fingerprints, for the audit trail.
+--   3. hsf_mco_transfer: the append only log of every transfer attempt.
+--   4. The hsf-staging bucket (private, 25 MB, the contract mime list) with no
+--      storage.objects policy for anon or authenticated: service role only.
+--   5. Parameters hsf.upload_max_bytes, hsf.upload_allowed_mime,
+--      hsf.mco_transfer_mode and hsf.staging_alert_days (category hsf).
+--   6. The functions the web tier and the transfer worker call. Every one is
+--      security definer with a fixed search path and is executable by the
+--      service role only; the web tier verifies the person's access token first
+--      and passes their auth user id.
+--   7. Contract 9.1 and 9.5 (Amendment 1): hsf_link_account links a signed in
+--      person to the company account of their confirmed email; the worker reads
+--      its mode through hsf_transfer_mode, claims work with hsf_transfer_claim,
+--      removes staged bytes listed by hsf_transfer_cleanup_queue, and stale
+--      registrations are swept by hsf_sweep_stale_uploads. Uploads older than
+--      hsf.staging_alert_days show in hsf_staging_alerts for staff. A withdrawn
+--      mco_transfer or document_storage consent blocks the account's
+--      untransferred uploads; nothing is deleted automatically.
+--
+-- Nothing here writes file content, a key or a token to msp_audit. The MCO
+-- interface contract is pending (HSF-3): no MCO endpoint is named here.
+
+-- 1. Parameter category -------------------------------------------------------------
+-- Migration 034 limited msp_env_parameter.category to six values. The contract
+-- files the HSF parameters under 'hsf', so the check gains that one value.
+do $$
+declare
+  v_name text;
+begin
+  select c.conname into v_name
+    from pg_constraint c
+   where c.conrelid = 'public.msp_env_parameter'::regclass
+     and c.contype = 'c'
+     and pg_get_constraintdef(c.oid) ilike '%category%';
+  if v_name is not null then
+    execute format('alter table msp_env_parameter drop constraint %I', v_name);
+  end if;
+end;
+$$;
+alter table msp_env_parameter add constraint msp_env_parameter_category_check
+  check (category in ('ai','agent','clinical','commercial','retention','integration','hsf'));
+
+insert into msp_env_parameter (key, value, value_type, allowed_values, min_value, max_value, category, description, updated_by) values
+  ('hsf.upload_max_bytes', '26214400', 'integer', null, 1, 26214400, 'hsf',
+   'Largest file a client may upload into the Health and Safety File builder, in bytes (25 MB). The hsf-staging bucket enforces the same ceiling, so this can be lowered here but not raised past it.',
+   'migration_049'),
+  ('hsf.upload_allowed_mime', 'application/pdf,image/jpeg,image/png,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/msword,application/vnd.ms-excel,text/csv', 'text', null, null, null, 'hsf',
+   'Comma separated file types the builder accepts (PDF, JPEG, PNG, Word, Excel and CSV). Any type added here must also be added to the hsf-staging bucket.',
+   'migration_049'),
+  ('hsf.mco_transfer_mode', 'hold', 'enum', array['hold','fixture','live'], null, null, 'hsf',
+   'How the transfer worker treats staged uploads. hold: keep them in Care Net staging and send nothing. fixture: test adapter only. live: pending the MyClinicOnline interface contract (HSF-3).',
+   'migration_049'),
+  ('hsf.staging_alert_days', '14', 'integer', null, 1, 365, 'hsf',
+   'Days an upload may wait in Care Net staging before staff are alerted to move it to MyClinicOnline.',
+   'migration_049')
+on conflict (key) do nothing;
+
+-- 2. Tables -------------------------------------------------------------------------
+
+create table hsf_consent (
+  id uuid primary key default gen_random_uuid(),
+  client_account_id uuid not null references msp_client_account(id),
+  auth_user_id uuid not null,
+  consent_kind text not null check (consent_kind in ('document_storage','mco_transfer','authority_to_share')),
+  granted boolean not null,
+  wording_version text not null,
+  granted_at timestamptz not null default now(),
+  withdrawn_at timestamptz
+);
+comment on table hsf_consent is 'HSF-UPL-01. Unbundled POPIA consents for the Health and Safety File builder: document_storage (Care Net holds the documents in its secure staging store), mco_transfer (the documents move to MyClinicOnline), authority_to_share (the person may share them for the company). A consent is current when the latest row of its kind is granted and not withdrawn. Rows are never deleted; withdrawal stamps withdrawn_at once.';
+create index hsf_consent_account_idx on hsf_consent(client_account_id, consent_kind, granted_at desc);
+
+create table hsf_upload (
+  id uuid primary key default gen_random_uuid(),
+  client_account_id uuid not null references msp_client_account(id),
+  auth_user_id uuid not null,
+  file_id uuid references hsf_file(id),
+  file_item_id uuid references hsf_file_item(id),
+  section_code text references hsf_section(code),
+  department_code text not null references hsf_department(code),
+  original_name text not null,
+  safe_name text not null check (safe_name ~ '^[A-Za-z0-9._]{1,120}$'),
+  mime_type text not null,
+  size_bytes bigint not null check (size_bytes > 0),
+  sha256_client text not null check (sha256_client ~ '^[0-9a-f]{64}$'),
+  sha256_server text check (sha256_server ~ '^[0-9a-f]{64}$'),
+  storage_bucket text not null default 'hsf-staging',
+  storage_path text,
+  status text not null default 'awaiting_upload' check (status in
+    ('awaiting_upload','uploaded','verified','held','transferring','transferred','staging_deleted','rejected','failed')),
+  reject_reason text,
+  mco_document_ref text,
+  transfer_blocked_reason text,
+  transfer_claimed_at timestamptz,
+  created_at timestamptz not null default now(),
+  uploaded_at timestamptz,
+  verified_at timestamptz,
+  transferred_at timestamptz,
+  staging_deleted_at timestamptz,
+  check (status <> 'staging_deleted' or (storage_path is null and staging_deleted_at is not null)),
+  check (status not in ('transferred','staging_deleted') or (mco_document_ref is not null and transferred_at is not null))
+);
+comment on table hsf_upload is 'HSF-UPL-01. One row per document a client drops into the builder. The bytes sit in the private hsf-staging bucket at <client_account_id>/<upload_id>/<safe_name> until they are transferred to MyClinicOnline and removed; the row, with the browser and server SHA 256 fingerprints, stays for the audit trail. Lifecycle: awaiting_upload, uploaded, held, transferred, staging_deleted (or rejected, failed).';
+create index hsf_upload_account_idx on hsf_upload(client_account_id, created_at desc);
+create index hsf_upload_file_idx on hsf_upload(file_id);
+create index hsf_upload_item_idx on hsf_upload(file_item_id);
+create index hsf_upload_queue_idx on hsf_upload(status, uploaded_at) where status in ('uploaded','held','transferring');
+create index hsf_upload_staged_idx on hsf_upload(status) where storage_path is not null;
+comment on column hsf_upload.transfer_blocked_reason is 'Contract 9.5. Set to ''consent withdrawn'' on every untransferred upload of the account when its mco_transfer or document_storage consent is withdrawn. A blocked upload is never claimed for transfer. Nothing is deleted automatically: what happens to the staged bytes is a Director and Information Officer decision (register item).';
+comment on column hsf_upload.transfer_claimed_at is 'Contract 9.5. When hsf_transfer_claim last moved the upload to transferring. A transferring upload claimed more than 30 minutes ago is claimed again.';
+
+create table hsf_mco_transfer (
+  id bigint generated always as identity primary key,
+  upload_id uuid not null references hsf_upload(id),
+  mode text not null check (mode in ('hold','fixture','live')),
+  outcome text not null check (outcome in ('held','received','hash_mismatch','error')),
+  mco_document_ref text,
+  mco_receipt_sha256 text check (mco_receipt_sha256 ~ '^[0-9a-f]{64}$'),
+  error text,
+  created_at timestamptz not null default now()
+);
+comment on table hsf_mco_transfer is 'HSF-UPL-01. Append only log of every attempt to move a staged upload to MyClinicOnline: the mode, the outcome, the MyClinicOnline reference and receipt fingerprint when received, and a short error text. Never the file content.';
+create index hsf_mco_transfer_upload_idx on hsf_mco_transfer(upload_id, created_at);
+
+-- The evidence ledger (047) records the upload it came through.
+alter table hsf_evidence
+  add constraint hsf_evidence_upload_fk foreign key (upload_id) references hsf_upload(id);
+
+-- 3. Guards -------------------------------------------------------------------------
+
+create or replace function hsf_mco_transfer_guard()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'hsf_mco_transfer is append only';
+end;
+$$;
+create trigger hsf_mco_transfer_append_only
+  before update or delete on hsf_mco_transfer
+  for each row execute function hsf_mco_transfer_guard();
+
+create or replace function hsf_consent_guard()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if tg_op = 'DELETE' then
+    raise exception 'hsf_consent rows are never deleted; withdraw the consent instead';
+  end if;
+  if (to_jsonb(new) - 'withdrawn_at') is distinct from (to_jsonb(old) - 'withdrawn_at')
+     or old.withdrawn_at is not null or new.withdrawn_at is null then
+    raise exception 'hsf_consent: only a withdrawal may be recorded, once';
+  end if;
+  return new;
+end;
+$$;
+create trigger hsf_consent_append_only
+  before update or delete on hsf_consent
+  for each row execute function hsf_consent_guard();
+
+create or replace function hsf_upload_guard()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'hsf_upload rows are kept for the audit trail and are never deleted';
+end;
+$$;
+create trigger hsf_upload_no_delete
+  before delete on hsf_upload
+  for each row execute function hsf_upload_guard();
+
+revoke execute on function hsf_mco_transfer_guard() from public, anon, authenticated;
+revoke execute on function hsf_consent_guard() from public, anon, authenticated;
+revoke execute on function hsf_upload_guard() from public, anon, authenticated;
+
+-- 4. Row Level Security ---------------------------------------------------------------
+
+create or replace function hsf_can_read_account(p_account_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select hsf_is_staff()
+      or exists (select 1 from msp_client_account a
+                  where a.id = p_account_id
+                    and auth.uid() is not null
+                    and a.auth_user_id = auth.uid());
+$$;
+revoke execute on function hsf_can_read_account(uuid) from public, anon;
+grant execute on function hsf_can_read_account(uuid) to authenticated;
+comment on function hsf_can_read_account is 'RLS helper: staff, or the client contact of the account.';
+
+do $$
+declare
+  t text;
+begin
+  foreach t in array array['hsf_consent','hsf_upload','hsf_mco_transfer'] loop
+    execute format('alter table %I enable row level security', t);
+    execute format('revoke all on %I from public, anon, authenticated', t);
+    execute format('grant select on %I to authenticated', t);
+    execute format('grant all on %I to service_role', t);
+  end loop;
+end;
+$$;
+
+create policy hsf_consent_read on hsf_consent
+  for select to authenticated using (hsf_can_read_account(client_account_id));
+create policy hsf_upload_read on hsf_upload
+  for select to authenticated using (hsf_can_read_account(client_account_id));
+create policy hsf_mco_transfer_read on hsf_mco_transfer
+  for select to authenticated using (
+    exists (select 1 from hsf_upload u where u.id = upload_id and hsf_can_read_account(u.client_account_id)));
+
+-- 5. Storage bucket -------------------------------------------------------------------
+-- Private, encrypted at rest by the platform, 25 MB, the contract mime list. No
+-- storage.objects policy is created for this bucket: anon and authenticated
+-- cannot read, list or write it; the service role signs one upload URL per
+-- registered upload and the transfer worker reads and removes the object.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('hsf-staging', 'hsf-staging', false, 26214400, array[
+  'application/pdf','image/jpeg','image/png',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/msword','application/vnd.ms-excel','text/csv'])
+on conflict (id) do nothing;
+
+-- 6. Internal helpers (never callable from outside) -------------------------------------
+
+create or replace function hsf_consent_wording_version()
+returns text
+language sql
+immutable
+set search_path = public
+as $$ select 'HSF-CONSENT-1.0'::text $$;
+comment on function hsf_consent_wording_version is 'The current consent wording version (contract section 1). A consent recorded under any other version is refused.';
+
+create or replace function hsf_account_of(p_auth_user uuid)
+returns msp_client_account
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select a.* from msp_client_account a where p_auth_user is not null and a.auth_user_id = p_auth_user limit 1;
+$$;
+comment on function hsf_account_of is 'The company account whose contact is this auth user, or null.';
+
+-- Contract 9.1. Company accounts are created by msp_client_signon from a typed
+-- email, without a sign in, so they carry no auth user. The web tier calls this
+-- once per request after it has verified the access token: an account already
+-- linked to the person is returned; otherwise the latest account that is not
+-- declined, has no auth user yet and whose contact email equals the person's
+-- confirmed Supabase email is linked and returned. An unconfirmed email links
+-- nothing.
+create or replace function hsf_link_account(p_auth_user uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+  v_email text;
+begin
+  if p_auth_user is null then
+    return null;
+  end if;
+  -- One link at a time per person, so two parallel requests never race.
+  perform pg_advisory_xact_lock(hashtext('hsf_link_account'), hashtext(p_auth_user::text));
+  select a.id into v_id from msp_client_account a where a.auth_user_id = p_auth_user;
+  if v_id is not null then
+    return v_id;
+  end if;
+  select lower(btrim(u.email)) into v_email
+    from auth.users u
+   where u.id = p_auth_user and u.email_confirmed_at is not null;
+  if coalesce(v_email, '') = '' then
+    return null;
+  end if;
+  select a.id into v_id
+    from msp_client_account a
+   where lower(btrim(a.contact_email)) = v_email
+     and a.auth_user_id is null
+     and a.account_kind <> 'declined'
+   order by a.created_at desc, a.id desc
+   limit 1
+   for update;
+  if v_id is null then
+    return null;
+  end if;
+  update msp_client_account set auth_user_id = p_auth_user where id = v_id and auth_user_id is null;
+  if not found then
+    return (select a.id from msp_client_account a where a.auth_user_id = p_auth_user);
+  end if;
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_email, 'client_auth_linked',
+          jsonb_build_object('client_account_id', v_id, 'auth_user_id', p_auth_user));
+  return v_id;
+end;
+$$;
+comment on function hsf_link_account is 'Contract 9.1. Returns the company account linked to the auth user, linking on first use the latest non declined account with no auth user whose contact email equals the user''s confirmed email. Null when there is none. Service role only; vercel/lib/auth.js requireUser calls it after verifying the token. Audited as client_auth_linked.';
+
+create or replace function hsf_user_email(p_auth_user uuid)
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select u.email from auth.users u where u.id = p_auth_user),
+                  (select a.contact_email from msp_client_account a where a.auth_user_id = p_auth_user limit 1));
+$$;
+comment on function hsf_user_email is 'The email of the auth user, used as the audit actor and as hsf_evidence.supplied_by.';
+
+create or replace function hsf_consent_current(p_account_id uuid, p_kind text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce((select c.granted and c.withdrawn_at is null
+                     from hsf_consent c
+                    where c.client_account_id = p_account_id and c.consent_kind = p_kind
+                    order by c.granted_at desc, c.id desc
+                    limit 1), false);
+$$;
+comment on function hsf_consent_current is 'True when the latest consent row of this kind for the account is granted and not withdrawn.';
+
+create or replace function hsf_consent_complete(p_account_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select hsf_consent_current(p_account_id, 'document_storage')
+     and hsf_consent_current(p_account_id, 'mco_transfer')
+     and hsf_consent_current(p_account_id, 'authority_to_share');
+$$;
+
+create or replace function hsf_safe_name(p_name text)
+returns text
+language plpgsql
+immutable
+set search_path = public
+as $$
+declare
+  v text := btrim(coalesce(p_name, ''));
+  v_ext text;
+  v_base text;
+begin
+  -- The extension (letters and digits after the last dot) is kept in lower case.
+  -- In the rest of the name every run of anything but a letter or a digit becomes
+  -- one underscore, so the only dot left is the one before the extension and no
+  -- path segment such as .. can survive.
+  v_ext := lower(substring(v from '\.([A-Za-z0-9]{1,10})$'));
+  v_base := case when v_ext is null then v else left(v, length(v) - length(v_ext) - 1) end;
+  v_base := btrim(regexp_replace(v_base, '[^A-Za-z0-9]+', '_', 'g'), '_');
+  if v_base = '' then
+    v_base := 'document';
+  end if;
+  if v_ext is null then
+    return left(v_base, 120);
+  end if;
+  return btrim(left(v_base, 120 - length(v_ext) - 1), '_') || '.' || v_ext;
+end;
+$$;
+comment on function hsf_safe_name is 'Storage safe file name: letters, digits, dot and underscore only, at most 120 characters, extension kept.';
+
+do $$
+declare
+  f text;
+begin
+  foreach f in array array['hsf_consent_wording_version()','hsf_account_of(uuid)','hsf_user_email(uuid)',
+                           'hsf_consent_current(uuid, text)','hsf_consent_complete(uuid)','hsf_safe_name(text)'] loop
+    execute format('revoke execute on function %s from public, anon, authenticated', f);
+    execute format('grant execute on function %s to service_role', f);
+  end loop;
+end;
+$$;
+
+-- 7. Consent ----------------------------------------------------------------------------
+
+create or replace function hsf_consent_status(p_auth_user uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+  v_ds boolean := false;
+  v_mt boolean := false;
+  v_as boolean := false;
+begin
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is not null then
+    v_ds := hsf_consent_current(v_acc.id, 'document_storage');
+    v_mt := hsf_consent_current(v_acc.id, 'mco_transfer');
+    v_as := hsf_consent_current(v_acc.id, 'authority_to_share');
+  end if;
+  return jsonb_build_object(
+    'client_account_id', v_acc.id,
+    'company_name', v_acc.company_name,
+    'wording_version', hsf_consent_wording_version(),
+    'document_storage', v_ds,
+    'mco_transfer', v_mt,
+    'authority_to_share', v_as,
+    'complete', v_ds and v_mt and v_as);
+end;
+$$;
+comment on function hsf_consent_status is 'Contract 049. The three builder consents of the auth user''s company account. true means the latest row of that kind is granted and not withdrawn; complete means all three.';
+
+create or replace function hsf_record_consent(p_auth_user uuid, p_kinds text[], p_wording_version text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+  v_kind text;
+  v_kinds text[];
+begin
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    raise exception 'Register your company account before giving consent.';
+  end if;
+  if p_wording_version is distinct from hsf_consent_wording_version() then
+    raise exception 'The consent wording has changed. Please read the current wording (%) and give your consent again.', hsf_consent_wording_version();
+  end if;
+  select array_agg(distinct k order by k) into v_kinds from unnest(coalesce(p_kinds, '{}'::text[])) k;
+  if v_kinds is null then
+    raise exception 'Choose at least one consent to record.';
+  end if;
+  foreach v_kind in array v_kinds loop
+    if v_kind is null or v_kind not in ('document_storage','mco_transfer','authority_to_share') then
+      raise exception 'Unknown consent kind: %', coalesce(v_kind, 'none');
+    end if;
+  end loop;
+  foreach v_kind in array v_kinds loop
+    insert into hsf_consent (client_account_id, auth_user_id, consent_kind, granted, wording_version, granted_at)
+    values (v_acc.id, p_auth_user, v_kind, true, p_wording_version, clock_timestamp());
+  end loop;
+  insert into msp_audit (actor, event_type, event_detail)
+  values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_consent_recorded',
+          jsonb_build_object('client_account_id', v_acc.id, 'kinds', to_jsonb(v_kinds),
+                             'wording_version', p_wording_version));
+  return hsf_consent_status(p_auth_user);
+end;
+$$;
+comment on function hsf_record_consent is 'Contract 049. Records one granted row per consent kind under the current wording version. Refuses unknown kinds and any other wording version. Audited.';
+
+create or replace function hsf_withdraw_consent(p_auth_user uuid, p_kind text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+  v_id uuid;
+  v_blocked int := 0;
+begin
+  if p_kind is null or p_kind not in ('document_storage','mco_transfer','authority_to_share') then
+    raise exception 'Unknown consent kind: %', coalesce(p_kind, 'none');
+  end if;
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    raise exception 'No company account is linked to this sign in.';
+  end if;
+  select c.id into v_id
+    from hsf_consent c
+   where c.client_account_id = v_acc.id and c.consent_kind = p_kind
+   order by c.granted_at desc, c.id desc
+   limit 1;
+  if v_id is not null then
+    update hsf_consent set withdrawn_at = clock_timestamp()
+     where id = v_id and granted and withdrawn_at is null;
+    if found then
+      -- Contract 9.5: without storage or transfer consent nothing more moves.
+      -- Untransferred uploads are blocked from the transfer claim; nothing is
+      -- deleted automatically (Director and Information Officer decision).
+      if p_kind in ('mco_transfer','document_storage') then
+        update hsf_upload
+           set transfer_blocked_reason = 'consent withdrawn'
+         where client_account_id = v_acc.id
+           and transfer_blocked_reason is null
+           and status in ('uploaded','verified','held','transferring');
+        get diagnostics v_blocked = row_count;
+      end if;
+      insert into msp_audit (actor, event_type, event_detail)
+      values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_consent_withdrawn',
+              jsonb_build_object('client_account_id', v_acc.id, 'kind', p_kind, 'blocked_uploads', v_blocked));
+    end if;
+  end if;
+  return hsf_consent_status(p_auth_user);
+end;
+$$;
+comment on function hsf_withdraw_consent is 'Contract 049 and 9.5. Withdraws one consent. New uploads stop at once. Withdrawing mco_transfer or document_storage sets transfer_blocked_reason = ''consent withdrawn'' on the account''s untransferred uploads, which are then never claimed for transfer; a later consent does not lift the block, and nothing is deleted automatically. Audited.';
+
+-- 8. Uploads ----------------------------------------------------------------------------
+
+create or replace function hsf_register_upload(p_auth_user uuid, p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+  v_file hsf_file;
+  v_item_id uuid;
+  v_element_section text;
+  v_section text := nullif(btrim(coalesce(p ->> 'section_code', '')), '');
+  v_dept text := nullif(btrim(coalesce(p ->> 'department_code', '')), '');
+  v_element text := nullif(btrim(coalesce(p ->> 'element_code', '')), '');
+  v_name text := btrim(coalesce(p ->> 'original_name', ''));
+  v_mime text := lower(btrim(coalesce(p ->> 'mime_type', '')));
+  v_size_txt text := btrim(coalesce(p ->> 'size_bytes', ''));
+  v_size bigint;
+  v_sha text := lower(btrim(coalesce(p ->> 'sha256', '')));
+  v_max bigint;
+  v_allowed text[];
+  v_id uuid := gen_random_uuid();
+  v_safe text;
+  v_path text;
+begin
+  if p is null or jsonb_typeof(p) <> 'object' then
+    raise exception 'The upload details are missing.';
+  end if;
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    raise exception 'Register your company account before uploading documents.';
+  end if;
+  if v_acc.account_kind = 'declined' then
+    raise exception 'This company account cannot upload documents. Please WhatsApp a sales executive.';
+  end if;
+  if not hsf_consent_complete(v_acc.id) then
+    raise exception 'All three consents are needed before any document is uploaded.';
+  end if;
+
+  if v_dept is null or not exists (select 1 from hsf_department d where d.code = v_dept) then
+    raise exception 'Choose the department this document belongs to.';
+  end if;
+  if v_section is not null and not exists (select 1 from hsf_section s where s.code = v_section) then
+    raise exception 'The File section must be a letter from A to O.';
+  end if;
+
+  if nullif(p ->> 'file_id', '') is not null then
+    if (p ->> 'file_id') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+      raise exception 'The File is not recognised.';
+    end if;
+    select f.* into v_file from hsf_file f where f.id = (p ->> 'file_id')::uuid;
+    if v_file.id is null or v_file.client_account_id <> v_acc.id then
+      raise exception 'The File is not recognised.';
+    end if;
+  end if;
+  if v_element is not null then
+    if v_file.id is null then
+      raise exception 'An element upload must name the File it belongs to.';
+    end if;
+    select fi.id, e.section_code into v_item_id, v_element_section
+      from hsf_file_item fi
+      join hsf_element e on e.id = fi.element_id
+     where fi.file_id = v_file.id and e.code = v_element
+     order by fi.site_ref nulls first
+     limit 1;
+    if v_item_id is null then
+      raise exception 'That element is not part of this File.';
+    end if;
+    if v_section is null then
+      v_section := v_element_section;
+    elsif v_section <> v_element_section then
+      raise exception 'That element belongs to Section %, not Section %.', v_element_section, v_section;
+    end if;
+  end if;
+
+  if v_name = '' or length(v_name) > 255 or v_name ~ '[[:cntrl:]]' then
+    raise exception 'The file name must be between 1 and 255 printable characters.';
+  end if;
+  v_allowed := array(select lower(btrim(x)) from unnest(string_to_array(coalesce(msp_env_get('hsf.upload_allowed_mime'), ''), ',')) x
+                      where btrim(x) <> '');
+  if v_mime = '' or not (v_mime = any(v_allowed)) then
+    raise exception 'That file type is not accepted. Upload a PDF, JPEG, PNG, Word, Excel or CSV file.';
+  end if;
+  if v_size_txt !~ '^[0-9]{1,15}$' then
+    raise exception 'The file size is not valid.';
+  end if;
+  v_size := v_size_txt::bigint;
+  v_max := coalesce(msp_env_get_int('hsf.upload_max_bytes'), 26214400);
+  if v_size < 1 or v_size > v_max then
+    raise exception 'The file is larger than the % MB limit.', round(v_max / 1048576.0, 1);
+  end if;
+  if v_sha !~ '^[0-9a-f]{64}$' then
+    raise exception 'The SHA 256 fingerprint must be 64 hexadecimal characters.';
+  end if;
+
+  v_safe := hsf_safe_name(v_name);
+  v_path := v_acc.id::text || '/' || v_id::text || '/' || v_safe;
+
+  insert into hsf_upload (id, client_account_id, auth_user_id, file_id, file_item_id, section_code, department_code,
+                          original_name, safe_name, mime_type, size_bytes, sha256_client, storage_bucket, storage_path)
+  values (v_id, v_acc.id, p_auth_user, v_file.id, v_item_id, v_section, v_dept,
+          v_name, v_safe, v_mime, v_size, v_sha, 'hsf-staging', v_path);
+
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_upload_registered',
+          jsonb_build_object('upload_id', v_id, 'client_account_id', v_acc.id, 'department_code', v_dept,
+                             'section_code', v_section, 'element_code', v_element, 'mime_type', v_mime,
+                             'size_bytes', v_size),
+          v_file.id);
+
+  return jsonb_build_object('upload_id', v_id, 'bucket', 'hsf-staging', 'path', v_path);
+end;
+$$;
+comment on function hsf_register_upload is 'Contract 049. Registers one upload before the bytes move: consent complete, account not declined, department, section, File and element checked, type and size against hsf.upload_allowed_mime and hsf.upload_max_bytes. Returns the staging bucket and path for the signed upload URL. Audited (never the file name or content).';
+
+create or replace function hsf_mark_uploaded(p_auth_user uuid, p_upload_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_up hsf_upload;
+  v_email text;
+  v_version int;
+  v_prev uuid;
+begin
+  select u.* into v_up from hsf_upload u where u.id = p_upload_id for update;
+  if v_up.id is null or p_auth_user is null or v_up.auth_user_id <> p_auth_user then
+    raise exception 'That upload was not found.';
+  end if;
+  if v_up.status <> 'awaiting_upload' then
+    return jsonb_build_object('upload_id', v_up.id, 'status', v_up.status);
+  end if;
+  v_email := coalesce(hsf_user_email(p_auth_user), 'client');
+
+  -- A consent withdrawn between registration and completion stops the upload.
+  if not hsf_consent_complete(v_up.client_account_id) then
+    update hsf_upload
+       set status = 'rejected', reject_reason = 'Consent was withdrawn before the upload completed.'
+     where id = v_up.id;
+    insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+    values (v_email, 'hsf_upload_rejected',
+            jsonb_build_object('upload_id', v_up.id, 'reason', 'consent_withdrawn'), v_up.file_id);
+    return jsonb_build_object('upload_id', v_up.id, 'status', 'rejected');
+  end if;
+
+  update hsf_upload set status = 'uploaded', uploaded_at = now() where id = v_up.id;
+
+  if v_up.file_item_id is not null then
+    -- Serialise completes on one File item, so two uploads never pick the same
+    -- evidence version (the second waits, then reads the committed maximum).
+    perform 1 from hsf_file_item where id = v_up.file_item_id for update;
+    select coalesce(max(e.version), 0) + 1 into v_version from hsf_evidence e where e.file_item_id = v_up.file_item_id;
+    select e.id into v_prev from hsf_evidence e
+     where e.file_item_id = v_up.file_item_id order by e.version desc limit 1;
+    insert into hsf_evidence (file_item_id, version, supersedes_id, source, storage_path, sha256, supplied_by, upload_id)
+    values (v_up.file_item_id, v_version, v_prev, 'client_upload', v_up.storage_path, v_up.sha256_client, v_email, v_up.id);
+    update hsf_file_item set status = 'uploaded', reason = null where id = v_up.file_item_id;
+    -- Keeps hsf_file.compliance_pct current and audits the change (migration 051).
+    perform hsf_compute_compliance(v_up.file_id);
+  end if;
+
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values (v_email, 'hsf_upload_completed',
+          jsonb_build_object('upload_id', v_up.id, 'file_item_id', v_up.file_item_id,
+                             'evidence_version', v_version, 'sha256', v_up.sha256_client),
+          v_up.file_id);
+
+  return jsonb_build_object('upload_id', v_up.id, 'status', 'uploaded');
+end;
+$$;
+comment on function hsf_mark_uploaded is 'Contract 049 and 9.5. awaiting_upload to uploaded, by the uploading person only. For an element upload it locks the File item, appends the hsf_evidence row (version n + 1, source client_upload, the browser hash), sets the item to uploaded and recomputes the compliance figure. A consent withdrawn in between rejects the upload instead. Audited.';
+
+create or replace function hsf_my_uploads(p_auth_user uuid, p_file_id uuid default null)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'upload_id', u.id,
+           'file_id', u.file_id,
+           'original_name', u.original_name,
+           'department_code', u.department_code,
+           'section_code', u.section_code,
+           'element_code', e.code,
+           'size_bytes', u.size_bytes,
+           'mime_type', u.mime_type,
+           'status', u.status,
+           'reject_reason', u.reject_reason,
+           'transfer_blocked_reason', u.transfer_blocked_reason,
+           'created_at', u.created_at,
+           'uploaded_at', u.uploaded_at,
+           'transferred_at', u.transferred_at,
+           'staging_deleted_at', u.staging_deleted_at,
+           'mco_document_ref', u.mco_document_ref)
+         order by u.created_at desc, u.id), '[]'::jsonb)
+    from hsf_upload u
+    join msp_client_account a on a.id = u.client_account_id
+    left join hsf_file_item fi on fi.id = u.file_item_id
+    left join hsf_element e on e.id = fi.element_id
+   where p_auth_user is not null
+     and a.auth_user_id = p_auth_user
+     and (p_file_id is null or u.file_id = p_file_id);
+$$;
+comment on function hsf_my_uploads is 'Contract 049. The uploads of the auth user''s company account, newest first, optionally for one File.';
+
+-- 9. Transfer worker ---------------------------------------------------------------------
+
+create or replace function hsf_transfer_queue(p_limit int)
+returns setof hsf_upload
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select u.*
+    from hsf_upload u
+   where u.status in ('uploaded','held')
+     and u.storage_path is not null
+     and u.transfer_blocked_reason is null
+     and hsf_consent_current(u.client_account_id, 'mco_transfer')
+     and hsf_consent_current(u.client_account_id, 'document_storage')
+   order by u.uploaded_at nulls last, u.created_at, u.id
+   limit greatest(1, least(coalesce(p_limit, 10), 100));
+$$;
+comment on function hsf_transfer_queue is 'Contract 049. A read only listing of uploads waiting for MyClinicOnline (uploaded or held), oldest first, at most 100; blocked uploads and accounts without mco_transfer and document_storage consent are skipped. The worker no longer reads it: it claims work with hsf_transfer_claim (contract 9.5).';
+
+create or replace function hsf_transfer_mode()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select case when v in ('hold','fixture','live') then v else 'hold' end
+    from (select msp_env_get('hsf.mco_transfer_mode') as v) x;
+$$;
+comment on function hsf_transfer_mode is 'Contract 9.5. The transfer mode from hsf.mco_transfer_mode: hold, fixture or live; anything else reads as hold. Service role only; the worker calls this instead of msp_env_get.';
+
+create or replace function hsf_transfer_claim(p_limit int)
+returns setof hsf_upload
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_mode text := hsf_transfer_mode();
+  v_limit int := greatest(1, least(coalesce(p_limit, 10), 100));
+begin
+  if v_mode = 'hold' then
+    -- Hold: only fresh uploads; the worker records each as held and sends nothing.
+    return query
+      select u.*
+        from hsf_upload u
+       where u.status = 'uploaded'
+         and u.storage_path is not null
+         and u.transfer_blocked_reason is null
+         and hsf_consent_current(u.client_account_id, 'mco_transfer')
+         and hsf_consent_current(u.client_account_id, 'document_storage')
+       order by u.uploaded_at nulls last, u.created_at, u.id
+       limit v_limit
+       for update of u skip locked;
+    return;
+  end if;
+  -- Fixture or live: uploaded and held rows, and transferring rows whose claim
+  -- is more than 30 minutes old (a worker that stopped part way). Rows another
+  -- worker has locked are skipped; the claimed rows move to transferring.
+  return query
+    with c as (
+      select u.id
+        from hsf_upload u
+       where u.storage_path is not null
+         and u.transfer_blocked_reason is null
+         and (u.status in ('uploaded','held')
+              or (u.status = 'transferring'
+                  and (u.transfer_claimed_at is null or u.transfer_claimed_at < now() - interval '30 minutes')))
+         and hsf_consent_current(u.client_account_id, 'mco_transfer')
+         and hsf_consent_current(u.client_account_id, 'document_storage')
+       order by u.uploaded_at nulls last, u.created_at, u.id
+       limit v_limit
+       for update of u skip locked
+    ), claimed as (
+      update hsf_upload u
+         set status = 'transferring', transfer_claimed_at = now()
+        from c
+       where u.id = c.id
+      returning u.*
+    )
+    select * from claimed order by uploaded_at nulls last, created_at, id;
+end;
+$$;
+comment on function hsf_transfer_claim is 'Contract 9.5. The worker''s claim, oldest first, at most 100. Mode hold: uploaded rows only (the worker records them held). Mode fixture or live: uploaded and held rows plus transferring rows claimed more than 30 minutes ago, locked with for update skip locked and moved to transferring. Blocked uploads and accounts without mco_transfer and document_storage consent are never returned.';
+
+create or replace function hsf_transfer_record(
+  p_upload_id uuid, p_mode text, p_outcome text, p_server_sha256 text,
+  p_mco_ref text, p_receipt_sha256 text, p_error text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_up hsf_upload;
+  v_server text := nullif(lower(btrim(coalesce(p_server_sha256, ''))), '');
+  v_receipt text := nullif(lower(btrim(coalesce(p_receipt_sha256, ''))), '');
+  v_ref text := nullif(btrim(coalesce(p_mco_ref, '')), '');
+  v_error text := nullif(left(btrim(coalesce(p_error, '')), 500), '');
+  v_outcome text := p_outcome;
+  v_status text;
+  v_revoked int := 0;
+begin
+  if p_mode is null or p_mode not in ('hold','fixture','live') then
+    raise exception 'Unknown transfer mode: %', coalesce(p_mode, 'none');
+  end if;
+  if p_outcome is null or p_outcome not in ('held','received','hash_mismatch','error') then
+    raise exception 'Unknown transfer outcome: %', coalesce(p_outcome, 'none');
+  end if;
+  if v_server is not null and v_server !~ '^[0-9a-f]{64}$' then
+    raise exception 'The server fingerprint must be 64 hexadecimal characters.';
+  end if;
+  if v_receipt is not null and v_receipt !~ '^[0-9a-f]{64}$' then
+    raise exception 'The receipt fingerprint must be 64 hexadecimal characters.';
+  end if;
+  if v_ref is not null and length(v_ref) > 200 then
+    raise exception 'The MyClinicOnline reference is too long.';
+  end if;
+
+  select u.* into v_up from hsf_upload u where u.id = p_upload_id for update;
+  if v_up.id is null then
+    raise exception 'That upload was not found.';
+  end if;
+  if v_up.status not in ('uploaded','held','transferring') then
+    raise exception 'The upload is not waiting for transfer (status %).', v_up.status;
+  end if;
+
+  if p_outcome = 'received' then
+    if p_mode = 'hold' then
+      raise exception 'A held transfer cannot be recorded as received.';
+    end if;
+    if v_ref is null then
+      raise exception 'A received transfer needs the MyClinicOnline reference.';
+    end if;
+    if v_server is null or v_receipt is null
+       or v_server <> v_up.sha256_client or v_receipt <> v_up.sha256_client then
+      -- The database runs the same check as the worker: without three matching
+      -- fingerprints the transfer is a mismatch and the staging copy is kept.
+      v_outcome := 'hash_mismatch';
+      v_error := coalesce(v_error, 'Reported as received, but the browser, server and receipt fingerprints do not all match.');
+    end if;
+  end if;
+
+  if v_outcome = 'held' then
+    v_status := 'held';
+    update hsf_upload
+       set status = 'held', sha256_server = coalesce(v_server, sha256_server), transfer_claimed_at = null
+     where id = v_up.id;
+  elsif v_outcome = 'received' then
+    v_status := 'transferred';
+    update hsf_upload
+       set status = 'transferred', sha256_server = v_server, mco_document_ref = v_ref,
+           transferred_at = now(), verified_at = coalesce(verified_at, now()), transfer_claimed_at = null
+     where id = v_up.id;
+    update hsf_evidence
+       set mco_document_ref = v_ref, transferred_at = now()
+     where upload_id = v_up.id and mco_document_ref is null and transferred_at is null;
+  elsif v_outcome = 'hash_mismatch' then
+    v_status := 'failed';
+    update hsf_upload
+       set status = 'failed', sha256_server = coalesce(v_server, sha256_server),
+           reject_reason = coalesce(v_error, 'The fingerprints do not match.'), transfer_claimed_at = null
+     where id = v_up.id;
+    -- Bytes that failed the fingerprint check are not evidence (contract 9.5):
+    -- revoke the evidence row written at completion, return the item to
+    -- outstanding when no other unrevoked evidence holds it, and recompute.
+    if v_up.file_item_id is not null then
+      perform 1 from hsf_file_item where id = v_up.file_item_id for update;
+    end if;
+    update hsf_evidence set revoked_at = now()
+     where upload_id = v_up.id and revoked_at is null;
+    get diagnostics v_revoked = row_count;
+    if v_up.file_item_id is not null then
+      update hsf_file_item fi
+         set status = 'outstanding', reason = null
+       where fi.id = v_up.file_item_id
+         and fi.status = 'uploaded'
+         and not exists (select 1 from hsf_evidence e where e.file_item_id = fi.id and e.revoked_at is null);
+    end if;
+    if v_up.file_id is not null then
+      perform hsf_compute_compliance(v_up.file_id);
+    end if;
+  else
+    -- An error returns the upload to uploaded, to be claimed again (contract 9.5).
+    v_status := 'uploaded';
+    update hsf_upload set status = 'uploaded', transfer_claimed_at = null where id = v_up.id;
+  end if;
+
+  insert into hsf_mco_transfer (upload_id, mode, outcome, mco_document_ref, mco_receipt_sha256, error)
+  values (v_up.id, p_mode, v_outcome, v_ref, v_receipt, v_error);
+
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values ('hsf-mco-transfer', 'hsf_transfer_recorded',
+          jsonb_build_object('upload_id', v_up.id, 'mode', p_mode, 'reported_outcome', p_outcome,
+                             'outcome', v_outcome, 'status', v_status, 'mco_document_ref', v_ref,
+                             'evidence_revoked', v_revoked),
+          v_up.file_id);
+
+  return jsonb_build_object('upload_id', v_up.id, 'outcome', v_outcome, 'status', v_status,
+                            'mco_document_ref', case when v_status = 'transferred' then v_ref end);
+end;
+$$;
+comment on function hsf_transfer_record is 'Contract 049 and 9.5. Accepts an upload that is uploaded, held or transferring. Appends hsf_mco_transfer and moves the upload: held to held; received with server, browser and receipt fingerprints equal to transferred (and the matching hsf_evidence row gains its MyClinicOnline fields); a mismatch to failed with the reason, revoking the upload''s evidence row, returning the File item to outstanding when no other unrevoked evidence holds it, and recomputing the compliance figure; an error back to uploaded. Audited.';
+
+create or replace function hsf_mark_staging_deleted(p_upload_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_up hsf_upload;
+  v_status text;
+begin
+  select u.* into v_up from hsf_upload u where u.id = p_upload_id for update;
+  if v_up.id is null then
+    raise exception 'That upload was not found.';
+  end if;
+  if v_up.status not in ('transferred','failed','rejected') then
+    raise exception 'Only a transferred, failed or rejected upload can be removed from staging (status %).', v_up.status;
+  end if;
+  if v_up.storage_path is null then
+    raise exception 'The staging copy of this upload has already been removed.';
+  end if;
+  v_status := case when v_up.status = 'transferred' then 'staging_deleted' else v_up.status end;
+  update hsf_upload
+     set status = v_status, storage_path = null, staging_deleted_at = now()
+   where id = v_up.id;
+  update hsf_evidence
+     set staging_deleted_at = now(), storage_path = null
+   where upload_id = v_up.id and staging_deleted_at is null;
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values ('hsf-mco-transfer', 'hsf_staging_deleted',
+          jsonb_build_object('upload_id', v_up.id, 'status', v_status, 'mco_document_ref', v_up.mco_document_ref),
+          v_up.file_id);
+  return jsonb_build_object('upload_id', v_up.id, 'status', v_status);
+end;
+$$;
+comment on function hsf_mark_staging_deleted is 'Contract 049 and 9.5. After the worker has removed the bytes through the Storage API: transferred becomes staging_deleted; failed and rejected keep their status. storage_path is cleared and staging_deleted_at set on the upload and its evidence row. The row and both fingerprints stay. Audited.';
+
+create or replace function hsf_transfer_cleanup_queue(p_limit int)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object('upload_id', q.id, 'storage_path', q.storage_path, 'reason', q.status)
+                            order by q.since, q.id), '[]'::jsonb)
+    from (select u.id, u.storage_path, u.status,
+                 coalesce(u.transferred_at, u.uploaded_at, u.created_at) as since
+            from hsf_upload u
+           where u.storage_path is not null
+             and u.status in ('transferred','failed','rejected')
+             -- After a consent withdrawal nothing is deleted automatically: a
+             -- blocked upload's bytes wait for the Director and Information
+             -- Officer decision.
+             and u.transfer_blocked_reason is null
+           order by coalesce(u.transferred_at, u.uploaded_at, u.created_at), u.id
+           limit greatest(1, least(coalesce(p_limit, 10), 100))) q;
+$$;
+comment on function hsf_transfer_cleanup_queue is 'Contract 9.5. Staged bytes to remove, oldest first, at most 100: {upload_id, storage_path, reason} where reason is the status, transferred (the copy at MyClinicOnline is confirmed), failed or rejected. Uploads blocked by a consent withdrawal are left out (nothing is deleted automatically). The worker deletes the object through the Storage API and then calls hsf_mark_staging_deleted.';
+
+create or replace function hsf_sweep_stale_uploads(p_hours int default 24)
+returns int
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_hours int := coalesce(p_hours, 24);
+  v_n int;
+begin
+  if v_hours < 1 or v_hours > 8760 then
+    raise exception 'The sweep age must be between 1 and 8760 hours.';
+  end if;
+  update hsf_upload
+     set status = 'failed', reject_reason = 'The upload was not completed.'
+   where status = 'awaiting_upload'
+     and created_at < now() - make_interval(hours => v_hours);
+  get diagnostics v_n = row_count;
+  if v_n > 0 then
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('hsf-mco-transfer', 'hsf_uploads_swept', jsonb_build_object('failed', v_n, 'older_than_hours', v_hours));
+  end if;
+  return v_n;
+end;
+$$;
+comment on function hsf_sweep_stale_uploads is 'Contract 9.5. Registrations still awaiting upload after p_hours (default 24) become failed with the reason ''The upload was not completed.''. Their staging path then appears in hsf_transfer_cleanup_queue, so any bytes that did arrive are removed. Audited when anything moves.';
+
+-- Staging alerts (contract 9.5): uploads still holding bytes in Care Net staging
+-- longer than hsf.staging_alert_days. Staff read the view (it filters on the
+-- forge staff roles, so a client or anon sees nothing); the service role reads
+-- hsf_staging_alerts_list(). The two carry the same rows.
+create or replace view hsf_staging_alerts as
+select u.id as upload_id,
+       u.client_account_id,
+       a.company_name,
+       u.file_id,
+       u.status,
+       u.department_code,
+       u.section_code,
+       u.size_bytes,
+       coalesce(u.uploaded_at, u.created_at) as staged_since,
+       floor(extract(epoch from now() - coalesce(u.uploaded_at, u.created_at)) / 86400)::int as days_in_staging,
+       u.transfer_blocked_reason
+  from hsf_upload u
+  join msp_client_account a on a.id = u.client_account_id
+ where u.storage_path is not null
+   and u.status <> 'awaiting_upload'
+   and coalesce(u.uploaded_at, u.created_at) < now() - make_interval(days =>
+         coalesce((select p.value::int from msp_env_parameter p where p.key = 'hsf.staging_alert_days'), 14))
+   and hsf_is_staff();
+comment on view hsf_staging_alerts is 'Contract 9.5. Uploads holding bytes in the hsf-staging bucket for longer than hsf.staging_alert_days. Staff only (forge_admin, forge_omp, forge_safety_reviewer); nobody else sees a row. No file names.';
+revoke all on hsf_staging_alerts from public, anon, authenticated;
+grant select on hsf_staging_alerts to authenticated;
+
+create or replace function hsf_staging_alerts_list()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'upload_id', u.id, 'client_account_id', u.client_account_id, 'company_name', a.company_name,
+           'file_id', u.file_id, 'status', u.status, 'department_code', u.department_code,
+           'section_code', u.section_code, 'size_bytes', u.size_bytes,
+           'staged_since', coalesce(u.uploaded_at, u.created_at),
+           'days_in_staging', floor(extract(epoch from now() - coalesce(u.uploaded_at, u.created_at)) / 86400)::int,
+           'transfer_blocked_reason', u.transfer_blocked_reason)
+         order by coalesce(u.uploaded_at, u.created_at), u.id), '[]'::jsonb)
+    from hsf_upload u
+    join msp_client_account a on a.id = u.client_account_id
+   where u.storage_path is not null
+     and u.status <> 'awaiting_upload'
+     and coalesce(u.uploaded_at, u.created_at) < now() - make_interval(days =>
+           coalesce(msp_env_get_int('hsf.staging_alert_days'), 14));
+$$;
+comment on function hsf_staging_alerts_list is 'Contract 9.5. The rows of hsf_staging_alerts for the service role (scheduled alerts), oldest first.';
+
+-- 10. Execute rights: service role only ------------------------------------------------------
+
+do $$
+declare
+  f text;
+begin
+  foreach f in array array[
+    'hsf_consent_status(uuid)',
+    'hsf_record_consent(uuid, text[], text)',
+    'hsf_withdraw_consent(uuid, text)',
+    'hsf_register_upload(uuid, jsonb)',
+    'hsf_mark_uploaded(uuid, uuid)',
+    'hsf_my_uploads(uuid, uuid)',
+    'hsf_transfer_queue(int)',
+    'hsf_transfer_record(uuid, text, text, text, text, text, text)',
+    'hsf_mark_staging_deleted(uuid)',
+    'hsf_link_account(uuid)',
+    'hsf_transfer_mode()',
+    'hsf_transfer_claim(int)',
+    'hsf_transfer_cleanup_queue(int)',
+    'hsf_sweep_stale_uploads(int)',
+    'hsf_staging_alerts_list()'] loop
+    execute format('revoke execute on function %s from public, anon, authenticated', f);
+    execute format('grant execute on function %s to service_role', f);
+  end loop;
+end;
+$$;
+
+------------------------------------------------------------------------------
+-- 050_kernel_api.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | KRN-API-01 v1.0.0 | Cognitive Kernel read API for approved clients 23/09/2026
+-- Built to hsf/BUILD-CONTRACT.md section 3 (050) and section 7. The database side
+-- of GET /api/kernel (vercel/api/kernel.js), which the Grok bot and other
+-- approved servers call with a cnck_ key.
+--
+-- What this migration does:
+--   1. msp_instrument_currency_hold: a hold removes an instrument from citation
+--      even while its kernel row still reads verified. A hold only ever tightens.
+--      Seeded for the NIHL Regulations, 2003 and the Environmental Regulations
+--      for Workplaces, 1987 wherever those rows are still verified (HSF-7), and
+--      for the Asbestos Abatement Regulations, 2020 (HSF-9, contract 9.4).
+--   2. kernel_citable_instrument: the one definition of "citable" for the
+--      register (verified through the three gates, not superseded, not held).
+--      Public read. The public register, industry profile and framework
+--      statistics views are redefined here so that a held instrument leaves
+--      them too (contract 9.4).
+--   3. hsf_element_citable (contract 9.3): the one definition of an instrument
+--      a File element may cite, used by hsf_public_element_library,
+--      hsf_file_detail, kernel_api_elements and the release gate.
+--      hsf_public_element_library (SPEC B4.8): the element library with those
+--      bases only and every other named instrument still awaiting
+--      verification. Public read.
+--   4. msp_api_client and msp_api_call_log: keys are stored as a SHA 256 hash
+--      only; the log holds the client, the resource, the status and the time,
+--      never a request body, a search term or an IP address.
+--   5. Key issue and revoke (service role or forge_admin), authorisation with an
+--      hourly limit (service role), and the kernel_api_* read functions (service
+--      role). The read functions touch kernel and library tables only, never
+--      client, engagement, upload, consent or audit data.
+
+-- 1. Currency holds -------------------------------------------------------------------
+
+create table msp_instrument_currency_hold (
+  instrument_id uuid primary key references msp_legal_instrument(id),
+  reason text not null,
+  held_by text not null,
+  held_on date not null default current_date
+);
+comment on table msp_instrument_currency_hold is 'KRN-API-01. Instruments withheld from citation although their kernel row may still read verified, for example after a repeal the live kernel has not yet recorded. A hold only ever tightens: it removes an instrument from kernel_citable_instrument and from every API and File basis.';
+
+alter table msp_instrument_currency_hold enable row level security;
+revoke all on msp_instrument_currency_hold from public, anon, authenticated;
+grant select on msp_instrument_currency_hold to authenticated;
+grant all on msp_instrument_currency_hold to service_role;
+create policy msp_instrument_currency_hold_read on msp_instrument_currency_hold
+  for select to authenticated using (msp_any_forge_role() or hsf_is_staff());
+
+with seeded as (
+  insert into msp_instrument_currency_hold (instrument_id, reason, held_by)
+  select li.id, v.reason, 'migration_050'
+    from (values
+      ('NIHL Regulations, 2003',
+       'Repealed with effect from 06/09/2026 by the Noise Exposure Regulations, 2024, as recorded in the CNC OHS Industry Kernel (23/09/2026) and in migration 042. Held from citation until the kernel row is superseded (HSF-7).'),
+      ('Environmental Regulations for Workplaces, 1987',
+       'Repealed with effect from 06/09/2026 by the Physical Agents Regulations, 2024, as recorded in the CNC OHS Industry Kernel (23/09/2026) and in migration 042. Held from citation until the kernel row is superseded (HSF-7).'),
+      ('Asbestos Abatement Regulations, 2020',
+       'The amendment notice number conflicts: GN R.2092 against GN R.11435. Held from citation until the amendment reference is verified (register HSF-9).')
+    ) as v(short_name, reason)
+    join msp_legal_instrument li on li.short_name = v.short_name
+   where li.status = 'verified'
+  on conflict (instrument_id) do nothing
+  returning instrument_id, reason
+)
+insert into msp_audit (actor, event_type, event_detail)
+select 'migration_050', 'kernel_currency_hold',
+       jsonb_build_object('instruments', jsonb_agg(li.short_name order by li.short_name),
+                          'holds', jsonb_agg(jsonb_build_object('short_name', li.short_name, 'reason', s.reason)
+                                             order by li.short_name))
+  from seeded s join msp_legal_instrument li on li.id = s.instrument_id
+having count(*) > 0;
+
+-- 2. Citable instruments -------------------------------------------------------------------
+
+create or replace function kernel_instrument_citable(p_instrument_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from msp_legal_instrument li
+                  where li.id = p_instrument_id
+                    and li.status = 'verified'
+                    and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id));
+$$;
+comment on function kernel_instrument_citable is 'The single definition of citable: status verified (gates a, b and c passed; a superseded row is never verified) and no currency hold.';
+
+create or replace view kernel_citable_instrument as
+select li.short_name,
+       li.full_citation,
+       li.instrument_type,
+       li.gazette_reference,
+       li.effective_date,
+       li.verified_on,
+       li.review_due,
+       li.scope,
+       (select coalesce(json_agg(json_build_object('code', i.code, 'name', i.name) order by i.code), '[]'::json)
+          from msp_industry_instrument ii
+          join msp_industry i on i.id = ii.industry_id
+         where ii.instrument_id = li.id) as industries
+  from msp_legal_instrument li
+ where li.status = 'verified'
+   and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)
+ order by li.short_name;
+comment on view kernel_citable_instrument is 'KRN-API-01. Instruments a page or the kernel API may name as a basis: verified three ways, in force, not superseded, not held. A File element cites through hsf_element_citable, which also needs scope safety or both and a verified provision (contract 9.3). Public read on purpose; it carries only what Care Net publishes.';
+grant select on kernel_citable_instrument to anon, authenticated;
+
+-- Contract 9.4: the published views leave out held instruments too. Same column
+-- lists as migrations 047 (register) and 033 (industry profile, framework
+-- statistics); only the hold predicate is added. The predicate is written inline
+-- because a view's function calls are checked against the caller, and anon may
+-- not execute kernel_instrument_citable. The views run with the owner's rights,
+-- so anon needs no grant on msp_instrument_currency_hold.
+create or replace view msp_public_instrument_register as
+select li.short_name,
+       li.full_citation,
+       li.instrument_type,
+       li.gazette_reference,
+       li.effective_date,
+       li.amendment_history,
+       li.verified_on,
+       li.review_due,
+       (select coalesce(json_agg(json_build_object('code', i.code, 'name', i.name) order by i.name), '[]'::json)
+          from msp_industry_instrument ii
+          join msp_industry i on i.id = ii.industry_id
+         where ii.instrument_id = li.id) as industries,
+       li.scope
+  from msp_legal_instrument li
+ where li.status = 'verified'
+   and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)
+ order by li.short_name;
+comment on view msp_public_instrument_register is
+  'The legislation register as published on the website: verified instruments that are not under a currency hold, with full citation, the industries each applies to and the scope. Anonymous read.';
+grant select on msp_public_instrument_register to anon, authenticated;
+
+create or replace view msp_public_industry_profile as
+select
+  i.code,
+  i.name,
+  i.regulatory_regime as regime,
+  (select count(*) from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustry_count,
+  (select count(*) from msp_job_role r
+     join msp_subindustry s on s.id = r.subindustry_id
+    where s.industry_id = i.id) as role_count,
+  (select coalesce(json_agg(json_build_object('name', s.name, 'roles',
+            (select coalesce(json_agg(r.title order by r.title), '[]'::json)
+               from msp_job_role r where r.subindustry_id = s.id)) order by s.name), '[]'::json)
+     from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustries,
+  (select coalesce(json_agg(json_build_object('name', li.short_name, 'note', ii.applicability_note)
+            order by li.short_name), '[]'::json)
+     from msp_industry_instrument ii
+     join msp_legal_instrument li on li.id = ii.instrument_id
+    where ii.industry_id = i.id and li.status = 'verified'
+      and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)) as instruments,
+  (select coalesce(json_agg(distinct h.name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_hazard h on h.id = jh.hazard_id
+    where s.industry_id = i.id) as hazards,
+  (select coalesce(json_agg(distinct tp.test_name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_test_protocol tp on tp.hazard_id = jh.hazard_id
+    where s.industry_id = i.id) as protocols
+from msp_industry i;
+comment on view msp_public_industry_profile is
+  'Public marketing surface for the website industry pages. Aggregate, non clinical, no client data; instruments are verified and not under a currency hold. Readable by anon on purpose.';
+grant select on msp_public_industry_profile to anon, authenticated;
+
+create or replace view msp_public_framework_stats as
+select
+  (select semver from msp_kernel_version order by released_on desc, semver desc limit 1) as version,
+  (select count(*) from msp_legal_instrument li
+    where li.status = 'verified'
+      and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)) as instruments,
+  (select count(*) from msp_industry) as industries,
+  (select count(*) from msp_subindustry where selectable) as subindustries,
+  (select count(*) from msp_job_role) as roles,
+  (select count(*) from msp_test_protocol) as protocols;
+comment on view msp_public_framework_stats is
+  'Public marketing statistics for the website. Aggregate only; the instrument count leaves out held instruments. Readable by anon on purpose.';
+grant select on msp_public_framework_stats to anon, authenticated;
+
+-- 3. File citations and the public element library (contract 9.3, SPEC B4.8) -------------------
+
+create or replace function hsf_element_citable(p_element_id uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(distinct li.short_name order by li.short_name), '[]'::jsonb)
+    from hsf_element_instrument ei
+    join msp_legal_instrument li on li.id = ei.instrument_id
+   where ei.element_id = p_element_id
+     and li.status = 'verified'
+     and li.scope in ('safety','both')
+     and lower(btrim(ei.provision)) <> 'awaiting verification'
+     and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id);
+$$;
+comment on function hsf_element_citable is 'Contract 9.3. The one definition of what a Health and Safety File element may cite: instruments that are verified (never superseded), not under a currency hold, of scope safety or both, and linked with a provision pinned past ''awaiting verification''. Returns the short names as a json array. Used by hsf_public_element_library, hsf_file_detail, kernel_api_elements and hsf_release_gate. Until the Phase 2 re verification every element shows its instruments as awaiting verification, which is the truthful state.';
+-- The public views call it, and a view's function calls are checked against the
+-- caller, so anon and authenticated may execute it. It returns published short
+-- names only.
+revoke execute on function hsf_element_citable(uuid) from public;
+grant execute on function hsf_element_citable(uuid) to anon, authenticated, service_role;
+
+create or replace view hsf_public_element_library as
+select e.section_code,
+       s.name as section_name,
+       e.code,
+       e.name,
+       e.duty,
+       e.universal,
+       c.citable::json as citable,
+       (select coalesce(json_agg(distinct li.short_name order by li.short_name), '[]'::json)
+          from hsf_element_instrument ei
+          join msp_legal_instrument li on li.id = ei.instrument_id
+         where ei.element_id = e.id
+           and li.status in ('pending','verified')
+           and not (c.citable ? li.short_name)) as awaiting
+  from hsf_element e
+  join hsf_section s on s.code = e.section_code
+  cross join lateral (select hsf_element_citable(e.id) as citable) c
+ where e.status = 'active'
+ order by s.ordinal, e.code;
+comment on view hsf_public_element_library is 'SPEC B4.8 and contract 9.3. The Health and Safety File element library: section, name, duty, the instruments the element may cite (hsf_element_citable) and every other instrument named for it that is still awaiting verification (never to be cited as a basis). No client data. Public read on purpose.';
+grant select on hsf_public_element_library to anon, authenticated;
+
+-- 4. API clients and the call log -------------------------------------------------------------
+
+create table msp_api_client (
+  id uuid primary key default gen_random_uuid(),
+  name text not null check (length(btrim(name)) between 1 and 120),
+  owner text not null check (length(btrim(owner)) between 1 and 120),
+  key_prefix text not null,
+  key_hash text unique not null check (key_hash ~ '^[0-9a-f]{64}$'),
+  scopes text[] not null default '{kernel.read}',
+  active boolean not null default true,
+  hourly_limit int not null default 600 check (hourly_limit between 1 and 100000),
+  created_at timestamptz not null default now(),
+  revoked_at timestamptz
+);
+comment on table msp_api_client is 'KRN-API-01. Approved servers that may read the kernel API. Only the SHA 256 hash of a key is kept; the key itself is shown once at issue and never stored. key_prefix is the first characters of the key so staff can tell keys apart.';
+
+create table msp_api_call_log (
+  id bigint generated always as identity primary key,
+  client_id uuid references msp_api_client(id),
+  resource text,
+  status int not null,
+  created_at timestamptz not null default now()
+);
+comment on table msp_api_call_log is 'KRN-API-01. Append only log of every authorisation: the client (null for an unknown key), the resource, the status and the time. No request bodies, no search words, no IP addresses.';
+create index msp_api_call_log_client_idx on msp_api_call_log(client_id, created_at desc);
+
+create or replace function msp_api_call_log_guard()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  raise exception 'msp_api_call_log is append only';
+end;
+$$;
+create trigger msp_api_call_log_append_only
+  before update or delete on msp_api_call_log
+  for each row execute function msp_api_call_log_guard();
+revoke execute on function msp_api_call_log_guard() from public, anon, authenticated;
+
+alter table msp_api_client enable row level security;
+alter table msp_api_call_log enable row level security;
+revoke all on msp_api_client from public, anon, authenticated;
+revoke all on msp_api_call_log from public, anon, authenticated;
+grant all on msp_api_client to service_role;
+grant all on msp_api_call_log to service_role;
+
+-- 5. Issue, revoke, authorise -------------------------------------------------------------------
+
+create or replace function msp_api_client_issue(p_name text, p_owner text, p_scopes text[] default '{kernel.read}')
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_key text;
+  v_id uuid;
+  v_scopes text[];
+  v_actor text := coalesce(auth.jwt() ->> 'email', auth.role(), 'unknown');
+begin
+  if not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'Issuing a kernel API key requires the forge_admin role.';
+  end if;
+  if length(btrim(coalesce(p_name, ''))) not between 1 and 120 or length(btrim(coalesce(p_owner, ''))) not between 1 and 120 then
+    raise exception 'A key needs a name and an owner of 1 to 120 characters.';
+  end if;
+  select array_agg(distinct s order by s) into v_scopes from unnest(coalesce(p_scopes, '{kernel.read}'::text[])) s;
+  if v_scopes is null or not (v_scopes <@ array['kernel.read']) then
+    raise exception 'Unknown scope. The only scope is kernel.read.';
+  end if;
+
+  v_key := 'cnck_' || encode(extensions.gen_random_bytes(32), 'hex');
+  insert into msp_api_client (name, owner, key_prefix, key_hash, scopes)
+  values (btrim(p_name), btrim(p_owner), left(v_key, 12), encode(extensions.digest(v_key, 'sha256'), 'hex'), v_scopes)
+  returning id into v_id;
+
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_actor, 'api_client_issued',
+          jsonb_build_object('client_id', v_id, 'name', btrim(p_name), 'owner', btrim(p_owner), 'scopes', to_jsonb(v_scopes)));
+
+  -- The only time the key exists outside the caller: it is returned once and never stored.
+  return jsonb_build_object('client_id', v_id, 'api_key', v_key);
+end;
+$$;
+comment on function msp_api_client_issue is 'KRN-API-01. Issues a kernel API key: cnck_ followed by 32 random bytes in hex, returned once. Only its SHA 256 hash is stored. Service role or forge_admin. Audited without the key.';
+
+create or replace function msp_api_client_revoke(p_client_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_actor text := coalesce(auth.jwt() ->> 'email', auth.role(), 'unknown');
+  v_row msp_api_client;
+begin
+  if not coalesce(msp_caller_is('forge_admin'), false) then
+    raise exception 'Revoking a kernel API key requires the forge_admin role.';
+  end if;
+  update msp_api_client
+     set active = false, revoked_at = coalesce(revoked_at, now())
+   where id = p_client_id
+  returning * into v_row;
+  if v_row.id is null then
+    raise exception 'That API client was not found.';
+  end if;
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_actor, 'api_client_revoked', jsonb_build_object('client_id', v_row.id, 'name', v_row.name));
+  return jsonb_build_object('client_id', v_row.id, 'active', v_row.active, 'revoked_at', v_row.revoked_at);
+end;
+$$;
+comment on function msp_api_client_revoke is 'KRN-API-01. Stops a key at once. Service role or forge_admin. Audited.';
+
+create or replace function msp_api_authorise(p_key_hash text, p_resource text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_hash text := lower(btrim(coalesce(p_key_hash, '')));
+  v_resource text := left(coalesce(p_resource, ''), 40);
+  v_client msp_api_client;
+  v_calls int;
+  v_reason text;
+  v_status int;
+begin
+  if v_resource not in ('industries','industry','instruments','protocols','elements','search') then
+    v_reason := 'unknown resource';
+    v_status := 400;
+    v_resource := null;
+  end if;
+  if v_reason is null and v_hash ~ '^[0-9a-f]{64}$' then
+    -- The row lock serialises concurrent calls on one key, so the hourly count is exact.
+    select c.* into v_client from msp_api_client c where c.key_hash = v_hash for update;
+  end if;
+  if v_reason is null and v_client.id is null then
+    v_reason := 'unknown key';
+    v_status := 401;
+  elsif v_reason is null and (not v_client.active or v_client.revoked_at is not null) then
+    v_reason := 'key revoked or inactive';
+    v_status := 401;
+  elsif v_reason is null and not ('kernel.read' = any(v_client.scopes)) then
+    v_reason := 'scope kernel.read missing';
+    v_status := 403;
+  elsif v_reason is null then
+    select count(*) into v_calls
+      from msp_api_call_log l
+     where l.client_id = v_client.id and l.status = 200 and l.created_at > now() - interval '1 hour';
+    if v_calls >= v_client.hourly_limit then
+      v_reason := 'hourly rate limit reached';
+      v_status := 429;
+    else
+      v_status := 200;
+    end if;
+  end if;
+
+  insert into msp_api_call_log (client_id, resource, status) values (v_client.id, v_resource, v_status);
+
+  return jsonb_build_object('ok', v_status = 200,
+                            'client_id', case when v_status in (200, 403, 429) then v_client.id end,
+                            'scopes', case when v_status = 200 then to_jsonb(v_client.scopes) else '[]'::jsonb end,
+                            'reason', v_reason);
+end;
+$$;
+comment on function msp_api_authorise is 'KRN-API-01. Checks a key hash for a resource: known, active, not revoked, scope kernel.read, and fewer authorised calls in the last hour than the key''s hourly_limit. Logs the call (client, resource, status, time only). Service role only.';
+
+-- 6. Read functions ---------------------------------------------------------------------------
+
+create or replace function kernel_api_envelope(p_data jsonb)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select case when p_data is null then null else jsonb_build_object(
+    'kernel_release', (select v.semver from msp_kernel_version v
+                        order by string_to_array(regexp_replace(v.semver, '[^0-9.]', '', 'g'), '.')::int[] desc nulls last,
+                                 v.released_on desc
+                        limit 1),
+    'as_at', current_date,
+    'notice', 'Framework reference data from the Care Net Cognitive Kernel. Not legal advice and not a clinical opinion. Only instruments that have passed three verification checks and are in force are included.',
+    'data', p_data) end;
+$$;
+comment on function kernel_api_envelope is 'Wraps every kernel API payload with kernel_release, as_at and the notice. A null payload stays null (the API answers 404).';
+
+create or replace function kernel_api_protocol_json(p_protocol_id uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+           'name', tp.test_name,
+           'test_type', tp.test_type,
+           'hazard', h.name,
+           'periodic_interval_months', tp.periodic_interval_months,
+           'basis', case when tp.legal_basis_id is not null and kernel_instrument_citable(tp.legal_basis_id)
+                         then jsonb_build_array(li.short_name) else '[]'::jsonb end)
+    from msp_test_protocol tp
+    join msp_hazard h on h.id = tp.hazard_id
+    left join msp_legal_instrument li on li.id = tp.legal_basis_id
+   where tp.id = p_protocol_id;
+$$;
+comment on function kernel_api_protocol_json is 'One protocol as the API shows it: name, type, hazard, interval and a basis of citable instruments only. Exposure values and clinical reference ranges are not included.';
+
+create or replace function kernel_api_industry_id(p_code text)
+returns uuid
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select i.id from msp_industry i where i.code = upper(btrim(coalesce(p_code, '')));
+$$;
+
+create or replace function kernel_api_industries()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select kernel_api_envelope(coalesce(
+    (select jsonb_agg(jsonb_build_object('code', i.code, 'name', i.name, 'regime', i.regulatory_regime) order by i.code)
+       from msp_industry i), '[]'::jsonb));
+$$;
+comment on function kernel_api_industries is 'KRN-API-01. Every industry in the kernel: code, name, regime.';
+
+create or replace function kernel_api_instruments(p_industry text default null)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_industry uuid;
+begin
+  if nullif(btrim(coalesce(p_industry, '')), '') is not null then
+    v_industry := kernel_api_industry_id(p_industry);
+    if v_industry is null then
+      return null;
+    end if;
+  end if;
+  return kernel_api_envelope(coalesce(
+    (select jsonb_agg(to_jsonb(k) order by k.short_name)
+       from kernel_citable_instrument k
+      where v_industry is null
+         or exists (select 1 from json_array_elements(k.industries) x
+                     where x ->> 'code' = (select code from msp_industry where id = v_industry))),
+    '[]'::jsonb));
+end;
+$$;
+comment on function kernel_api_instruments is 'KRN-API-01. Citable instruments, all or those mapped to one industry. Null for an unknown industry.';
+
+create or replace function kernel_api_protocols(p_industry text default null)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_industry uuid;
+begin
+  if nullif(btrim(coalesce(p_industry, '')), '') is not null then
+    v_industry := kernel_api_industry_id(p_industry);
+    if v_industry is null then
+      return null;
+    end if;
+  end if;
+  return kernel_api_envelope(coalesce(
+    (select jsonb_agg(kernel_api_protocol_json(tp.id) order by tp.test_name, h.name, tp.id)
+       from msp_test_protocol tp
+       join msp_hazard h on h.id = tp.hazard_id
+      where v_industry is null
+         or exists (select 1 from msp_job_hazard jh
+                      join msp_job_role r on r.id = jh.job_role_id
+                      join msp_subindustry s on s.id = r.subindustry_id
+                     where jh.hazard_id = tp.hazard_id and s.industry_id = v_industry and s.selectable)),
+    '[]'::jsonb));
+end;
+$$;
+comment on function kernel_api_protocols is 'KRN-API-01. Medical surveillance protocols, all or those an industry''s roles call for, with citable bases only. Null for an unknown industry.';
+
+create or replace function kernel_api_elements(p_industry text default null)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_industry uuid;
+begin
+  if nullif(btrim(coalesce(p_industry, '')), '') is not null then
+    v_industry := kernel_api_industry_id(p_industry);
+    if v_industry is null then
+      return null;
+    end if;
+  end if;
+  return kernel_api_envelope(coalesce(
+    (select jsonb_agg(to_jsonb(l) order by s.ordinal, l.code)
+       from hsf_public_element_library l
+       join hsf_section s on s.code = l.section_code
+       join hsf_element e on e.code = l.code
+      where v_industry is null
+         or e.universal
+         or exists (select 1 from hsf_element_industry x where x.element_id = e.id and x.industry_id = v_industry)),
+    '[]'::jsonb));
+end;
+$$;
+comment on function kernel_api_elements is 'KRN-API-01. Health and Safety File elements with citable bases only and awaiting candidates named: all, or the universal elements plus the overlay of one industry. Null for an unknown industry.';
+
+create or replace function kernel_api_industry(p_code text)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_ind msp_industry;
+begin
+  select i.* into v_ind from msp_industry i where i.id = kernel_api_industry_id(p_code);
+  if v_ind.id is null then
+    return null;
+  end if;
+  return kernel_api_envelope(jsonb_build_object(
+    'code', v_ind.code,
+    'name', v_ind.name,
+    'regime', v_ind.regulatory_regime,
+    'subindustries', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'code', s.code, 'name', s.name,
+               'roles', coalesce((select jsonb_agg(r.title order by r.title) from msp_job_role r where r.subindustry_id = s.id), '[]'::jsonb))
+             order by s.name)
+        from msp_subindustry s where s.industry_id = v_ind.id and s.selectable), '[]'::jsonb),
+    'roles', coalesce((
+      select jsonb_agg(distinct r.title order by r.title)
+        from msp_job_role r join msp_subindustry s on s.id = r.subindustry_id
+       where s.industry_id = v_ind.id and s.selectable), '[]'::jsonb),
+    'hazards', coalesce((
+      select jsonb_agg(distinct h.name order by h.name)
+        from msp_job_hazard jh
+        join msp_job_role r on r.id = jh.job_role_id
+        join msp_subindustry s on s.id = r.subindustry_id
+        join msp_hazard h on h.id = jh.hazard_id
+       where s.industry_id = v_ind.id and s.selectable), '[]'::jsonb),
+    'protocols', coalesce((kernel_api_protocols(v_ind.code) -> 'data'), '[]'::jsonb),
+    'instruments', coalesce((kernel_api_instruments(v_ind.code) -> 'data'), '[]'::jsonb)));
+end;
+$$;
+comment on function kernel_api_industry is 'KRN-API-01. One industry: its selectable subindustries with role titles, roles, hazards, protocols with citable bases only, and its citable instruments. Null for an unknown code.';
+
+create or replace function kernel_api_search(p_q text)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_q text := btrim(regexp_replace(coalesce(p_q, ''), '\s+', ' ', 'g'));
+  v_pat text;
+begin
+  if length(v_q) < 2 or length(v_q) > 100 then
+    return kernel_api_envelope('[]'::jsonb);
+  end if;
+  v_pat := '%' || replace(replace(replace(v_q, '\', '\\'), '%', '\%'), '_', '\_') || '%';
+  return kernel_api_envelope(coalesce((
+    select jsonb_agg(jsonb_build_object('kind', m.kind, 'name', m.name, 'code', m.code) order by m.rank, m.name, m.code)
+      from (
+        select * from (
+          select 1 as rank, 'instrument'::text as kind, k.short_name as name, null::text as code
+            from kernel_citable_instrument k
+           where k.short_name ilike v_pat or k.full_citation ilike v_pat
+          union
+          select 2, 'protocol', tp.test_name, null
+            from msp_test_protocol tp where tp.test_name ilike v_pat
+          union
+          select 3, 'role', r.title, i.code
+            from msp_job_role r
+            join msp_subindustry s on s.id = r.subindustry_id and s.selectable
+            join msp_industry i on i.id = s.industry_id
+           where r.title ilike v_pat
+          union
+          select 4, 'element', l.name, l.code
+            from hsf_public_element_library l where l.name ilike v_pat
+        ) u
+        order by rank, name, code
+        limit 50
+      ) m), '[]'::jsonb));
+end;
+$$;
+comment on function kernel_api_search is 'KRN-API-01. Case insensitive match over citable instrument, protocol, role and element names; at most 50 results. The search text is not logged.';
+
+-- 7. Execute rights ----------------------------------------------------------------------------
+
+do $$
+declare
+  f text;
+begin
+  foreach f in array array[
+    'kernel_instrument_citable(uuid)',
+    'msp_api_authorise(text, text)',
+    'kernel_api_envelope(jsonb)',
+    'kernel_api_protocol_json(uuid)',
+    'kernel_api_industry_id(text)',
+    'kernel_api_industries()',
+    'kernel_api_industry(text)',
+    'kernel_api_instruments(text)',
+    'kernel_api_protocols(text)',
+    'kernel_api_elements(text)',
+    'kernel_api_search(text)'] loop
+    execute format('revoke execute on function %s from public, anon, authenticated', f);
+    execute format('grant execute on function %s to service_role', f);
+  end loop;
+end;
+$$;
+
+-- Issue and revoke: the service role, or a signed in forge_admin (checked in the body).
+revoke execute on function msp_api_client_issue(text, text, text[]) from public, anon;
+revoke execute on function msp_api_client_revoke(uuid) from public, anon;
+grant execute on function msp_api_client_issue(text, text, text[]) to authenticated, service_role;
+grant execute on function msp_api_client_revoke(uuid) to authenticated, service_role;
+
+------------------------------------------------------------------------------
+-- 051_hsf_generate_and_compliance.sql
+------------------------------------------------------------------------------
+
+-- CNC MSP FORGE | HSF-GEN-01 v1.0.0 | HSF skeleton generation, compliance and the client read paths 23/09/2026
+-- Built to hsf/BUILD-CONTRACT.md section 3 (051) and SPEC.md Part B, B9.3 and B9.4.
+--
+-- What this migration does:
+--   1. hsf_trigger_applies: the trigger rule of hsf/build_samples.py (U, compound
+--      "A and B" and "A or B", plain codes).
+--   2. hsf_generate_file: writes the skeleton of a File (hsf_file, draft,
+--      revision 1, and one outstanding hsf_file_item per applicable element).
+--      Generating a skeleton holds no documents, so no consent is needed for it;
+--      consent is needed for uploads only (049).
+--   3. hsf_compute_compliance (SPEC B9.4): linked_mco or uploaded over every
+--      item not marked not applicable, per section and overall; the overall is
+--      the ratio across all items, not a mean of sections. Cached on hsf_file.
+--   4. hsf_my_files, hsf_file_detail and hsf_set_item_status for the web tier.
+--   5. Contract 9.2, 9.6, 9.7 and 9.8 (Amendment 1): a File the caller may not
+--      see reads as null and a foreign item raises P0002 (both 404 at the API);
+--      at most hsf.files_per_account_per_day Files per account per day; the
+--      builder's anon views hsf_public_trigger and hsf_public_subindustry; and
+--      hsf_portal_summary for the portal (read only, mints no token).
+--
+-- All functions are security definer with a fixed search path and executable by
+-- the service role only. The web tier verifies the person's access token and
+-- passes their auth user id. Every write is audited in msp_audit with the File.
+--
+-- Not built in this release (open, see the build report): per appointment, per
+-- course, per licence class, per examination class and per site expansion of
+-- items (B9.3.4), and the MCO and MSP evidence pass (B9.3.6). One item is written
+-- per element, with site_ref null.
+
+-- 1. Parameter (SPEC B9.4) --------------------------------------------------------------
+
+insert into msp_env_parameter (key, value, value_type, min_value, max_value, category, description, updated_by) values
+  ('hsf.compliance_scope', 'true', 'boolean', null, null, 'hsf',
+   'SPEC B9.4. true: an item marked not applicable (with its written reason) leaves the denominator of the compliance figure. false: it counts against the File.',
+   'migration_051'),
+  ('hsf.files_per_account_per_day', '20', 'integer', 1, 1000, 'hsf',
+   'Contract 9.6. The most Health and Safety Files one company account may generate in a day. Keeps one account from filling the File tables.',
+   'migration_051')
+on conflict (key) do nothing;
+
+-- 2. Helpers --------------------------------------------------------------------------------
+
+create or replace function hsf_trigger_applies(p_trigger text, p_raised text[])
+returns boolean
+language plpgsql
+immutable
+set search_path = public
+as $$
+declare
+  t text := btrim(coalesce(p_trigger, ''));
+  v_raised text[] := coalesce(p_raised, '{}'::text[]);
+begin
+  if t = '' or t = 'U' or t like 'Per %' then
+    return true;
+  end if;
+  if t like '% and %' then
+    return (select bool_and(btrim(x) = any(v_raised)) from unnest(string_to_array(t, ' and ')) x);
+  end if;
+  if t like '% or %' then
+    return (select bool_or(btrim(x) = any(v_raised)) from unnest(string_to_array(t, ' or ')) x);
+  end if;
+  return t = any(v_raised);
+end;
+$$;
+comment on function hsf_trigger_applies is 'The trigger rule of hsf/build_samples.py: null, U or Per ... always applies; A and B needs every code raised; A or B needs one; a plain code needs itself.';
+
+create or replace function hsf_user_is_staff(p_auth_user uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  -- The web tier passes the verified auth user id; staff roles live in the user's
+  -- app metadata (msp_roles), the same claim msp_has_role reads from the JWT.
+  select coalesce((select (to_jsonb(u) -> 'raw_app_meta_data' -> 'msp_roles')
+                            ?| array['forge_admin','forge_omp','forge_safety_reviewer']
+                     from auth.users u where u.id = p_auth_user), false);
+$$;
+comment on function hsf_user_is_staff is 'True when the auth user carries forge_admin, forge_omp or forge_safety_reviewer in app_metadata.msp_roles.';
+
+create or replace function hsf_can_access_file(p_auth_user uuid, p_file_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p_auth_user is not null
+     and (exists (select 1 from hsf_file f join msp_client_account a on a.id = f.client_account_id
+                   where f.id = p_file_id and a.auth_user_id = p_auth_user)
+          or (hsf_user_is_staff(p_auth_user) and exists (select 1 from hsf_file f where f.id = p_file_id)));
+$$;
+comment on function hsf_can_access_file is 'The owning client account''s contact, or staff.';
+
+-- The figures only, without writing the cache: used by the read paths.
+create or replace function hsf_compliance_figures(p_file_id uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  with scope as (
+    select coalesce(msp_env_get_bool('hsf.compliance_scope'), true) as na_leaves
+  ),
+  items as (
+    select e.section_code, fi.status
+      from hsf_file_item fi join hsf_element e on e.id = fi.element_id
+     where fi.file_id = p_file_id
+  ),
+  per_section as (
+    select s.code, s.name, s.ordinal,
+           count(i.status) as items,
+           count(i.status) filter (where i.status <> 'not_applicable' or not sc.na_leaves) as applicable,
+           count(i.status) filter (where i.status in ('linked_mco','uploaded')) as evidenced
+      from hsf_section s
+      cross join scope sc
+      left join items i on i.section_code = s.code
+     group by s.code, s.name, s.ordinal
+  ),
+  overall as (
+    select sum(items)::int as items, sum(applicable)::int as applicable, sum(evidenced)::int as evidenced
+      from per_section
+  )
+  select jsonb_build_object(
+    'file_id', p_file_id,
+    'overall', jsonb_build_object(
+      'pct', case when o.applicable > 0 then round(100.0 * o.evidenced / o.applicable, 1) end,
+      'items', o.items, 'applicable', o.applicable, 'evidenced', o.evidenced,
+      'counts', coalesce((select jsonb_object_agg(c.status, c.n)
+                            from (select status, count(*) as n from items group by status) c), '{}'::jsonb)),
+    'sections', (select jsonb_agg(jsonb_build_object(
+                          'code', p.code, 'name', p.name, 'items', p.items, 'applicable', p.applicable,
+                          'evidenced', p.evidenced,
+                          'compliance_pct', case when p.applicable > 0 then round(100.0 * p.evidenced / p.applicable, 1) end)
+                        order by p.ordinal)
+                   from per_section p))
+    from overall o;
+$$;
+comment on function hsf_compliance_figures is 'SPEC B9.4 figures for a File without writing the cache: per section and overall, linked_mco or uploaded over every item not marked not applicable (hsf.compliance_scope). A section with nothing applicable has a null figure.';
+
+do $$
+declare
+  f text;
+begin
+  foreach f in array array['hsf_trigger_applies(text, text[])','hsf_user_is_staff(uuid)',
+                           'hsf_can_access_file(uuid, uuid)','hsf_compliance_figures(uuid)'] loop
+    execute format('revoke execute on function %s from public, anon, authenticated', f);
+    execute format('grant execute on function %s to service_role', f);
+  end loop;
+end;
+$$;
+
+-- 3. Compliance (cached) ---------------------------------------------------------------------
+
+create or replace function hsf_compute_compliance(p_file_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_old numeric;
+  v_fig jsonb;
+  v_pct numeric;
+begin
+  select f.compliance_pct into v_old from hsf_file f where f.id = p_file_id for update;
+  if not found then
+    raise exception 'That File was not found.' using errcode = 'P0002';
+  end if;
+  v_fig := hsf_compliance_figures(p_file_id);
+  v_pct := (v_fig -> 'overall' ->> 'pct')::numeric;
+  if v_pct is distinct from v_old then
+    update hsf_file set compliance_pct = v_pct where id = p_file_id;
+    insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+    values ('hsf-engine', 'hsf_compliance_computed',
+            jsonb_build_object('from', v_old, 'to', v_pct, 'overall', v_fig -> 'overall'), p_file_id);
+  end if;
+  return v_fig;
+end;
+$$;
+comment on function hsf_compute_compliance is 'SPEC B9.4. Computes the compliance figures of a File and caches the overall figure on hsf_file.compliance_pct. A change of the cached figure is audited.';
+
+-- 4. Generation (SPEC B9.3) ------------------------------------------------------------------
+
+create or replace function hsf_generate_file(p_auth_user uuid, p jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+  v_ind msp_industry;
+  v_sub msp_subindustry;
+  v_regime text;
+  v_triggers text[];
+  v_bad text;
+  v_scope jsonb;
+  v_site jsonb;
+  v_file_id uuid;
+  v_reference text;
+  v_items int;
+  v_headcount text;
+  v_daily int;
+begin
+  if p is null or jsonb_typeof(p) <> 'object' then
+    raise exception 'The File details are missing.';
+  end if;
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    raise exception 'Register your company account before building a File.';
+  end if;
+  if v_acc.account_kind = 'declined' then
+    raise exception 'This company account cannot build a File. Please WhatsApp a sales executive.';
+  end if;
+
+  select i.* into v_ind from msp_industry i where i.code = upper(btrim(coalesce(p ->> 'industry_code', '')));
+  if v_ind.id is null then
+    raise exception 'Choose your industry.';
+  end if;
+  if nullif(btrim(coalesce(p ->> 'subindustry_code', '')), '') is not null then
+    select s.* into v_sub from msp_subindustry s
+     where s.code = upper(btrim(p ->> 'subindustry_code')) and s.industry_id = v_ind.id;
+    if v_sub.id is null then
+      raise exception 'The subindustry is not part of the chosen industry.';
+    end if;
+  end if;
+
+  -- Triggers: every code must be in the SPEC B9.2 vocabulary (or U).
+  if p ? 'triggers' and jsonb_typeof(p -> 'triggers') not in ('array','null') then
+    raise exception 'Activities must be a list of trigger codes.';
+  end if;
+  select coalesce(array_agg(distinct t order by t), '{}'::text[]) into v_triggers
+    from jsonb_array_elements_text(case when jsonb_typeof(p -> 'triggers') = 'array' then p -> 'triggers' else '[]'::jsonb end) t;
+  select string_agg(t, ', ' order by t) into v_bad
+    from unnest(v_triggers) t
+   where t <> 'U' and not exists (select 1 from hsf_trigger g where g.code = t and g.code !~ ' (and|or) ');
+  if v_bad is not null then
+    raise exception 'Unknown activity code: %', v_bad;
+  end if;
+
+  -- RULE-HSF-REGIME: a mine is under the Mine Health and Safety Act, every other
+  -- industry under the OHS Act. The mine regime is a kernel fact and raises T-MINING.
+  v_regime := case when v_ind.code = 'MINING' then 'MHSA' else 'OHSA' end;
+  if v_regime = 'MHSA' and not ('T-MINING' = any(v_triggers)) then
+    v_triggers := array_append(v_triggers, 'T-MINING');
+  end if;
+
+  -- Scope: at least one site with a name.
+  if jsonb_typeof(p -> 'scope') <> 'object' or jsonb_typeof(p -> 'scope' -> 'sites') <> 'array'
+     or jsonb_array_length(p -> 'scope' -> 'sites') < 1 then
+    raise exception 'Tell us which sites the File covers.';
+  end if;
+  for v_site in select value from jsonb_array_elements(p -> 'scope' -> 'sites') loop
+    if jsonb_typeof(v_site) <> 'object' or length(btrim(coalesce(v_site ->> 'name', ''))) not between 1 and 200 then
+      raise exception 'Every site needs a name of up to 200 characters.';
+    end if;
+  end loop;
+  v_headcount := p -> 'scope' ->> 'headcount';
+  if v_headcount is not null and v_headcount !~ '^[0-9]{1,7}$' then
+    raise exception 'The headcount must be a whole number.';
+  end if;
+  v_scope := jsonb_strip_nulls(jsonb_build_object(
+    'sites', (select jsonb_agg(jsonb_strip_nulls(jsonb_build_object(
+                       'name', btrim(s ->> 'name'),
+                       'address', nullif(btrim(coalesce(s ->> 'address', '')), ''))))
+                from jsonb_array_elements(p -> 'scope' -> 'sites') s),
+    'project_reference', nullif(btrim(coalesce(p -> 'scope' ->> 'project_reference', '')), ''),
+    'headcount', v_headcount::int,
+    'triggers', to_jsonb(v_triggers)));
+
+  -- Contract 9.6: a daily ceiling per account. The account row lock makes two
+  -- parallel requests count one after the other.
+  perform 1 from msp_client_account where id = v_acc.id for update;
+  v_daily := greatest(1, coalesce(msp_env_get_int('hsf.files_per_account_per_day'), 20));
+  if (select count(*) from hsf_file f where f.client_account_id = v_acc.id and f.created_at >= current_date) >= v_daily then
+    raise exception 'This company has already built % Files today, which is the daily limit. Please try again tomorrow or WhatsApp a sales executive.', v_daily;
+  end if;
+
+  insert into hsf_file (client_account_id, industry_id, subindustry_id, regime, scope, revision, status)
+  values (v_acc.id, v_ind.id, v_sub.id, v_regime, v_scope, 1, 'draft')
+  returning id, reference into v_file_id, v_reference;
+
+  -- B9.3.2 and B9.3.3: universal elements whose trigger is raised, the industry
+  -- overlay (and the universal elements the overlay makes mandatory), filtered
+  -- to the regime; under the MHSA an element with an MHSA equivalent is swapped.
+  insert into hsf_file_item (file_id, element_id, status)
+  select distinct v_file_id,
+         case when v_regime = 'MHSA' and e.mhsa_equivalent_id is not null then e.mhsa_equivalent_id else e.id end,
+         'outstanding'
+    from hsf_element e
+   where e.status = 'active'
+     and e.regime in ('BOTH', v_regime)
+     and ((e.universal and hsf_trigger_applies(e.trigger_code, v_triggers))
+          or exists (select 1 from hsf_element_industry x
+                      where x.element_id = e.id
+                        and x.industry_id = v_ind.id
+                        and (x.subindustry_id is null or x.subindustry_id = v_sub.id)
+                        and x.applicability = 'mandatory'));
+  get diagnostics v_items = row_count;
+
+  perform hsf_compute_compliance(v_file_id);
+
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_file_generated',
+          jsonb_build_object('reference', v_reference, 'industry_code', v_ind.code, 'subindustry_code', v_sub.code,
+                             'regime', v_regime, 'triggers', to_jsonb(v_triggers), 'items', v_items),
+          v_file_id);
+
+  return jsonb_build_object('file_id', v_file_id, 'reference', v_reference, 'regime', v_regime, 'items', v_items);
+end;
+$$;
+comment on function hsf_generate_file is 'Contract 051, 9.6 and SPEC B9.3. Writes a draft File (revision 1) with one outstanding item per applicable element: universal elements whose trigger applies, the industry overlay, the regime filter (MHSA for MINING, else OHSA). No consent needed: the skeleton holds no documents. Refuses more than hsf.files_per_account_per_day Files per account per day. Audited.';
+
+-- 5. Read paths ---------------------------------------------------------------------------------
+
+create or replace function hsf_my_files(p_auth_user uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'file_id', f.id,
+           'reference', f.reference,
+           'industry_code', i.code,
+           'industry_name', i.name,
+           'regime', f.regime,
+           'status', f.status,
+           'revision', f.revision,
+           'compliance_pct', (hsf_compliance_figures(f.id) -> 'overall' ->> 'pct')::numeric,
+           'created_at', f.created_at)
+         order by f.created_at desc, f.reference desc), '[]'::jsonb)
+    from hsf_file f
+    join msp_client_account a on a.id = f.client_account_id
+    join msp_industry i on i.id = f.industry_id
+   where p_auth_user is not null and a.auth_user_id = p_auth_user;
+$$;
+comment on function hsf_my_files is 'Contract 051. The Files of the auth user''s company account, newest first, with the compliance figure computed live.';
+
+create or replace function hsf_file_detail(p_auth_user uuid, p_file_id uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_fig jsonb;
+  v_file jsonb;
+  v_sections jsonb;
+begin
+  -- Contract 9.2: a File that does not exist and a File of another account read
+  -- the same, as null, which the web tier answers with 404.
+  if not hsf_can_access_file(p_auth_user, p_file_id) then
+    return null;
+  end if;
+  v_fig := hsf_compliance_figures(p_file_id);
+
+  select jsonb_build_object(
+           'id', f.id, 'file_id', f.id, 'reference', f.reference,
+           'company_name', a.company_name,
+           'industry_code', i.code, 'industry_name', i.name,
+           'subindustry_code', s.code, 'subindustry_name', s.name,
+           'regime', f.regime, 'scope', f.scope, 'status', f.status, 'revision', f.revision,
+           'compliance_pct', (v_fig -> 'overall' ->> 'pct')::numeric, 'created_at', f.created_at)
+    into v_file
+    from hsf_file f
+    join msp_client_account a on a.id = f.client_account_id
+    join msp_industry i on i.id = f.industry_id
+    left join msp_subindustry s on s.id = f.subindustry_id
+   where f.id = p_file_id;
+
+  select jsonb_agg(jsonb_build_object(
+           'code', sec.code,
+           'name', sec.name,
+           'compliance_pct', (select (x ->> 'compliance_pct')::numeric
+                                from jsonb_array_elements(v_fig -> 'sections') x where x ->> 'code' = sec.code),
+           'items', coalesce((
+             select jsonb_agg(jsonb_build_object(
+                      'item_id', fi.id,
+                      'element_code', e.code,
+                      'name', e.name,
+                      'duty', e.duty,
+                      'evidence_type', e.evidence_type,
+                      'review_interval', e.review_interval,
+                      'status', fi.status,
+                      'reason', fi.reason,
+                      'responsible_person', coalesce(fi.responsible_person, e.responsible_role, apt.name),
+                      'due_date', fi.due_date,
+                      'site_ref', fi.site_ref,
+                      'citable', coalesce(to_jsonb(l.citable), '[]'::jsonb),
+                      'awaiting', coalesce(to_jsonb(l.awaiting), '[]'::jsonb),
+                      'uploads', coalesce((
+                        select jsonb_agg(jsonb_build_object(
+                                 'upload_id', u.id, 'original_name', u.original_name, 'status', u.status,
+                                 'department_code', u.department_code, 'created_at', u.created_at)
+                               order by u.created_at desc, u.id)
+                          from hsf_upload u where u.file_item_id = fi.id), '[]'::jsonb))
+                    order by e.code, fi.site_ref nulls first)
+               from hsf_file_item fi
+               join hsf_element e on e.id = fi.element_id
+               left join hsf_appointment_type apt on apt.code = e.responsible_appointment
+               left join hsf_public_element_library l on l.code = e.code
+              where fi.file_id = p_file_id and e.section_code = sec.code), '[]'::jsonb))
+         order by sec.ordinal)
+    into v_sections
+    from hsf_section sec;
+
+  return jsonb_build_object('file', v_file, 'sections', v_sections, 'overall', v_fig -> 'overall');
+end;
+$$;
+comment on function hsf_file_detail is 'Contract 051, 9.2 and 9.3. The File, its fifteen sections with their items (basis: the short names hsf_element_citable allows, through hsf_public_element_library, and the instruments still awaiting verification; uploads) and the overall figure. The owning client account or staff only; null for a File that does not exist or is not the caller''s.';
+
+create or replace function hsf_set_item_status(p_auth_user uuid, p_item_id uuid, p_status text, p_reason text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_item hsf_file_item;
+  v_reason text := nullif(btrim(regexp_replace(coalesce(p_reason, ''), '\s+', ' ', 'g')), '');
+  v_fig jsonb;
+begin
+  select fi.* into v_item from hsf_file_item fi where fi.id = p_item_id for update;
+  if v_item.id is null or not hsf_can_access_file(p_auth_user, v_item.file_id) then
+    raise exception 'That File item was not found.' using errcode = 'P0002';  -- 404 at the API (contract 9.2)
+  end if;
+  if p_status is null or p_status not in ('not_applicable','outstanding') then
+    raise exception 'The status must be not_applicable or outstanding.';
+  end if;
+  if p_status = 'not_applicable' then
+    if v_reason is null or length(v_reason) < 10 then
+      raise exception 'Give a reason of at least ten characters for marking the item not applicable.';
+    end if;
+    if length(v_reason) > 1000 then
+      raise exception 'The reason must be at most 1000 characters.';
+    end if;
+  end if;
+  if v_item.status in ('uploaded','linked_mco') then
+    raise exception 'Evidence is already held for this item, so its status cannot be changed here.';
+  end if;
+  if p_status = 'outstanding' and v_item.status not in ('not_applicable','outstanding') then
+    raise exception 'Only an item marked not applicable can be returned to outstanding.';
+  end if;
+
+  update hsf_file_item
+     set status = p_status,
+         reason = case when p_status = 'not_applicable' then v_reason else null end
+   where id = v_item.id;
+
+  v_fig := hsf_compute_compliance(v_item.file_id);
+
+  insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
+  values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_item_status_set',
+          jsonb_build_object('item_id', v_item.id, 'from', v_item.status, 'to', p_status,
+                             'reason', case when p_status = 'not_applicable' then v_reason end),
+          v_item.file_id);
+
+  return jsonb_build_object('item_id', v_item.id, 'status', p_status,
+                            'reason', case when p_status = 'not_applicable' then v_reason end,
+                            'overall', v_fig -> 'overall');
+end;
+$$;
+comment on function hsf_set_item_status is 'Contract 051. Marks an item not applicable with a written reason of at least ten characters, or returns it to outstanding. Not for an item that already holds evidence. The owning client account or staff. Recomputes the compliance figure. Audited.';
+
+-- 6. Builder support views (contract 9.7) -----------------------------------------------------------
+-- Anon read, like the other msp_public_* views: the builder's setup form lists
+-- the activity triggers and the subindustries before anyone signs in. The
+-- compound trigger rows (A and B, A or B) are library expressions, not choices,
+-- and hsf_generate_file refuses them, so they are left out.
+
+create or replace view hsf_public_trigger as
+select t.code, t.description
+  from hsf_trigger t
+ where t.code !~ ' (and|or) '
+ order by t.code;
+comment on view hsf_public_trigger is 'Contract 9.7. The SPEC B9.2 activity triggers a client may raise when generating a File: code and description. Public read on purpose.';
+grant select on hsf_public_trigger to anon, authenticated;
+
+create or replace view hsf_public_subindustry as
+select s.code, s.name, i.code as industry_code, s.selectable
+  from msp_subindustry s
+  join msp_industry i on i.id = s.industry_id
+ order by i.code, s.name;
+comment on view hsf_public_subindustry is 'Contract 9.7. Subindustries with their industry code and whether a client may choose them. Public read on purpose; names only.';
+grant select on hsf_public_subindustry to anon, authenticated;
+
+-- 7. Portal summary (contract 9.8) ---------------------------------------------------------------------
+
+create or replace function hsf_portal_summary(p_auth_user uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+begin
+  -- Read only (stable): it never approves an account and never mints or returns
+  -- an assessment token, unlike msp_client_start_assessment.
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    return jsonb_build_object('account', null, 'plans', '[]'::jsonb, 'quotes', '[]'::jsonb, 'files', '[]'::jsonb);
+  end if;
+  return jsonb_build_object(
+    'account', jsonb_build_object(
+      'client_account_id', v_acc.id,
+      'company_name', v_acc.company_name,
+      'account_kind', v_acc.account_kind,
+      'approved_at', v_acc.approved_at),
+    -- Plans: engagements whose intake consumed an assessment token of the account.
+    'plans', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'engagement_id', e.id,
+               'reference', e.reference,
+               'status', e.status,
+               'industry_code', i.code,
+               'revision', e.revision,
+               'created_at', e.created_at)
+             order by e.created_at desc, e.reference desc)
+        from msp_engagement e
+        left join msp_industry i on i.id = e.industry_id
+       where e.id in (select it.engagement_id
+                        from msp_form_access fa
+                        join msp_intake it on it.id = fa.used_by_intake
+                       where fa.client_account_id = v_acc.id)), '[]'::jsonb),
+    -- Quotes: by the account's contact email.
+    'quotes', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'quote_reference', q.quote_reference,
+               'package_code', q.package_code,
+               'price_zar', q.price_zar,
+               'price_status', q.price_status,
+               'valid_until', q.valid_until,
+               'created_at', q.created_at)
+             order by q.created_at desc, q.quote_reference desc)
+        from msp_quote q
+       where lower(btrim(q.contact_email)) = lower(btrim(v_acc.contact_email))), '[]'::jsonb),
+    'files', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'file_id', f.id,
+               'reference', f.reference,
+               'industry_code', i.code,
+               'status', f.status,
+               'revision', f.revision,
+               'compliance_pct', (hsf_compliance_figures(f.id) -> 'overall' ->> 'pct')::numeric,
+               'signoffs', coalesce((
+                 select jsonb_agg(jsonb_build_object('kind', so.kind, 'decision', so.decision, 'decided_at', so.decided_at)
+                                  order by so.kind, so.decided_at nulls last)
+                   from hsf_signoff so
+                  where so.file_id = f.id and so.revision = f.revision), '[]'::jsonb))
+             order by f.created_at desc, f.reference desc)
+        from hsf_file f
+        join msp_industry i on i.id = f.industry_id
+       where f.client_account_id = v_acc.id), '[]'::jsonb));
+end;
+$$;
+comment on function hsf_portal_summary is 'Contract 9.8. The portal''s view of the signed in person''s company: the account, its Medical Surveillance Plans (engagements whose intake used an assessment token of the account), its quotations (by contact email) and its Health and Safety Files with compliance and the sign offs of the current revision. Read only; mints no token. Service role only; GET /api/portal-summary calls it after requireUser.';
+
+-- 8. Execute rights: service role only -------------------------------------------------------------
+
+do $$
+declare
+  f text;
+begin
+  foreach f in array array[
+    'hsf_compute_compliance(uuid)',
+    'hsf_generate_file(uuid, jsonb)',
+    'hsf_my_files(uuid)',
+    'hsf_file_detail(uuid, uuid)',
+    'hsf_set_item_status(uuid, uuid, text, text)',
+    'hsf_portal_summary(uuid)'] loop
+    execute format('revoke execute on function %s from public, anon, authenticated', f);
+    execute format('grant execute on function %s to service_role', f);
+  end loop;
+end;
+$$;

@@ -95,3 +95,14 @@ On the Director's instruction, built while the legislation and kernel are loaded
 ### CNC OHS Industry Kernel received | 23/09/2026
 
 The Director's OHS Legal Compliance Kernel pack (sandbox until OMP and attorney review) is held verbatim in kernel/cnc-ohs-industry-kernel/ and reconciled against the live kernel in kernel/OHS-KERNEL-RECONCILIATION.md. Industries, role counts (316) and the thirty protocols agree. The pack independently confirms HSF-7: the live kernel still cites the repealed NIHL Regulations, 2003 and Environmental Regulations, 1987. New register items HSF-11 to HSF-16. The sample Files now take their Section E protocols and basis strengths from the pack, and "POPIA compliant" is gone from the site per the pack's rule.
+
+### Portal, File builder, uploads, MCO transfer and kernel API | 23/09/2026
+
+Built on the Director's instruction ahead of the gates; recorded as SPEC.md B14. It opens no gate.
+
+- Migrations 047 to 051 (File engine, element library, consent and uploads, MCO transfer, kernel API with currency holds, File generation) are in the repository and replay cleanly. None is applied to the live project (HSF-21), and 048 refuses to run until 042 is applied (HSF-7).
+- Server handlers for consent, uploads, Files, the kernel API and the portal summary; the MCO transfer worker in hold mode until HSF-3; the portal and File builder with drag and drop per department; every page on the shared tracking and call to action code; DESIGNER-ASSETS.md for the designer.
+- Adversarial review of the build found 25 confirmed findings; all are fixed under contract Amendment 1 (hsf/BUILD-CONTRACT.md section 9). Seven build decisions from that round need the Director's confirmation (HSF-22, SPEC B14.6).
+- Proof on the local replay: core checks 81 of 81, flow checks 237 passed, node tests 149 of 149, end to end flow 52 of 52, builder browser drive 25 of 25, fifteen pages clean at desktop and phone width.
+- backup/cognitive_kernel_rebuild.sql and backup/MANIFEST.md regenerated with 047 to 051 and proved by a replay into an empty database. SOP-KERNEL-AGENT.md v1.2.0 adds the kernel API, the Grok bot and HSF FORGE (section 8).
+- Waiting on Care Net: GTM container ID (HSF-17), Grok key and xAI details (HSF-18), uploads before MCO and staging limits (HSF-19), consent withdrawal (HSF-20), live application (HSF-21), legislation copy items (HSF-23), and the MCO contract (HSF-3).

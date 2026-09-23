@@ -1839,6 +1839,14 @@ B12.1 These items enter msp_confirmation_item in Phase 2.
 | HSF-14 | confirm | Food handler fitness: live cites the Food Premises Hygiene Regulations, R638 of 2018; the pack cites municipal by laws and SASOHN guidance only. Agree one basis | OMP | Open |
 | HSF-15 | confirm | HCA instrument title: "2020" in the pack, "2021" in the live kernel, GN R280 dated 29 March 2021 in both. Confirm the Gazette title and align | Build, forge_verifier | Open |
 | HSF-16 | confirm | The pack's ten templates map to File elements (reconciliation section 9) and become engine generated evidence templates in Phase 4, after the OMP and attorney review the pack itself requires | Director, OMP and attorney | Open |
+| HSF-17 | confirm | Google Tag Manager container ID for www.carenetconsultants.co.za. It could not be read from the build environment, so vercel/js/cnc-config.js holds null and tracking stays off until the ID is confirmed | Director | Pending |
+| HSF-18 | confirm | Grok bot connection (B14.4): a kernel API key issued by a forge_admin through msp_api_client_issue once 050 is applied; the xAI model, tool calling and retention details read from xAI's own pages; xAI recorded as an operator in the privacy notice | Director, Odendaal, Information Officer | Open |
+| HSF-19 | confirm | Company uploads before MCO is connected: whether uploads open while the transfer worker is in hold mode, the longest stay in Supabase staging, whether an upload waits for Care Net's approval of the account, and malware scanning of staged files | Director, Information Officer | Open |
+| HSF-20 | confirm | Consent withdrawal: withdrawing storage or transfer consent blocks that company's untransferred uploads and nothing is deleted automatically. Open: what happens to the blocked documents (deletion, return, or transfer after fresh consent), who decides each case, and whether withdrawing the authority to share should block them too | Director, Information Officer, attorney | Behaviour built; decision open |
+| HSF-21 | confirm | Application of migrations 047 to 051 to the live project, after HSF-7. Nothing is applied without the Director's explicit approval | Director | Open |
+| HSF-22 | decision | Seven build decisions from the review fix round (B14.6), subject to Director approval | Build | Resolved in the build, subject to Director approval |
+| HSF-23 | confirm | Legislation copy still to settle: the register release 1.0.0 PDF and CSV are linked from no page but remain reachable at their addresses and list repealed instruments as verified (hsf/build_seed.py reads that CSV, so change the generator before deleting it); form/fields.json and form/assess.html still carry the old noise and asbestos labels; element names in 048 and the B6 tables still carry section and annexure numbers; static pages name the Noise Exposure and Physical Agents Regulations, 2024 as the replacing instruments while contract section 7 reserves that for after HSF-7 closes | Build, forge_verifier | Open |
+| HSF-24 | confirm | Local test stub: it does not copy hosted Supabase's default function privileges, so service_role cannot run msp_client_signon on a plain local replay. Either the stub adds the default privileges or migration 043 grants service_role explicitly | Build | Open |
 
 ---
 
@@ -1855,3 +1863,46 @@ B12.1 These items enter msp_confirmation_item in Phase 2.
 | 7 | Site and journey | Build your File page, account panel, public element library, extended register; Lighthouse 100 on every category, mobile and desktop; house register; no price | Blocked on Phase 6 gate |
 
 END OF PART B. Phase 1 stops here pending the Director's approval.
+
+---
+
+## B14. ADDENDUM 23/09/2026: PORTAL, BUILDER, UPLOADS, MCO TRANSFER AND KERNEL API
+
+B14.1 **Status.** Built on the Director's instruction of 23/09/2026, ahead of the B13 gates. It does not open any gate. Migrations 047 to 051 are in the repository and replay cleanly into an empty database; none is applied to the live project (HSF-21). Nothing is deployed to Vercel. The binding build contract is hsf/BUILD-CONTRACT.md, with Amendment 1 (section 9) from the review round.
+
+B14.2 **What was built.**
+
+B14.2.1 Database: the File engine schema and element library (047, 048: 256 elements, 41 appointment types, 49 triggers, 34 element classes), consent, uploads and the MCO transfer (049), the kernel API with currency holds (050), and File generation and compliance (051).
+
+B14.2.2 Server: vercel/api/hsf-consent.js, hsf-upload.js, hsf-file.js, kernel.js and portal-summary.js on vercel/lib/auth.js, with server/serve.js so the same handlers run outside Vercel when the portal moves to MCO hosting.
+
+B14.2.3 Worker: supabase/functions/hsf-mco-transfer with the MCO adapter in hold, fixture and live modes. Live is a placeholder until HSF-3; the worker runs in hold mode, so documents stay in staging.
+
+B14.2.4 Front end: the portal (vercel/portal.html), the File builder with drag and drop per department (vercel/hsf-builder.html), shared configuration, tracking, sign in and designer asset scripts under vercel/js/, and all existing pages brought onto the same tracking and call to action code. DESIGNER-ASSETS.md lists every asset slot per page with size, ratio and format.
+
+B14.2.5 Documentation: HSF-PORTAL-ARCHITECTURE.md (target architecture, document lifecycle, POPIA analysis, open items), KERNEL-API.md with vercel/kernel-api/openapi.yaml, and the Grok pack under grok/.
+
+B14.3 **Document lifecycle.** A company gives three separate consents (document storage, MCO transfer, authority to share; version HSF-CONSENT-1.0) before any upload. Files go to the private Supabase Storage bucket hsf-staging through a signed upload URL, with a SHA-256 fingerprint computed in the browser and again on the server. The worker sends a document to MCO and deletes the staging copy only when the browser, server and MCO receipt fingerprints all match. A mismatch revokes the evidence, and the bytes leave staging through the cleanup queue. "Supabase Secrets" in the instruction is read as private Supabase Storage: secrets hold keys, never documents.
+
+B14.4 **Kernel API and the Grok bot.** A read only API over verified kernel content, with no client data. Keys are issued only by a forge_admin, shown once and stored as a SHA-256 hash; every call is logged and rate limited. A currency hold withholds an instrument from every public view, API answer and File citation while its row still reads verified. Odendaal connects the bot with grok/kernel-tools.json and grok/bridge-example.mjs (HSF-18).
+
+B14.5 **Legislation references.** A reference is shown only once it has passed the kernel's three checks (B1.6, verified through the B8 plan). No new reading of the Gazette was possible, because the build environment cannot reach gov.za or carenetconsultants.co.za. File citations therefore show "Awaiting verification" until the Phase 2 re verification, and the website pages carry no section or regulation number apart from the two OHS Act references already on the site, sections 16(2) and 37(2).
+
+B14.6 **Build decisions from the review fix round (HSF-22).**
+
+B14.6.1 An upload blocked by a consent withdrawal stays blocked even if consent is given again; staff decide what happens to it.
+
+B14.6.2 The cleanup queue skips blocked uploads, so their bytes are never deleted automatically.
+
+B14.6.3 hsf_transfer_queue is kept as a read only listing; the worker claims work through hsf_transfer_claim.
+
+B14.6.4 Cleanup rows give the upload status (transferred, failed or rejected) as the reason.
+
+B14.6.5 Compound triggers ("A and B", "A or B") are left out of hsf_public_trigger, because generation refuses them.
+
+B14.6.6 Every File release is refused until the Phase 2 provisions are pinned and instrument scope is set (contract 9.3).
+
+B14.6.7 test/sql/hsf_core_checks.sql runs only after a full replay, because the 047 release gate calls a function defined in 050.
+
+B14.7 **Proof on the local replay (23/09/2026).** Replay of 001 to 051 clean; HSF core checks 81 of 81; HSF flow checks 237 passed; node tests 149 of 149; end to end flow 52 of 52; builder browser drive 25 of 25; all fifteen pages clean at 1280 and 390 pixels wide. None of this was run against the live project.
+
