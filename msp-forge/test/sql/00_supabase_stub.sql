@@ -1,9 +1,12 @@
 -- CNC MSP FORGE | local test harness only. Stands in for the Supabase platform
 -- objects the migrations expect (roles, auth, storage, cron, extensions), so the
 -- migrations can be replayed into a plain PostgreSQL 16. Never applied to Supabase.
-create role anon nologin;
-create role authenticated nologin;
-create role service_role nologin bypassrls;
+do $$ begin
+  -- Roles belong to the whole cluster and survive a database drop, so create them only once.
+  if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon nologin; end if;
+  if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated nologin; end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role nologin bypassrls; end if;
+end $$;
 create schema extensions;
 create extension pgcrypto with schema extensions;
 create schema auth;

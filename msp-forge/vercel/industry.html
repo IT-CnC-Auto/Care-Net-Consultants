@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Care Net Consultants">
 <meta property="og:title" content="Your industry and the law behind your Plan | Care Net">
 <meta property="og:description" content="The Acts, job roles, hazards and medical assessments behind a Medical Surveillance Plan for your industry.">
-<meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
+<meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" data-asset="industry-og">
 <meta property="og:locale" content="en_ZA">
 <link rel="preconnect" href="https://pboebfnujzffgwctsplw.supabase.co" crossorigin>
 <link rel="preload" href="/fonts/Inter-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -158,6 +158,10 @@ footer.foot .base img{height:44px;width:auto}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:16px;top:10px;background:#fff;color:var(--ink);padding:8px 12px;border-radius:8px;z-index:100}
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -173,7 +177,7 @@ footer.foot .base img{height:44px;width:auto}
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="industry-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
@@ -194,7 +198,7 @@ footer.foot .base img{height:44px;width:auto}
 </nav>
 
 <main id="main">
-  <section class="hero" aria-labelledby="h1">
+  <section class="hero" aria-labelledby="h1" data-asset="industry-hero">
     <div class="wrap">
       <span class="eyebrow" id="eyebrow">Your industry</span>
       <h1 id="h1">Medical Surveillance Plans for <span class="r">your industry.</span></h1>
@@ -202,12 +206,12 @@ footer.foot .base img{height:44px;width:auto}
       <div class="picker">
         <label for="picker" class="sr-only">Choose your industry</label>
         <select id="picker"><option>Loading industries</option></select>
-        <a class="btn btn-red" href="/shop.html">Get a quote for this industry</a>
+        <a class="btn btn-red" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
       </div>
     </div>
   </section>
 
-  <div class="pattern-strip" role="presentation"></div>
+  <div class="pattern-strip" role="presentation" data-asset="industry-pattern"></div>
 
   <div class="livebar">
     <div class="wrap" id="livebar">
@@ -279,9 +283,9 @@ footer.foot .base img{height:44px;width:auto}
           <article class="step"><b>5</b><h3>We keep it current</h3><p>Revision control, and updates when your operations or the law change.</p></article>
         </div>
         <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
-          <a class="btn btn-red" href="/shop.html">Get your quotation</a>
-          <a class="btn btn-ghost-dark" id="sample-link" href="/sample.html">Read a sample Plan</a>
-          <a class="btn btn-ghost-dark" href="/assess.html?demo=1">Preview the assessment</a>
+          <a class="btn btn-red" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
+          <a class="btn btn-ghost-dark" id="sample-link" href="/sample.html" data-cta="view_sample_plan">Read a sample Plan</a>
+          <a class="btn btn-ghost-dark" href="/assess.html?demo=1" data-cta="preview_assessment">Preview the assessment</a>
         </div>
       </div>
     </section>
@@ -294,8 +298,8 @@ footer.foot .base img{height:44px;width:auto}
             <p>Tell us your headcount and your site. A sales executive replies the same working day.</p>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <a class="btn" href="/shop.html">Get a quote</a>
-            <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp us</a>
+            <a class="btn" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
+            <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
           </div>
         </div>
       </div>
@@ -318,8 +322,8 @@ footer.foot .base img{height:44px;width:auto}
       <div>
         <h2>Get started</h2>
         <ul>
-          <li><a href="/account.html">Client sign in</a></li>
-          <li><a href="/shop.html">Get a quotation</a></li>
+          <li><a href="/portal.html" data-cta="sign_in">Sign in</a></li>
+          <li><a href="/shop.html" data-cta="footer_get_quotation">Get a quotation</a></li>
           <li><a href="/sample.html">Sample Plan</a></li>
         </ul>
       </div>
@@ -335,14 +339,14 @@ footer.foot .base img{height:44px;width:auto}
       <div>
         <h2>Contact</h2>
         <ul>
-          <li><a href="tel:+27600702723">+27 60 070 2723</a></li>
-          <li><a href="mailto:salesdesk@carenetconsultants.co.za">salesdesk@carenetconsultants.co.za</a></li>
-          <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="tel:+27600702723" data-cta="call_sales_desk">+27 60 070 2723</a></li>
+          <li><a href="mailto:salesdesk@carenetconsultants.co.za" data-cta="email_sales_desk">salesdesk@carenetconsultants.co.za</a></li>
+          <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a></li>
         </ul>
       </div>
     </div>
     <div class="base">
-      <img decoding="async" loading="lazy" width="1024" height="331" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp" alt="Care Net Consultants logo">
+      <img data-asset="industry-footer-logo" decoding="async" loading="lazy" width="1024" height="331" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp" alt="Care Net Consultants logo">
       <span>&copy; Care Net Consultants 2026. Your Partner in Workplace Health.</span>
     </div>
   </div>
@@ -354,7 +358,7 @@ footer.foot .base img{height:44px;width:auto}
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="industry-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -440,14 +444,14 @@ footer.foot .base img{height:44px;width:auto}
       .then(function (rows) {
         if (!rows || !rows.length) {
           el('state').className = 'state err';
-          el('state').innerHTML = 'We could not find that industry. <a href="/industry.html?code=CONSTR" class="r">See Construction</a>, or pick another from the list above.';
+          el('state').innerHTML = 'We could not find that industry. <a href="/industry.html?code=CONSTR" class="r" data-cta="see_construction">See Construction</a>, or pick another from the list above.';
           return;
         }
         render(rows[0]);
       })
       .catch(function () {
         el('state').className = 'state err';
-        el('state').innerHTML = 'The framework could not be reached just now. Please try again, or <a href="/shop.html" class="r">request a quotation</a> and a sales executive will send you the detail.';
+        el('state').innerHTML = 'The framework could not be reached just now. Please try again, or <a href="/shop.html" class="r" data-cta="request_quotation">request a quotation</a> and a sales executive will send you the detail.';
       });
   }
   load();
@@ -455,5 +459,143 @@ footer.foot .base img{height:44px;width:auto}
 </script>
 <script src="/js/cnc-header.js?v=20260918a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260918a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/industry.html",
+ "title": "Your industry and the law behind your Plan",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "industry-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Medical Surveillance Plans for your industry\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Medical Surveillance Plans for your industry, from Care Net Consultants",
+   "file_name": "industry-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/industry-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. Today the og:image tag carries the 1024 x 384 home banner from the R2 development address (https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp), which platforms crop badly at 1.91:1. Point the tag at the delivery address once the file is live."
+  },
+  {
+   "id": "industry-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "industry-hero",
+   "block": "Hero: industry band behind the heading and picker",
+   "purpose": "A photograph of the chosen industry at work behind the heading, so each industry page opens on its own people and sites. Today the band is a dark gradient with no photograph.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 3840,
+   "height": 2160,
+   "ratio": "16:9",
+   "max_kb": 450,
+   "colour": "Natural light; the page keeps its dark red to charcoal gradient over the photograph so the white heading holds its contrast, so the left half may be busy or dark",
+   "alt": "Workers in the chosen industry on site (one alt text per industry, for example: Construction workers on a building site)",
+   "file_name": "industry-hero-CODE-3840x2160.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/industry-hero-CODE-3840x2160.webp",
+   "status": "needed",
+   "notes": "One photograph per industry, chosen by ?code=, where CODE is one of AGRI, CLEAN, CONSTR, EDU, GOV, HEALTH, HOSP, MANU, MINING, OFFICE, PETRO, RETAIL, SEC, TEL, TRANS, UTIL and WASTE (17 files). The band is the full page width and about 420 to 520 px high, so 3840 px across covers 2x on a 1920 px screen; also supply 1920 px wide versions under 220 KB. Keep the subject between 45 and 75 percent across so it survives both the wide desktop crop and the centred phone crop. The hero needs a background image layer (as on medical-surveillance-plans.html) before a photograph can show; until then the gradient stays. Model release needed for anyone identifiable."
+  },
+  {
+   "id": "industry-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "industry-footer-logo",
+   "block": "Footer: base row logo",
+   "purpose": "The Care Net Consultants logo with its tag line, closing the dark footer.",
+   "type": "logo",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 284,
+   "height": 92,
+   "ratio": "3.09:1",
+   "max_kb": 15,
+   "colour": "The red Care Net logo with tag line, readable on the charcoal footer #16161A",
+   "alt": "Care Net Consultants logo",
+   "file_name": "cnc-logo-red-tagline-284x92.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/cnc-logo-red-tagline-284x92.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp (1024 x 331), far larger than it shows. It sits on the charcoal footer at 44 px high, about 136 px wide, so 284 x 92 covers 2x on this page and on medical-surveillance-plans.html. Supply the file under the name given at the delivery address, with an SVG master, then point both footers at it."
+  },
+  {
+   "id": "industry-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

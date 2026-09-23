@@ -1,0 +1,2227 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health and Safety File builder | Care Net Consultants</title>
+<meta name="description" content="Build your Health and Safety File with Care Net Consultants: sign in, give consent, generate the File for your industry and drop in the documents you already hold, section by section and department by department.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Build your Health and Safety File | Care Net Consultants">
+<meta property="og:description" content="Generate the File for your industry and drop in the documents you already hold. Held securely, then kept with MyClinicOnline.">
+<meta property="og:image" data-asset="hsf-builder-og" content="https://img.carenetcdn.com/health-and-safety-file/hsf-builder-og-1200x630.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<!--
+=====================================================================
+ hsf-builder.html :: Version 1.0 :: 23 September 2026
+ The Health and Safety File builder for CNC HSF FORGE ("Build my File"),
+ on the shared Care Net shell (cnc-header, cnc-hero, cnc-pattern,
+ cnc-secnav, cnc-footer), per hsf/BUILD-CONTRACT.md section 6.
+
+ STATES
+   1. Signed out            email one time link through /js/cnc-auth.js
+   2. No company account    link to / to register
+   3. Consent               three separate unticked consents, HSF-CONSENT-1.0
+   4. No File yet           setup form, generate
+   5. File view             compliance header, fifteen section cards with
+                            drop zones and department selectors, element
+                            rows, upload queue, gap report, not applicable
+   Demo (?demo=1)           renders the fictitious construction sample from
+                            /hsf/samples/construction.js. Nothing is sent.
+
+ CALLS: only /api/hsf-consent, /api/hsf-upload and /api/hsf-file with the
+ user's access token (auth.apiFetch), plus two public, anonymous Supabase
+ REST views: msp_public_industry_profile and hsf_public_element_library.
+ The signed upload URL returned by /api/hsf-upload receives the file bytes
+ directly (PUT). No secret is held in this page.
+
+ UPLOAD LIMITS mirror the contract for a plain message before upload; the
+ server (hsf_register_upload, from msp_env_parameter) is the authority.
+
+ LEGISLATION: an instrument is named only when the API returns it as
+ citable (kernel_citable_instrument). Everything else is shown as
+ "Awaiting verification". No section or regulation numbers are typed here
+ except section 16(2) and section 37(2) of the OHS Act.
+
+ HARD RULES: SA British English, ZAR as R4 250,00, no dashes in copy,
+ sales executives, numbering from 1, never a compliance stamp.
+=====================================================================
+-->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
+<style>
+  :root { --red: #ED1B24; --red-ink: #C5141B; --charcoal: #1A1A1A; --ink-2: #4d4d4d; --line: #e5e2e2; --soft: #f7f5f5; --green: #2A7D4E; --green-ink: #1B6E45; --amber-bg: #fdf3dc; --amber-line: #ecd49a; --amber-ink: #6b4600; --blue-bg: #eef3fb; --blue-ink: #2B4C8C; --blue-line: #4a6fb5; --grey-bg: #f0efef; }
+  * { box-sizing: border-box; }
+  main > *, .card, .grid > * { min-width: 0; }
+  [hidden] { display: none !important; }
+  html { overflow-x: hidden; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  main { max-width: 1000px; margin: 0 auto; padding: 26px 16px 70px; }
+  section { scroll-margin-top: 130px; margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  @media (max-width: 520px) { .card { padding: 18px 16px; } }
+  .card + .card { margin-top: 18px; }
+  .grid .card + .card { margin-top: 0; }
+  .card h2 { color: var(--red-ink); font-size: 17px; margin: 0 0 10px; }
+  .card h3 { font-size: 15px; margin: 18px 0 6px; }
+  .card p, .card li { font-size: 14px; line-height: 1.55; }
+  .card p { margin: 0 0 10px; }
+  .muted { font-size: 13px; color: var(--ink-2); }
+  .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red-ink); margin-bottom: 6px; }
+  .sechead { margin: 6px 0 14px; }
+  .sechead h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(26px, 3.6vw, 36px); line-height: 1; margin: 0; color: var(--charcoal); text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
+  .sechead h2 .r { color: var(--red); }
+  .sechead p { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 10px 0 0; max-width: 72ch; }
+  .tag { display: inline-block; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; margin-bottom: 10px; }
+  .tag.free { background: #e8f7ec; color: var(--green-ink); border: 1px solid var(--green); }
+  .tag.signed { background: var(--blue-bg); color: var(--blue-ink); border: 1px solid var(--blue-line); }
+  .btn { display: block; text-align: center; text-decoration: none; background: var(--red-ink); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; font-size: 14px; font-family: inherit; }
+  .btn.inl { display: inline-block; margin-top: 0; }
+  .btn.sm { padding: 8px 14px; font-size: 13px; }
+  .btn.ghost { background: #fff; color: var(--red-ink); border: 2px solid var(--red); }
+  .btn.plain { background: #fff; color: var(--charcoal); border: 1px solid #bdbdbd; }
+  .btn:hover { background: #B7141A; color: #fff; }
+  .btn.plain:hover { background: var(--soft); color: var(--charcoal); }
+  .btn[disabled], .btn[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  a.inline { color: var(--red-ink); font-weight: bold; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .pending { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .note { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .okbox { background: #e8f7ec; border: 1px solid var(--green); color: var(--green-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; }
+  .errbox { background: #fff1f1; border: 1px solid #f0b7b9; color: #8a1016; border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
+  .vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
+  :target { scroll-margin-top: 130px; }
+
+  /* Forms */
+  label.l { display: block; font-size: 13px; font-weight: bold; margin: 14px 0 6px; }
+  .help { font-size: 12.5px; color: var(--ink-2); margin: 4px 0 0; line-height: 1.45; }
+  input[type=email], input[type=text], input[type=number], select, textarea { width: 100%; max-width: 100%; padding: 10px 11px; border: 1px solid #bdbdbd; border-radius: 5px; font-family: inherit; font-size: 14px; background: #fff; color: var(--charcoal); }
+  textarea { min-height: 76px; resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px 14px; margin: 16px 0 0; min-width: 0; }
+  legend { font-weight: 700; font-size: 13.5px; padding: 0 6px; }
+  .checks { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+  @media (max-width: 620px) { .checks { grid-template-columns: 1fr; } }
+  .chk { display: flex; gap: 9px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; padding: 5px 0; cursor: pointer; }
+  .chk input { margin-top: 3px; width: 17px; height: 17px; flex: none; accent-color: var(--red-ink); }
+  .chk input:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .site { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 8px; align-items: end; margin-top: 8px; }
+  @media (max-width: 620px) { .site { grid-template-columns: 1fr; } }
+
+  /* Consent */
+  .consent-item { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-top: 12px; background: #fcfbfb; }
+  .consent-item .chk { font-size: 14px; padding: 0; }
+  .consent-item b.n { font-family: 'Montserrat', Arial, sans-serif; color: var(--red-ink); margin-right: 4px; }
+  .consent-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
+  .consent-meta code { font-family: ui-monospace, Menlo, Consolas, monospace; background: var(--grey-bg); padding: 1px 6px; border-radius: 3px; color: var(--charcoal); }
+  .cstat { list-style: none; padding: 0; margin: 10px 0 0; }
+  .cstat li { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); padding: 10px 0; }
+  .ill { display: flex; align-items: center; justify-content: center; border-radius: 8px; background: repeating-linear-gradient(45deg, #faf8f8 0 12px, #f3f0f0 12px 24px); border: 1px dashed #d8d3d3; color: var(--ink-2); font-size: 12px; text-align: center; padding: 10px; }
+  .ill.consent { aspect-ratio: 3 / 2; max-width: 240px; float: right; margin: 0 0 10px 16px; width: 40%; }
+  @media (max-width: 620px) { .ill.consent { float: none; width: 100%; max-width: 100%; margin: 0 0 12px; } }
+
+  /* File header */
+  .fhead { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; align-items: center; }
+  @media (max-width: 760px) { .fhead { grid-template-columns: 1fr; } }
+  .fhead h2 { margin-bottom: 4px; overflow-wrap: anywhere; }
+  .kv { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+  .kv b { color: var(--charcoal); }
+  .pct { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: clamp(30px, 5vw, 42px); color: var(--charcoal); font-variant-numeric: tabular-nums; line-height: 1; }
+  .bar { height: 10px; background: var(--grey-bg); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+  .bar i { display: block; height: 100%; background: var(--green); width: 0; }
+  .counts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 30px; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border: 1px solid transparent; white-space: nowrap; }
+  .pill.uploaded, .pill.linked_mco { background: #e8f7ec; color: var(--green-ink); border-color: #9fd3b3; }
+  .pill.outstanding { background: var(--amber-bg); color: var(--amber-ink); border-color: var(--amber-line); }
+  .pill.expired { background: #fff1f1; color: #8a1016; border-color: #f0b7b9; }
+  .pill.not_applicable { background: var(--grey-bg); color: var(--ink-2); border-color: #dcd8d8; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); margin: 18px 0 0; overflow-x: auto; }
+  .tabs button { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; padding: 10px 14px; cursor: pointer; color: var(--ink-2); white-space: nowrap; }
+  .tabs button[aria-selected="true"] { color: var(--red-ink); border-bottom-color: var(--red); }
+  .tabpanel { padding-top: 16px; }
+
+  /* Section cards */
+  .scard { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); padding: 16px 18px; margin-top: 14px; border-left: 4px solid var(--line); }
+  .scard.good { border-left-color: var(--green); }
+  .scard.mid { border-left-color: #d9a32a; }
+  .scard.low { border-left-color: var(--red); }
+  .shead { display: flex; gap: 12px; align-items: center; }
+  .shead h3 { margin: 0; font-size: 15.5px; flex: 1; min-width: 0; overflow-wrap: break-word; }
+  .shead .spct { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sico { width: 40px; height: 40px; flex: none; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 17px; color: var(--red-ink); background: #fff5f5; border: 1px solid #f3caca; }
+  .drop { margin-top: 12px; border: 2px dashed #cfc9c9; border-radius: 8px; padding: 14px; background: #fcfbfb; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; transition: background .15s, border-color .15s; }
+  .drop.over, .erow.over { border-color: var(--red); background: #fff5f5; }
+  .drop.locked { opacity: .75; }
+  .drop .dico { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--red-ink); }
+  .drop p { margin: 0; font-size: 13.5px; }
+  .drop .ctl { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
+  @media (max-width: 520px) { .drop { grid-template-columns: 1fr; } .drop .dico { display: none; } .drop .ctl { grid-template-columns: 1fr; } }
+  .drop .ctl label.l { margin: 0 0 4px; font-size: 12px; }
+  .filebtn { position: relative; display: inline-block; }
+  .filebtn input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .filebtn span { display: inline-block; background: var(--red-ink); color: #fff; font-weight: 700; font-size: 13px; padding: 10px 14px; border-radius: 5px; white-space: nowrap; }
+  .filebtn span.sm { font-size: 12px; padding: 6px 10px; background: #fff; color: var(--red-ink); border: 1px solid var(--red); }
+  .filebtn:focus-within span { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  .filebtn input[disabled] { cursor: not-allowed; }
+  .filebtn input[disabled] + span { opacity: .55; }
+  details.els { margin-top: 12px; }
+  details.els > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--red-ink); padding: 6px 0; }
+  .erow { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; margin-top: 8px; background: #fff; }
+  .erow .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
+  .erow .ename { font-size: 13.5px; font-weight: 600; flex: 1 1 260px; min-width: 0; overflow-wrap: break-word; }
+  .erow code, .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: var(--ink-2); }
+  .erow .basis { font-size: 12.5px; color: var(--ink-2); margin: 6px 0 0; line-height: 1.45; overflow-wrap: break-word; }
+  .erow .basis b { color: var(--charcoal); }
+  .erow .await { color: var(--amber-ink); }
+  .erow .meta { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+  .erow .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .linkbtn { background: none; border: none; padding: 0; color: var(--red-ink); font-weight: 700; font-size: 12.5px; cursor: pointer; text-decoration: underline; font-family: inherit; }
+  .naform { margin-top: 8px; }
+  .ups { list-style: none; margin: 6px 0 0; padding: 0; font-size: 12.5px; }
+  .ups li { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 3px 0; overflow-wrap: anywhere; }
+
+  /* Upload queue */
+  .queue { list-style: none; margin: 0; padding: 0; }
+  .qi { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-top: 10px; background: #fff; }
+  .qi .qtop { display: flex; flex-wrap: wrap; gap: 6px 12px; justify-content: space-between; align-items: baseline; }
+  .qi .qname { font-weight: 700; font-size: 13.5px; overflow-wrap: anywhere; min-width: 0; flex: 1 1 200px; }
+  .qi .qmeta { font-size: 12px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+  .qi .sha { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11px; word-break: break-all; color: var(--ink-2); }
+  .qi progress { width: 100%; height: 10px; margin-top: 8px; accent-color: var(--green); }
+  .qi .qmsg { font-size: 12.5px; margin-top: 6px; }
+  .qi .qmsg.err { color: #8a1016; }
+  .steps { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 10px 0 0; counter-reset: st; }
+  .steps li { counter-increment: st; font-size: 11.5px; padding: 3px 9px 3px 7px; border-radius: 30px; background: var(--grey-bg); color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
+  .steps li::before { content: counter(st); font-weight: 800; font-family: 'Montserrat', Arial, sans-serif; }
+  .steps li.done { background: #e8f7ec; color: var(--green-ink); }
+  .steps li.now { background: var(--charcoal); color: #fff; }
+  .stateico { width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex: none; }
+  .qstatus { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; }
+  .empty { text-align: center; padding: 16px 8px; }
+  .empty .ill { aspect-ratio: 16 / 10; max-width: 320px; margin: 0 auto 12px; }
+
+  /* Journey (static) */
+  .journey { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 14px; list-style: none; padding: 0; }
+  @media (max-width: 860px) { .journey { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 460px) { .journey { grid-template-columns: 1fr; } }
+  .journey li { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fcfbfb; font-size: 13px; line-height: 1.45; display: flex; flex-direction: column; gap: 8px; }
+  .journey li b { font-size: 13.5px; }
+  .jico { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
+  .s-up { background: var(--blue-bg); color: var(--blue-ink); }
+  .s-ok { background: #e8f7ec; color: var(--green-ink); }
+  .s-held { background: var(--amber-bg); color: var(--amber-ink); }
+  .s-mco { background: #e9f4f7; color: #1d5d6f; }
+  .s-del { background: var(--grey-bg); color: var(--charcoal); }
+  .s-no { background: #fff1f1; color: #8a1016; }
+  .bridge { aspect-ratio: 3 / 1; margin-top: 14px; }
+  @media (max-width: 520px) { .bridge { aspect-ratio: 3 / 2; } }
+
+  /* Sections overview and library */
+  .secs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+  @media (max-width: 860px) { .secs { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .secs { grid-template-columns: 1fr; } }
+  .secs > div { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; background: #fcfbfb; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+  .secs span.nm { font-size: 13.5px; font-weight: 600; display: block; }
+  .secs small { display: block; color: var(--ink-2); font-size: 12px; margin-top: 3px; line-height: 1.4; }
+  .lib details { border-top: 1px solid var(--line); padding: 8px 0; }
+  .lib summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+  .lib ul { margin: 8px 0 4px; padding-left: 18px; }
+  .lib li { font-size: 13px; margin-bottom: 8px; line-height: 1.45; overflow-wrap: break-word; }
+  .lib li small { display: block; color: var(--ink-2); font-size: 12px; }
+
+  /* Gap report */
+  .gap h3 { font-size: 14.5px; margin: 18px 0 4px; }
+  .gap .gi { border-top: 1px solid var(--line); padding: 10px 0; font-size: 13px; line-height: 1.5; overflow-wrap: break-word; }
+  .gap .gi b { font-size: 13.5px; }
+
+  .demo-banner { background: #1A1A1A; color: #fff; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; font-size: 14px; line-height: 1.5; border-left: 6px solid var(--red); }
+  .demo-banner b { color: #fff; font-family: 'Montserrat', Arial, sans-serif; letter-spacing: .05em; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 4px; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid #e3dede; border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite; vertical-align: -3px; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } .drop { transition: none; } }
+  @media print { .cnc-sitehead, .cnc-hero, .pattern-strip, .cnc-secnav, .ah-stamp, .drop, .tabs, #journey, #sections, #library, #privacy, #ready, .demo-banner { display: none !important; } }
+</style>
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
+</head>
+<body>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+        <img class="logo-img" data-asset="hsf-builder-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/">Start your journey</a></li>
+        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/method.html">The Care Net Method</a></li>
+        <li><a href="/shop.html">Build your Plan</a></li>
+        <li><a href="/sample.html">Sample Plan</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<section class="cnc-hero">
+  <div class="hwrap">
+    <div>
+      <span class="eyebrow">Health and Safety File builder</span>
+      <h1>Build your File. <span class="r">Drop in what you already hold.</span></h1>
+      <p class="lede">Generate the Health and Safety File for your industry and your sites, then drop your documents into the section and department they belong to. Every document is fingerprinted in your browser, held securely and then kept with MyClinicOnline, where special personal information is protected.</p>
+      <div class="chips">
+        <a class="chip" href="#build" data-cta="hsf_builder_hero_start">Start building</a>
+        <a class="chip" href="#journey" data-cta="hsf_builder_hero_journey">Where your documents go</a>
+        <a class="chip" href="/hsf-builder.html?demo=1" data-cta="hsf_builder_hero_demo">See a demonstration</a>
+        <a class="chip" href="#privacy" data-cta="hsf_builder_hero_privacy">Your consent and POPIA</a>
+      </div>
+    </div>
+    <div class="heroimg" data-asset="hsf-builder-hero">
+      <img src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A health and safety record being completed" width="1920" height="1080" fetchpriority="high" decoding="async">
+    </div>
+  </div>
+</section>
+<div class="pattern-strip" role="presentation" data-asset="hsf-builder-pattern"></div>
+
+<main id="main">
+
+  <div class="demo-banner" id="demo-banner" role="note" hidden>
+    <b>Demonstration with fictitious data</b>
+    This is a demonstration File for a fictitious construction company, built from the Care Net sample. Nothing you do here is saved or sent: drops and uploads are simulated in your browser. <a class="inline" style="color:#fff" href="/hsf-builder.html" data-cta="hsf_builder_demo_exit">Leave the demonstration and build your own File</a>.
+  </div>
+
+  <!-- 1 :: BUILD (the application) -->
+  <section id="build" aria-labelledby="build-title">
+    <div class="sechead">
+      <span class="eyebrow">Your File</span>
+      <h2 id="build-title">Build my File, <span class="r">one section at a time.</span></h2>
+    </div>
+
+    <!-- Loading -->
+    <div class="card" id="st-loading" role="status">
+      <p><span class="spinner" aria-hidden="true"></span>Getting the File builder ready.</p>
+    </div>
+
+    <!-- Friendly error (servers unreachable) -->
+    <div class="card" id="st-error" hidden>
+      <h2>The File builder cannot reach Care Net right now</h2>
+      <div class="errbox" id="st-error-msg" role="alert">Please try again in a few minutes.</div>
+      <p class="muted" style="margin-top:12px">Nothing you have uploaded is lost. If this carries on, a sales executive can help.</p>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn inl" id="retry" data-cta="hsf_builder_retry">Try again</button>
+        <a class="btn ghost inl" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        <a class="btn plain inl" href="/hsf-builder.html?demo=1" data-cta="hsf_builder_demo_from_error">See a demonstration</a>
+      </div>
+    </div>
+
+    <!-- State 1: signed out -->
+    <div class="card" id="st-signin" hidden>
+      <div class="ill consent" data-asset="hsf-builder-signin-illustration" aria-hidden="true">Sign in illustration</div>
+      <h2>Sign in to build your File</h2>
+      <p>Enter your work email and we will send you a one time sign in link. There is no password to remember. Use the same email as your Medical Surveillance Plan and your File starts from what you told us then.</p>
+      <form id="signin-form" novalidate>
+        <label class="l" for="signin-email">Work email</label>
+        <input type="email" id="signin-email" name="email" autocomplete="email" inputmode="email" required aria-describedby="signin-help signin-msg">
+        <p class="help" id="signin-help">The link signs you in on this device and brings you back to this page.</p>
+        <div id="signin-msg" role="status" aria-live="polite" style="margin-top:10px"></div>
+        <button type="submit" class="btn" id="signin-btn" data-cta="hsf_builder_send_link">Send my sign in link</button>
+      </form>
+      <p class="muted" style="clear:both;margin-top:14px">New to Care Net? <a class="inline" href="/" data-cta="build_my_plan_register">Start your journey</a> to register your company first. Want to look around? <a class="inline" href="/hsf-builder.html?demo=1" data-cta="hsf_builder_demo_from_signin">See a demonstration</a>.</p>
+    </div>
+
+    <!-- State 2: signed in, no company account -->
+    <div class="card" id="st-noaccount" hidden>
+      <h2>Register your company first</h2>
+      <p>You are signed in as <b id="na-email">your email</b>, but this email is not linked to a company account with Care Net yet. Register your company once and come back here to build your File.</p>
+      <div class="row" style="margin-top:6px">
+        <a class="btn inl" href="/" data-cta="hsf_builder_register_company">Register my company</a>
+        <a class="btn ghost inl" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        <button type="button" class="btn plain inl" data-signout data-cta="hsf_builder_sign_out">Sign out</button>
+      </div>
+    </div>
+
+    <!-- State 3: consent -->
+    <div class="card" id="st-consent" hidden>
+      <div class="ill consent" data-asset="hsf-builder-consent-illustration" aria-hidden="true">Consent illustration</div>
+      <h2>Your consent before any document is stored</h2>
+      <p>Your File documents may hold personal information about your employees, and some may hold health information, which POPIA treats as special personal information. Please read each statement and tick it only if you agree. Nothing uploads until all three are given.</p>
+      <form id="consent-form" novalidate>
+        <div class="consent-item">
+          <label class="chk" for="c-storage">
+            <input type="checkbox" id="c-storage" name="document_storage" value="document_storage">
+            <span><b class="n">1.</b> I consent to Care Net Consultants (Pty) Ltd storing the documents I upload in its secure staging environment on Supabase, a private and encrypted storage area that only Care Net's servers can reach, for the single purpose of building my company's Health and Safety File.</span>
+          </label>
+        </div>
+        <div class="consent-item">
+          <label class="chk" for="c-transfer">
+            <input type="checkbox" id="c-transfer" name="mco_transfer" value="mco_transfer">
+            <span><b class="n">2.</b> I consent to these documents being transferred to MyClinicOnline, where they are kept in a secure environment for special personal information, after which the staging copy held by Care Net on Supabase is deleted. A record of each document's name, size, department and SHA 256 fingerprint stays with the File as its audit trail.</span>
+          </label>
+        </div>
+        <div class="consent-item">
+          <label class="chk" for="c-authority">
+            <input type="checkbox" id="c-authority" name="authority_to_share" value="authority_to_share">
+            <span><b class="n">3.</b> I confirm that I am authorised by my employer, <b class="co-name">my company</b>, to share these documents with Care Net, and I understand that any document containing employee health information is special personal information under POPIA and will be handled as such.</span>
+          </label>
+        </div>
+        <div class="consent-meta">
+          <span>Consent wording version <code id="c-version">HSF-CONSENT-1.0</code></span>
+          <span>Read our <a class="inline" href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="hsf_builder_privacy_policy">privacy policy</a></span>
+        </div>
+        <p class="muted" style="margin-top:12px"><b>Changing your mind.</b> You can withdraw any of these consents at any time from the Your consents panel on your File, which appears once you continue, or by asking a sales executive on WhatsApp at 27 60 070 2723. Withdrawal stops new uploads straight away.</p>
+        <p class="pending" data-mco-pending hidden>MyClinicOnline is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to MyClinicOnline the day the connection goes live. The staging copy is deleted only after MyClinicOnline confirms it has received an identical file.</p>
+        <div id="consent-msg" role="alert" style="margin-top:10px"></div>
+        <button type="submit" class="btn" id="consent-btn" data-cta="hsf_builder_give_consent">Give consent and continue</button>
+      </form>
+    </div>
+
+    <!-- State 4: no File yet -->
+    <div class="card" id="st-setup" hidden>
+      <h2>Set up your File</h2>
+      <p>Tell us your industry, your sites and the work you do. The File is generated from the Care Net element library: every element that applies, each marked outstanding until you evidence it. Generating the File stores no documents.</p>
+      <form id="setup-form" novalidate>
+        <div class="grid">
+          <div>
+            <label class="l" for="su-industry">Your industry</label>
+            <select id="su-industry" required aria-describedby="su-industry-help"><option value="">Loading industries</option></select>
+            <p class="help" id="su-industry-help">From the Care Net industry profiles.</p>
+          </div>
+          <div>
+            <label class="l" for="su-sub">Area of work</label>
+            <select id="su-sub" disabled aria-describedby="su-sub-help"><option value="">Choose your industry first</option></select>
+            <p class="help" id="su-sub-help">For your reference while you choose activities. The File covers the elements for your whole industry.</p>
+          </div>
+        </div>
+        <fieldset>
+          <legend>Sites the File covers</legend>
+          <div id="su-sites"></div>
+          <button type="button" class="btn plain sm inl" id="su-addsite" style="margin-top:10px">Add another site</button>
+        </fieldset>
+        <div class="grid">
+          <div>
+            <label class="l" for="su-project">Contract or project reference (optional)</label>
+            <input type="text" id="su-project" maxlength="100" autocomplete="off">
+          </div>
+          <div>
+            <label class="l" for="su-headcount">People in scope (optional)</label>
+            <input type="number" id="su-headcount" min="0" max="1000000" step="1" inputmode="numeric">
+          </div>
+        </div>
+        <div id="su-activities"></div>
+        <div id="setup-msg" role="alert" style="margin-top:12px"></div>
+        <button type="submit" class="btn" id="setup-btn" data-cta="hsf_builder_generate">Generate my File</button>
+      </form>
+    </div>
+
+    <!-- State 5: File view -->
+    <div id="st-file" hidden>
+      <div class="card" id="consent-panel-wrap">
+        <div class="fhead">
+          <div>
+            <span class="eyebrow" id="f-eyebrow">Health and Safety File</span>
+            <h2 id="f-title">Your File</h2>
+            <div class="kv" id="f-kv"></div>
+            <div class="row" style="margin-top:10px">
+              <label class="vh" for="f-switch">Choose a File</label>
+              <select id="f-switch" hidden style="max-width:320px"></select>
+              <button type="button" class="btn plain sm inl" id="f-refresh" data-cta="hsf_builder_refresh">Refresh</button>
+              <button type="button" class="btn plain sm inl" data-signout data-cta="hsf_builder_sign_out">Sign out</button>
+            </div>
+          </div>
+          <div>
+            <span class="eyebrow">Compliance figure</span>
+            <div class="pct" id="f-pct">Not yet worked out</div>
+            <div class="bar" aria-hidden="true"><i id="f-bar"></i></div>
+            <p class="help" id="f-pct-help">Items evidenced, as a share of the items that apply. Not applicable items leave the count. This is a working figure, not a sign off.</p>
+            <div class="counts" id="f-counts"></div>
+          </div>
+        </div>
+        <p class="pending" data-mco-pending hidden style="margin-top:14px">MyClinicOnline is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to MyClinicOnline the day the connection goes live.</p>
+        <div id="consent-block" class="pending" style="margin-top:14px" hidden>Uploads are paused because not all three consents are in place. Give them again in the consent panel above to carry on.</div>
+        <details id="consents" style="margin-top:14px">
+          <summary class="linkbtn" style="text-decoration:none">Your consents and how to withdraw them</summary>
+          <ul class="cstat" id="cstat"></ul>
+          <p class="muted">Wording version <span class="mono">HSF-CONSENT-1.0</span>. Withdrawing a consent stops new uploads straight away. For documents already received, ask a sales executive on WhatsApp at 27 60 070 2723.</p>
+        </details>
+
+        <div class="tabs" role="tablist" aria-label="File views">
+          <button type="button" role="tab" id="tab-sections" aria-controls="panel-sections" aria-selected="true">Sections</button>
+          <button type="button" role="tab" id="tab-gaps" aria-controls="panel-gaps" aria-selected="false" tabindex="-1">Gap report</button>
+          <button type="button" role="tab" id="tab-uploads" aria-controls="panel-uploads" aria-selected="false" tabindex="-1">Uploads</button>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="panel-sections" aria-labelledby="tab-sections">
+          <p class="muted" style="margin:0">Drop files onto a section, or onto one element inside it. Choose the department each document belongs to first. Accepted: PDF, Word, Excel, CSV, JPEG and PNG, up to 25 MB each.</p>
+        </div>
+        <div class="tabpanel gap" role="tabpanel" id="panel-gaps" aria-labelledby="tab-gaps" hidden></div>
+        <div class="tabpanel" role="tabpanel" id="panel-uploads" aria-labelledby="tab-uploads" hidden>
+          <div class="row" style="justify-content:space-between">
+            <p class="muted" style="margin:0">Each document shows its SHA 256 fingerprint, worked out in your browser before it leaves your device, and where it is on its way to MyClinicOnline.</p>
+            <button type="button" class="btn plain sm inl" id="q-refresh" data-cta="hsf_builder_refresh_uploads">Refresh statuses</button>
+          </div>
+          <div class="empty" id="q-empty">
+            <div class="ill" data-asset="hsf-builder-empty-state" aria-hidden="true">Empty state illustration</div>
+            <p class="muted">No documents yet. Drop your first document onto a section to start.</p>
+          </div>
+          <ul class="queue" id="queue" aria-label="Upload queue"></ul>
+        </div>
+      </div>
+      <div id="sec-cards"></div>
+    </div>
+
+    <div id="live" class="vh" aria-live="polite" aria-atomic="true"></div>
+  </section>
+
+  <!-- 2 :: THE JOURNEY -->
+  <section id="journey" aria-labelledby="journey-title">
+    <div class="sechead">
+      <span class="eyebrow">Where your documents go</span>
+      <h2 id="journey-title">Held securely, <span class="r">then kept with MyClinicOnline.</span></h2>
+      <p>Every document follows the same five steps. You can see each one against every file in the Uploads view of your File.</p>
+    </div>
+    <div class="card">
+      <ol class="journey">
+        <li><span class="jico s-up" data-asset="hsf-builder-state-uploading" aria-hidden="true">&uarr;</span><b>Uploading</b>Your browser works out the document's SHA 256 fingerprint, then sends it straight to Care Net's private staging storage.</li>
+        <li><span class="jico s-ok" data-asset="hsf-builder-state-uploaded" aria-hidden="true">&check;</span><b>Uploaded</b>The document is in staging, checked against the size you sent, and linked to its section, department and element.</li>
+        <li><span class="jico s-held" data-asset="hsf-builder-state-held" aria-hidden="true">&#9679;</span><b>Held for MyClinicOnline</b>The document waits, encrypted and reachable only by Care Net's servers, until MyClinicOnline takes it.</li>
+        <li><span class="jico s-mco" data-asset="hsf-builder-state-transferred" aria-hidden="true">&rarr;</span><b>Transferred to MyClinicOnline</b>MyClinicOnline confirms it received a file with the same fingerprint, and keeps it in its secure environment for special personal information.</li>
+        <li><span class="jico s-del" data-asset="hsf-builder-state-removed" aria-hidden="true">&times;</span><b>Removed from Care Net staging</b>Only then is the staging copy deleted. The name, size and fingerprint stay with your File as its audit trail.</li>
+      </ol>
+      <div class="ill bridge" data-asset="hsf-builder-journey-diagram" aria-hidden="true">Journey diagram: your browser, Care Net staging, MyClinicOnline</div>
+      <p class="muted" style="margin-top:12px"><span class="stateico s-no" data-asset="hsf-builder-state-rejected" aria-hidden="true">!</span> A document of the wrong type or over 25 MB is turned away in your browser before anything is sent, with a plain message saying why.</p>
+    </div>
+  </section>
+
+  <!-- 3 :: THE FIFTEEN SECTIONS -->
+  <section id="sections" aria-labelledby="sections-title">
+    <div class="sechead">
+      <span class="eyebrow">What is in the File</span>
+      <h2 id="sections-title">Fifteen sections, <span class="r">nine departments.</span></h2>
+      <p>Each section has its own drop zone. Choose the department a document belongs to, so the right people in your company can find it: executive and legal, human resources, health and safety, operations, engineering and maintenance, procurement and contractors, occupational health and medical, training and development, and facilities and security.</p>
+    </div>
+    <div class="card">
+      <div class="secs" id="secs"></div>
+    </div>
+  </section>
+
+  <!-- 4 :: THE ELEMENT LIBRARY -->
+  <section id="library" aria-labelledby="library-title">
+    <div class="sechead">
+      <span class="eyebrow">The element library</span>
+      <h2 id="library-title">Nothing is cited <span class="r">until it has been checked three times.</span></h2>
+      <p>These are the elements every File carries. An instrument is named only once the Care Net Cognitive Kernel has verified it against its primary text, corroborated it independently and confirmed it is in force. Everything else shows as awaiting verification, and the duty is described in plain words.</p>
+    </div>
+    <div class="card lib" id="lib-box">
+      <p class="muted" id="lib-msg"><span class="spinner" aria-hidden="true"></span>Loading the element library.</p>
+    </div>
+  </section>
+
+  <!-- 5 :: PRIVACY -->
+  <section id="privacy" aria-labelledby="privacy-title">
+    <div class="sechead">
+      <span class="eyebrow">Your consent and POPIA</span>
+      <h2 id="privacy-title">Your documents, <span class="r">handled as special personal information.</span></h2>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h2>What we ask and why</h2>
+        <p>Three separate consents, each in full, before a single document is stored: storage in Care Net's secure staging environment for the single purpose of building your File, transfer to MyClinicOnline with the staging copy deleted afterwards, and your confirmation that you may share the documents for your employer.</p>
+        <p>Documents go to private, encrypted storage that only Care Net's servers can reach. They are never placed where the public can see them, and the File keeps each document's fingerprint so any change can be detected.</p>
+      </div>
+      <div class="card">
+        <h2>What the File does, and what it does not</h2>
+        <p>The File assembles, evidences, flags and reports. It does not decide that a workplace is safe, certify that a person is competent or determine anyone's fitness for work. Care Net screens fitness for work and does not diagnose; a certificate of fitness says fit, fit with a restriction or not fit, and no clinical detail reaches the File.</p>
+        <p class="muted">Your chief executive and section 16(2) appointee, the Health and Safety Manager and the Occupational Medical Practitioner decide and sign. Read the <a class="inline" href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="hsf_builder_privacy_policy">privacy policy</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 :: READY -->
+  <section id="ready" aria-labelledby="ready-title">
+    <div class="card" style="border-top:5px solid var(--red)">
+      <h2 id="ready-title">Questions before you start?</h2>
+      <p>A sales executive can walk you through the File, the sign off and your Medical Surveillance Plan. Everything you build here also appears in your portal.</p>
+      <div class="grid">
+        <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        <a class="btn ghost" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
+      </div>
+      <p class="muted" style="margin-top:12px">Already a client? <a class="inline" href="/portal.html" data-cta="sign_in">Sign in</a> to your portal, or read about <a class="inline" href="/health-and-safety-file.html" data-cta="hsf_builder_about_file">the Health and Safety File and its sign off</a>.</p>
+    </div>
+  </section>
+</main>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" data-asset="hsf-builder-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#build"><i aria-hidden="true">1</i><span>Your File</span></a>
+  <a href="#journey"><i aria-hidden="true">2</i><span>Where documents go</span></a>
+  <a href="#sections"><i aria-hidden="true">3</i><span>The fifteen sections</span></a>
+  <a href="#library"><i aria-hidden="true">4</i><span>The element library</span></a>
+  <a href="#privacy"><i aria-hidden="true">5</i><span>Consent and POPIA</span></a>
+</nav>
+
+<noscript><p style="text-align:center;padding:16px">The File builder needs JavaScript. Please enable it, or WhatsApp a sales executive on 27 60 070 2723.</p></noscript>
+
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/hsf-builder.html",
+ "title": "Health and Safety File builder",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "hsf-builder-og",
+   "block": "Head: social share card",
+   "purpose": "The image shown when the File builder link is shared on WhatsApp, LinkedIn, Facebook or email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "png"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 300,
+   "colour": "Charcoal #1A1A1A field, Care Net red #ED1B24 accent, white Bebas Neue headline \"Build your Health and Safety File\", Care Net logo top left, pattern strip along the bottom edge",
+   "alt": "Build your Health and Safety File with Care Net Consultants",
+   "file_name": "hsf-builder-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 by 566 safe area. No people who could be identified, no employee documents with readable personal information. The meta tag already points at the delivery path."
+  },
+  {
+   "id": "hsf-builder-logo",
+   "block": "Header: logo",
+   "purpose": "Care Net Consultants logo in the shared site header.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  },
+  {
+   "id": "hsf-builder-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "Sets the scene for the builder: a site manager or safety officer at a desk or site office, dropping documents into a laptop, hard hat and File binder in view.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 220,
+   "colour": "Natural light, warm neutrals; a touch of Care Net red (hard hat, lanyard or binder spine). Dark enough at the left edge to sit against the charcoal hero.",
+   "alt": "A site safety officer uploading Health and Safety File documents on a laptop in a site office",
+   "file_name": "hsf-builder-hero-1920x1080.webp",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-hero-1920x1080.webp",
+   "status": "needed",
+   "notes": "Until delivered the page shows the existing record-submission.webp. Supply 960 by 540 as well for mobile (max 90 KB). Screens must show no readable personal or health information. Model release required for anyone identifiable."
+  },
+  {
+   "id": "hsf-builder-pattern",
+   "block": "Pattern strip under the hero",
+   "purpose": "The shared Care Net Africa pattern strip.",
+   "type": "pattern",
+   "formats": [
+    "png"
+   ],
+   "width": 1200,
+   "height": null,
+   "ratio": "repeat x",
+   "max_kb": 60,
+   "colour": "Brand pattern",
+   "alt": "Decorative pattern, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Loaded by /css/cnc-pattern.css. No change needed."
+  },
+  {
+   "id": "hsf-builder-signin-illustration",
+   "block": "Build: sign in card",
+   "purpose": "Friendly illustration beside the email sign in form: an envelope carrying a key towards an open File binder.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 480,
+   "height": 320,
+   "ratio": "3:2",
+   "max_kb": 25,
+   "colour": "Line art in charcoal #1A1A1A with Care Net red #ED1B24 accents on a white or #F7F5F5 ground",
+   "alt": "An envelope carrying a key to an open Health and Safety File",
+   "file_name": "hsf-builder-signin-480x320.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-signin-480x320.svg",
+   "status": "needed",
+   "notes": "Decorative on the page (the form carries the meaning), so it is placed with empty alternative text. SVG preferred; PNG at 2x (960 by 640) as fallback. Floats right on desktop, full width on mobile."
+  },
+  {
+   "id": "hsf-builder-consent-illustration",
+   "block": "Build: consent card",
+   "purpose": "Reassures before the three POPIA consents: a shield with a padlock over a document, and an arrow to a second secure vault (MyClinicOnline).",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 480,
+   "height": 320,
+   "ratio": "3:2",
+   "max_kb": 25,
+   "colour": "Charcoal line art, green #2A7D4E for the shield, Care Net red #ED1B24 accent",
+   "alt": "A locked document moving from secure staging to a secure medical records vault",
+   "file_name": "hsf-builder-consent-480x320.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-consent-480x320.svg",
+   "status": "needed",
+   "notes": "Must not suggest any certification, seal or stamp of approval (no ticks inside badges, no words such as certified). Decorative on the page."
+  },
+  {
+   "id": "hsf-builder-section-a-icon",
+   "block": "Sections overview and File view: Section A card",
+   "purpose": "Icon for Section A, Legal and administrative, shown in the fifteen sections overview and at the head of the Section A card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section A, Legal and administrative",
+   "file_name": "hsf-section-a-legal-and-administrative.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-a-legal-and-administrative.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a registered company document with an official stamp outline. Icon 1 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-b-icon",
+   "block": "Sections overview and File view: Section B card",
+   "purpose": "Icon for Section B, Policy, organisation and appointments, shown in the fifteen sections overview and at the head of the Section B card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section B, Policy, organisation and appointments",
+   "file_name": "hsf-section-b-policy-organisation-and-appointments.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-b-policy-organisation-and-appointments.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an organisation chart with an appointment letter. Icon 2 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-c-icon",
+   "block": "Sections overview and File view: Section C card",
+   "purpose": "Icon for Section C, Risk management, shown in the fifteen sections overview and at the head of the Section C card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section C, Risk management",
+   "file_name": "hsf-section-c-risk-management.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-c-risk-management.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a warning triangle over a checklist. Icon 3 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-d-icon",
+   "block": "Sections overview and File view: Section D card",
+   "purpose": "Icon for Section D, Training and competence, shown in the fifteen sections overview and at the head of the Section D card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section D, Training and competence",
+   "file_name": "hsf-section-d-training-and-competence.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-d-training-and-competence.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a graduation cap over a certificate. Icon 4 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-e-icon",
+   "block": "Sections overview and File view: Section E card",
+   "purpose": "Icon for Section E, Medical surveillance and fitness, shown in the fifteen sections overview and at the head of the Section E card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section E, Medical surveillance and fitness",
+   "file_name": "hsf-section-e-medical-surveillance-and-fitness.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-e-medical-surveillance-and-fitness.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a stethoscope around a clipboard. Icon 5 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-f-icon",
+   "block": "Sections overview and File view: Section F card",
+   "purpose": "Icon for Section F, Registers and inspections, shown in the fifteen sections overview and at the head of the Section F card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section F, Registers and inspections",
+   "file_name": "hsf-section-f-registers-and-inspections.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-f-registers-and-inspections.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a magnifying glass over a register. Icon 6 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-g-icon",
+   "block": "Sections overview and File view: Section G card",
+   "purpose": "Icon for Section G, Permits and controls, shown in the fifteen sections overview and at the head of the Section G card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section G, Permits and controls",
+   "file_name": "hsf-section-g-permits-and-controls.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-g-permits-and-controls.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a permit card with a padlock. Icon 7 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-h-icon",
+   "block": "Sections overview and File view: Section H card",
+   "purpose": "Icon for Section H, Emergency preparedness, shown in the fifteen sections overview and at the head of the Section H card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section H, Emergency preparedness",
+   "file_name": "hsf-section-h-emergency-preparedness.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-h-emergency-preparedness.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an emergency exit sign with a running figure. Icon 8 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-i-icon",
+   "block": "Sections overview and File view: Section I card",
+   "purpose": "Icon for Section I, Incident management, shown in the fifteen sections overview and at the head of the Section I card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section I, Incident management",
+   "file_name": "hsf-section-i-incident-management.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-i-incident-management.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an incident report with an exclamation mark. Icon 9 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-j-icon",
+   "block": "Sections overview and File view: Section J card",
+   "purpose": "Icon for Section J, Occupational hygiene, shown in the fifteen sections overview and at the head of the Section J card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section J, Occupational hygiene",
+   "file_name": "hsf-section-j-occupational-hygiene.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-j-occupational-hygiene.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a sound wave and a sampling pump. Icon 10 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-k-icon",
+   "block": "Sections overview and File view: Section K card",
+   "purpose": "Icon for Section K, Contractors, visitors and the public, shown in the fifteen sections overview and at the head of the Section K card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section K, Contractors, visitors and the public",
+   "file_name": "hsf-section-k-contractors-visitors-and-the-public.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-k-contractors-visitors-and-the-public.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a visitor badge and a hard hat. Icon 11 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-l-icon",
+   "block": "Sections overview and File view: Section L card",
+   "purpose": "Icon for Section L, Communication and consultation, shown in the fifteen sections overview and at the head of the Section L card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section L, Communication and consultation",
+   "file_name": "hsf-section-l-communication-and-consultation.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-l-communication-and-consultation.svg",
+   "status": "needed",
+   "notes": "Suggested motif: two speech bubbles over a notice board. Icon 12 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-m-icon",
+   "block": "Sections overview and File view: Section M card",
+   "purpose": "Icon for Section M, Environment, welfare and facilities, shown in the fifteen sections overview and at the head of the Section M card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section M, Environment, welfare and facilities",
+   "file_name": "hsf-section-m-environment-welfare-and-facilities.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-m-environment-welfare-and-facilities.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a water tap and a leaf. Icon 13 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-n-icon",
+   "block": "Sections overview and File view: Section N card",
+   "purpose": "Icon for Section N, Audit, review and improvement, shown in the fifteen sections overview and at the head of the Section N card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section N, Audit, review and improvement",
+   "file_name": "hsf-section-n-audit-review-and-improvement.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-n-audit-review-and-improvement.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a circular arrow around a clipboard. Icon 14 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-section-o-icon",
+   "block": "Sections overview and File view: Section O card",
+   "purpose": "Icon for Section O, Records and retention, shown in the fifteen sections overview and at the head of the Section O card with its drop zone.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Section O, Records and retention",
+   "file_name": "hsf-section-o-records-and-retention.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-o-records-and-retention.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an archive box with a clock. Icon 15 of a set of fifteen; all fifteen must share one stroke weight and corner radius. Placed with empty alternative text because the section name sits beside it; the alt given here is for reuse elsewhere. Until delivered the tile shows the section letter."
+  },
+  {
+   "id": "hsf-builder-dropzone-icon",
+   "block": "File view: every section drop zone",
+   "purpose": "The icon inside each dashed drop zone: a document dropping into an open tray.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Care Net red #C5141B single colour line icon, transparent background",
+   "alt": "Drop files here",
+   "file_name": "hsf-builder-dropzone-64.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-builder-dropzone-64.svg",
+   "status": "needed",
+   "notes": "Shown at 44 by 44 in a white circle. Hidden below 520 px wide. Decorative on the page."
+  },
+  {
+   "id": "hsf-builder-empty-state",
+   "block": "File view: Uploads tab, empty queue",
+   "purpose": "Empty state for the upload queue before any document is dropped: an empty tray with one document hovering above it, ready to land.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 640,
+   "height": 400,
+   "ratio": "16:10",
+   "max_kb": 40,
+   "colour": "Soft neutrals #F7F5F5 and #E5E2E2 with charcoal line work and one Care Net red accent on the document",
+   "alt": "An empty tray waiting for the first document",
+   "file_name": "hsf-builder-empty-queue-640x400.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-empty-queue-640x400.svg",
+   "status": "needed",
+   "notes": "Displayed at up to 320 by 200. Decorative on the page; the sentence beneath it carries the message."
+  },
+  {
+   "id": "hsf-builder-state-uploading",
+   "block": "Journey section and Uploads tab: upload state 1",
+   "purpose": "Status icon for the upload state \"Uploading\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph blue #2B4C8C on #EEF3FB tile",
+   "alt": "Uploading",
+   "file_name": "hsf-upload-state-uploading-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-uploading-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an upward arrow leaving a document. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-state-uploaded",
+   "block": "Journey section and Uploads tab: upload state 2",
+   "purpose": "Status icon for the upload state \"Uploaded\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph green #1B6E45 on #E8F7EC tile",
+   "alt": "Uploaded",
+   "file_name": "hsf-upload-state-uploaded-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-uploaded-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document with a tick. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-state-held",
+   "block": "Journey section and Uploads tab: upload state 3",
+   "purpose": "Status icon for the upload state \"Held for MyClinicOnline\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph amber #6B4600 on #FDF3DC tile",
+   "alt": "Held for MyClinicOnline",
+   "file_name": "hsf-upload-state-held-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-held-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document resting in a locked tray. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-state-transferred",
+   "block": "Journey section and Uploads tab: upload state 4",
+   "purpose": "Status icon for the upload state \"Transferred to MyClinicOnline\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph teal #1D5D6F on #E9F4F7 tile",
+   "alt": "Transferred to MyClinicOnline",
+   "file_name": "hsf-upload-state-transferred-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-transferred-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document crossing a bridge into a vault. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-state-removed",
+   "block": "Journey section and Uploads tab: upload state 5",
+   "purpose": "Status icon for the upload state \"Removed from Care Net staging\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph charcoal #1A1A1A on #F0EFEF tile",
+   "alt": "Removed from Care Net staging",
+   "file_name": "hsf-upload-state-removed-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-removed-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an empty tray with a small bin. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-state-rejected",
+   "block": "Journey section and Uploads tab: upload state 6",
+   "purpose": "Status icon for the upload state \"Not accepted (wrong type or over 25 MB)\", used in the five step journey and next to each document in the upload queue.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 48,
+   "height": 48,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Single colour glyph red #8A1016 on #FFF1F1 tile",
+   "alt": "Not accepted (wrong type or over 25 MB)",
+   "file_name": "hsf-upload-state-rejected-48.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-rejected-48.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document with a cross. One set of six sharing a stroke weight; must read at 24 by 24. The label is always written next to it, so it is placed with empty alternative text. Until delivered a character glyph stands in."
+  },
+  {
+   "id": "hsf-builder-journey-diagram",
+   "block": "Journey section: diagram under the five steps",
+   "purpose": "Simple left to right diagram of where a document travels: the company's browser (fingerprint worked out), Care Net staging on Supabase (private, encrypted), MyClinicOnline secure environment for special personal information, and the staging copy deleted after an identical fingerprint is confirmed.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 1200,
+   "height": 400,
+   "ratio": "3:1",
+   "max_kb": 60,
+   "colour": "Charcoal line work, green for secure stores, Care Net red for the arrows; labels in Inter 14 px or larger",
+   "alt": "Documents travel from your browser to Care Net staging and then to MyClinicOnline, after which the staging copy is deleted",
+   "file_name": "hsf-builder-journey-1200x400.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-journey-1200x400.svg",
+   "status": "needed",
+   "notes": "Also supply a stacked 600 by 400 (3:2) version for phones. Do not show any real MyClinicOnline screen, logo lock up or address: the MCO interface is pending (HSF-3). No certification marks."
+  },
+  {
+   "id": "hsf-builder-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the shared footer stamp.",
+   "type": "icon",
+   "formats": [
+    "webp"
+   ],
+   "width": 22,
+   "height": 22,
+   "ratio": "1:1",
+   "max_kb": 3,
+   "colour": "Gold, as supplied",
+   "alt": "Decorative, no alternative text",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  }
+ ]
+}
+</script>
+
+<script type="module">
+import { auth } from '/js/cnc-auth.js';
+
+/* =====================================================================
+   The File builder. Everything below runs inside try/catch boundaries
+   so an unreachable API shows a friendly state, never a page error.
+   ===================================================================== */
+const CFG = window.CNC_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const params = new URLSearchParams(location.search);
+const DEMO = params.get('demo') === '1';
+
+const WORDING_VERSION = 'HSF-CONSENT-1.0';
+const CONSENT_KINDS = ['document_storage', 'mco_transfer', 'authority_to_share'];
+const CONSENT_LABELS = {
+  document_storage: 'Storage in Care Net’s secure staging environment',
+  mco_transfer: 'Transfer to MyClinicOnline, then deletion from staging',
+  authority_to_share: 'Authority to share for your employer'
+};
+
+/* Mirrors hsf/BUILD-CONTRACT.md section 1 for a plain message before upload.
+   The server (msp_env_parameter hsf.upload_max_bytes, hsf.upload_allowed_mime)
+   is the authority and checks again. */
+const MAX_BYTES = 26214400;
+const ALLOWED = {
+  'application/pdf': 'PDF',
+  'image/jpeg': 'JPEG image',
+  'image/png': 'PNG image',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel workbook',
+  'application/msword': 'Word document',
+  'application/vnd.ms-excel': 'Excel workbook',
+  'text/csv': 'CSV file'
+};
+const BY_EXT = { pdf: 'application/pdf', jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  doc: 'application/msword', xls: 'application/vnd.ms-excel', csv: 'text/csv' };
+const ACCEPT = '.pdf,.jpg,.jpeg,.png,.docx,.xlsx,.doc,.xls,.csv,' + Object.keys(ALLOWED).join(',');
+
+/* hsf_department, seeded per contract section 2. */
+const DEPARTMENTS = [
+  ['EXEC', 'Executive and legal'], ['HR', 'Human resources'], ['SHE', 'Health and safety'],
+  ['OPS', 'Operations'], ['ENG', 'Engineering and maintenance'], ['PROC', 'Procurement and contractors'],
+  ['OH', 'Occupational health and medical'], ['TRAIN', 'Training and development'], ['FAC', 'Facilities and security']
+];
+const DEPT_NAME = Object.fromEntries(DEPARTMENTS);
+
+/* The fifteen sections (SPEC B6), described in plain words. The suggested
+   department is only a starting choice; the uploader changes it freely. */
+const SECTIONS = [
+  ['A', 'Legal and administrative', 'Registration, COIDA good standing, notifications, section 37(2) agreements, the legal register', 'EXEC'],
+  ['B', 'Policy, organisation and appointments', 'Policy, the section 16(2) assignment, representatives, the committee, statutory appointments', 'EXEC'],
+  ['C', 'Risk management', 'Baseline and task risk assessments, method statements, fall protection and other plans', 'SHE'],
+  ['D', 'Training and competence', 'Training needs, the training matrix, inductions, licences, toolbox talks', 'TRAIN'],
+  ['E', 'Medical surveillance and fitness', 'Your Medical Surveillance Plan, certificates of fitness, statutory examinations', 'OH'],
+  ['F', 'Registers and inspections', 'Scaffolds, ladders, lifting equipment, electrical, fire equipment, PPE, chemicals', 'ENG'],
+  ['G', 'Permits and controls', 'Permit to work, hot work, confined space, excavation, height, isolation', 'OPS'],
+  ['H', 'Emergency preparedness', 'Emergency plan, drills, fire plan, medical emergencies, spill response', 'SHE'],
+  ['I', 'Incident management', 'Reporting, the incident register, investigations, COIDA claims', 'SHE'],
+  ['J', 'Occupational hygiene', 'Noise, chemical, lighting and thermal surveys by approved inspection authorities', 'OH'],
+  ['K', 'Contractors, visitors and the public', 'Contractor selection, contractor Files, visitor control, public protection', 'PROC'],
+  ['L', 'Communication and consultation', 'Committee minutes, representative inspections, notices, change notifications', 'HR'],
+  ['M', 'Environment, welfare and facilities', 'Sanitation, drinking water, change rooms, the physical environment, waste', 'FAC'],
+  ['N', 'Audit, review and improvement', 'Internal and external audits, management review, corrective actions', 'SHE'],
+  ['O', 'Records and retention', 'The retention schedule, storage and access, the POPIA operator agreement', 'EXEC']
+];
+const SEC_NAME = Object.fromEntries(SECTIONS.map((s) => [s[0], s[1]]));
+const secSlug = (c) => 'hsf-builder-section-' + c.toLowerCase() + '-icon';
+
+/* Activity checklist: plain questions that raise the SPEC B9.2 trigger codes
+   (hsf_trigger, seeded in migration 048). The generator decides which
+   elements each code switches on. */
+const ACTIVITIES = [
+  ['Construction work', [
+    ['T-CONSTR', 'Construction work is carried on'],
+    ['T-CONSTR-NOTIFY', 'Construction work at or above the notification or permit thresholds (thresholds awaiting verification)'],
+    ['T-DEMOLITION', 'Demolition work'], ['T-EXCAVATION', 'Excavation work'],
+    ['T-TEMPWORKS', 'Temporary works'], ['T-SCAFFOLD', 'Scaffolding is erected or used'],
+    ['T-ROADWORKS', 'Work on or next to public roads']]],
+  ['Height and access', [['T-HEIGHT', 'Work at height'], ['T-LADDERS', 'Ladders are used'], ['T-STACKING', 'Goods are stacked and stored']]],
+  ['Plant, machinery and equipment', [
+    ['T-MOBILEPLANT', 'Construction vehicles, forklifts or other mobile plant'], ['T-LIFTING', 'Lifting machines and lifting tackle'],
+    ['T-MACHINERY', 'Machinery that needs guarding and supervision'], ['T-PRESSURE', 'Pressure equipment'],
+    ['T-ELEC', 'Electrical installations or electrical work'], ['T-EPT', 'Explosive powered tools are used'],
+    ['T-LPG', 'Liquefied petroleum gas installations']]],
+  ['Substances and exposures', [
+    ['T-HCA', 'Hazardous chemical agents are used, stored or produced'], ['T-HBA', 'Exposure to hazardous biological agents'],
+    ['T-ASBESTOS', 'Asbestos is present or may be disturbed'], ['T-LEAD', 'Work with lead'],
+    ['T-NOISE', 'Noise exposure identified by the risk assessment'], ['T-RADIATION', 'Ionising radiation sources'],
+    ['T-THERMAL', 'Heat or cold exposure'], ['T-EXPLOSIVES', 'Explosives are used'],
+    ['T-MHI', 'Large holdings of listed substances (major hazard installation thresholds awaiting verification)']]],
+  ['Higher risk tasks', [
+    ['T-CONFINED', 'Confined spaces are entered'], ['T-HOTWORK', 'Hot work such as welding, cutting or grinding'],
+    ['T-PTW', 'A permit to work system is needed'], ['T-TASKRA', 'Task based and daily pre task risk assessments are needed']]],
+  ['People and organisation', [
+    ['T-CONTRACTORS', 'Contractors or mandataries work for you'], ['T-HSR', 'Your workforce needs designated health and safety representatives'],
+    ['T-COMMITTEE', 'A health and safety committee is needed'], ['T-SHIFT', 'Shift or night work'],
+    ['T-VIOLENCE', 'Exposure to violence or aggression'], ['T-PUBLIC', 'Members of the public may be affected by the work'],
+    ['T-TRAFFIC', 'Vehicles and people share space'], ['T-PRDP', 'Drivers who need a professional driving permit']]],
+  ['Your sector', [
+    ['T-FOOD', 'Food is prepared, handled or served'], ['T-SECURITY', 'Private security services are provided'],
+    ['T-ARMED', 'Armed security or firearms are carried'], ['T-WASTE', 'Waste is generated, handled or disposed of'],
+    ['T-ENVIRO', 'Other environmental law applies']]]
+];
+
+const ITEM_STATUS = {
+  linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding',
+  expired: 'Expired', not_applicable: 'Not applicable'
+};
+/* The upload lifecycle, labelled exactly as the build contract lists it. */
+const LIFECYCLE = ['Uploading', 'Uploaded', 'Held for MyClinicOnline', 'Transferred to MyClinicOnline', 'Removed from Care Net staging'];
+const UPLOAD_STATUS = {
+  checking: { label: 'Checking the file', step: 0, cls: 's-up', ico: '…' },
+  hashing: { label: 'Working out the SHA 256 fingerprint', step: 0, cls: 's-up', ico: '#' },
+  queued: { label: 'Waiting its turn', step: 0, cls: 's-up', ico: '…' },
+  awaiting_upload: { label: 'Uploading', step: 1, cls: 's-up', ico: '↑' },
+  uploading: { label: 'Uploading', step: 1, cls: 's-up', ico: '↑' },
+  uploaded: { label: 'Uploaded', step: 2, cls: 's-ok', ico: '✓' },
+  verified: { label: 'Uploaded', step: 2, cls: 's-ok', ico: '✓' },
+  held: { label: 'Held for MyClinicOnline', step: 3, cls: 's-held', ico: '●' },
+  transferring: { label: 'Held for MyClinicOnline', step: 3, cls: 's-held', ico: '●' },
+  transferred: { label: 'Transferred to MyClinicOnline', step: 4, cls: 's-mco', ico: '→' },
+  staging_deleted: { label: 'Removed from Care Net staging', step: 5, cls: 's-del', ico: '×' },
+  rejected: { label: 'Not accepted', step: -1, cls: 's-no', ico: '!' },
+  failed: { label: 'Not transferred: please upload it again', step: -1, cls: 's-no', ico: '!' },
+  error: { label: 'Upload stopped', step: -1, cls: 's-no', ico: '!' }
+};
+
+/* ------------------------------------------------------------ helpers */
+const fmtPct = (n) => (n == null || n === '' || isNaN(Number(n))) ? null : Number(n).toFixed(1).replace('.', ',') + '%';
+const fmtSize = (b) => {
+  const n = Number(b) || 0;
+  if (n >= 1048576) return (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+  if (n >= 1024) return Math.max(1, Math.round(n / 1024)) + ' KB';
+  return n + ' bytes';
+};
+const dmy = (d) => {
+  if (!d) return '';
+  const s = String(d);
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : s;
+};
+const words = (s) => String(s || '').replace(/_/g, ' ');
+let liveTimer = null;
+function announce(msg) {
+  const el = $('live'); if (!el) return;
+  el.textContent = '';
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => { el.textContent = msg; }, 60);
+}
+function withTimeout(p, ms, msg) {
+  let t;
+  return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => { const e = new Error(msg || 'The request took too long.'); e.timeout = true; rej(e); }, ms); })])
+    .finally(() => clearTimeout(t));
+}
+function friendly(err, fallback) {
+  if (!err) return fallback;
+  if (err.timeout) return 'Care Net\u2019s servers took too long to answer. Please try again shortly.';
+  /* No status: the network failed or the API is not there. 5xx: a server fault. */
+  if (!err.status || err.status >= 500) return fallback;
+  if (err.status === 404 && !err.code) return 'This part of the File builder is not available right now. Please try again shortly.';
+  if (err.status === 405) return fallback;
+  return err.message || fallback;
+}
+
+const STATES = ['st-loading', 'st-error', 'st-signin', 'st-noaccount', 'st-consent', 'st-setup', 'st-file'];
+function show(...ids) {
+  STATES.forEach((s) => { const el = $(s); if (el) el.hidden = !ids.includes(s); });
+}
+function showError(msg) {
+  $('st-error-msg').textContent = msg || 'Please try again in a few minutes.';
+  show('st-error');
+}
+
+/* ------------------------------------------------------------ state */
+const S = {
+  user: null, consent: null, files: [], fileId: null, detail: null,
+  queue: [], serverUploads: [], running: false, industries: null
+};
+const consentComplete = () => !!(S.consent && S.consent.complete);
+
+/* ------------------------------------------------------------ API (live) */
+async function api(path, opts) {
+  return withTimeout(auth.apiFetch(path, opts), 20000, 'timeout');
+}
+const REST = () => (CFG.supabaseUrl || '') + '/rest/v1';
+function restHeaders() {
+  const k = CFG.publishableKey || '';
+  return { apikey: k, Authorization: 'Bearer ' + k };
+}
+async function restGet(path) {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 15000);
+  try {
+    const r = await fetch(REST() + path, { headers: restHeaders(), signal: ctl.signal, credentials: 'omit' });
+    if (!r.ok) { const e = new Error('rest ' + r.status); e.status = r.status; throw e; }
+    return await r.json();
+  } finally { clearTimeout(t); }
+}
+
+/* ============================================================ static sections */
+function renderSectionsOverview() {
+  $('secs').innerHTML = SECTIONS.map((s) =>
+    '<div><span class="sico" data-asset="' + secSlug(s[0]) + '" aria-hidden="true">' + s[0] + '</span><div><span class="nm">Section ' + s[0] + ': ' + esc(s[1]) + '</span><small>' + esc(s[2]) + '</small><small>Suggested department: ' + esc(DEPT_NAME[s[3]]) + '</small></div></div>'
+  ).join('');
+}
+
+/* ============================================================ element library */
+function listOf(v) {
+  if (Array.isArray(v)) return v.map((x) => (x && typeof x === 'object') ? (x.short_name || x.name || '') : String(x)).filter(Boolean);
+  if (typeof v === 'string' && v.trim()) { try { return listOf(JSON.parse(v)); } catch (_) { return [v]; } }
+  return [];
+}
+function basisHtml(citable, awaiting) {
+  const c = listOf(citable), a = listOf(awaiting);
+  let h = '';
+  if (c.length) h += '<b>Basis:</b> ' + esc(c.join('; '));
+  if (a.length) h += (h ? '<br>' : '') + '<span class="await"><b>Awaiting verification:</b> ' + esc(a.join('; ')) + '</span>';
+  if (!h) h = '<span class="await"><b>Awaiting verification</b></span>';
+  return h;
+}
+async function loadLibrary() {
+  const box = $('lib-box');
+  if (DEMO) {
+    box.innerHTML = '<p class="muted">The live element library loads here outside the demonstration. In the demonstration File above, every basis is shown as awaiting verification, because a sample File cites nothing.</p>';
+    return;
+  }
+  try {
+    const rows = await restGet('/hsf_public_element_library?select=*&order=code');
+    if (!Array.isArray(rows) || !rows.length) throw new Error('empty');
+    const by = {};
+    rows.forEach((r) => { const c = r.section_code || '?'; (by[c] = by[c] || []).push(r); });
+    let html = '<p class="muted" style="margin-top:0">' + rows.length + ' elements across ' + Object.keys(by).length + ' sections, read live from the Care Net element library.</p>';
+    SECTIONS.forEach((s) => {
+      const list = by[s[0]]; if (!list) return;
+      html += '<details><summary>Section ' + s[0] + ': ' + esc(list[0].section_name || s[1]) + ' (' + list.length + ')</summary><ul>'
+        + list.map((r) => '<li><b>' + esc(r.name) + '</b> <span class="mono">' + esc(r.code) + '</span>'
+          + (r.duty ? '<small>' + esc(r.duty) + '</small>' : '')
+          + '<small>' + basisHtml(r.citable != null ? r.citable : (r.citable_instruments != null ? r.citable_instruments : r.instruments), r.awaiting) + '</small></li>').join('')
+        + '</ul></details>';
+    });
+    box.innerHTML = html;
+  } catch (e) {
+    box.innerHTML = '<p class="pending">The element library could not be reached just now. It lists every element with its basis once it loads; please try again shortly. Your File, once generated, carries the same elements.</p>';
+  }
+}
+
+/* ============================================================ sign in */
+function wireSignin() {
+  $('signin-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const msg = $('signin-msg'), btn = $('signin-btn');
+    const email = $('signin-email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.innerHTML = '<div class="errbox">Please enter a valid work email address.</div>';
+      $('signin-email').focus();
+      return;
+    }
+    btn.disabled = true; msg.innerHTML = '<span class="spinner" aria-hidden="true"></span>Sending your link.';
+    try {
+      await withTimeout(auth.signInWithEmail(email, location.origin + location.pathname), 20000, 'timeout');
+      msg.innerHTML = '<div class="okbox">Check your inbox. We have sent a sign in link to ' + esc(email) + '. Open it on this device to come back here signed in.</div>';
+    } catch (e) {
+      msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'The sign in link could not be sent just now. Please try again shortly.')) + '</div>';
+    } finally { btn.disabled = false; }
+  });
+}
+function wireSignout() {
+  document.querySelectorAll('[data-signout]').forEach((b) => b.addEventListener('click', async () => {
+    if (DEMO) { location.href = '/hsf-builder.html'; return; }
+    try { await auth.signOut(); } catch (_) { /* local sign out is best effort */ }
+    location.href = location.pathname;
+  }));
+}
+
+/* ============================================================ consent */
+function renderConsentState() {
+  const co = (S.consent && S.consent.company_name) || 'my company';
+  document.querySelectorAll('.co-name').forEach((b) => { b.textContent = co; });
+  $('c-version').textContent = (S.consent && S.consent.wording_version) || WORDING_VERSION;
+  const map = { document_storage: 'c-storage', mco_transfer: 'c-transfer', authority_to_share: 'c-authority' };
+  /* Always unticked on arrival: a consent is given by ticking, never assumed. */
+  Object.values(map).forEach((id) => { $(id).checked = false; });
+  $('consent-msg').innerHTML = '';
+}
+function wireConsent() {
+  $('consent-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const ticks = { document_storage: $('c-storage').checked, mco_transfer: $('c-transfer').checked, authority_to_share: $('c-authority').checked };
+    const missing = CONSENT_KINDS.filter((k) => !ticks[k]);
+    const msg = $('consent-msg');
+    if (missing.length) {
+      msg.innerHTML = '<div class="errbox">All three consents are needed before any document can be uploaded. Still to tick: ' + esc(missing.map((k) => CONSENT_KINDS.indexOf(k) + 1).join(' and ')) + '.</div>';
+      return;
+    }
+    const btn = $('consent-btn'); btn.disabled = true;
+    msg.innerHTML = '<span class="spinner" aria-hidden="true"></span>Recording your consent.';
+    try {
+      if (DEMO) {
+        S.consent = { client_account_id: 'demo', company_name: S.detail && S.detail.file.company, wording_version: WORDING_VERSION, document_storage: true, mco_transfer: true, authority_to_share: true, complete: true };
+      } else {
+        S.consent = await api('/api/hsf-consent', { method: 'POST', body: { kinds: CONSENT_KINDS.slice(), wording_version: WORDING_VERSION } });
+      }
+      msg.innerHTML = '';
+      announce('Consent recorded. You can now upload documents.');
+      $('st-consent').hidden = true;
+      if (DEMO) { renderConsentPanel(); renderSectionCards(); $('st-file').hidden = false; }
+      else await loadFiles();
+    } catch (e) {
+      msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'Your consent could not be recorded just now. Nothing has been stored. Please try again shortly.')) + '</div>';
+    } finally { btn.disabled = false; }
+  });
+}
+function renderConsentPanel() {
+  const c = S.consent || {};
+  $('cstat').innerHTML = CONSENT_KINDS.map((k, i) => {
+    const on = !!c[k];
+    return '<li><span><b>' + (i + 1) + '.</b> ' + esc(CONSENT_LABELS[k]) + ': <b>' + (on ? 'given' : 'not given') + '</b></span>'
+      + (on ? '<button type="button" class="btn plain sm inl" data-withdraw="' + k + '" data-cta="hsf_builder_withdraw_consent">Withdraw</button>' : '') + '</li>';
+  }).join('');
+  $('consent-block').hidden = consentComplete();
+  $('cstat').querySelectorAll('[data-withdraw]').forEach((b) => b.addEventListener('click', () => withdraw(b)));
+}
+async function withdraw(btn) {
+  const kind = btn.getAttribute('data-withdraw');
+  if (btn.dataset.confirm !== '1') {
+    btn.dataset.confirm = '1';
+    btn.textContent = 'Confirm withdrawal';
+    btn.setAttribute('aria-label', 'Confirm withdrawal of consent ' + (CONSENT_KINDS.indexOf(kind) + 1));
+    return;
+  }
+  btn.disabled = true;
+  try {
+    if (DEMO) { S.consent = Object.assign({}, S.consent, { [kind]: false, complete: false }); }
+    else { S.consent = await api('/api/hsf-consent?kind=' + encodeURIComponent(kind), { method: 'DELETE' }); }
+    announce('Consent withdrawn. New uploads are paused.');
+    renderConsentPanel();
+    renderSectionCards();
+    renderConsentState();
+    $('st-consent').hidden = false;
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Withdraw';
+    delete btn.dataset.confirm;
+    announce(friendly(e, 'The withdrawal could not be recorded just now. Please try again.'));
+  }
+}
+
+/* ============================================================ setup */
+function siteRow(n) {
+  const d = document.createElement('div');
+  d.className = 'site';
+  d.innerHTML = '<div><label class="l" for="site-n-' + n + '" style="margin-top:6px">Site ' + n + ' name</label><input type="text" id="site-n-' + n + '" maxlength="200" autocomplete="off"></div>'
+    + '<div><label class="l" for="site-a-' + n + '" style="margin-top:6px">Site ' + n + ' address (optional)</label><input type="text" id="site-a-' + n + '" maxlength="500" autocomplete="off"></div>'
+    + (n > 1 ? '<button type="button" class="btn plain sm inl" aria-label="Remove site ' + n + '">Remove</button>' : '<span></span>');
+  const rm = d.querySelector('button');
+  if (rm) rm.addEventListener('click', () => { d.remove(); $('su-addsite').focus(); });
+  return d;
+}
+let siteCount = 0;
+function renderSetup() {
+  if (!$('su-sites').children.length) { siteCount = 1; $('su-sites').appendChild(siteRow(1)); }
+  $('su-activities').innerHTML = ACTIVITIES.map((g, gi) =>
+    '<fieldset><legend>' + esc(g[0]) + '</legend><div class="checks">'
+    + g[1].map((a, ai) => '<label class="chk" for="act-' + gi + '-' + ai + '"><input type="checkbox" id="act-' + gi + '-' + ai + '" value="' + esc(a[0]) + '"><span>' + esc(a[1]) + '</span></label>').join('')
+    + '</div></fieldset>').join('')
+    + '<p class="help">Tick everything that happens at any site in scope. Each answer switches on the elements the law asks for that activity.</p>';
+  loadIndustries();
+}
+async function loadIndustries() {
+  const sel = $('su-industry');
+  if (S.industries) return;
+  try {
+    const list = await restGet('/msp_public_industry_profile?select=code,name,regime,subindustries&order=name');
+    if (!Array.isArray(list) || !list.length) throw new Error('empty');
+    S.industries = list;
+    sel.innerHTML = '<option value="">Choose your industry</option>' + list.map((r) => '<option value="' + esc(r.code) + '">' + esc(r.name) + '</option>').join('');
+    $('su-industry-help').textContent = 'From the Care Net industry profiles.';
+  } catch (e) {
+    sel.innerHTML = '<option value="">The industry list could not be reached</option>';
+    $('su-industry-help').innerHTML = 'The industry list could not be reached just now. <button type="button" class="linkbtn" id="su-retry">Try again</button>';
+    const b = $('su-retry'); if (b) b.addEventListener('click', () => { sel.innerHTML = '<option value="">Loading industries</option>'; loadIndustries(); });
+  }
+}
+function wireSetup() {
+  $('su-addsite').addEventListener('click', () => {
+    siteCount += 1;
+    const r = siteRow(siteCount);
+    $('su-sites').appendChild(r);
+    r.querySelector('input').focus();
+  });
+  $('su-industry').addEventListener('change', () => {
+    const code = $('su-industry').value, sub = $('su-sub');
+    const prof = (S.industries || []).find((r) => r.code === code);
+    const subs = prof && Array.isArray(prof.subindustries) ? prof.subindustries : [];
+    sub.innerHTML = '<option value="">' + (subs.length ? 'The whole industry' : 'No areas of work listed') + '</option>' + subs.map((s) => '<option>' + esc(s.name) + '</option>').join('');
+    sub.disabled = !subs.length;
+  });
+  $('setup-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const msg = $('setup-msg');
+    const industry = $('su-industry').value;
+    const sites = [];
+    $('su-sites').querySelectorAll('.site').forEach((row) => {
+      const ins = row.querySelectorAll('input');
+      const name = ins[0].value.trim(), address = ins[1].value.trim();
+      if (name) sites.push(address ? { name, address } : { name });
+    });
+    const problems = [];
+    if (!industry) problems.push('Choose your industry.');
+    if (!sites.length) problems.push('Name at least one site.');
+    const hc = $('su-headcount').value.trim();
+    if (hc && !/^\d{1,7}$/.test(hc)) problems.push('The number of people must be a whole number.');
+    const allText = sites.map((s) => s.name + ' ' + (s.address || '')).join(' ') + ' ' + $('su-project').value;
+    if (/\d{13}/.test(allText)) problems.push('Please remove what looks like an identity number. The File never holds personal identifiers here.');
+    if (problems.length) { msg.innerHTML = '<div class="errbox">' + problems.map(esc).join('<br>') + '</div>'; return; }
+    const triggers = Array.from($('su-activities').querySelectorAll('input:checked')).map((i) => i.value);
+    if (industry === 'MINING' && !triggers.includes('T-MINING')) triggers.push('T-MINING');
+    const scope = { sites };
+    const pr = $('su-project').value.trim(); if (pr) scope.project_reference = pr;
+    if (hc) scope.headcount = Number(hc);
+    const btn = $('setup-btn'); btn.disabled = true;
+    msg.innerHTML = '<span class="spinner" aria-hidden="true"></span>Generating your File. This can take a few seconds.';
+    try {
+      const out = await api('/api/hsf-file', { method: 'POST', body: { action: 'generate', industry_code: industry, triggers, scope } });
+      msg.innerHTML = '';
+      announce('Your File ' + (out && out.reference ? out.reference + ' ' : '') + 'has been generated.');
+      S.fileId = out && out.file_id;
+      await loadFiles();
+    } catch (e) {
+      msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'Your File could not be generated just now. Nothing has been lost; please try again shortly.')) + '</div>';
+    } finally { btn.disabled = false; }
+  });
+}
+
+/* ============================================================ File view */
+async function loadFiles() {
+  show('st-loading');
+  if (!consentComplete()) { renderConsentState(); }
+  try {
+    const files = await api('/api/hsf-file');
+    S.files = Array.isArray(files) ? files : [];
+  } catch (e) {
+    if (e && e.status === 401) { show('st-signin'); return; }
+    showError(friendly(e, 'Your Files could not be loaded just now. Please try again in a few minutes.'));
+    return;
+  }
+  const extra = consentComplete() ? [] : ['st-consent'];
+  if (!S.files.length) {
+    renderSetup();
+    show('st-setup', ...extra);
+    return;
+  }
+  if (!S.fileId || !S.files.some((f) => f.file_id === S.fileId)) {
+    const sorted = S.files.slice().sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    S.fileId = sorted[0].file_id;
+  }
+  const sw = $('f-switch');
+  if (S.files.length > 1) {
+    sw.innerHTML = S.files.map((f) => '<option value="' + esc(f.file_id) + '"' + (f.file_id === S.fileId ? ' selected' : '') + '>' + esc(f.reference + ', ' + (f.industry_name || f.industry_code || '')) + '</option>').join('');
+    sw.hidden = false;
+  } else sw.hidden = true;
+  await loadDetail();
+  show('st-file', ...extra);
+}
+async function loadDetail(quiet) {
+  try {
+    const [detail, uploads] = await Promise.all([
+      api('/api/hsf-file?file_id=' + encodeURIComponent(S.fileId)),
+      api('/api/hsf-upload?file_id=' + encodeURIComponent(S.fileId)).catch(() => null)
+    ]);
+    S.detail = normaliseDetail(detail);
+    if (Array.isArray(uploads)) S.serverUploads = uploads;
+    renderFile();
+  } catch (e) {
+    if (e && e.status === 401) { show('st-signin'); return; }
+    if (quiet) { announce(friendly(e, 'Your File could not be refreshed just now. Please try again shortly.')); return; }
+    showError(friendly(e, 'Your File could not be loaded just now. Please try again in a few minutes.'));
+    throw e;
+  }
+}
+function normaliseDetail(d) {
+  d = d || {};
+  const f = d.file || {};
+  const secs = Array.isArray(d.sections) ? d.sections : [];
+  return {
+    file: {
+      id: f.id || f.file_id || S.fileId, reference: f.reference || '', industry: f.industry_name || f.industry_code || '',
+      company: f.company_name || (S.consent && S.consent.company_name) || '', status: f.status || '', revision: f.revision,
+      regime: f.regime || '', scope: f.scope || null
+    },
+    sections: secs.map((s) => ({
+      code: s.code, name: s.name || SEC_NAME[s.code] || '', pct: s.compliance_pct,
+      items: (Array.isArray(s.items) ? s.items : []).map((i) => ({
+        item_id: i.item_id, code: i.element_code, name: i.name, duty: i.duty, evidence: i.evidence_type,
+        review: i.review_interval, status: i.status, reason: i.reason, due: i.due_date, responsible: i.responsible_person || i.responsible || '',
+        citable: i.citable, awaiting: i.awaiting, uploads: Array.isArray(i.uploads) ? i.uploads : []
+      }))
+    })),
+    overall: d.overall || {}
+  };
+}
+function sectionClass(p) { if (p == null) return ''; const n = Number(p); return n >= 80 ? 'good' : (n >= 50 ? 'mid' : 'low'); }
+
+function renderFile() {
+  const d = S.detail; if (!d) return;
+  const f = d.file;
+  $('f-eyebrow').textContent = DEMO ? 'Demonstration File, fictitious data' : 'Health and Safety File';
+  $('f-title').textContent = f.reference ? f.reference : 'Your File';
+  const kv = [];
+  if (f.company) kv.push('<b>' + esc(f.company) + '</b>');
+  if (f.industry) kv.push('Industry: <b>' + esc(f.industry) + '</b>');
+  if (f.regime) kv.push('Regime: <b>' + esc(f.regime === 'MHSA' ? 'Mine Health and Safety Act' : (f.regime === 'OHSA' ? 'Occupational Health and Safety Act' : f.regime)) + '</b>');
+  if (f.revision != null) kv.push('Revision <b>' + esc(f.revision) + '</b>');
+  if (f.status) kv.push('Status: <b>' + esc(words(f.status)) + '</b>');
+  if (f.scope && typeof f.scope === 'string') kv.push(esc(f.scope));
+  else if (f.scope && Array.isArray(f.scope.sites)) kv.push('Sites: ' + esc(f.scope.sites.map((s) => s.name).join('; ')));
+  $('f-kv').innerHTML = kv.join('<br>');
+  renderOverall();
+  renderConsentPanel();
+  $('st-file').querySelectorAll('[data-mco-pending]').forEach((p) => { p.hidden = !(CFG.pending ? CFG.pending.mcoPortalUrl : true); });
+  renderSectionCards();
+  renderGaps();
+  renderQueue();
+}
+function renderOverall() {
+  const o = S.detail.overall || {};
+  const p = fmtPct(o.pct);
+  $('f-pct').textContent = p || 'Not yet worked out';
+  $('f-bar').style.width = p ? Math.max(0, Math.min(100, Number(o.pct))) + '%' : '0';
+  const c = o.counts || {};
+  $('f-counts').innerHTML = ['uploaded', 'linked_mco', 'outstanding', 'expired', 'not_applicable']
+    .filter((k) => c[k] != null).map((k) => '<span class="pill ' + k + '">' + esc(ITEM_STATUS[k]) + ': ' + esc(c[k]) + '</span>').join('');
+}
+
+function deptOptions(sel) {
+  return DEPARTMENTS.map((d) => '<option value="' + d[0] + '"' + (d[0] === sel ? ' selected' : '') + '>' + esc(d[1]) + '</option>').join('');
+}
+const deptChoice = {};
+function renderSectionCards() {
+  const d = S.detail; if (!d) return;
+  const locked = !consentComplete();
+  const byCode = {}; d.sections.forEach((s) => { byCode[s.code] = s; });
+  const html = SECTIONS.map((meta) => {
+    const c = meta[0];
+    const s = byCode[c] || { code: c, name: meta[1], pct: null, items: [] };
+    const p = fmtPct(s.pct);
+    const dept = deptChoice[c] || meta[3];
+    const lockNote = locked ? '<p class="help" style="grid-column:1/-1">Uploads are paused until all three consents are given.</p>' : '';
+    const eNote = c === 'E' ? '<p class="help" style="grid-column:1/-1">Documents here may contain employee health information, which is special personal information under POPIA. They are kept with MyClinicOnline once transferred.</p>' : '';
+    const items = s.items.map((it, idx) => elementRow(c, it, idx, locked)).join('');
+    const secUps = sectionUploads(c);
+    return '<article class="scard ' + sectionClass(s.pct) + '" id="sec-' + c + '" aria-labelledby="sec-' + c + '-h">'
+      + '<div class="shead"><span class="sico" data-asset="' + secSlug(c) + '" aria-hidden="true">' + c + '</span>'
+      + '<h3 id="sec-' + c + '-h">Section ' + c + ': ' + esc(s.name || meta[1]) + '</h3>'
+      + '<span class="spct" title="Compliance figure for this section">' + (p || '<span class="muted">No items</span>') + '</span></div>'
+      + '<div class="drop' + (locked ? ' locked' : '') + '" data-drop="section" data-section="' + c + '" role="group" aria-labelledby="drop-' + c + '-t">'
+      + '<span class="dico" data-asset="hsf-builder-dropzone-icon" aria-hidden="true">&#8683;</span>'
+      + '<p id="drop-' + c + '-t"><b>Drop files for Section ' + c + ' here</b><br><span class="muted">or choose them with the button. PDF, Word, Excel, CSV, JPEG or PNG, up to 25 MB each.</span></p>'
+      + '<div class="ctl"><div><label class="l" for="dept-' + c + '">Department for these documents</label><select id="dept-' + c + '" data-dept="' + c + '">' + deptOptions(dept) + '</select></div>'
+      + '<span class="filebtn"><input type="file" id="pick-' + c + '" multiple accept="' + ACCEPT + '" data-pick="section" data-section="' + c + '"' + (locked ? ' disabled' : '') + ' aria-describedby="drop-' + c + '-t"><span>Choose files</span></span></div>'
+      + eNote + lockNote + '</div>'
+      + (secUps.length ? '<ul class="ups" aria-label="Documents filed under Section ' + c + '">' + secUps.map((u) => '<li><span>' + esc(u.name) + '</span><span class="muted">' + esc((UPLOAD_STATUS[u.state] || {}).label || words(u.state)) + (u.dept ? ', ' + esc(DEPT_NAME[u.dept] || u.dept) : '') + '</span></li>').join('') + '</ul>' : '')
+      + (s.items.length ? '<details class="els"><summary>Show the ' + s.items.length + ' element' + (s.items.length === 1 ? '' : 's') + ' in Section ' + c + '</summary>' + items + '</details>'
+        : '<p class="muted" style="margin-top:10px">No elements in this section apply to your File.</p>')
+      + '</article>';
+  }).join('');
+  $('sec-cards').innerHTML = html;
+  wireSectionCards();
+}
+/* Documents dropped on the section itself (not on one element): this session's
+   queue plus what the server already holds for this File. */
+function sectionUploads(c) {
+  const local = S.queue.filter((q) => q.section === c && !q.element && q.state !== 'rejected').map((q) => ({ id: q.uploadId, name: q.name, state: q.state, dept: q.dept }));
+  const seen = new Set(local.map((u) => u.id).filter(Boolean));
+  const server = (S.serverUploads || []).filter((u) => u.section_code === c && !u.element_code && !seen.has(u.upload_id))
+    .map((u) => ({ id: u.upload_id, name: u.original_name, state: u.status, dept: u.department_code }));
+  return local.concat(server);
+}
+function elementRow(sec, it, idx, locked) {
+  const id = String(it.item_id || (sec + '-' + idx)).replace(/[^A-Za-z0-9_-]/g, '_');
+  const ups = (it.uploads || []).concat(S.queue.filter((q) => q.itemKey === id && q.state !== 'rejected').map((q) => ({ original_name: q.name, status: q.state, department_code: q.dept })));
+  const st = it.status || 'outstanding';
+  return '<div class="erow" data-drop="element" data-section="' + sec + '" data-element="' + esc(it.code || '') + '" data-item="' + esc(id) + '" id="el-' + esc(id) + '">'
+    + '<div class="top"><span class="ename">' + esc(it.name) + ' <code>' + esc(it.code || '') + '</code></span><span class="pill ' + esc(st) + '">' + esc(ITEM_STATUS[st] || words(st)) + '</span></div>'
+    + (it.duty ? '<p class="basis">' + esc(it.duty) + '</p>' : '')
+    + '<p class="basis">' + basisHtml(it.citable, it.awaiting) + '</p>'
+    + '<p class="meta">' + [it.evidence ? 'Evidence: ' + esc(words(it.evidence)) : '', it.review ? 'Review: ' + esc(words(it.review)) : '', it.responsible ? 'Responsible: ' + esc(it.responsible) : '', it.due ? 'Due: ' + esc(dmy(it.due)) : ''].filter(Boolean).join(' <span aria-hidden="true">&middot;</span> ') + '</p>'
+    + (st === 'not_applicable' && it.reason ? '<p class="meta"><b>Not applicable because:</b> ' + esc(it.reason) + '</p>' : '')
+    + (ups.length ? '<ul class="ups" aria-label="Documents for this element">' + ups.map((u) => '<li><span>' + esc(u.original_name) + '</span><span class="muted">' + esc((UPLOAD_STATUS[u.status] || {}).label || words(u.status)) + (u.department_code ? ', ' + esc(DEPT_NAME[u.department_code] || u.department_code) : '') + '</span></li>').join('') + '</ul>' : '')
+    + '<div class="acts">'
+    + '<span class="filebtn"><input type="file" multiple accept="' + ACCEPT + '" data-pick="element" data-section="' + sec + '" data-element="' + esc(it.code || '') + '" data-item="' + esc(id) + '"' + (locked ? ' disabled' : '') + ' aria-label="Attach documents to ' + esc(it.name) + '"><span class="sm">Attach documents</span></span>'
+    + (st === 'not_applicable'
+      ? '<button type="button" class="linkbtn" data-na-undo="' + esc(id) + '">Mark as outstanding again</button>'
+      : (st === 'outstanding' || st === 'expired' ? '<button type="button" class="linkbtn" data-na="' + esc(id) + '" aria-expanded="false" aria-controls="na-' + esc(id) + '">Set not applicable</button>' : ''))
+    + '</div>'
+    + '<form class="naform" id="na-' + esc(id) + '" data-na-form="' + esc(id) + '" hidden novalidate><label class="l" for="na-r-' + esc(id) + '">Why this element does not apply (at least 10 characters)</label><textarea id="na-r-' + esc(id) + '" maxlength="1000"></textarea><div class="row" style="margin-top:8px"><button type="submit" class="btn sm inl">Save the reason</button><button type="button" class="btn plain sm inl" data-na-cancel="' + esc(id) + '">Cancel</button></div><div class="help" role="alert"></div></form>'
+    + '</div>';
+}
+function findItem(key) {
+  for (const s of S.detail.sections) for (let i = 0; i < s.items.length; i++) {
+    const it = s.items[i];
+    const id = String(it.item_id || (s.code + '-' + i)).replace(/[^A-Za-z0-9_-]/g, '_');
+    if (id === key) return { s, it };
+  }
+  return null;
+}
+function wireSectionCards() {
+  const root = $('sec-cards');
+  root.querySelectorAll('[data-dept]').forEach((sel) => sel.addEventListener('change', () => { deptChoice[sel.dataset.dept] = sel.value; }));
+  root.querySelectorAll('input[type=file][data-pick]').forEach((inp) => inp.addEventListener('change', () => {
+    const files = Array.from(inp.files || []);
+    const target = { section: inp.dataset.section, element: inp.dataset.element || null, itemKey: inp.dataset.item || null };
+    addFiles(files, target);
+    inp.value = '';
+  }));
+  root.querySelectorAll('[data-drop]').forEach((zone) => wireDrop(zone));
+  root.querySelectorAll('[data-na]').forEach((b) => b.addEventListener('click', () => {
+    const form = root.querySelector('[data-na-form="' + b.dataset.na + '"]');
+    form.hidden = !form.hidden; b.setAttribute('aria-expanded', String(!form.hidden));
+    if (!form.hidden) form.querySelector('textarea').focus();
+  }));
+  root.querySelectorAll('[data-na-cancel]').forEach((b) => b.addEventListener('click', () => {
+    const form = root.querySelector('[data-na-form="' + b.dataset.naCancel + '"]'); form.hidden = true;
+    const t = root.querySelector('[data-na="' + b.dataset.naCancel + '"]'); if (t) { t.setAttribute('aria-expanded', 'false'); t.focus(); }
+  }));
+  root.querySelectorAll('[data-na-form]').forEach((form) => form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const reason = form.querySelector('textarea').value.replace(/\s+/g, ' ').trim();
+    const out = form.querySelector('[role=alert]');
+    if (reason.length < 10) { out.textContent = 'Please give a reason of at least 10 characters.'; return; }
+    if (/\d{13}/.test(reason)) { out.textContent = 'Please remove what looks like an identity number.'; return; }
+    setItemStatus(form.dataset.naForm, 'not_applicable', reason, out);
+  }));
+  root.querySelectorAll('[data-na-undo]').forEach((b) => b.addEventListener('click', () => setItemStatus(b.dataset.naUndo, 'outstanding', null, null)));
+}
+async function setItemStatus(key, status, reason, out) {
+  const hit = findItem(key); if (!hit) return;
+  const openSec = hit.s.code;
+  try {
+    if (DEMO) {
+      hit.it.status = status; hit.it.reason = reason || '';
+      recomputeDemo();
+    } else {
+      await api('/api/hsf-file', { method: 'POST', body: { action: 'set_status', item_id: hit.it.item_id, status, reason } });
+      await loadDetail(true);
+    }
+    announce(status === 'not_applicable' ? 'Marked not applicable, with your reason.' : 'Marked as outstanding again.');
+    renderOverall(); renderSectionCards(); renderGaps();
+    const det = document.querySelector('#sec-' + openSec + ' details.els'); if (det) det.open = true;
+    const row = document.getElementById('el-' + key); if (row) { const f = row.querySelector('button, input'); if (f) f.focus(); }
+  } catch (e) {
+    const m = friendly(e, 'The change could not be saved just now. Please try again.');
+    if (out) out.textContent = m; else announce(m);
+  }
+}
+
+/* ============================================================ drag and drop */
+const hasFiles = (ev) => !!(ev.dataTransfer && Array.from(ev.dataTransfer.types || []).includes('Files'));
+function wireDrop(zone) {
+  let depth = 0;
+  zone.addEventListener('dragenter', (ev) => {
+    if (!hasFiles(ev)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    depth += 1; zone.classList.add('over');
+  });
+  zone.addEventListener('dragover', (ev) => {
+    if (!hasFiles(ev)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    ev.dataTransfer.dropEffect = consentComplete() ? 'copy' : 'none';
+  });
+  zone.addEventListener('dragleave', (ev) => {
+    ev.stopPropagation();
+    depth = Math.max(0, depth - 1);
+    if (!depth) zone.classList.remove('over');
+  });
+  zone.addEventListener('drop', (ev) => {
+    if (!hasFiles(ev)) return;
+    ev.preventDefault(); ev.stopPropagation();
+    depth = 0; zone.classList.remove('over');
+    const files = Array.from(ev.dataTransfer.files || []);
+    addFiles(files, { section: zone.dataset.section, element: zone.dataset.element || null, itemKey: zone.dataset.item || null });
+  });
+}
+/* A file dropped outside a zone must not open in the browser and leave the page. */
+window.addEventListener('dragover', (ev) => { if (hasFiles(ev)) { ev.preventDefault(); ev.dataTransfer.dropEffect = 'none'; } });
+window.addEventListener('drop', (ev) => { if (hasFiles(ev)) ev.preventDefault(); });
+
+/* ============================================================ upload queue */
+let qSeq = 0;
+function mimeOf(file) {
+  const t = String(file.type || '').toLowerCase();
+  if (ALLOWED[t]) return t;
+  const ext = (String(file.name).split('.').pop() || '').toLowerCase();
+  if (!t || t === 'application/octet-stream') return BY_EXT[ext] || t;
+  /* Some systems label CSV files as a spreadsheet type the server also accepts. */
+  if (ext === 'csv' && (t === 'application/csv' || t === 'text/comma-separated-values')) return 'text/csv';
+  return t;
+}
+function checkFile(file) {
+  const mime = mimeOf(file);
+  if (!ALLOWED[mime]) return { ok: false, msg: '“' + file.name + '” was not added. The File accepts PDF, Word, Excel, CSV, JPEG and PNG documents only.' };
+  if (!file.size) return { ok: false, msg: '“' + file.name + '” was not added because it is empty.' };
+  if (file.size > MAX_BYTES) return { ok: false, msg: '“' + file.name + '” was not added because it is ' + fmtSize(file.size) + '. Each document can be up to 25 MB.' };
+  return { ok: true, mime };
+}
+function addFiles(files, target) {
+  if (!files.length) return;
+  if (!consentComplete()) {
+    announce('Uploads are paused until all three consents are given.');
+    const c = $('st-consent'); if (c && !c.hidden) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+  const dept = deptChoice[target.section] || (SECTIONS.find((s) => s[0] === target.section) || [])[3] || 'SHE';
+  let added = 0, refused = 0;
+  files.forEach((file) => {
+    const q = { id: 'q' + (++qSeq), file, name: file.name, size: file.size, mime: mimeOf(file), dept, section: target.section,
+      element: target.element, itemKey: target.itemKey, sha: '', progress: 0, state: 'checking', message: '', uploadId: null };
+    const chk = checkFile(file);
+    if (!chk.ok) { q.state = 'rejected'; q.message = chk.msg; refused += 1; }
+    else { q.mime = chk.mime; q.state = 'queued'; added += 1; }
+    S.queue.unshift(q);
+  });
+  renderQueue();
+  selectTab('tab-uploads');
+  announce((added ? added + ' document' + (added === 1 ? '' : 's') + ' added to the upload queue. ' : '') + (refused ? refused + ' not accepted; see the Uploads view for why.' : ''));
+  runQueue();
+}
+async function sha256Hex(file) {
+  if (!(window.crypto && crypto.subtle && crypto.subtle.digest)) {
+    const e = new Error('Your browser cannot work out file fingerprints on this connection. Please use an up to date browser on the secure site.');
+    e.local = true; throw e;
+  }
+  const buf = await file.arrayBuffer();
+  const dig = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(dig)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+function putWithProgress(url, file, mime, onProgress) {
+  return new Promise((resolve, reject) => {
+    const x = new XMLHttpRequest();
+    x.open('PUT', url, true);
+    x.setRequestHeader('Content-Type', mime);
+    x.upload.onprogress = (ev) => { if (ev.lengthComputable) onProgress(ev.loaded / ev.total); };
+    x.onload = () => { if (x.status >= 200 && x.status < 300) resolve(); else { const e = new Error('The document could not be sent to secure storage. Please try again.'); e.status = x.status; reject(e); } };
+    x.onerror = () => reject(new Error('The connection dropped while sending the document. Please try again.'));
+    x.ontimeout = () => reject(new Error('Sending the document took too long. Please try again.'));
+    x.timeout = 15 * 60 * 1000;
+    x.send(file);
+  });
+}
+function simulateProgress(onProgress) {
+  return new Promise((resolve) => {
+    let p = 0;
+    const t = setInterval(() => { p = Math.min(1, p + 0.2); onProgress(p); if (p >= 1) { clearInterval(t); resolve(); } }, 180);
+  });
+}
+async function runQueue() {
+  if (S.running) return;
+  S.running = true;
+  try {
+    let q;
+    while ((q = S.queue.slice().reverse().find((x) => x.state === 'queued'))) {
+      await processOne(q);
+    }
+  } finally { S.running = false; }
+}
+async function processOne(q) {
+  const update = () => updateQueueItem(q);
+  try {
+    q.state = 'hashing'; update();
+    q.sha = await sha256Hex(q.file);
+    q.state = 'uploading'; q.progress = 0; update();
+    announce('Uploading ' + q.name + '.');
+    let lastSaid = 0;
+    const onProgress = (f) => {
+      q.progress = f; update();
+      const pct = Math.floor(f * 100);
+      if (pct >= lastSaid + 25 && pct < 100) { lastSaid = pct - (pct % 25); announce(q.name + ': ' + lastSaid + ' per cent uploaded.'); }
+    };
+    if (DEMO) {
+      await simulateProgress(onProgress);
+      q.state = 'uploaded'; q.progress = 1; update();
+      announce(q.name + ' uploaded (demonstration).');
+      setTimeout(() => { q.state = 'held'; q.message = 'Demonstration: in a live File this document now waits in Care Net staging until MyClinicOnline takes it.'; update(); refreshElementUploads(); }, 1400);
+    } else {
+      const body = { action: 'register', department_code: q.dept, original_name: q.name, mime_type: q.mime, size_bytes: q.size, sha256: q.sha, file_id: S.fileId, section_code: q.section };
+      if (q.element) body.element_code = q.element;
+      const reg = await api('/api/hsf-upload', { method: 'POST', body });
+      if (!reg || !reg.upload_url || !reg.upload_id) throw new Error('The upload could not be prepared. Please try again.');
+      q.uploadId = reg.upload_id;
+      await putWithProgress(reg.upload_url, q.file, q.mime, onProgress);
+      const done = await api('/api/hsf-upload', { method: 'POST', body: { action: 'complete', upload_id: q.uploadId } });
+      q.state = (done && done.status) || 'uploaded'; q.progress = 1; update();
+      announce(q.name + ' uploaded. ' + ((UPLOAD_STATUS[q.state] || {}).label || ''));
+      q.file = null;
+      refreshAfterUpload();
+    }
+    q.file = null;
+    refreshElementUploads();
+  } catch (e) {
+    q.state = 'error';
+    q.message = e.local ? e.message : friendly(e, 'The document could not be uploaded just now. Please try again.');
+    q.file = null;
+    update();
+    announce(q.name + ': ' + q.message);
+  }
+}
+let refreshTimer = null;
+function refreshAfterUpload() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(async () => {
+    if (S.queue.some((x) => ['queued', 'hashing', 'uploading'].includes(x.state))) return;
+    await loadDetail(true);
+  }, 800);
+}
+function refreshElementUploads() {
+  /* Keep the element rows' document lists in step without closing open sections. */
+  const open = Array.from(document.querySelectorAll('#sec-cards details.els[open]')).map((d) => d.closest('article').id);
+  renderSectionCards();
+  open.forEach((id) => { const d = document.querySelector('#' + id + ' details.els'); if (d) d.open = true; });
+}
+function queueItemHtml(q) {
+  const st = UPLOAD_STATUS[q.state] || { label: words(q.state), step: -1, cls: 's-up', ico: '' };
+  const where = 'Section ' + esc(q.section || '') + (q.element ? ', element ' + esc(q.element) : '') + ', ' + esc(DEPT_NAME[q.dept] || q.dept || '');
+  const stepHtml = st.step >= 0 ? '<ol class="steps" aria-label="Where this document is">' + LIFECYCLE.map((l, i) => {
+    const n = i + 1; const cls = n < st.step ? 'done' : (n === st.step ? 'now' : '');
+    return '<li class="' + cls + '"' + (n === st.step ? ' aria-current="step"' : '') + '>' + esc(l) + '</li>';
+  }).join('') + '</ol>' : '';
+  const prog = q.state === 'uploading'
+    ? '<progress max="100" value="' + Math.round(q.progress * 100) + '" aria-label="Upload progress for ' + esc(q.name) + '"></progress>'
+    : (q.state === 'hashing' ? '<progress aria-label="Working out the fingerprint for ' + esc(q.name) + '"></progress>' : '');
+  return '<div class="qtop"><span class="qname">' + esc(q.name) + '</span><span class="qstatus"><span class="stateico ' + st.cls + '" aria-hidden="true">' + esc(st.ico) + '</span>'
+    + esc(st.label) + (q.state === 'uploading' ? ' ' + Math.round(q.progress * 100) + '%' : '') + '</span></div>'
+    + '<div class="qmeta">' + esc(fmtSize(q.size)) + (q.mime && ALLOWED[q.mime] ? ', ' + esc(ALLOWED[q.mime]) : '') + ' <span aria-hidden="true">&middot;</span> ' + where + '</div>'
+    + (q.sha ? '<div class="qmeta">SHA 256 <span class="sha">' + esc(q.sha) + '</span></div>' : '')
+    + prog + stepHtml
+    + (q.message ? '<div class="qmsg' + (st.step < 0 ? ' err' : '') + '">' + esc(q.message) + '</div>' : '');
+}
+function updateQueueItem(q) {
+  const li = document.getElementById('qi-' + q.id);
+  if (!li) { renderQueue(); return; }
+  li.innerHTML = queueItemHtml(q);
+}
+function renderQueue() {
+  const list = $('queue'); if (!list) return;
+  const local = S.queue.map((q) => '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>');
+  const seen = new Set(S.queue.map((q) => q.uploadId).filter(Boolean));
+  const server = (S.serverUploads || []).filter((u) => !seen.has(u.upload_id)).map((u) => {
+    const q = { id: 's' + String(u.upload_id).replace(/[^A-Za-z0-9]/g, ''), name: u.original_name, size: u.size_bytes, mime: '', dept: u.department_code,
+      section: u.section_code, element: u.element_code, sha: u.sha256 || u.sha256_client || '', state: u.status, progress: 1,
+      message: u.staging_deleted_at ? 'Removed from staging on ' + dmy(u.staging_deleted_at) + '.' : (u.transferred_at ? 'Transferred on ' + dmy(u.transferred_at) + '.' : '') };
+    return '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>';
+  });
+  list.innerHTML = local.concat(server).join('');
+  $('q-empty').hidden = (local.length + server.length) > 0;
+}
+
+/* ============================================================ gap report */
+function renderGaps() {
+  const d = S.detail; if (!d) return;
+  let html = '<div class="row" style="justify-content:space-between"><p class="muted" style="margin:0">Every item not yet evidenced, grouped by section, with its basis and what to do next.</p><button type="button" class="btn plain sm inl" id="gap-print" data-cta="hsf_builder_print_gaps">Print the gap report</button></div>';
+  let total = 0;
+  d.sections.forEach((s) => {
+    const gaps = s.items.filter((i) => i.status === 'outstanding' || i.status === 'expired');
+    if (!gaps.length) return;
+    total += gaps.length;
+    html += '<h3>Section ' + esc(s.code) + ': ' + esc(s.name) + ' (' + gaps.length + ')</h3>'
+      + gaps.map((i) => {
+        const medical = i.evidence === 'medical_certificate' || i.evidence === 'training_record';
+        const path = i.status === 'expired'
+          ? (medical ? 'Renewal: book through MyClinicOnline once it is connected, or upload a current copy.' : 'Renewal: upload a current copy.')
+          : 'Next step: upload the evidence, or set it not applicable with a reason.';
+        return '<div class="gi"><b>' + esc(i.name) + '</b> <span class="mono">' + esc(i.code || '') + '</span> <span class="pill ' + esc(i.status) + '">' + esc(ITEM_STATUS[i.status]) + '</span><br>'
+          + (i.duty ? esc(i.duty) + '<br>' : '')
+          + '<span class="muted">' + basisHtml(i.citable, i.awaiting) + '</span><br>'
+          + '<span class="muted">' + [i.responsible ? 'Responsible: ' + esc(i.responsible) : '', i.due ? 'Due: ' + esc(dmy(i.due)) : ''].filter(Boolean).join(' <span aria-hidden="true">&middot;</span> ') + '</span>'
+          + '<br>' + esc(path) + '</div>';
+      }).join('');
+  });
+  if (!total) html += '<p class="okbox" style="margin-top:12px">No gaps: every item that applies is evidenced. Sign off is still needed before the File is released.</p>';
+  $('panel-gaps').innerHTML = html;
+  const pb = $('gap-print'); if (pb) pb.addEventListener('click', () => { selectTab('tab-gaps'); window.print(); });
+}
+
+/* ============================================================ tabs */
+const TABS = ['tab-sections', 'tab-gaps', 'tab-uploads'];
+function selectTab(id) {
+  TABS.forEach((t) => {
+    const b = $(t), on = t === id;
+    b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+    $(b.getAttribute('aria-controls')).hidden = !on;
+  });
+  $('sec-cards').hidden = id !== 'tab-sections';
+}
+function wireTabs() {
+  TABS.forEach((t, i) => {
+    const b = $(t);
+    b.addEventListener('click', () => selectTab(t));
+    b.addEventListener('keydown', (ev) => {
+      let n = null;
+      if (ev.key === 'ArrowRight') n = TABS[(i + 1) % TABS.length];
+      if (ev.key === 'ArrowLeft') n = TABS[(i + TABS.length - 1) % TABS.length];
+      if (ev.key === 'Home') n = TABS[0];
+      if (ev.key === 'End') n = TABS[TABS.length - 1];
+      if (n) { ev.preventDefault(); selectTab(n); $(n).focus(); }
+    });
+  });
+  $('f-refresh').addEventListener('click', async () => {
+    if (DEMO) { announce('The demonstration File is up to date.'); return; }
+    await loadDetail(true); announce('Your File has been refreshed.');
+  });
+  $('q-refresh').addEventListener('click', async () => {
+    if (DEMO) { announce('Demonstration statuses are simulated.'); return; }
+    try {
+      const ups = await api('/api/hsf-upload?file_id=' + encodeURIComponent(S.fileId));
+      if (Array.isArray(ups)) S.serverUploads = ups;
+      renderQueue(); announce('Upload statuses refreshed.');
+    } catch (e) { announce(friendly(e, 'The statuses could not be refreshed just now.')); }
+  });
+  $('f-switch').addEventListener('change', async () => {
+    S.fileId = $('f-switch').value; S.serverUploads = [];
+    try { await loadDetail(); } catch (_) { /* friendly state shown */ }
+  });
+}
+
+/* ============================================================ demo */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = () => resolve(); s.onerror = () => reject(new Error('The demonstration data could not be loaded.'));
+    document.head.appendChild(s);
+  });
+}
+function recomputeDemo() {
+  const count = (items) => {
+    const app = items.filter((i) => i.status !== 'not_applicable');
+    const ok = app.filter((i) => i.status === 'uploaded' || i.status === 'linked_mco');
+    return app.length ? Math.round(ok.length / app.length * 1000) / 10 : null;
+  };
+  const all = [];
+  S.detail.sections.forEach((s) => { s.pct = count(s.items); all.push(...s.items); });
+  const counts = {};
+  all.forEach((i) => { counts[i.status] = (counts[i.status] || 0) + 1; });
+  S.detail.overall = { pct: count(all), counts };
+}
+async function startDemo() {
+  $('demo-banner').hidden = false;
+  document.title = 'Demonstration File | Health and Safety File builder | Care Net Consultants';
+  await withTimeout(loadScript('/hsf/samples/construction.js'), 15000, 'timeout');
+  const s = window.__HSF_SAMPLE;
+  if (!s || !Array.isArray(s.items)) throw new Error('The demonstration data could not be read.');
+  S.fileId = 'demo';
+  S.detail = {
+    file: { id: 'demo', reference: s.reference, industry: s.industry, company: s.company, status: 'draft', revision: s.revision, regime: s.regime, scope: s.scope + ' (' + s.sites + ' site, ' + s.headcount + ' people in scope)' },
+    sections: (s.sections || []).map((sec) => ({
+      code: sec.code, name: sec.name, pct: null,
+      items: s.items.filter((i) => i.section === sec.code).map((i, idx) => ({
+        item_id: 'demo-' + i.code + '-' + idx, code: i.code, name: i.name, duty: '', evidence: i.evidence, review: i.review,
+        status: i.status, reason: i.reason, due: /^\d{2}\/\d{2}\/\d{4}$/.test(i.to || '') && (i.status === 'outstanding' || i.status === 'expired') ? i.to : '',
+        responsible: i.responsible,
+        /* A sample File cites nothing: every basis shows as awaiting verification. */
+        citable: [], awaiting: i.basis ? [i.basis] : [],
+        uploads: i.source === 'Client upload' ? [{ original_name: i.code + ' evidence (fictitious).pdf', status: 'held', department_code: (SECTIONS.find((x) => x[0] === sec.code) || [])[3] }] : []
+      }))
+    })),
+    overall: {}
+  };
+  recomputeDemo();
+  S.consent = { client_account_id: 'demo', company_name: s.company, wording_version: WORDING_VERSION, document_storage: false, mco_transfer: false, authority_to_share: false, complete: false };
+  renderConsentState();
+  const cm = $('st-consent').querySelector('.muted');
+  if (cm) cm.insertAdjacentHTML('beforebegin', '<p class="note">Demonstration: ticking all three and continuing unlocks the drop zones below. Nothing is recorded or sent.</p>');
+  renderFile();
+  document.querySelectorAll('[data-mco-pending]').forEach((p) => { p.hidden = false; });
+  show('st-consent', 'st-file');
+}
+
+/* ============================================================ live start */
+async function startLive() {
+  show('st-loading');
+  let session = null;
+  try {
+    await withTimeout(auth.init(), 15000, 'timeout');
+    session = await withTimeout(auth.session(), 10000, 'timeout');
+  } catch (e) {
+    showError('Sign in could not be reached just now. Please try again in a few minutes, or look around the demonstration File while you wait.');
+    return;
+  }
+  if (!session) { show('st-signin'); return; }
+  S.user = session.user || null;
+  document.querySelectorAll('[data-mco-pending]').forEach((p) => { p.hidden = !(CFG.pending ? CFG.pending.mcoPortalUrl : true); });
+  try {
+    S.consent = await api('/api/hsf-consent');
+  } catch (e) {
+    if (e && e.status === 401) { show('st-signin'); return; }
+    showError(friendly(e, 'The File builder could not reach Care Net’s servers just now. Please try again in a few minutes.'));
+    return;
+  }
+  if (!S.consent || !S.consent.client_account_id) {
+    $('na-email').textContent = (S.user && S.user.email) || 'your email';
+    show('st-noaccount');
+    return;
+  }
+  renderConsentState();
+  await loadFiles();
+}
+
+/* ============================================================ boot */
+function boot() {
+  renderSectionsOverview();
+  wireSignin(); wireSignout(); wireConsent(); wireSetup(); wireTabs();
+  $('retry').addEventListener('click', () => { (DEMO ? startDemo() : startLive()).catch(() => showError()); });
+  loadLibrary().catch(() => {});
+  const run = DEMO ? startDemo() : startLive();
+  run.catch((e) => showError(DEMO ? 'The demonstration File could not be loaded just now. Please try again shortly.' : friendly(e, 'The File builder could not start just now. Please try again in a few minutes.')));
+  if (!DEMO) {
+    try {
+      auth.onChange((event) => { if (event === 'SIGNED_IN' && !$('st-signin').hidden) startLive().catch(() => showError()); });
+    } catch (_) { /* provider pending: the start routine already shows a friendly state */ }
+  }
+}
+try { boot(); } catch (e) { try { showError('The File builder could not start just now. Please try again in a few minutes.'); } catch (_) { /* nothing more to do */ } }
+</script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<script src="/js/cnc-design-assets.js" defer></script>
+</body>
+</html>

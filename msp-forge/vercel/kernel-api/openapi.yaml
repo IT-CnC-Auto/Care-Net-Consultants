@@ -1,0 +1,592 @@
+# CNC HSF FORGE | HSF-KRN-API v1.0.0 | OpenAPI description of the Cognitive Kernel read API
+# Version 1.0 | 23/09/2026 | hsf/BUILD-CONTRACT.md section 3 (migration 050) and section 4 (vercel/api/kernel.js)
+#
+# Describes GET /api/kernel exactly as vercel/api/kernel.js implements it. The
+# payload fields under "data" follow the kernel_api_* functions of migration
+# 050_kernel_api.sql. Migration 050 was not yet in the repository when this file
+# was written: where 050 as merged names a field differently, 050 wins and this
+# file is corrected to match. Every payload object allows additional fields for
+# that reason; the envelope fields (kernel_release, as_at, notice) are fixed by
+# the contract and are required.
+#
+# No key, host secret or model name appears in this file.
+
+openapi: 3.1.0
+
+info:
+  title: Care Net Cognitive Kernel read API
+  version: 1.0.0
+  summary: Read only framework reference data from the Care Net Cognitive Kernel for approved server side clients.
+  description: |
+    The Care Net Cognitive Kernel holds the South African occupational health and
+    safety framework that Care Net Consultants (Pty) Ltd builds Medical Surveillance
+    Plans and Health and Safety Files from: industries, subindustries, job roles,
+    hazards, medical surveillance protocols, Health and Safety File elements and the
+    legal instruments behind them.
+
+    This API returns framework reference data only. It never returns client,
+    engagement, intake, upload, consent, person, audit or key data, and it never
+    returns an instrument that is pending, excluded, superseded or held from
+    citation. Only instruments that have passed the three verification checks
+    (gate a primary text, gate b independent corroboration, gate c currency on the
+    day) and are in force appear, read from the view kernel_citable_instrument.
+
+    Every successful response carries kernel_release, as_at and the notice below,
+    and every answer built from this API must show that notice to its reader:
+
+    "Framework reference data from the Care Net Cognitive Kernel. Not legal advice
+    and not a clinical opinion. Only instruments that have passed three
+    verification checks and are in force are included."
+
+    Keys are issued by a forge_admin through msp_api_client_issue, shown once, and
+    stored by Care Net only as a SHA 256 hash. A key is for server to server use:
+    never place it in a browser page, a chat message or source code. Each key has
+    an hourly call limit (msp_api_client.hourly_limit, 600 by default); calls
+    above it are refused with 429 until the rolling hour clears.
+  contact:
+    name: Care Net Consultants (Pty) Ltd
+    url: https://www.carenetconsultants.co.za
+
+servers:
+  - url: /
+    description: >
+      Relative to the host that serves this document. The production host for the
+      Forge API is pending: the Vercel project today, MyClinicOnline hosting
+      through server/serve.js later (HSF-3). Set it in the client as
+      CNC_KERNEL_API_BASE.
+
+security:
+  - kernelKey: []
+
+tags:
+  - name: kernel
+    description: Cognitive Kernel reference data
+
+paths:
+  /api/kernel:
+    get:
+      tags: [kernel]
+      operationId: getKernel
+      summary: Read one kernel resource
+      description: |
+        Choose the resource with r. The database checks the key (active, not
+        revoked, scope kernel.read, under the hourly limit) and logs the call
+        (client, resource, status and time only: no request text, no IP address)
+        before any data is read.
+
+        | r | Other parameters | data holds |
+        | --- | --- | --- |
+        | industries | none | every industry in the kernel |
+        | industry | code (required) | one industry with its subindustries, roles, hazards, protocols and citable instruments |
+        | instruments | industry (optional) | citable instruments, all or for one industry |
+        | protocols | industry (optional) | medical surveillance protocols, with bases from citable instruments only |
+        | elements | industry (optional) | Health and Safety File elements, with bases from citable instruments only |
+        | search | q (required) | up to 50 matches across instrument, protocol, role and element names |
+      parameters:
+        - $ref: '#/components/parameters/Resource'
+        - $ref: '#/components/parameters/Code'
+        - $ref: '#/components/parameters/Industry'
+        - $ref: '#/components/parameters/Query'
+      responses:
+        '200':
+          description: The resource. The shape of data depends on r.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/IndustriesResponse'
+                  - $ref: '#/components/schemas/IndustryResponse'
+                  - $ref: '#/components/schemas/InstrumentsResponse'
+                  - $ref: '#/components/schemas/ProtocolsResponse'
+                  - $ref: '#/components/schemas/ElementsResponse'
+                  - $ref: '#/components/schemas/SearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorised'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+    options:
+      tags: [kernel]
+      operationId: preflightKernel
+      summary: CORS preflight
+      description: >
+        Answers 204 with Access-Control-Allow-Origin *, Allow-Methods GET and
+        OPTIONS and Allow-Headers Authorization. No key is needed and the
+        database is not called. CORS is open because keys are used server to
+        server with no cookies; it is not an invitation to call the API from a
+        browser page.
+      security: []
+      responses:
+        '204':
+          description: Preflight accepted.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+                const: GET, OPTIONS
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+                const: Authorization
+
+components:
+  securitySchemes:
+    kernelKey:
+      type: http
+      scheme: bearer
+      bearerFormat: cnck_ followed by 64 lowercase hexadecimal characters
+      description: >
+        Authorization: Bearer cnck_<64 hex>. Issued once by msp_api_client_issue;
+        Care Net keeps only its SHA 256 hash. The key must carry the scope
+        kernel.read. A missing or malformed key is refused with 401 before the
+        database is called.
+
+  parameters:
+    Resource:
+      name: r
+      in: query
+      required: true
+      description: The resource to read. Lower case, sent once.
+      schema:
+        type: string
+        enum: [industries, industry, instruments, protocols, elements, search]
+    Code:
+      name: code
+      in: query
+      required: false
+      description: >
+        Industry code, required when r is industry. Case is ignored (the API
+        upper cases it). Read valid codes from r=industries; codes are kernel
+        data, not a fixed list.
+      schema:
+        $ref: '#/components/schemas/IndustryCode'
+    Industry:
+      name: industry
+      in: query
+      required: false
+      description: Optional industry code filter for r=instruments, protocols or elements.
+      schema:
+        $ref: '#/components/schemas/IndustryCode'
+    Query:
+      name: q
+      in: query
+      required: false
+      description: >
+        Search text, required when r is search. 2 to 100 characters after
+        spaces are collapsed: letters, digits, spaces and . , ' ( ) & / and the
+        hyphen found in instrument names. The LIKE wildcards % and _ and the
+        backslash are refused.
+      schema:
+        type: string
+        minLength: 2
+        maxLength: 100
+        pattern: "^[^%_\\\\]+$"
+
+  headers:
+    NoStore:
+      description: Responses are never cached.
+      schema:
+        type: string
+        const: no-store
+    AllowOrigin:
+      description: Open CORS; keys are server to server and no cookies are used.
+      schema:
+        type: string
+        const: '*'
+
+  responses:
+    BadRequest:
+      description: Unknown or missing resource, missing required parameter, or a parameter that fails its pattern. Checked before the database.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Unknown resource. Use r=industries, industry, instruments, protocols, elements or search.
+            code: bad_resource
+    Unauthorised:
+      description: Missing, malformed, unknown, inactive or revoked key.
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+            const: Bearer realm="cnc-kernel"
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: A valid kernel API key is required.
+            code: invalid_key
+    Forbidden:
+      description: The key is valid but does not carry the kernel.read scope.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: This key does not carry the kernel.read scope.
+            code: forbidden
+    NotFound:
+      description: No industry has that code, or nothing was found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: No industry has that code.
+            code: not_found
+    MethodNotAllowed:
+      description: Only GET and OPTIONS are accepted.
+      headers:
+        Allow:
+          schema:
+            type: string
+            const: GET, OPTIONS
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Method not allowed.
+            code: method_not_allowed
+    RateLimited:
+      description: >
+        The key has reached its hourly call limit (msp_api_client.hourly_limit,
+        600 by default). No Retry-After header is sent; wait for the rolling
+        hour to clear.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: The hourly call limit for this key has been reached. Please try again later.
+            code: rate_limited
+    ServerError:
+      description: The read failed. The body is always plain; no stack trace or database text is sent.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: The request could not be processed.
+            code: server_error
+    Unavailable:
+      description: The server is not configured, or the key store could not be reached.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: The kernel API is not available at the moment.
+            code: unavailable
+
+  schemas:
+    IndustryCode:
+      type: string
+      maxLength: 64
+      pattern: "^[A-Za-z][A-Za-z0-9_]{0,31}(-[A-Za-z0-9_]{1,31}){0,4}$"
+      examples: [CONSTR, MINING]
+
+    Notice:
+      type: string
+      const: Framework reference data from the Care Net Cognitive Kernel. Not legal advice and not a clinical opinion. Only instruments that have passed three verification checks and are in force are included.
+
+    Envelope:
+      type: object
+      description: Carried by every successful response.
+      required: [kernel_release, as_at, notice]
+      properties:
+        kernel_release:
+          type: [string, 'null']
+          description: The latest msp_kernel_version.semver, for example 1.0.0.
+          examples: ['1.0.0']
+        as_at:
+          type: string
+          format: date
+          description: The database current_date on the day of the call (ISO date; show it to readers as DD/MM/YYYY).
+        notice:
+          $ref: '#/components/schemas/Notice'
+
+    IndustryRef:
+      type: object
+      required: [code, name]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+
+    Industry:
+      type: object
+      required: [code, name]
+      additionalProperties: true
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        regime:
+          type: string
+          enum: [OHSA, MHSA, DUAL]
+          description: msp_industry.regulatory_regime. MINING routes to the MHSA; every other industry to the OHS Act.
+
+    IndustryDetail:
+      allOf:
+        - $ref: '#/components/schemas/Industry'
+        - type: object
+          additionalProperties: true
+          properties:
+            subindustries:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+                properties:
+                  code:
+                    type: string
+                  name:
+                    type: string
+                  roles:
+                    type: array
+                    items:
+                      type: string
+            roles:
+              type: array
+              description: Job role titles.
+              items:
+                type: string
+            hazards:
+              type: array
+              description: Hazard names.
+              items:
+                type: string
+            protocols:
+              type: array
+              items:
+                $ref: '#/components/schemas/Protocol'
+            instruments:
+              type: array
+              description: Citable instruments for this industry.
+              items:
+                $ref: '#/components/schemas/Instrument'
+
+    Instrument:
+      type: object
+      description: One row of kernel_citable_instrument (verified, in force, not superseded, not held).
+      required: [short_name, full_citation, instrument_type]
+      additionalProperties: true
+      properties:
+        short_name:
+          type: string
+          description: The name to cite. Cite exactly this text.
+        full_citation:
+          type: string
+        instrument_type:
+          type: string
+          enum: [act, regulation, code, hpcsa, sans, guideline, circular]
+        gazette_reference:
+          type: [string, 'null']
+        effective_date:
+          type: [string, 'null']
+          format: date
+        verified_on:
+          type: [string, 'null']
+          format: date
+        review_due:
+          type: [string, 'null']
+          format: date
+        scope:
+          type: string
+          enum: [medical, safety, both]
+        industries:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndustryRef'
+
+    Protocol:
+      type: object
+      description: >
+        A medical surveillance protocol. Its basis lists only citable instruments;
+        a protocol whose basis is not yet citable shows an empty basis. Exposure
+        values and clinical reference ranges are not part of this API.
+      required: [name]
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        test_type:
+          type: string
+          enum: [clinical, biological_monitoring, biological_effect]
+        hazard:
+          type: [string, 'null']
+        periodic_interval_months:
+          type: [integer, 'null']
+          minimum: 1
+        basis:
+          type: array
+          description: Short names of citable instruments only.
+          items:
+            type: string
+
+    Element:
+      type: object
+      description: A Health and Safety File element, as the view hsf_public_element_library carries it.
+      required: [code, name]
+      additionalProperties: true
+      properties:
+        section_code:
+          type: string
+          pattern: "^[A-O]$"
+        section_name:
+          type: string
+        code:
+          type: string
+          examples: [HSF-A-01]
+        name:
+          type: string
+        duty:
+          type: string
+          description: The duty in plain words.
+        universal:
+          type: boolean
+        citable:
+          type: array
+          description: Short names of citable instruments only.
+          items:
+            type: string
+        awaiting:
+          type: array
+          description: Candidate instruments named for this element that are not yet citable (awaiting verification). Never cite these as a basis.
+          items:
+            type: string
+
+    SearchResult:
+      type: object
+      required: [kind, name]
+      additionalProperties: true
+      properties:
+        kind:
+          type: string
+          enum: [instrument, protocol, role, element]
+        name:
+          type: string
+        code:
+          type: [string, 'null']
+          description: Element code or industry code where the kind has one.
+
+    IndustriesResponse:
+      title: r=industries
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Industry'
+
+    IndustryResponse:
+      title: r=industry
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: '#/components/schemas/IndustryDetail'
+
+    InstrumentsResponse:
+      title: r=instruments
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Instrument'
+
+    ProtocolsResponse:
+      title: r=protocols
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Protocol'
+
+    ElementsResponse:
+      title: r=elements
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Element'
+
+    SearchResponse:
+      title: r=search
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: array
+              maxItems: 50
+              items:
+                $ref: '#/components/schemas/SearchResult'
+
+    Error:
+      type: object
+      required: [error, code]
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+          description: A plain message for the reader. Never a stack trace, database text or secret.
+        code:
+          type: string
+          enum:
+            - bad_request
+            - bad_resource
+            - invalid_key
+            - forbidden
+            - not_found
+            - method_not_allowed
+            - rate_limited
+            - server_error
+            - unavailable
+            - refused

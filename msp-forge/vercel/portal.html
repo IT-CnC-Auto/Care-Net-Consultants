@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Care Net portal | Care Net Consultants</title>
+<meta name="description" content="One sign in for your company account, Medical Surveillance Plans, Health and Safety Files and quotations, and, once MyClinicOnline is connected, your people's certificates of fitness, training records and bookings.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Your Care Net portal | Care Net Consultants">
+<meta property="og:description" content="One sign in for your company records and your people's medicals and training.">
+<meta property="og:image" data-asset="portal-og" content="https://img.carenetcdn.com/portal/portal-og-1200x630.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<!--
+=====================================================================
+ portal.html :: Version 1.0 :: 23 September 2026
+ The Care Net login portal for CNC HSF FORGE (hsf/BUILD-CONTRACT.md
+ section 6, "portal"). It joins the two spines behind one sign in:
+
+   COMMERCIAL SPINE (Care Net)
+     1. Company account and approval state   GET /api/company-lookup
+        (the existing endpoint index.html uses; see the note below)
+     2. Medical Surveillance Plans            the assessment link from
+        company-lookup; Plan status in the portal is PENDING (no read
+        endpoint exists), so the page links to the existing journey at
+        ./ and account.html
+     3. Health and Safety Files               GET /api/hsf-file and
+        GET /api/hsf-file?file_id= (newest File only, for the section
+        breakdown); links to hsf-builder.html
+     4. Quotations                            PENDING (no read endpoint);
+        links to shop.html
+
+   MEDICAL SPINE (MyClinicOnline)
+     Certificates of fitness, training records and bookings. The MCO
+     interface contract is pending (HSF-3), so each panel shows
+     "Arrives when MyClinicOnline is connected" and what will appear.
+     Nothing is invented. ?demo=1 renders a clearly labelled
+     demonstration from hsf/samples/construction.js (matrix people);
+     no API is called in the demonstration.
+
+   STAFF: app_metadata.msp_roles holding forge_admin, forge_omp or
+   forge_safety_reviewer shows links to review.html and settings.html.
+   The links are a convenience; each staff page checks the role again.
+
+ SIGN IN: one sign in through js/cnc-auth.js (Supabase email one time
+ link today; MCO single sign on is a stub until HSF-3 closes).
+
+ PORTABILITY: built to be served from inside MyClinicOnline. Every
+ internal address on this page is relative (no leading slash), and
+ every setting (Supabase, API base, WhatsApp, privacy policy, MCO
+ portal address) is read from window.CNC_CONFIG (js/cnc-config.js).
+
+ NOTE ON company-lookup: that endpoint also runs
+ msp_client_start_assessment, which self approves a non declined
+ account and reuses or mints the single use assessment token (the MD
+ ruling of 31/08/2026). The portal therefore behaves exactly like the
+ signed in landing page. A read only account endpoint would be cleaner;
+ recorded as an open item for the build.
+
+ HARD RULES: SA British English, ZAR as R4 250,00, no dashes in copy,
+ sales executives, numbering from 1, never a compliance stamp, Care Net
+ screens fitness for work and does not diagnose. No secret in this file.
+=====================================================================
+-->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="fonts/cnc-fonts.css">
+<link rel="stylesheet" href="css/cnc-header.css?v=20260922a">
+<link rel="stylesheet" href="css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="css/cnc-pattern.css?v=20260915a">
+<link rel="stylesheet" href="css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="css/cnc-secnav.css?v=20260915b">
+<style>
+  :root { --red: #ED1B24; --red-ink: #C5141B; --charcoal: #1A1A1A; --ink-2: #4d4d4d; --line: #e5e2e2; --soft: #f7f5f5; --green: #2A7D4E; --green-ink: #1B6E45; --amber-bg: #fdf3dc; --amber-line: #ecd49a; --amber-ink: #6b4600; --blue-bg: #eef3fb; --blue-ink: #2B4C8C; --blue-line: #4a6fb5; --grey-bg: #f0efef; --teal-bg: #e9f4f7; --teal-ink: #1d5d6f; --teal-line: #9cc9d6; }
+  * { box-sizing: border-box; }
+  main > *, .card, .grid > *, .grid3 > * { min-width: 0; }
+  [hidden] { display: none !important; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
+  main { max-width: 1000px; margin: 0 auto; padding: 26px 16px 70px; }
+  section { scroll-margin-top: 130px; margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+  @media (max-width: 860px) { .grid3 { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .grid3.stack { grid-template-columns: 1fr; }
+  .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  @media (max-width: 520px) { .card { padding: 18px 16px; } }
+  .card + .card, .grid + .card, .card + .grid, .grid + .grid { margin-top: 18px; }
+  .grid .card + .card, .grid3 .card + .card { margin-top: 0; }
+  .card h2 { color: var(--red-ink); font-size: 17px; margin: 0 0 10px; }
+  .card h3.ct { color: var(--red-ink); font-size: 17px; margin: 0; overflow-wrap: break-word; }
+  .card > h3.ct { margin-bottom: 10px; }
+  .card h4 { font-size: 14.5px; margin: 16px 0 6px; }
+  .card p, .card li { font-size: 14px; line-height: 1.55; }
+  .card p { margin: 0 0 10px; }
+  .muted { font-size: 13px; color: var(--ink-2); }
+  .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red-ink); margin-bottom: 6px; }
+  .sechead { margin: 6px 0 14px; }
+  .sechead h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(26px, 3.6vw, 36px); line-height: 1; margin: 0; color: var(--charcoal); text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
+  .sechead h2 .r { color: var(--red); }
+  .sechead p { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 10px 0 0; max-width: 72ch; }
+  .spinehead { display: flex; gap: 14px; align-items: center; }
+  .spinehead > div { min-width: 0; }
+  .btn { display: block; text-align: center; text-decoration: none; background: var(--red-ink); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; font-size: 14px; font-family: inherit; }
+  .btn.inl { display: inline-block; margin-top: 0; }
+  .btn.sm { padding: 8px 14px; font-size: 13px; }
+  .btn.ghost { background: #fff; color: var(--red-ink); border: 2px solid var(--red); }
+  .btn.plain { background: #fff; color: var(--charcoal); border: 1px solid #bdbdbd; }
+  .btn:hover { background: #B7141A; color: #fff; }
+  .btn.plain:hover { background: var(--soft); color: var(--charcoal); }
+  .btn[disabled] { opacity: .55; cursor: not-allowed; }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, .tw:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  a.inline { color: var(--red-ink); font-weight: bold; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .row + .row, p + .row, .row + p { margin-top: 12px; }
+  .pending { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .note { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .okbox { background: #e8f7ec; border: 1px solid var(--green); color: var(--green-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; }
+  .errbox { background: #fff1f1; border: 1px solid #f0b7b9; color: #8a1016; border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
+  .card p.pending, .card p.note, .card p.errbox, .card p.okbox { font-size: 13.5px; }
+  .vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  .mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; }
+  footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
+  :target { scroll-margin-top: 130px; }
+
+  /* Tiles, icons and pills */
+  .chead { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .ico { width: 40px; height: 40px; flex: none; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .02em; color: var(--red-ink); background: #fff5f5; border: 1px solid #f3caca; }
+  .ico.lg { width: 48px; height: 48px; font-size: 15px; border-radius: 10px; }
+  .ico.med { color: var(--teal-ink); background: var(--teal-bg); border-color: var(--teal-line); }
+  .pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 30px; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border: 1px solid transparent; line-height: 1.4; }
+  .pill.ok { background: #e8f7ec; color: var(--green-ink); border-color: #9fd3b3; }
+  .pill.wait { background: var(--amber-bg); color: var(--amber-ink); border-color: var(--amber-line); }
+  .pill.no { background: #fff1f1; color: #8a1016; border-color: #f0b7b9; }
+  .pill.grey { background: var(--grey-bg); color: var(--ink-2); border-color: #dcd8d8; }
+  .pill.blue { background: var(--blue-bg); color: var(--blue-ink); border-color: var(--blue-line); }
+  .pill.mco { background: var(--teal-bg); color: var(--teal-ink); border-color: var(--teal-line); }
+  .ill { display: flex; align-items: center; justify-content: center; border-radius: 8px; background: repeating-linear-gradient(45deg, #faf8f8 0 12px, #f3f0f0 12px 24px); border: 1px dashed #d8d3d3; color: var(--ink-2); font-size: 12px; text-align: center; padding: 10px; }
+  .ill.side { aspect-ratio: 3 / 2; max-width: 240px; float: right; margin: 0 0 10px 16px; width: 40%; }
+  @media (max-width: 620px) { .ill.side { float: none; width: 100%; max-width: 100%; margin: 0 0 12px; } }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid #e3dede; border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite; vertical-align: -3px; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+
+  /* Sign in and account bar */
+  label.l { display: block; font-size: 13px; font-weight: bold; margin: 14px 0 6px; }
+  .help { font-size: 12.5px; color: var(--ink-2); margin: 4px 0 0; line-height: 1.45; }
+  input[type=email] { width: 100%; max-width: 100%; padding: 10px 11px; border: 1px solid #bdbdbd; border-radius: 5px; font-family: inherit; font-size: 14px; background: #fff; color: var(--charcoal); }
+  input:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+  .acctbar { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; justify-content: space-between; border-top: 5px solid var(--red); }
+  .acctbar p { margin: 0; overflow-wrap: anywhere; min-width: 0; }
+  .acctbar .who b { overflow-wrap: anywhere; }
+
+  /* Key value lists */
+  dl.kv { margin: 0 0 12px; display: grid; gap: 8px; }
+  dl.kv > div { display: grid; grid-template-columns: 11em 1fr; gap: 4px 12px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 8px; }
+  dl.kv > div:first-child { border-top: none; padding-top: 0; }
+  @media (max-width: 520px) { dl.kv > div { grid-template-columns: 1fr; } }
+  dl.kv dt { font-size: 12.5px; color: var(--ink-2); font-weight: 700; }
+  dl.kv dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+
+  /* Files */
+  .files { list-style: none; margin: 0; padding: 0; }
+  .frow { border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-top: 12px; background: #fcfbfb; }
+  .frow:first-child { margin-top: 0; }
+  .ftop { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; }
+  .ftop .ref { font-size: 13.5px; overflow-wrap: anywhere; min-width: 0; }
+  .fmeta { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.5; }
+  .fpct { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 10px; font-size: 12.5px; color: var(--ink-2); }
+  .fpct b { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 22px; color: var(--charcoal); font-variant-numeric: tabular-nums; }
+  .fpct b.none { font-family: inherit; font-weight: 700; font-size: 13.5px; color: var(--ink-2); }
+  .bar { height: 10px; background: var(--grey-bg); border-radius: 6px; overflow: hidden; margin: 6px 0 8px; }
+  .bar i { display: block; height: 100%; background: var(--green); width: 0; }
+  .fsign { font-size: 13px; margin: 6px 0 0; line-height: 1.5; }
+  .card .fsign { font-size: 13px; }
+  .counts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  details.bysec { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
+  details.bysec > summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--red-ink); padding: 6px 0; }
+  .sbars { list-style: none; margin: 8px 0 0; padding: 0; }
+  .sbars li { display: grid; grid-template-columns: 26px minmax(0, 1fr) 140px 58px; gap: 6px 10px; align-items: center; padding: 6px 0; border-top: 1px solid #f0eded; font-size: 13px; }
+  .sbars li:first-child { border-top: none; }
+  .sbars .sl { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; color: var(--red-ink); }
+  .sbars .sn { overflow-wrap: break-word; }
+  .sbars .sb { height: 8px; background: var(--grey-bg); border-radius: 6px; overflow: hidden; }
+  .sbars .sb i { display: block; height: 100%; background: var(--green); }
+  .sbars .sb i.mid { background: #d9a32a; }
+  .sbars .sb i.low { background: var(--red); }
+  .sbars .sp { text-align: right; font-variant-numeric: tabular-nums; }
+  @media (max-width: 520px) { .sbars li { grid-template-columns: 26px minmax(0, 1fr) 58px; } .sbars .sb { grid-column: 2 / 3; grid-row: 2; } .sbars .sp { grid-row: 1; grid-column: 3; } }
+  .empty { display: grid; grid-template-columns: 200px 1fr; gap: 18px; align-items: center; }
+  .empty .ill { aspect-ratio: 16 / 10; }
+  @media (max-width: 620px) { .empty { grid-template-columns: 1fr; } .empty .ill { max-width: 280px; } }
+
+  /* What will appear lists */
+  .tick { list-style: none; margin: 8px 0 0; padding: 0; }
+  .tick li { position: relative; padding-left: 26px; margin-bottom: 8px; font-size: 13.5px; }
+  .tick li::before { content: ""; position: absolute; left: 0; top: 3px; width: 14px; height: 14px; border: 2px solid var(--teal-ink); border-radius: 3px; background: #fff; }
+  .tick li::after { content: ""; position: absolute; left: 5px; top: 5px; width: 5px; height: 9px; border: solid var(--teal-ink); border-width: 0 2px 2px 0; transform: rotate(42deg); }
+  .mcostate { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); padding: 20px 22px; border-left: 6px solid var(--amber-line); margin-bottom: 18px; }
+  .mcostate .ill { aspect-ratio: 3 / 2; }
+  .mcostate h3 { font-size: 17px; margin: 8px 0 8px; overflow-wrap: break-word; }
+  .mcostate p { font-size: 14px; line-height: 1.55; margin: 0 0 10px; }
+  @media (max-width: 700px) { .mcostate { grid-template-columns: 1fr; } .mcostate .ill { max-width: 280px; } }
+  .mcologo { display: inline-flex; align-items: center; font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .04em; color: var(--teal-ink); border: 1px dashed var(--teal-line); border-radius: 6px; padding: 3px 8px; background: var(--teal-bg); }
+
+  /* Demonstration matrix */
+  .tw { position: relative; overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; -webkit-overflow-scrolling: touch; }
+  table.mx { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 560px; }
+  table.mx caption { text-align: left; font-size: 12.5px; color: var(--ink-2); padding: 10px 12px; caption-side: top; }
+  .mx th, .mx td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: top; text-align: left; }
+  .mx thead th { font-family: 'Montserrat', Arial, sans-serif; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); background: #faf9f9; border-top: none; }
+  .mx tbody th { font-weight: 700; background: #fff; position: sticky; left: 0; z-index: 1; min-width: 150px; box-shadow: 1px 0 0 var(--line); }
+  .mx tbody th small { display: block; font-weight: 400; color: var(--ink-2); font-size: 11.5px; margin-top: 2px; }
+  .cell { display: inline-flex; flex-direction: column; gap: 1px; font-weight: 700; }
+  .cell small { font-weight: 400; color: var(--ink-2); font-size: 11.5px; white-space: nowrap; }
+  .cell.ok { color: var(--green-ink); }
+  .cell.wait { color: var(--amber-ink); }
+  .cell.no { color: #8a1016; }
+  .cell abbr.src { text-decoration: none; font-size: 10px; font-weight: 800; letter-spacing: .05em; color: var(--teal-ink); background: var(--teal-bg); border: 1px solid var(--teal-line); border-radius: 4px; padding: 0 4px; align-self: flex-start; margin-top: 2px; }
+  .na { color: #9a9a9a; }
+  .blist { margin: 8px 0 0; padding-left: 22px; }
+  .blist li { margin-bottom: 8px; font-size: 13.5px; overflow-wrap: break-word; }
+  .demo-banner { background: #1A1A1A; color: #fff; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; font-size: 14px; line-height: 1.5; border-left: 6px solid var(--red); }
+  .demo-banner b { color: #fff; font-family: 'Montserrat', Arial, sans-serif; letter-spacing: .05em; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 4px; }
+  .demo-banner a { color: #fff; font-weight: bold; }
+  .demo-tag { display: inline-block; font-family: 'Montserrat', Arial, sans-serif; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--charcoal); border-radius: 4px; padding: 2px 8px; }
+
+  /* Staff tiles */
+  a.tile { display: block; text-decoration: none; color: var(--charcoal); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fcfbfb; }
+  a.tile:hover { border-color: var(--red); background: #fff; }
+  a.tile b { display: block; color: var(--red-ink); font-size: 15px; margin-bottom: 4px; }
+  a.tile span { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+
+  /* One login diagram (drawn in HTML until the designed SVG arrives) */
+  .diagram { border: 1px solid var(--line); border-radius: 10px; padding: 14px; background: #fcfbfb; margin-bottom: 14px; }
+  .dg-host { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal-ink); text-align: center; border: 1px dashed var(--teal-line); background: var(--teal-bg); border-radius: 6px; padding: 6px; }
+  .dg-login { width: max-content; max-width: 100%; margin: 12px auto; background: var(--charcoal); color: #fff; border-radius: 30px; padding: 7px 16px; font-weight: 700; font-size: 13px; position: relative; }
+  .dg-spines { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dg-spine { border-radius: 8px; padding: 10px 12px; background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--red); display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+  .dg-spine.med { border-top-color: var(--teal-ink); }
+  .dg-spine b { flex: 1 1 100%; font-size: 13px; }
+  .dg-spine span { font-size: 11.5px; background: var(--grey-bg); border-radius: 30px; padding: 2px 9px; }
+  @media (max-width: 460px) { .dg-spines { grid-template-columns: 1fr; } }
+
+  @media print { .cnc-sitehead, .cnc-hero, .pattern-strip, .cnc-secnav, .ah-stamp, #ready, #one-login, .demo-banner .inline { display: none !important; } }
+</style>
+<script src="js/cnc-config.js"></script>
+<script src="js/cnc-tracking.js"></script>
+</head>
+<body>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="./" aria-label="Care Net Consultants home">
+        <img class="logo-img" data-asset="portal-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="./">Start your journey</a></li>
+        <li><a href="pilot.html">How it works</a></li>
+        <li><a href="method.html">The Care Net Method</a></li>
+        <li><a href="shop.html">Build your Plan</a></li>
+        <li><a href="sample.html">Sample Plan</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<section class="cnc-hero">
+  <div class="hwrap">
+    <div>
+      <span class="eyebrow">Your Care Net portal</span>
+      <h1>One sign in. <span class="r">Your company and your people, together.</span></h1>
+      <p class="lede">Your company account, Medical Surveillance Plans, Health and Safety Files and quotations on one side. Your people&rsquo;s certificates of fitness, training records and bookings from MyClinicOnline on the other. One sign in opens both.</p>
+      <div class="chips">
+        <a class="chip" href="#portal" data-cta="sign_in">Sign in</a>
+        <a class="chip" href="#commercial" data-cta="portal_hero_commercial">Company and Files</a>
+        <a class="chip" href="#medical" data-cta="portal_hero_medical">Medicals and training</a>
+        <a class="chip" href="portal.html?demo=1" data-cta="portal_hero_demo">See a demonstration</a>
+      </div>
+    </div>
+    <div class="heroimg" data-asset="portal-hero">
+      <img src="https://img.carenetcdn.com/medical-surveillance/New-Site_carenet-medical-surveillance-planning-pc-mockup.webp.1920x1200px.webp" alt="A Medical Surveillance Plan open on a desktop screen" width="1920" height="1200" fetchpriority="high" decoding="async">
+    </div>
+  </div>
+</section>
+<div class="pattern-strip" role="presentation" data-asset="portal-pattern"></div>
+
+<main id="main">
+
+  <div class="demo-banner" id="demo-banner" role="note" hidden>
+    <b>Demonstration with fictitious data</b>
+    This is a demonstration portal for a fictitious construction company, built from the Care Net sample File. The company, the people, the dates and the figures are made up. Nothing is read from or sent to Care Net or MyClinicOnline. <a class="inline" href="portal.html" data-cta="portal_demo_exit">Leave the demonstration and sign in</a>.
+  </div>
+
+  <div id="live" class="vh" role="status" aria-live="polite"></div>
+
+  <!-- 1 :: SIGN IN AND ACCOUNT BAR -->
+  <section id="portal" aria-labelledby="portal-title">
+    <div class="sechead">
+      <span class="eyebrow">Your portal</span>
+      <h2 id="portal-title">Sign in once. <span class="r">See what is yours.</span></h2>
+    </div>
+
+    <div class="card" id="st-loading" role="status">
+      <p><span class="spinner" aria-hidden="true"></span>Getting your portal ready.</p>
+    </div>
+
+    <div class="card" id="st-error" hidden>
+      <h3 class="ct">Your portal cannot reach Care Net right now</h3>
+      <div class="errbox" id="st-error-msg" role="alert">Please try again in a few minutes.</div>
+      <p class="muted" style="margin-top:12px">Nothing is lost. If this carries on, a sales executive can help.</p>
+      <div class="row">
+        <button type="button" class="btn inl" id="retry" data-cta="portal_retry">Try again</button>
+        <a class="btn ghost inl" data-wa href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        <a class="btn plain inl" href="portal.html?demo=1" data-cta="portal_demo_from_error">See a demonstration</a>
+      </div>
+    </div>
+
+    <div class="card" id="st-signin" hidden>
+      <div class="ill side" data-asset="portal-signin-illustration" aria-hidden="true">Sign in illustration</div>
+      <h3 class="ct">Sign in to your portal</h3>
+      <p>Enter your work email and we will send you a one time sign in link. There is no password to remember. Use the email your company registered with Care Net, and your Plans and Files are waiting.</p>
+      <form id="signin-form" novalidate>
+        <label class="l" for="signin-email">Work email</label>
+        <input type="email" id="signin-email" name="email" autocomplete="email" inputmode="email" required aria-describedby="signin-help signin-msg">
+        <p class="help" id="signin-help">The link signs you in on this device and brings you back to this page.</p>
+        <div id="signin-msg" role="status" aria-live="polite" style="margin-top:10px"></div>
+        <button type="submit" class="btn" id="signin-btn" data-cta="portal_send_link">Send my sign in link</button>
+      </form>
+      <p class="muted" style="clear:both;margin-top:14px">New to Care Net? <a class="inline" href="./" data-cta="portal_start_journey">Start your journey</a> to register your company first. Want to look around? <a class="inline" href="portal.html?demo=1" data-cta="portal_demo_from_signin">See a demonstration</a>.</p>
+    </div>
+
+    <div class="card acctbar" id="st-account" hidden>
+      <p class="who">Signed in as <b id="acct-email">your email</b></p>
+      <div class="row">
+        <a class="btn plain sm inl" href="#commercial" data-cta="portal_jump_commercial">Company and Files</a>
+        <a class="btn plain sm inl" href="#medical" data-cta="portal_jump_medical">Medicals and training</a>
+        <button type="button" class="btn ghost sm inl" data-signout data-cta="portal_sign_out">Sign out</button>
+      </div>
+    </div>
+
+    <div class="card acctbar" id="st-demo" hidden>
+      <p class="who"><span class="demo-tag">Demonstration</span> Portal for <b id="demo-co">a fictitious company</b></p>
+      <div class="row">
+        <a class="btn ghost sm inl" href="portal.html" data-cta="portal_demo_exit">Leave the demonstration</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 :: COMMERCIAL SPINE -->
+  <section id="commercial" aria-labelledby="commercial-title">
+    <div class="sechead">
+      <div class="spinehead">
+        <span class="ico lg" data-asset="portal-spine-commercial-icon" aria-hidden="true">CO</span>
+        <div>
+          <span class="eyebrow">Commercial records</span>
+          <h2 id="commercial-title">Your company, <span class="r">Plans and Files.</span></h2>
+        </div>
+      </div>
+      <p>Your account with Care Net and whether it is approved, your Medical Surveillance Plans, your Health and Safety Files with their compliance figures and where each one is in review and sign off, and your quotations.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card" id="c-account">
+        <div class="chead"><span class="ico" data-asset="portal-account-icon" aria-hidden="true">AC</span><h3 class="ct">Company account</h3></div>
+        <div id="account-body"><p class="muted">Sign in to see your company account and whether it is approved.</p></div>
+      </div>
+      <div class="card" id="c-plans">
+        <div class="chead"><span class="ico" data-asset="portal-plans-icon" aria-hidden="true">PL</span><h3 class="ct">Medical Surveillance Plans</h3></div>
+        <div id="plans-body"><p class="muted">Sign in to see your Medical Surveillance Plan assessment and where your Plan stands.</p></div>
+        <div class="row">
+          <a class="btn ghost sm inl" href="shop.html" data-cta="build_my_plan">Build my Plan</a>
+          <a class="btn plain sm inl" href="./" data-cta="portal_plan_journey">Start your journey</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="c-files">
+      <div class="chead"><span class="ico" data-asset="portal-files-icon" aria-hidden="true">HS</span><h3 class="ct">Health and Safety Files</h3></div>
+      <div id="files-body"><p class="muted">Sign in to see your Health and Safety Files, their compliance figures and where each one is in review and sign off.</p></div>
+      <div class="empty" id="files-empty" hidden>
+        <div class="ill" data-asset="portal-files-empty-illustration" aria-hidden="true">No File yet illustration</div>
+        <div>
+          <p><b>No Health and Safety File yet.</b> Build it free: every element the law asks of your industry, who owns it, the evidence behind it and the compliance figure per section.</p>
+          <a class="btn inl" href="hsf-builder.html" data-cta="build_my_file">Build my File</a>
+        </div>
+      </div>
+      <div class="row" id="files-actions">
+        <a class="btn sm inl" href="hsf-builder.html#build" data-cta="build_my_file">Build my File</a>
+        <a class="btn plain sm inl" href="health-and-safety-file.html" data-cta="portal_about_file">About the File and its sign off</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card" id="c-quotes">
+        <div class="chead"><span class="ico" data-asset="portal-quotes-icon" aria-hidden="true">QU</span><h3 class="ct">Quotations</h3></div>
+        <div id="quotes-body">
+          <p class="pending"><b>Quotations in the portal: pending.</b> The quotations prepared for you will be listed here with their reference, what they cover and how long they are valid. Until then, a sales executive sends each quotation to you directly and confirms every figure before work starts.</p>
+        </div>
+        <div class="row">
+          <a class="btn ghost sm inl" href="shop.html#calc" data-cta="portal_quote_calc">Work out my practitioner review</a>
+          <a class="btn plain sm inl" data-wa href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        </div>
+      </div>
+      <div class="card" id="c-docs">
+        <div class="chead"><span class="ico" data-asset="portal-documents-icon" aria-hidden="true">DO</span><h3 class="ct">Your documents</h3></div>
+        <p>Drop the documents you already hold into your File, section by section and department by department. You give consent first. Each document is fingerprinted in your browser, held securely by Care Net, then transferred to MyClinicOnline, where special personal information is protected, and removed from Care Net staging.</p>
+        <a class="btn sm inl" href="hsf-builder.html#build" data-cta="build_my_file">Build my File</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 :: MEDICAL SPINE -->
+  <section id="medical" aria-labelledby="medical-title">
+    <div class="sechead">
+      <div class="spinehead">
+        <span class="ico lg med" data-asset="portal-spine-medical-icon" aria-hidden="true">MD</span>
+        <div>
+          <span class="eyebrow">Medical records</span>
+          <h2 id="medical-title">Medicals and training <span class="r">from MyClinicOnline.</span></h2>
+        </div>
+      </div>
+      <p>Certificates of fitness, training records and bookings are kept in MyClinicOnline, the secure environment for your people&rsquo;s special personal information. Your portal shows only what an employer may hold.</p>
+    </div>
+
+    <div class="mcostate" id="mco-state">
+      <div class="ill" data-asset="portal-mco-pending-illustration" aria-hidden="true">MyClinicOnline connection illustration</div>
+      <div>
+        <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+        <h3>Your people&rsquo;s records arrive when MyClinicOnline is connected</h3>
+        <p>The link between this portal and <span class="mcologo" data-asset="portal-mco-logo">MyClinicOnline</span> is waiting on the MyClinicOnline interface contract, which is pending. Until it is live, this side of the portal stays empty on purpose: nothing is guessed and nothing is made up. The three panels below show what will appear.</p>
+        <p id="mco-open" hidden><a class="btn ghost sm inl" id="mco-open-link" href="#medical" target="_blank" rel="noopener" data-cta="portal_open_mco">Open MyClinicOnline</a></p>
+        <p class="muted">Want to see it filled in? <a class="inline" href="portal.html?demo=1" data-cta="portal_demo_from_medical">See a demonstration</a> with fictitious people.</p>
+      </div>
+    </div>
+
+    <div class="note" id="demo-medical-note" hidden></div>
+
+    <div class="grid3" id="med-grid">
+      <div class="card" id="m-cert">
+        <div class="chead"><span class="ico med" data-asset="portal-certificates-icon" aria-hidden="true">CF</span><h3 class="ct">Certificates of fitness</h3></div>
+        <div id="m-cert-body">
+          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <h4>What will appear</h4>
+          <ul class="tick">
+            <li>Every person in scope, matched on MyClinicOnline&rsquo;s own person reference, never on a name</li>
+            <li>Each certificate: baseline, periodic and exit, and the construction, professional driving permit and mine certificates where they apply</li>
+            <li>Issue date and expiry, with expiries flagged before they lapse</li>
+            <li>The outcome an employer may hold: fit, fit with a restriction or not fit, with any work restriction</li>
+            <li>The practitioner who signed</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" id="m-train">
+        <div class="chead"><span class="ico med" data-asset="portal-training-icon" aria-hidden="true">TR</span><h3 class="ct">Training records</h3></div>
+        <div id="m-train-body">
+          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <h4>What will appear</h4>
+          <ul class="tick">
+            <li>Every training record MyClinicOnline holds for your people</li>
+            <li>Provider, course or unit standard, date completed and expiry</li>
+            <li>The certificate reference for each record</li>
+            <li>The training matrix for every person in scope, which also fills your Health and Safety File</li>
+            <li>Expired records with the renewal path</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" id="m-book">
+        <div class="chead"><span class="ico med" data-asset="portal-bookings-icon" aria-hidden="true">BK</span><h3 class="ct">Bookings</h3></div>
+        <div id="m-book-body">
+          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <h4>What will appear</h4>
+          <ul class="tick">
+            <li>Medicals and training booked with Care Net, with the date and the people booked</li>
+            <li>Renewals falling due, so you can book before a certificate lapses</li>
+            <li>The exact booking details follow the MyClinicOnline interface contract, which is pending</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:18px">Care Net screens fitness for work and does not diagnose. A certificate of fitness says fit, fit with a restriction or not fit, and no clinical detail ever reaches your portal or your File.</p>
+  </section>
+
+  <!-- 4 :: STAFF (shown only to Care Net staff roles) -->
+  <section id="staff" aria-labelledby="staff-title" hidden>
+    <div class="sechead">
+      <span class="eyebrow">Care Net staff</span>
+      <h2 id="staff-title">Staff tools</h2>
+    </div>
+    <div class="card">
+      <div class="chead"><span class="ico" data-asset="portal-staff-icon" aria-hidden="true">ST</span><h3 class="ct">Your staff role</h3></div>
+      <p>You are signed in with a Care Net staff role: <b id="staff-roles">none</b>. The staff pages check your role again when they open.</p>
+      <div class="grid">
+        <a class="tile" href="review.html" data-cta="portal_staff_review"><b>Review queue</b><span>Items waiting for review and sign off by the Occupational Medical Practitioner and the Health and Safety Manager.</span></a>
+        <a class="tile" href="settings.html" data-cta="portal_staff_settings"><b>Settings</b><span>The running configuration, parameters and usage. Changing a value needs forge_admin.</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 :: ONE LOGIN -->
+  <section id="one-login" aria-labelledby="one-title">
+    <div class="sechead">
+      <span class="eyebrow">One login</span>
+      <h2 id="one-title">Built to be served <span class="r">from MyClinicOnline.</span></h2>
+    </div>
+    <div class="card">
+      <div class="diagram" data-asset="portal-one-login-diagram" role="img" aria-label="Diagram: one sign in opens both sides of the portal. The commercial side holds your account, Plans, Files and quotations. The medical side holds certificates of fitness, training records and bookings. Both are served from MyClinicOnline.">
+        <div class="dg-host">Served from MyClinicOnline</div>
+        <div class="dg-login">One sign in</div>
+        <div class="dg-spines">
+          <div class="dg-spine"><b>Commercial</b><span>Account</span><span>Plans</span><span>Files</span><span>Quotations</span></div>
+          <div class="dg-spine med"><b>Medical</b><span>Certificates of fitness</span><span>Training records</span><span>Bookings</span></div>
+        </div>
+      </div>
+      <p>This portal is built to be served from inside MyClinicOnline, so your company records and your people&rsquo;s medical records open with one login. Every address on the page is relative and every setting comes from one shared configuration file, so the move needs no rewrite. Until MyClinicOnline single sign on is agreed, which is pending, you sign in here with your work email.</p>
+    </div>
+  </section>
+
+  <!-- 6 :: NEXT STEPS -->
+  <section id="ready" aria-labelledby="ready-title">
+    <div class="card" style="border-top:5px solid var(--red)">
+      <h2 id="ready-title">Next steps</h2>
+      <p>Build your File and your Plan free. A sales executive can walk you through either, and through the sign off.</p>
+      <div class="grid3">
+        <a class="btn" href="hsf-builder.html" data-cta="build_my_file">Build my File</a>
+        <a class="btn ghost" href="shop.html" data-cta="build_my_plan">Build my Plan</a>
+        <a class="btn ghost" data-wa href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+      </div>
+      <p class="muted" style="margin-top:14px">Your information is handled under POPIA. Read our <a class="inline" data-privacy href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="portal_privacy_policy">privacy policy</a>.</p>
+    </div>
+  </section>
+</main>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" data-asset="portal-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#portal"><i aria-hidden="true">1</i><span>Your portal</span></a>
+  <a href="#commercial"><i aria-hidden="true">2</i><span>Company and Files</span></a>
+  <a href="#medical"><i aria-hidden="true">3</i><span>Medicals and training</span></a>
+  <a href="#one-login"><i aria-hidden="true">4</i><span>One login</span></a>
+</nav>
+
+<noscript><p style="text-align:center;padding:16px">Your portal needs JavaScript. Please enable it, or WhatsApp a sales executive on 27 60 070 2723.</p></noscript>
+
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/portal.html",
+ "title": "Care Net login portal",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "portal-og",
+   "block": "Head: social share card",
+   "purpose": "The image shown when the portal link is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": ["jpg", "png"],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 300,
+   "colour": "Charcoal #1A1A1A field with the hero gradient, Care Net red #ED1B24 accent, white Bebas Neue headline \"Your Care Net portal\", subline \"One sign in for your company and your people\" in Inter, Care Net logo top left, pattern strip along the bottom edge",
+   "alt": "Your Care Net portal: one sign in for your company and your people",
+   "file_name": "portal-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/portal/portal-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 by 566 safe area. No screenshots with readable names, certificates or health information. The meta tag already points at the delivery path."
+  },
+  {
+   "id": "portal-logo",
+   "block": "Header: logo",
+   "purpose": "Care Net Consultants logo in the shared site header.",
+   "type": "logo",
+   "formats": ["webp", "png"],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  },
+  {
+   "id": "portal-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "Sets the scene for the portal: an HR or safety manager at a laptop in a bright office, one screen showing a generic dashboard with two columns (company records on the left, people's certificates on the right), a hard hat and a File binder on the desk.",
+   "type": "photo",
+   "formats": ["avif", "webp", "jpg"],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 220,
+   "colour": "Natural light, warm neutrals, one touch of Care Net red (lanyard, binder spine or mug). Keep the left edge darker so it sits well against the charcoal hero.",
+   "alt": "A company safety manager checking the Care Net portal on a laptop",
+   "file_name": "portal-hero-1920x1080.webp",
+   "delivery": "img.carenetcdn.com/portal/portal-hero-1920x1080.webp",
+   "status": "needed",
+   "notes": "Until delivered the page shows the existing Medical Surveillance Plan desktop mockup (1920 by 1200). Supply 960 by 540 as well for mobile (max 90 KB). The screen must show a generic, unreadable dashboard: no names, no certificate outcomes, no health information. Model release required for anyone identifiable."
+  },
+  {
+   "id": "portal-pattern",
+   "block": "Pattern strip under the hero",
+   "purpose": "The shared Care Net Africa pattern strip.",
+   "type": "pattern",
+   "formats": ["png"],
+   "width": 1200,
+   "height": null,
+   "ratio": null,
+   "max_kb": 60,
+   "colour": "Brand pattern",
+   "alt": "Decorative pattern, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Loaded by css/cnc-pattern.css, shown 48 px high and tiled across the page (repeat x). The source file is 1200 px wide; its pixel height is not confirmed here (pending). No change needed."
+  },
+  {
+   "id": "portal-signin-illustration",
+   "block": "Your portal: sign in card",
+   "purpose": "Friendly illustration beside the email sign in form: one key opening two doors side by side, a company building on the left and a clinic on the right.",
+   "type": "illustration",
+   "formats": ["svg", "png"],
+   "width": 480,
+   "height": 320,
+   "ratio": "3:2",
+   "max_kb": 25,
+   "colour": "Line art in charcoal #1A1A1A with Care Net red #ED1B24 on the company door and teal #1D5D6F on the clinic door, on a white or #F7F5F5 ground",
+   "alt": "One key opening a company door and a clinic door",
+   "file_name": "portal-signin-480x320.svg",
+   "delivery": "img.carenetcdn.com/portal/portal-signin-480x320.svg",
+   "status": "needed",
+   "notes": "Decorative on the page (the form carries the meaning), so it is placed with empty alternative text. SVG preferred; PNG at 2x (960 by 640) as fallback. Floats right on desktop, full width on mobile. Do not use the red cross or red crescent emblem for the clinic; use a heart or stethoscope motif."
+  },
+  {
+   "id": "portal-spine-commercial-icon",
+   "block": "Company and Files: section heading",
+   "purpose": "Marks the commercial side of the portal (Care Net records) at the head of the section.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 48 by 48 inside a #FFF5F5 rounded tile.",
+   "alt": "Company records",
+   "file_name": "portal-spine-commercial.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-spine-commercial.svg",
+   "status": "needed",
+   "notes": "Suggested motif: an office building with a document in front of it. Part of a set of eleven portal icons that share one stroke weight and corner radius. Placed with empty alternative text because the heading sits beside it. Until delivered the tile shows the letters CO."
+  },
+  {
+   "id": "portal-account-icon",
+   "block": "Company and Files: Company account card",
+   "purpose": "Icon at the head of the Company account card (company name, approval and service level agreement).",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Company account",
+   "file_name": "portal-account.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-account.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a company badge or ID card with a building mark. No tick inside a badge (nothing that reads as a certification). Placed with empty alternative text. Until delivered the tile shows the letters AC."
+  },
+  {
+   "id": "portal-plans-icon",
+   "block": "Company and Files: Medical Surveillance Plans card",
+   "purpose": "Icon at the head of the Medical Surveillance Plans card.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Medical Surveillance Plans",
+   "file_name": "portal-plans.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-plans.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a clipboard with a pulse line. Must match the icon used for the Plan on the Build your Plan pages if one exists. Placed with empty alternative text. Until delivered the tile shows the letters PL."
+  },
+  {
+   "id": "portal-files-icon",
+   "block": "Company and Files: Health and Safety Files card",
+   "purpose": "Icon at the head of the Health and Safety Files card (compliance figure, review and sign off).",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Health and Safety Files",
+   "file_name": "portal-files.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-files.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a lever arch File with a hard hat on top. Placed with empty alternative text. Until delivered the tile shows the letters HS."
+  },
+  {
+   "id": "portal-files-empty-illustration",
+   "block": "Company and Files: Health and Safety Files card, empty state",
+   "purpose": "Shown when a signed in company has no Health and Safety File yet, beside the Build my File button.",
+   "type": "illustration",
+   "formats": ["svg", "png"],
+   "width": 480,
+   "height": 300,
+   "ratio": "16:10",
+   "max_kb": 25,
+   "colour": "Charcoal line art, Care Net red #ED1B24 accent, #F7F5F5 ground",
+   "alt": "An empty File binder waiting for its first documents",
+   "file_name": "portal-files-empty-480x300.svg",
+   "delivery": "img.carenetcdn.com/portal/portal-files-empty-480x300.svg",
+   "status": "needed",
+   "notes": "Encouraging, not alarming: an open binder with fifteen empty dividers and a plus sign. Decorative on the page. Visible only in the empty state; use ?design=1 with a test account that has no File to see it in place."
+  },
+  {
+   "id": "portal-quotes-icon",
+   "block": "Company and Files: Quotations card",
+   "purpose": "Icon at the head of the Quotations card.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Quotations",
+   "file_name": "portal-quotes.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-quotes.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document with a rand sign (R) and a calculator. Use R, never a dollar sign. Placed with empty alternative text. Until delivered the tile shows the letters QU."
+  },
+  {
+   "id": "portal-documents-icon",
+   "block": "Company and Files: Your documents card",
+   "purpose": "Icon at the head of the card that sends companies to drop their documents into the File builder.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Your documents",
+   "file_name": "portal-documents.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-documents.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a document dropping into a tray with a small padlock. Should echo the drop zone icon in the File builder. Placed with empty alternative text. Until delivered the tile shows the letters DO."
+  },
+  {
+   "id": "portal-spine-medical-icon",
+   "block": "Medicals and training: section heading",
+   "purpose": "Marks the medical side of the portal (MyClinicOnline records) at the head of the section.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent; transparent background. Displayed at 48 by 48 inside a #E9F4F7 rounded tile.",
+   "alt": "Medical records",
+   "file_name": "portal-spine-medical.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-spine-medical.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a stethoscope around a certificate. Teal marks everything that comes from MyClinicOnline across the portal. No red cross or red crescent emblem. Placed with empty alternative text. Until delivered the tile shows the letters MD."
+  },
+  {
+   "id": "portal-mco-logo",
+   "block": "Medicals and training: connection panel",
+   "purpose": "The MyClinicOnline name mark inside the connection panel, so companies recognise where their people's records live.",
+   "type": "logo",
+   "formats": ["svg", "png"],
+   "width": 240,
+   "height": 48,
+   "ratio": "5:1",
+   "max_kb": 12,
+   "colour": "As supplied by the MyClinicOnline owner (brand master). Must read on white and on #E9F4F7.",
+   "alt": "MyClinicOnline",
+   "file_name": "myclinic-online-logo-240x48.svg",
+   "delivery": "img.carenetcdn.com/portal/myclinic-online-logo-240x48.svg",
+   "status": "needed",
+   "notes": "PENDING: the logo and its usage rules must come from the MyClinicOnline owner; do not redraw it. Until supplied the name appears in text inside a teal outline. Displayed at 24 px high inline with the text; supply PNG at 2x (480 by 96) as fallback."
+  },
+  {
+   "id": "portal-mco-pending-illustration",
+   "block": "Medicals and training: Arrives when MyClinicOnline is connected panel",
+   "purpose": "Explains the waiting state at a glance: the portal and MyClinicOnline as two secure boxes with a dotted bridge between them and a plug about to connect.",
+   "type": "illustration",
+   "formats": ["svg", "png"],
+   "width": 480,
+   "height": 320,
+   "ratio": "3:2",
+   "max_kb": 30,
+   "colour": "Charcoal line art; Care Net red #ED1B24 on the portal box, teal #1D5D6F on the MyClinicOnline box, amber #ECD49A for the dotted bridge (the pending colour used on the page)",
+   "alt": "The Care Net portal waiting to connect to MyClinicOnline",
+   "file_name": "portal-mco-pending-480x320.svg",
+   "delivery": "img.carenetcdn.com/portal/portal-mco-pending-480x320.svg",
+   "status": "needed",
+   "notes": "Must not show any real records, names or certificates. Decorative on the page because the panel text carries the meaning. Keep a variant ready for the connected state (solid bridge in green #2A7D4E), named portal-mco-connected-480x320.svg."
+  },
+  {
+   "id": "portal-certificates-icon",
+   "block": "Medicals and training: Certificates of fitness card",
+   "purpose": "Icon at the head of the Certificates of fitness card.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent; transparent background. Displayed at 40 by 40 inside a #E9F4F7 rounded tile.",
+   "alt": "Certificates of fitness",
+   "file_name": "portal-certificates.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-certificates.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a certificate with a heartbeat line and a calendar corner for the expiry. Nothing that suggests a diagnosis or a clinical result. Placed with empty alternative text. Until delivered the tile shows the letters CF."
+  },
+  {
+   "id": "portal-training-icon",
+   "block": "Medicals and training: Training records card",
+   "purpose": "Icon at the head of the Training records card.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent; transparent background. Displayed at 40 by 40 inside a #E9F4F7 rounded tile.",
+   "alt": "Training records",
+   "file_name": "portal-training.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-training.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a graduation cap over a hard hat. Placed with empty alternative text. Until delivered the tile shows the letters TR."
+  },
+  {
+   "id": "portal-bookings-icon",
+   "block": "Medicals and training: Bookings card",
+   "purpose": "Icon at the head of the Bookings card.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent; transparent background. Displayed at 40 by 40 inside a #E9F4F7 rounded tile.",
+   "alt": "Bookings",
+   "file_name": "portal-bookings.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-bookings.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a calendar page with a clock. Placed with empty alternative text. Until delivered the tile shows the letters BK."
+  },
+  {
+   "id": "portal-staff-icon",
+   "block": "Staff tools card (Care Net staff only)",
+   "purpose": "Icon at the head of the Staff tools card, seen only by people holding forge_admin, forge_omp or forge_safety_reviewer.",
+   "type": "icon",
+   "formats": ["svg"],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 40 by 40 inside a #FFF5F5 rounded tile.",
+   "alt": "Staff tools",
+   "file_name": "portal-staff.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-staff.svg",
+   "status": "needed",
+   "notes": "Suggested motif: a lanyard with a staff card and a small gear. Hidden for clients, so design mode shows it only when signed in with a staff role. Placed with empty alternative text. Until delivered the tile shows the letters ST."
+  },
+  {
+   "id": "portal-one-login-diagram",
+   "block": "One login panel",
+   "purpose": "Explains in one picture that the portal is served from MyClinicOnline and that one sign in opens both sides: commercial (account, Plans, Files, quotations) and medical (certificates of fitness, training records, bookings).",
+   "type": "illustration",
+   "formats": ["svg", "png"],
+   "width": 1200,
+   "height": 480,
+   "ratio": "5:2",
+   "max_kb": 40,
+   "colour": "White ground; a teal #E9F4F7 band across the top labelled Served from MyClinicOnline; a charcoal #1A1A1A pill labelled One sign in in the centre; two columns below, the commercial column topped with Care Net red #ED1B24, the medical column with teal #1D5D6F. Montserrat labels, Inter item text.",
+   "alt": "One sign in opens both sides of the portal, served from MyClinicOnline",
+   "file_name": "portal-one-login-1200x480.svg",
+   "delivery": "img.carenetcdn.com/portal/portal-one-login-1200x480.svg",
+   "status": "needed",
+   "notes": "Until delivered the page draws the same diagram in HTML (role img with a full text description), so the words in the SVG must match: Served from MyClinicOnline; One sign in; Commercial: Account, Plans, Files, Quotations; Medical: Certificates of fitness, Training records, Bookings. Supply a stacked mobile version at 720 by 960 (3:4) as portal-one-login-720x960.svg. Text in the SVG must be real text or outlined with the full description kept in the page."
+  },
+  {
+   "id": "portal-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The gold AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": ["webp"],
+   "width": 22,
+   "height": 22,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Gold, brand master",
+   "alt": "Decorative, no alternative text",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  }
+ ]
+}
+</script>
+
+<script>
+/* Watchdog: if the portal module cannot load (an old browser, or the shared
+   sign in script is unreachable), show a plain message instead of a spinner
+   that never stops. */
+(function () {
+  setTimeout(function () {
+    if (window.__cncPortalStarted) return;
+    var l = document.getElementById('st-loading'), e = document.getElementById('st-error'), m = document.getElementById('st-error-msg');
+    if (l) l.hidden = true;
+    if (m) m.textContent = 'Your portal could not start in this browser. Please reload the page, or WhatsApp a sales executive.';
+    if (e) e.hidden = false;
+  }, 12000);
+})();
+</script>
+
+<script type="module">
+import { auth } from './js/cnc-auth.js';
+window.__cncPortalStarted = true;
+
+/* =====================================================================
+   The portal. Every call sits inside try/catch boundaries, so an
+   unreachable API shows a friendly state, never a page error, and
+   nothing is written to the console.
+   ===================================================================== */
+const CFG = window.CNC_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const params = new URLSearchParams(location.search);
+const DEMO = params.get('demo') === '1';
+const SAMPLE_SRC = 'hsf/samples/construction.js';
+
+/* Staff roles live in app_metadata.msp_roles, which only the server sets. */
+const STAFF_ROLES = ['forge_admin', 'forge_omp', 'forge_safety_reviewer'];
+const ROLE_LABEL = {
+  forge_admin: 'administrator (forge_admin)',
+  forge_omp: 'Occupational Medical Practitioner (forge_omp)',
+  forge_safety_reviewer: 'safety reviewer (forge_safety_reviewer)'
+};
+
+/* Settings come from CNC_CONFIG only. An address is used only if it is https. */
+const httpsUrl = (u) => (typeof u === 'string' && /^https:\/\/[^\s"'<>]+$/i.test(u)) ? u : null;
+const WA_URL = httpsUrl(CFG.whatsappUrl) || (CFG.whatsapp && /^\d{9,15}$/.test(CFG.whatsapp) ? 'https://wa.me/' + CFG.whatsapp : 'https://wa.me/27600702723');
+const PRIVACY_URL = httpsUrl(CFG.privacyUrl) || 'https://www.carenetconsultants.co.za/privacy-policy';
+const MCO_URL = httpsUrl(CFG.mcoPortalUrl);
+
+/* hsf_file.status (migration 047), in plain words, with the review and sign
+   off stage each one stands for (SPEC B2.2.5 and B11). */
+const FILE_STATUS = {
+  draft: ['grey', 'Draft', 'Not yet sent for review. Keep evidencing it in the builder.'],
+  generating: ['grey', 'Being generated', 'Not yet sent for review.'],
+  in_review: ['blue', 'In review', 'The Health and Safety Manager reviews the safety content and the Occupational Medical Practitioner the medical section.'],
+  approved: ['ok', 'Approved', 'Release needs the Health and Safety Manager, the Occupational Medical Practitioner and your section 16(2) appointee.'],
+  released: ['ok', 'Released', 'Signed off and released with its revision number.'],
+  live: ['ok', 'Live', 'Signed off, released and kept live: expiries and changes open a new revision.'],
+  superseded: ['grey', 'Superseded', 'Replaced by a newer revision.'],
+  archived: ['grey', 'Archived', 'No longer in use.']
+};
+const ACCOUNT_KIND = {
+  approved_client: ['ok', 'Approved'],
+  applicant: ['wait', 'Awaiting approval'],
+  declined: ['no', 'Not approved']
+};
+const SLA = { active_sla: 'Active service level agreement', none: 'None on record' };
+const COUNT_LABEL = { linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
+const COUNT_CLASS = { linked_mco: 'mco', uploaded: 'ok', outstanding: 'wait', expired: 'no', not_applicable: 'grey' };
+
+/* ------------------------------------------------------------ helpers */
+const fmtPct = (n) => (n == null || n === '' || isNaN(Number(n))) ? null : Number(n).toFixed(1).replace('.', ',') + '%';
+const clampPct = (n) => Math.max(0, Math.min(100, Number(n) || 0));
+const dmy = (d) => {
+  if (!d) return '';
+  const s = String(d);
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : '';
+};
+const words = (s) => String(s || '').replace(/_/g, ' ');
+const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
+const band = (p) => (p == null ? '' : (p >= 80 ? '' : (p >= 50 ? 'mid' : 'low')));
+
+let liveTimer = null;
+function announce(msg) {
+  const el = $('live'); if (!el) return;
+  el.textContent = '';
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => { el.textContent = msg; }, 60);
+}
+function withTimeout(p, ms) {
+  let t;
+  return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => { const e = new Error('timeout'); e.timeout = true; rej(e); }, ms); })])
+    .finally(() => clearTimeout(t));
+}
+function friendly(err, fallback) {
+  if (!err) return fallback;
+  if (err.timeout) return 'Care Net’s servers took too long to answer. Please try again shortly.';
+  if (err.pending) return 'MyClinicOnline single sign on is pending, so sign in is not available here yet. Please WhatsApp a sales executive.';
+  if (!err.status || err.status >= 500 || err.status === 404 || err.status === 405) return fallback;
+  return err.message || fallback;
+}
+function busy(el, msg) {
+  el.innerHTML = '<p class="muted" role="status"><span class="spinner" aria-hidden="true"></span>' + esc(msg) + '</p>';
+}
+
+const STATES = ['st-loading', 'st-error', 'st-signin', 'st-account', 'st-demo'];
+function show(...ids) {
+  STATES.forEach((s) => { const el = $(s); if (el) el.hidden = !ids.includes(s); });
+}
+function showError(msg) {
+  $('st-error-msg').textContent = msg || 'Please try again in a few minutes.';
+  show('st-error');
+}
+
+function applyConfig() {
+  document.querySelectorAll('a[data-wa]').forEach((a) => { a.href = WA_URL; });
+  document.querySelectorAll('a[data-privacy]').forEach((a) => { a.href = PRIVACY_URL; });
+  /* The MyClinicOnline portal address is pending (HSF-3). Only once it is set
+     in cnc-config.js does the link appear; the records still wait for the
+     interface contract, so the panels keep their waiting state. */
+  if (MCO_URL && !DEMO) {
+    $('mco-open-link').href = MCO_URL;
+    $('mco-open').hidden = false;
+  }
+}
+
+/* ------------------------------------------------------------ API */
+async function api(path) {
+  return withTimeout(auth.apiFetch(path), 20000);
+}
+
+/* ============================================================ commercial: signed out */
+function renderSignedOut() {
+  $('account-body').innerHTML = '<p class="muted">Sign in to see your company account and whether it is approved.</p>';
+  $('plans-body').innerHTML = '<p class="muted">Sign in to see your Medical Surveillance Plan assessment and where your Plan stands.</p>';
+  $('files-body').innerHTML = '<p class="muted">Sign in to see your Health and Safety Files, their compliance figures and where each one is in review and sign off.</p>';
+  $('files-empty').hidden = true;
+  $('staff').hidden = true;
+}
+
+/* ============================================================ commercial: account and Plans */
+function relAssess(url) {
+  /* The endpoint returns an absolute link built from the request host; the
+     portal keeps only the token so the link stays relative (MCO hosting). */
+  try {
+    const u = new URL(url, location.href);
+    const t = u.searchParams.get('token');
+    if (/\/assess(\.html)?$/.test(u.pathname) && t && /^[A-Za-z0-9_.~-]{8,200}$/.test(t)) return 'assess.html?token=' + encodeURIComponent(t);
+  } catch (_) { /* not a usable link */ }
+  return null;
+}
+function planPendingNote() {
+  return '<p class="pending"><b>Plan status in the portal: pending.</b> The review and sign off status of each Plan will show here once the portal can read it. Until then, <a class="inline" href="account.html" data-cta="portal_open_account">your account page</a> opens your Plan assessment, and a sales executive can tell you where your Plan stands.</p>';
+}
+function renderAccount(r, email) {
+  const acc = $('account-body'), plans = $('plans-body');
+  if (!r || typeof r !== 'object') throw new Error('bad account reply');
+  if (!r.found) {
+    acc.innerHTML = '<p>You are signed in as <b>' + esc(email || 'your email') + '</b>, but this email is not linked to a company account with Care Net yet.</p>'
+      + '<a class="btn sm inl" href="./" data-cta="portal_register_company">Register my company</a>';
+    plans.innerHTML = '<p>Register your company first, and your Medical Surveillance Plan assessment opens straight away.</p>' + planPendingNote();
+    return;
+  }
+  const kindKey = r.declined ? 'declined' : r.account_kind;
+  const kind = ACCOUNT_KIND[kindKey] || ['grey', 'Pending'];
+  acc.innerHTML = '<dl class="kv">'
+    + '<div><dt>Company</dt><dd>' + esc(r.company_name || 'Not on record') + '</dd></div>'
+    + '<div><dt>Account</dt><dd><span class="pill ' + kind[0] + '">' + esc(kind[1]) + '</span></dd></div>'
+    + '<div><dt>Service level agreement</dt><dd>' + esc(SLA[r.sla_status] || 'Pending') + '</dd></div>'
+    + '<div><dt>Signed in as</dt><dd>' + esc(email || r.email || '') + '</dd></div>'
+    + '</dl>'
+    + (kindKey === 'declined'
+      ? '<p class="errbox">Please contact Care Net about your account status before starting an assessment.</p><a class="btn ghost sm inl" href="' + esc(WA_URL) + '" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>'
+      : '<a class="btn plain sm inl" href="account.html" data-cta="portal_open_account">Open my account</a>');
+
+  if (kindKey === 'declined') {
+    plans.innerHTML = '<p>Your Plan assessment opens once your account status is settled with a sales executive.</p>' + planPendingNote();
+    return;
+  }
+  const link = r.assessment_url ? relAssess(r.assessment_url) : null;
+  plans.innerHTML = (link
+      ? '<p>Your Medical Surveillance Plan assessment is open. Start it, or carry on from where you stopped.</p><a class="btn sm inl" href="' + esc(link) + '" data-cta="portal_open_assessment">Open my Plan assessment</a>'
+      : '<p>Your Plan assessment link is not available just now. <a class="inline" href="./" data-cta="portal_plan_journey">Start your journey</a> opens it.</p>')
+    + '<div style="margin-top:12px">' + planPendingNote() + '</div>';
+}
+async function loadAccount(email) {
+  busy($('account-body'), 'Checking your company account.');
+  busy($('plans-body'), 'Checking your Plan assessment.');
+  try {
+    const r = await api('/api/company-lookup');
+    renderAccount(r, email);
+  } catch (e) {
+    if (e && e.status === 401) throw e;
+    const msg = friendly(e, 'Your company account could not be loaded just now. Please try again shortly.');
+    $('account-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="account" data-cta="portal_retry_account">Try again</button>';
+    $('plans-body').innerHTML = '<p class="muted">Your Plan status appears once your account loads.</p>' + planPendingNote();
+  }
+}
+
+/* ============================================================ commercial: Files */
+function fileRow(f) {
+  const st = f.demo
+    ? ['grey', 'Demonstration', 'The sample carries no review or sign off record. In your portal this line shows where your File is in review and sign off.']
+    : (FILE_STATUS[f.status] || ['grey', words(f.status) || 'Pending', 'Review and sign off status pending.']);
+  const pct = fmtPct(f.compliance_pct);
+  const made = dmy(f.created_at);
+  return '<li class="frow">'
+    + '<div class="ftop"><b class="mono ref">' + esc(f.reference || 'Reference pending') + '</b><span class="pill ' + st[0] + '">' + esc(st[1]) + '</span></div>'
+    + '<div class="fmeta">' + [esc(f.industry_name || f.industry_code || ''), f.revision != null ? 'Revision ' + esc(f.revision) : '', made ? 'Started ' + esc(made) : ''].filter(Boolean).join(' <span aria-hidden="true">&middot;</span> ') + '</div>'
+    + '<div class="fpct"><span>Compliance figure</span><b' + (pct ? '' : ' class="none"') + '>' + esc(pct || 'Not worked out yet') + '</b></div>'
+    + '<div class="bar" aria-hidden="true"><i style="width:' + clampPct(f.compliance_pct) + '%"></i></div>'
+    + '<p class="fsign"><b>Review and sign off:</b> ' + esc(st[2]) + '</p>'
+    + '</li>';
+}
+function sectionBars(title, sections, open) {
+  const rows = (sections || []).map((s) => {
+    const p = s.pct != null ? s.pct : s.compliance_pct;
+    const t = fmtPct(p);
+    return '<li><span class="sl" aria-hidden="true">' + esc(s.code) + '</span><span class="sn">Section ' + esc(s.code) + ': ' + esc(s.name) + '</span>'
+      + '<span class="sb" aria-hidden="true"><i class="' + band(p) + '" style="width:' + clampPct(p) + '%"></i></span><b class="sp">' + esc(t || 'None yet') + '</b></li>';
+  }).join('');
+  if (!rows) return '';
+  return '<details class="bysec"' + (open ? ' open' : '') + '><summary>Compliance figure by section, ' + esc(title) + '</summary><ul class="sbars">' + rows + '</ul></details>';
+}
+function renderFiles(list) {
+  const body = $('files-body');
+  if (!Array.isArray(list)) throw new Error('bad files reply');
+  if (!list.length) {
+    body.innerHTML = '';
+    $('files-empty').hidden = false;
+    return [];
+  }
+  $('files-empty').hidden = true;
+  const sorted = list.slice().sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+  body.innerHTML = '<p class="muted">' + plural(sorted.length, 'File', 'Files') + ' for your company. The compliance figure counts every element that applies; an element set not applicable with a reason leaves the count.</p>'
+    + '<ul class="files">' + sorted.map(fileRow).join('') + '</ul><div id="files-detail"></div>';
+  return sorted;
+}
+async function loadFiles() {
+  busy($('files-body'), 'Loading your Health and Safety Files.');
+  $('files-empty').hidden = true;
+  let files;
+  try {
+    files = renderFiles(await api('/api/hsf-file'));
+  } catch (e) {
+    if (e && e.status === 401) throw e;
+    const msg = friendly(e, 'Your Health and Safety Files could not be loaded just now. Please try again shortly.');
+    $('files-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="files" data-cta="portal_retry_files">Try again</button>';
+    return;
+  }
+  /* The section breakdown for the newest File. Optional: the list above
+     already stands on its own, so a failure here is quiet. */
+  const newest = files && files[0];
+  if (!newest || !newest.file_id) return;
+  try {
+    const d = await api('/api/hsf-file?file_id=' + encodeURIComponent(newest.file_id));
+    const host = $('files-detail');
+    if (host && d && Array.isArray(d.sections)) host.innerHTML = sectionBars(newest.reference || 'your newest File', d.sections);
+  } catch (_) { /* the list is enough */ }
+}
+
+/* ============================================================ staff */
+function rolesOf(user) {
+  const m = (user && user.app_metadata) || {};
+  const r = Array.isArray(m.msp_roles) ? m.msp_roles : [];
+  return r.filter((x) => typeof x === 'string');
+}
+function renderStaff(user) {
+  const mine = rolesOf(user).filter((r) => STAFF_ROLES.includes(r));
+  $('staff').hidden = !mine.length;
+  if (mine.length) $('staff-roles').textContent = mine.map((r) => ROLE_LABEL[r]).join(', ');
+}
+
+/* ============================================================ sign in */
+function wireSignin() {
+  $('signin-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const msg = $('signin-msg'), btn = $('signin-btn');
+    const email = $('signin-email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.innerHTML = '<div class="errbox">Please enter a valid work email address.</div>';
+      $('signin-email').focus();
+      return;
+    }
+    btn.disabled = true;
+    msg.innerHTML = '<span class="spinner" aria-hidden="true"></span>Sending your link.';
+    try {
+      await withTimeout(auth.signInWithEmail(email, location.origin + location.pathname), 20000);
+      msg.innerHTML = '<div class="okbox">Check your inbox. We have sent a sign in link to ' + esc(email) + '. Open it on this device to come back here signed in.</div>';
+    } catch (e) {
+      msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'The sign in link could not be sent just now. Please try again shortly.')) + '</div>';
+    } finally { btn.disabled = false; }
+  });
+  document.querySelectorAll('[data-signout]').forEach((b) => b.addEventListener('click', async () => {
+    try { await withTimeout(auth.signOut(), 10000); } catch (_) { /* local sign out is best effort */ }
+    location.href = location.pathname;
+  }));
+  /* Try again buttons inside the cards. */
+  document.addEventListener('click', (ev) => {
+    const t = ev.target && ev.target.closest ? ev.target.closest('[data-reload]') : null;
+    if (!t || DEMO) return;
+    const what = t.getAttribute('data-reload');
+    const run = what === 'account' ? loadAccount(S.email) : loadFiles();
+    run.catch((e) => { if (e && e.status === 401) toSignin(); });
+  });
+}
+
+/* ============================================================ live start */
+const S = { email: null, started: false };
+function toSignin() {
+  show('st-signin');
+  renderSignedOut();
+}
+async function startLive() {
+  show('st-loading');
+  let session = null;
+  try {
+    await withTimeout(auth.init(), 15000);
+    session = await withTimeout(auth.session(), 10000);
+  } catch (e) {
+    renderSignedOut();
+    showError(e && e.pending
+      ? friendly(e)
+      : 'Sign in could not be reached just now. Please try again in a few minutes, or look around the demonstration while you wait.');
+    return;
+  }
+  if (!session) { toSignin(); return; }
+  const user = session.user || {};
+  S.email = user.email || null;
+  $('acct-email').textContent = S.email || 'your Care Net account';
+  show('st-account');
+  renderStaff(user);
+  const results = await Promise.allSettled([loadAccount(S.email), loadFiles()]);
+  if (results.some((r) => r.status === 'rejected' && r.reason && r.reason.status === 401)) {
+    toSignin();
+    announce('Your sign in has expired. Please sign in again.');
+    return;
+  }
+  announce('Your portal is ready.');
+}
+
+/* ============================================================ demonstration */
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = () => resolve(); s.onerror = () => reject(new Error('The demonstration data could not be loaded.'));
+    document.head.appendChild(s);
+  });
+}
+/* Columns of the sample matrix that are medicals; the rest are training. */
+const MEDICAL_COLS = ['cof', 'annex3', 'prdp'];
+const isMedical = (c) => MEDICAL_COLS.includes(c.id) || /medical|fitness/i.test(c.name || '');
+const CELL = {
+  ok: ['ok', 'Current', (d) => d ? 'to ' + d : ''],
+  due: ['wait', 'Renewal due', (d) => d ? 'by ' + d : ''],
+  expired: ['no', 'Expired', (d) => d ? 'on ' + d : ''],
+  missing: ['no', 'None on record', () => '']
+};
+function cellHtml(c) {
+  if (!c || c.s === 'na' || !c.s) return '<span class="na" aria-hidden="true">&middot;</span><span class="vh">Not required</span>';
+  const m = CELL[c.s] || ['', words(c.s), () => ''];
+  const sub = m[2](dmy(c.d));
+  return '<span class="cell ' + m[0] + '">' + esc(m[1]) + (sub ? '<small>' + esc(sub) + '</small>' : '')
+    + (c.src === 'MCO' ? '<abbr class="src" title="Linked from MyClinicOnline in the sample">MCO</abbr>' : '') + '</span>';
+}
+function tally(people, cols) {
+  const t = { ok: 0, due: 0, expired: 0, missing: 0 };
+  people.forEach((p) => cols.forEach((c) => { const x = p.cells && p.cells[c.id]; if (x && t[x.s] != null) t[x.s]++; }));
+  return t;
+}
+function tallyText(t, noun, nouns) {
+  return plural(t.ok, noun + ' current', nouns + ' current') + ', ' + t.due + ' due for renewal, ' + t.expired + ' expired and ' + t.missing + ' with nothing on record.';
+}
+function matrixTable(id, caption, people, cols) {
+  return '<div class="tw" role="region" aria-labelledby="' + id + '" tabindex="0"><table class="mx"><caption id="' + id + '">' + esc(caption) + '</caption>'
+    + '<thead><tr><th scope="col">Person</th>' + cols.map((c) => '<th scope="col">' + esc(c.name) + '</th>').join('') + '</tr></thead><tbody>'
+    + people.map((p) => '<tr><th scope="row">' + esc(p.name) + '<small>' + esc(p.role || '') + '</small></th>'
+      + cols.map((c) => '<td>' + cellHtml(p.cells && p.cells[c.id]) + '</td>').join('') + '</tr>').join('')
+    + '</tbody></table></div>';
+}
+function renderDemoCommercial(s) {
+  $('demo-co').textContent = s.company || 'a fictitious company';
+  $('account-body').innerHTML = '<dl class="kv">'
+    + '<div><dt>Company</dt><dd>' + esc(s.company) + '</dd></div>'
+    + '<div><dt>Account</dt><dd><span class="pill grey">Demonstration only</span></dd></div>'
+    + '<div><dt>Service level agreement</dt><dd>Not part of the sample</dd></div>'
+    + '<div><dt>Headcount in scope</dt><dd>' + esc(s.headcount) + ' people, ' + plural(Number(s.sites) || 0, 'site', 'sites') + '</dd></div>'
+    + '</dl><p class="muted">In your portal this card shows your company, whether your account is approved and your service level agreement.</p>';
+  $('plans-body').innerHTML = '<p class="note">The sample holds no Medical Surveillance Plan. In your portal, your Plan assessment and your Plan&rsquo;s review and sign off status appear here.</p>';
+  const o = s.overall || {};
+  const file = { demo: true, reference: s.reference, industry_name: s.industry, revision: s.revision, compliance_pct: o.pct, created_at: null };
+  const counts = o.counts || {};
+  $('files-empty').hidden = true;
+  $('files-body').innerHTML = '<p class="muted">One fictitious File, as at ' + esc(s.as_at || '') + ': ' + esc(s.scope || '') + '.</p>'
+    + '<ul class="files">' + fileRow(file) + '</ul>'
+    + '<div class="counts">' + Object.keys(COUNT_LABEL).filter((k) => counts[k] != null).map((k) => '<span class="pill ' + COUNT_CLASS[k] + '">' + esc(COUNT_LABEL[k]) + ' ' + esc(counts[k]) + '</span>').join('') + '</div>'
+    + sectionBars(s.reference, s.sections, true);
+  $('quotes-body').innerHTML = '<p class="note">The sample holds no quotations. In your portal, quotations are listed here with their reference, what they cover and how long they are valid (pending).</p>';
+}
+function renderDemoMedical(s) {
+  const m = s.matrix || {};
+  const people = Array.isArray(m.people) ? m.people : [];
+  const cols = Array.isArray(m.columns) ? m.columns : [];
+  if (!people.length || !cols.length) throw new Error('The demonstration data could not be read.');
+  const med = cols.filter(isMedical), train = cols.filter((c) => !isMedical(c));
+  $('mco-state').hidden = true;
+  const note = $('demo-medical-note');
+  note.hidden = false;
+  note.innerHTML = '<span class="demo-tag">Demonstration</span> These people and records are fictitious and come from the Care Net sample File for ' + esc(s.company) + ', as at ' + esc(s.as_at || '') + '. In your portal they arrive when MyClinicOnline is connected. <abbr class="src" title="Linked from MyClinicOnline in the sample" style="text-decoration:none">MCO</abbr> marks a record the sample shows as linked from MyClinicOnline.';
+  note.style.marginBottom = '18px';
+  $('med-grid').classList.add('stack');
+
+  const tm = tally(people, med), tt = tally(people, train);
+  $('m-cert-body').innerHTML = '<p>' + plural(people.length, 'person', 'people') + ' in the sample. ' + esc(tallyText(tm, 'certificate', 'certificates')) + '</p>'
+    + '<p class="muted">The sample does not carry outcomes, so none is shown. In your portal each certificate shows fit, fit with a restriction or not fit, and nothing more.</p>'
+    + matrixTable('cap-cert', 'Certificates of fitness by person (fictitious sample)', people, med);
+  $('m-train-body').innerHTML = '<p>' + esc(tallyText(tt, 'record', 'records')) + '</p>'
+    + matrixTable('cap-train', 'Training records by person (fictitious sample)', people, train);
+
+  const order = { expired: 1, missing: 2, due: 3 };
+  const renewals = [];
+  people.forEach((p) => cols.forEach((c) => {
+    const x = p.cells && p.cells[c.id];
+    if (x && order[x.s]) renewals.push({ p, c, x });
+  }));
+  renewals.sort((a, b) => order[a.x.s] - order[b.x.s] || String(a.p.name).localeCompare(String(b.p.name)));
+  $('m-book-body').innerHTML = '<p>The sample holds no bookings. These are the ' + plural(renewals.length, 'renewal', 'renewals') + ' it shows as expired, with nothing on record or due, which is what you would book with Care Net through MyClinicOnline:</p>'
+    + (renewals.length
+      ? '<ol class="blist">' + renewals.map((r) => { const k = CELL[r.x.s]; const sub = k[2](dmy(r.x.d)); return '<li><b>' + esc(r.p.name) + '</b>, ' + esc(r.p.role || '') + ': ' + esc(r.c.name) + ' <span class="pill ' + k[0] + '">' + esc(k[1] + (sub ? ' ' + sub : '')) + '</span></li>'; }).join('') + '</ol>'
+      : '<p class="muted">Nothing is due in the sample.</p>');
+}
+async function startDemo() {
+  $('demo-banner').hidden = false;
+  document.title = 'Demonstration portal | Care Net Consultants';
+  show('st-loading');
+  await withTimeout(loadScript(SAMPLE_SRC), 15000);
+  const s = window.__HSF_SAMPLE;
+  if (!s || typeof s !== 'object') throw new Error('The demonstration data could not be read.');
+  renderDemoCommercial(s);
+  renderDemoMedical(s);
+  show('st-demo');
+  announce('Demonstration portal ready. Every record on this page is fictitious.');
+}
+
+/* ============================================================ boot */
+function boot() {
+  applyConfig();
+  wireSignin();
+  $('retry').addEventListener('click', () => {
+    (DEMO ? startDemo() : startLive()).catch(() => showError());
+  });
+  if (DEMO) {
+    startDemo().catch(() => showError('The demonstration could not be loaded just now. Please try again shortly.'));
+    return;
+  }
+  renderSignedOut();
+  startLive().catch((e) => showError(friendly(e, 'Your portal could not start just now. Please try again in a few minutes.')));
+  try {
+    auth.onChange((event) => {
+      if (event === 'SIGNED_IN' && !$('st-signin').hidden) startLive().catch(() => showError());
+      if (event === 'SIGNED_OUT' && !$('st-account').hidden) toSignin();
+    });
+  } catch (_) { /* provider pending: the start routine already shows a friendly state */ }
+}
+try { boot(); } catch (e) { try { showError('Your portal could not start just now. Please try again in a few minutes.'); } catch (_) { /* nothing more to do */ } }
+</script>
+<script src="js/cnc-header.js?v=20260915a" defer></script>
+<script src="js/cnc-secnav.js?v=20260915b" defer></script>
+<script src="js/cnc-design-assets.js" defer></script>
+</body>
+</html>

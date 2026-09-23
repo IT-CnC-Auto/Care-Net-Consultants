@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CNC Medical Surveillance Plans</title>
 <meta name="description" content="Start your Medical Surveillance Plan with Care Net Consultants: sign in with your work email, build your Plan free against the verified law for your industry, and see what it is built from.">
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/index-og-1200x630.jpg" data-asset="index-og">
 <!-- Care Net house faces and the shared site header. Both are front end only:
      no endpoints, no data handling, nothing that touches the app's plumbing. -->
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
@@ -124,6 +125,10 @@
   .steps { font-size: 13px; color: #555; padding-left: 18px; }
   footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -140,7 +145,7 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="index-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li class="active"><a href="/" aria-current="page">Start your journey</a></li>
@@ -154,11 +159,11 @@
 </header>
 <!-- Hero banner: the all-industries photograph from R2, no text over it. -->
 <section class="hero">
-  <img src="https://img.carenetcdn.com/medical-surveillance/hero-all-industries%20v2.webp" alt="Care Net Consultants occupational health teams across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
+  <img data-asset="index-hero" src="https://img.carenetcdn.com/medical-surveillance/hero-all-industries%20v2.webp" alt="Care Net Consultants occupational health teams across South African industries" width="1920" height="1080" fetchpriority="high" decoding="async">
 </section>
 
 <!-- Africa pattern strip, the same page break the main site uses. -->
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="index-pattern"></div>
 
 <div class="titleband">
   <div class="pagehead">
@@ -193,19 +198,20 @@
       <p class="hint">Only so a sales executive can reach you if there is a question about your Plan.</p>
     </div>
 
-    <button id="send-link">Email me my secure sign in link</button>
+    <button id="send-link" data-cta="send_sign_in_link">Email me my secure sign in link</button>
     <div class="status" id="signin-status" style="display:none"></div>
     <p class="privacy">Care Net uses these details to prepare your Medical Surveillance Plan and to contact you about it. They are processed in line with POPIA and are not used for anything else.</p>
+    <p class="privacy">Already working with us? <a class="linklike" href="/portal.html" data-cta="sign_in">Sign in</a> to see your Plans and Files in one place.</p>
   </div>
 
   <div class="card" id="inbox-card" style="display:none">
     <h2>Check your inbox</h2>
     <div class="inbox">
-      <div class="tick" aria-hidden="true">&#10003;</div>
+      <div class="tick" aria-hidden="true" data-asset="index-inbox-tick">&#10003;</div>
       <b id="inbox-email">&nbsp;</b>
       <p>Your secure sign in link is on its way. Open it on this device and your assessment is ready and waiting, with your details already filled in.</p>
       <p class="hint" style="margin-top:10px">Nothing after a minute or two? Check your spam folder, or send it again.</p>
-      <button class="again" id="inbox-again">Use a different email address</button>
+      <button class="again" id="inbox-again" data-cta="use_different_email">Use a different email address</button>
     </div>
   </div>
 
@@ -217,11 +223,11 @@
       <div class="fld"><label for="reg-company">Company name</label><input id="reg-company" type="text" autocomplete="organization"></div>
       <div class="fld"><label for="reg-contact">Your name</label><input id="reg-contact" type="text" autocomplete="name"></div>
       <div class="fld"><label for="reg-phone">Contact number <span class="opt">optional</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
-      <button id="register">Register my company and start</button>
+      <button id="register" data-cta="register_company">Register my company and start</button>
     </div>
     <div id="start-body" style="display:none">
       <p>Your Medical Surveillance Plan assessment is ready. It takes about twenty minutes, and you can add sites, job categories and substances as you go. Have your risk assessment to hand if you have one.</p>
-      <a class="button big" id="start-link" href="#">Start your assessment</a>
+      <a class="button big" id="start-link" href="#" data-cta="start_assessment">Start your assessment</a>
       <p class="hint" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
     </div>
     <div class="status" id="account-status" style="display:none"></div>
@@ -233,13 +239,13 @@
       <h4>If you need it for an audit or a regulator</h4>
       <p>Then it needs our Occupational Medical Practitioner to read it and sign it, and we would rather tell you why than let you find out later.</p>
       <p class="straight">Your Plan is drafted by a trained language model working from a framework we maintain, updated every month for new legislation and again for job roles and risk. That framework is strong and we stand behind how it is built. It is still not a person. We will not put a practitioner's name on a document that no person has read, so the practitioner goes through your Plan line by line before signing it. That review is charged per person on the report.</p>
-      <p>What it comes to depends on your industry and how complex your operation is, so there is no single number we can put here honestly. <a class="linklike" href="/shop.html#calc">Work it out for your headcount</a>, and a sales executive confirms the figure before anything starts.</p>
+      <p>What it comes to depends on your industry and how complex your operation is, so there is no single number we can put here honestly. <a class="linklike" href="/shop.html#calc" data-cta="work_out_review_fee">Work it out for your headcount</a>, and a sales executive confirms the figure before anything starts.</p>
     </div>
     <p class="alsosee">
-      Also see <a class="linklike" href="/shop.html">Build your Plan</a>,
-      <a class="linklike" href="/shop.html#law">the law behind your Plan</a>
-      and <a class="linklike" href="/sample.html">Samples</a>.
-      New: <a class="linklike" href="/health-and-safety-file.html">build your Health and Safety File</a>, free.
+      Also see <a class="linklike" href="/shop.html" data-cta="build_your_plan_link">Build your Plan</a>,
+      <a class="linklike" href="/shop.html#law" data-cta="law_behind_plan">the law behind your Plan</a>
+      and <a class="linklike" href="/sample.html" data-cta="view_samples">Samples</a>.
+      New: <a class="linklike" href="/health-and-safety-file.html" data-cta="hsf_landing">build your Health and Safety File</a>, free.
     </p>
   </div>
 
@@ -251,9 +257,9 @@
         <b id="resume-company">Your assessment</b>
         <span class="when" id="resume-when">&nbsp;</span>
       </div>
-      <a class="button big" id="resume-link" href="#" style="margin-top:14px">Carry on with my assessment</a>
+      <a class="button big" id="resume-link" href="#" style="margin-top:14px" data-cta="resume_assessment">Carry on with my assessment</a>
       <p class="hint" style="margin-top:10px">Saved on this device as you went. Any documents you attached need attaching again.</p>
-      <button type="button" class="discard" id="resume-discard">Discard this saved draft</button>
+      <button type="button" class="discard" id="resume-discard" data-cta="discard_saved_draft">Discard this saved draft</button>
     </div>
     <div id="resume-none">
       <p class="nodraft">Nothing saved in this browser. Your answers are kept on the device you started on, so use that same computer, or sign in on the left and start again.</p>
@@ -273,8 +279,8 @@
       <div class="fig"><b id="f-roles">316</b><span>job roles, each with its own risk picture</span></div>
       <div class="fig"><b id="f-protocols">30</b><span>medical assessments, each with a legal basis</span></div>
     </div>
-    <a class="button" href="/sample.html">Download a Sample Plan</a>
-    <p class="law">Every citation is on the <a class="linklike" href="/shop.html#law">legislation register</a>, with the industries it applies to and the date it was last verified.</p>
+    <a class="button" href="/sample.html" data-cta="download_sample_plan">Download a Sample Plan</a>
+    <p class="law">Every citation is on the <a class="linklike" href="/shop.html#law" data-cta="legislation_register">legislation register</a>, with the industries it applies to and the date it was last verified.</p>
   </div>
 
   </div>
@@ -297,7 +303,7 @@
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="index-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -530,5 +536,142 @@ sb.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' && ses
 </script>
 <script src="/js/cnc-journey.js?v=20260916a"></script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/index.html",
+ "title": "Start your journey (Medical Surveillance Plan sign in)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "index-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Medical Surveillance Plan Assessment\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Start your Medical Surveillance Plan with Care Net Consultants",
+   "file_name": "index-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/index-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before."
+  },
+  {
+   "id": "index-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "index-hero",
+   "block": "Hero banner (full page width, under the header)",
+   "purpose": "The all industries photograph that opens the Start your journey page. No text sits on it.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 3840,
+   "height": 2160,
+   "ratio": "16:9",
+   "max_kb": 450,
+   "colour": "Natural light across several South African workplaces; the page lays a dark gradient over the left side (55 percent fading to clear), so the left third may sit darker",
+   "alt": "Care Net Consultants occupational health teams across South African industries",
+   "file_name": "hero-all-industries-v2-3840x2160.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/hero-all-industries%20v2.webp",
+   "status": "existing",
+   "notes": "Current file: hero-all-industries v2.webp, 1920 x 1080 declared (the space in the name is written %20 in the address). The band is the full page width and 280 to 460 px high, so on a 1920 px screen it needs 3840 px across for 2x. The visible crop runs from about 4:1 on wide screens to about 4:3 on phones, always centred: keep people and faces between 30 and 70 percent across and 25 and 75 percent down. Also supply 2560, 1920, 1280 and 828 px wide versions (the 1920 version under 220 KB) so a srcset can be added; until then the page uses one file. The file name given has no spaces; when it lands, the image and the preload in the head move to it together. Model release needed for anyone identifiable."
+  },
+  {
+   "id": "index-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "index-inbox-tick",
+   "block": "Check your inbox card: confirmation mark",
+   "purpose": "The round tick that confirms the sign in link is on its way. Today it is a text character in a green circle drawn by the page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 92,
+   "height": 92,
+   "ratio": "1:1",
+   "max_kb": 3,
+   "colour": "Green #2E8B57 tick on a pale green #E8F7EC circle, the page's own success colours",
+   "alt": "Decorative, no alternative text (the heading says what happened)",
+   "file_name": "index-inbox-tick.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/index-inbox-tick.svg",
+   "status": "needed",
+   "notes": "Shows at 46 x 46 px, so a PNG fallback is 92 x 92 for 2x; SVG preferred. Optional polish: the page works with the text character until this is supplied."
+  },
+  {
+   "id": "index-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Build your Health and Safety File | Care Net Consultants</title>
 <meta name="description" content="Build your Health and Safety File free, for every industry, with your Care Net medicals and training linked in. When you need it signed, a registered Health and Safety Manager reviews it, and Care Net clients pay 25% less than the market average.">
+<meta property="og:image" content="https://img.carenetcdn.com/health-and-safety-file/health-and-safety-file-og-1200x630.jpg" data-asset="hsf-og">
 <!--
 =====================================================================
  health-and-safety-file.html :: Version 1.0 :: 23 September 2026
@@ -29,7 +30,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
-<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" data-asset="hsf-favicon">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
@@ -131,6 +132,10 @@
   footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
   :target { scroll-margin-top: 130px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -140,7 +145,7 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="hsf-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
@@ -160,18 +165,18 @@
       <h1>Your Health and Safety File, free to build. <span class="r">Signed off when you need it.</span></h1>
       <p class="lede">Every element the law asks of your industry, who owns it, the evidence behind it and what is still outstanding, in one File an inspector can read. Build it at no charge. When you need it signed, a registered Health and Safety Manager reviews it, and Care Net clients pay 25% less than the market average.</p>
       <div class="chips">
-        <a class="chip" href="#two-ways">Free for every client</a>
-        <a class="chip" href="#pricing">Sign off costs by industry</a>
-        <a class="chip" href="/hsf-sample.html">Sample File</a>
-        <a class="chip" href="#mco">Medicals and training linked</a>
+        <a class="chip" href="#two-ways" data-cta="chip_free_for_every_client">Free for every client</a>
+        <a class="chip" href="#pricing" data-cta="chip_sign_off_costs">Sign off costs by industry</a>
+        <a class="chip" href="/hsf-sample.html" data-cta="chip_sample_file">Sample File</a>
+        <a class="chip" href="#mco" data-cta="chip_medicals_and_training">Medicals and training linked</a>
       </div>
     </div>
     <div class="heroimg">
-      <img src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A health and safety record being completed" width="1920" height="1080" fetchpriority="high" decoding="async">
+      <img data-asset="hsf-hero" src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A health and safety record being completed" width="1920" height="1080" fetchpriority="high" decoding="async">
     </div>
   </div>
 </section>
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="hsf-pattern"></div>
 
 <main id="main">
 
@@ -193,7 +198,7 @@
           <li>The training and medical matrix for every person in scope, with expiry dates</li>
           <li>Expiries flagged before they lapse; a new revision when your operation changes</li>
         </ul>
-        <a class="btn ghost" href="/hsf-sample.html">See a sample File</a>
+        <a class="btn ghost" href="/hsf-sample.html" data-cta="view_sample_file">See a sample File</a>
       </div>
       <div class="card featured">
         <span class="tag signed">Signed off</span>
@@ -206,7 +211,7 @@
           <li>Released with revision numbers and an audit pack an inspector can read without the system</li>
         </ul>
         <div class="from"><span id="from-note">Priced at the market average for your industry.</span><b id="from-figure">Care Net clients pay 25% less</b></div>
-        <a class="btn" href="#pricing">See the cost for my industry</a>
+        <a class="btn" href="#pricing" data-cta="see_cost_for_my_industry">See the cost for my industry</a>
       </div>
     </div>
   </section>
@@ -265,12 +270,12 @@
     </div>
     <div class="grid">
       <div class="card">
-        <h2>Medicals</h2>
+        <h2 data-asset="hsf-mco-medicals-icon">Medicals</h2>
         <p>Certificates of fitness per person per protocol, the Construction Regulations Annexure 3 certificate where construction work applies, professional driving permit medicals, and the mine certificate of fitness at a mine. Each arrives with its issue date, expiry, any work restriction and the practitioner who signed.</p>
         <p class="muted">Only what the employer may lawfully hold: fit, fit with a restriction, or not fit. No clinical detail ever reaches the File.</p>
       </div>
       <div class="card">
-        <h2>Training</h2>
+        <h2 data-asset="hsf-mco-training-icon">Training</h2>
         <p>Every training record MyClinicOnline holds for your people, with provider, course or unit standard, date, expiry and certificate reference. It fills the training matrix and the competence evidence of every appointment.</p>
         <p class="muted">People are matched on MyClinicOnline's own person reference, never on a name. Where there is no record, the item shows outstanding and you can upload instead; where a record has expired, the File shows the renewal path.</p>
       </div>
@@ -295,10 +300,10 @@
       <span class="eyebrow">The law behind your File</span>
       <h2 id="law-title">Nothing is cited <span class="r">until it has been checked three times.</span></h2>
     </div>
-    <div class="card">
+    <div class="card" data-asset="hsf-three-checks-illustration">
       <p>Every instrument in your File is verified against its primary text, corroborated by an independent source, and checked for currency on the day. An instrument that fails a check is left out rather than guessed at, and the element that depends on it shows as awaiting verification instead. The register is reviewed every month; when the law moves, your File opens a revision.</p>
       <p class="straight"><b>What the File does, and what it does not.</b>It assembles, evidences, flags and reports. It does not decide that a workplace is safe, certify that a person is competent or determine anyone's fitness for work. The people the law names decide and sign: your chief executive and section 16(2) appointee, the Health and Safety Manager for the safety content, and the Occupational Medical Practitioner for the medical section.</p>
-      <p class="muted">See the verified instruments on the <a class="inline" href="/shop.html#law">legislation register</a>.</p>
+      <p class="muted">See the verified instruments on the <a class="inline" href="/shop.html#law" data-cta="legislation_register">legislation register</a>.</p>
     </div>
   </section>
 
@@ -308,8 +313,8 @@
       <h2 id="ready-title">Ready to build your File?</h2>
       <p>Start with your work email. If you already have a Medical Surveillance Plan with us, your File starts from what you told us then.</p>
       <div class="grid">
-        <a class="btn" href="/">Build my File</a>
-        <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp a sales executive</a>
+        <a class="btn" href="/hsf-builder.html" data-cta="build_my_file">Build my File</a>
+        <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
       </div>
     </div>
   </section>
@@ -318,7 +323,7 @@
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="hsf-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -341,6 +346,9 @@
   /* House style: R4 250,00. A space for thousands, a comma for cents. */
   var zar = function (n) { var v = Number(n).toFixed(2).split('.'); return 'R' + v[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + v[1]; };
   var ICONS = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
+  /* Designer asset slot ids, matching the cnc-asset-spec block at the end of the page. */
+  var sectionSlot = function (code) { return 'hsf-section-' + code.toLowerCase() + '-icon'; };
+  var iconSlot = function (slug) { return 'hsf-icon-' + slug; };
 
   var SECTIONS = [
     ['A', 'Legal and administrative', 'Registration, COIDA good standing, notifications, section 37(2) agreements, the legal register'],
@@ -360,7 +368,7 @@
     ['O', 'Records and retention', 'The retention schedule, storage and access, the POPIA operator agreement']
   ];
   $('secs').innerHTML = SECTIONS.map(function (s) {
-    return '<div><b>' + s[0] + '</b><span>' + esc(s[1]) + '</span><small>' + esc(s[2]) + '</small></div>';
+    return '<div data-asset="' + sectionSlot(s[0]) + '"><b>' + s[0] + '</b><span>' + esc(s[1]) + '</span><small>' + esc(s[2]) + '</small></div>';
   }).join('');
 
   var INDUSTRIES = [
@@ -374,7 +382,8 @@
     ["utilities-and-energy","UTIL","Utilities and energy"],["waste-management","WASTE","Waste management"]
   ];
   $('indgrid').innerHTML = INDUSTRIES.map(function (i) {
-    return '<a href="/hsf-sample.html?industry=' + i[0] + '"><img src="' + ICONS + 'cnc-medical-surveillance-' + i[0] + '-icon.svg" alt="" width="32" height="32" loading="lazy" decoding="async">' + esc(i[2]) + '</a>';
+    return '<a href="/hsf-sample.html?industry=' + i[0] + '" data-cta="hsf_sample_industry:' + i[0] + '">'
+      + '<img data-asset="' + iconSlot(i[0]) + '" src="' + ICONS + 'cnc-medical-surveillance-' + i[0] + '-icon.svg" alt="" width="32" height="32" loading="lazy" decoding="async">' + esc(i[2]) + '</a>';
   }).join('');
 
   /* ---- Pricing: every figure comes from /hsf/pricing.js. */
@@ -420,5 +429,809 @@
 </script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/health-and-safety-file.html",
+ "title": "Build your Health and Safety File",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "hsf-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when the Build your Health and Safety File page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Your Health and Safety File, free to build\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Build your Health and Safety File free with Care Net Consultants",
+   "file_name": "health-and-safety-file-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/health-and-safety-file-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before."
+  },
+  {
+   "id": "hsf-favicon",
+   "block": "Head: browser tab icon (favicon)",
+   "purpose": "The small icon in the browser tab, in bookmarks and on a phone home screen. Today the icon tag points at the full logo, which a browser squeezes into a 16 px square.",
+   "type": "logo",
+   "formats": [
+    "svg",
+    "png",
+    "ico"
+   ],
+   "width": 512,
+   "height": 512,
+   "ratio": "1:1",
+   "max_kb": 20,
+   "colour": "A square version of the Care Net logo, simplified until it reads at 16 x 16 px (the logo symbol or initials without the tagline), Care Net red #ED1B24 on white or transparent",
+   "alt": "Decorative, no alternative text (the browser shows the page title beside it)",
+   "file_name": "cnc-favicon-512x512.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
+   "status": "needed",
+   "notes": "One set for the whole site, not per page: cnc-favicon.svg (square artboard), cnc-favicon-512x512.png, cnc-apple-touch-icon-180x180.png and favicon.ico carrying 16, 32 and 48 px, all to the same folder. Keep 10 percent clear space inside the square. Today the icon tag points at New-Site_Care_Net_Logo.webp, a 445 x 160 wordmark, so the tab shows an unreadable sliver. When the set lands, the icon tag on every page changes in one release."
+  },
+  {
+   "id": "hsf-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "hsf-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "The hero photograph for Build your Health and Safety File: a health and safety record being completed.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 250,
+   "colour": "Natural light; the card sits on the charcoal hero, so a mid to dark photograph with a touch of Care Net red (a hard hat, a lanyard, a File binder spine) reads best",
+   "alt": "A health and safety record being completed",
+   "file_name": "record-submission.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
+   "status": "existing",
+   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on shop.html (Build your Plan) and hsf-sample.html, so the Plan and File pages look alike. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information."
+  },
+  {
+   "id": "hsf-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "hsf-section-a-icon",
+   "block": "What is in the File: fifteen sections grid, Section A",
+   "purpose": "Icon for Section A, Legal and administrative, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section A, Legal and administrative",
+   "file_name": "hsf-section-a-legal-and-administrative.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-a-legal-and-administrative.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-a-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a registered company document with an official stamp outline. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-b-icon",
+   "block": "What is in the File: fifteen sections grid, Section B",
+   "purpose": "Icon for Section B, Policy, organisation and appointments, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section B, Policy, organisation and appointments",
+   "file_name": "hsf-section-b-policy-organisation-and-appointments.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-b-policy-organisation-and-appointments.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-b-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: an organisation chart with an appointment letter. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-c-icon",
+   "block": "What is in the File: fifteen sections grid, Section C",
+   "purpose": "Icon for Section C, Risk management, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section C, Risk management",
+   "file_name": "hsf-section-c-risk-management.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-c-risk-management.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-c-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a warning triangle over a checklist. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-d-icon",
+   "block": "What is in the File: fifteen sections grid, Section D",
+   "purpose": "Icon for Section D, Training and competence, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section D, Training and competence",
+   "file_name": "hsf-section-d-training-and-competence.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-d-training-and-competence.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-d-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a graduation cap over a certificate. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-e-icon",
+   "block": "What is in the File: fifteen sections grid, Section E",
+   "purpose": "Icon for Section E, Medical surveillance and fitness, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section E, Medical surveillance and fitness",
+   "file_name": "hsf-section-e-medical-surveillance-and-fitness.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-e-medical-surveillance-and-fitness.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-e-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a stethoscope around a clipboard. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-f-icon",
+   "block": "What is in the File: fifteen sections grid, Section F",
+   "purpose": "Icon for Section F, Registers and inspections, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section F, Registers and inspections",
+   "file_name": "hsf-section-f-registers-and-inspections.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-f-registers-and-inspections.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-f-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a magnifying glass over a register. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-g-icon",
+   "block": "What is in the File: fifteen sections grid, Section G",
+   "purpose": "Icon for Section G, Permits and controls, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section G, Permits and controls",
+   "file_name": "hsf-section-g-permits-and-controls.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-g-permits-and-controls.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-g-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a permit card with a padlock. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-h-icon",
+   "block": "What is in the File: fifteen sections grid, Section H",
+   "purpose": "Icon for Section H, Emergency preparedness, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section H, Emergency preparedness",
+   "file_name": "hsf-section-h-emergency-preparedness.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-h-emergency-preparedness.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-h-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: an emergency exit sign with a running figure. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-i-icon",
+   "block": "What is in the File: fifteen sections grid, Section I",
+   "purpose": "Icon for Section I, Incident management, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section I, Incident management",
+   "file_name": "hsf-section-i-incident-management.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-i-incident-management.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-i-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: an incident report with an exclamation mark. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-j-icon",
+   "block": "What is in the File: fifteen sections grid, Section J",
+   "purpose": "Icon for Section J, Occupational hygiene, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section J, Occupational hygiene",
+   "file_name": "hsf-section-j-occupational-hygiene.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-j-occupational-hygiene.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-j-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a sound wave and a sampling pump. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-k-icon",
+   "block": "What is in the File: fifteen sections grid, Section K",
+   "purpose": "Icon for Section K, Contractors, visitors and the public, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section K, Contractors, visitors and the public",
+   "file_name": "hsf-section-k-contractors-visitors-and-the-public.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-k-contractors-visitors-and-the-public.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-k-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a visitor badge and a hard hat. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-l-icon",
+   "block": "What is in the File: fifteen sections grid, Section L",
+   "purpose": "Icon for Section L, Communication and consultation, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section L, Communication and consultation",
+   "file_name": "hsf-section-l-communication-and-consultation.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-l-communication-and-consultation.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-l-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: two speech bubbles over a notice board. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-m-icon",
+   "block": "What is in the File: fifteen sections grid, Section M",
+   "purpose": "Icon for Section M, Environment, welfare and facilities, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section M, Environment, welfare and facilities",
+   "file_name": "hsf-section-m-environment-welfare-and-facilities.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-m-environment-welfare-and-facilities.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-m-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a water tap and a leaf. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-n-icon",
+   "block": "What is in the File: fifteen sections grid, Section N",
+   "purpose": "Icon for Section N, Audit, review and improvement, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section N, Audit, review and improvement",
+   "file_name": "hsf-section-n-audit-review-and-improvement.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-n-audit-review-and-improvement.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-n-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: a circular arrow around a clipboard. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-section-o-icon",
+   "block": "What is in the File: fifteen sections grid, Section O",
+   "purpose": "Icon for Section O, Records and retention, on its tile in the fifteen sections overview.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background",
+   "alt": "Section O, Records and retention",
+   "file_name": "hsf-section-o-records-and-retention.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/sections/hsf-section-o-records-and-retention.svg",
+   "status": "needed",
+   "notes": "The same file as hsf-builder-section-o-icon on hsf-builder.html: one set of fifteen serves both pages, so draw it once, with one stroke weight and corner radius across the set. Suggested motif: an archive box with a clock. Here it would sit left of the section letter at about 32 x 32 px; placed with empty alternative text because the section name sits beside it. Until the set is delivered and the page is updated to show it, the tile shows the letter only."
+  },
+  {
+   "id": "hsf-mco-medicals-icon",
+   "block": "Linked, not uploaded: Medicals card",
+   "purpose": "Icon at the head of the Medicals card, for the certificates of fitness that arrive in the File from MyClinicOnline.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent (the medical spine colour on portal.html); transparent background",
+   "alt": "Certificates of fitness",
+   "file_name": "portal-certificates.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-certificates.svg",
+   "status": "needed",
+   "notes": "The same file as portal-certificates-icon on portal.html: draw it once. Suggested motif: a certificate with a calendar corner for the expiry. Nothing that suggests a diagnosis or a clinical result: Care Net screens fitness for work and the File holds only fit, fit with a restriction, or not fit. Here it would sit beside the Medicals heading at about 40 x 40 px, with empty alternative text. Until it is delivered and the page updated, the card shows the heading only."
+  },
+  {
+   "id": "hsf-mco-training-icon",
+   "block": "Linked, not uploaded: Training card",
+   "purpose": "Icon at the head of the Training card, for the training records that arrive from MyClinicOnline.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 96,
+   "height": 96,
+   "ratio": "1:1",
+   "max_kb": 8,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one teal #1D5D6F accent (the medical spine colour on portal.html); transparent background",
+   "alt": "Training records",
+   "file_name": "portal-training.svg",
+   "delivery": "img.carenetcdn.com/portal/icons/portal-training.svg",
+   "status": "needed",
+   "notes": "The same file as portal-training-icon on portal.html: draw it once. Suggested motif: a graduation cap over a hard hat. Here it would sit beside the Training heading at about 40 x 40 px, with empty alternative text. Until it is delivered and the page updated, the card shows the heading only."
+  },
+  {
+   "id": "hsf-icon-agriculture-and-forestry",
+   "block": "Sample Files: industry grid, tile 1 of 17",
+   "purpose": "Icon for Agriculture and forestry on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-agriculture-and-forestry-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-agriculture-and-forestry-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-agriculture-and-forestry-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-cleaning-and-hygiene-services",
+   "block": "Sample Files: industry grid, tile 2 of 17",
+   "purpose": "Icon for Cleaning and hygiene services on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-construction",
+   "block": "Sample Files: industry grid, tile 3 of 17",
+   "purpose": "Icon for Construction on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-construction-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-construction-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-construction-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-education",
+   "block": "Sample Files: industry grid, tile 4 of 17",
+   "purpose": "Icon for Education on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-education-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-education-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-education-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-government-and-municipal",
+   "block": "Sample Files: industry grid, tile 5 of 17",
+   "purpose": "Icon for Government and municipal on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-government-and-municipal-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-government-and-municipal-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-government-and-municipal-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-healthcare-and-laboratories",
+   "block": "Sample Files: industry grid, tile 6 of 17",
+   "purpose": "Icon for Healthcare and laboratories on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-healthcare-and-laboratories-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-healthcare-and-laboratories-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-healthcare-and-laboratories-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-hospitality-and-food-service",
+   "block": "Sample Files: industry grid, tile 7 of 17",
+   "purpose": "Icon for Hospitality and food service on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-hospitality-and-food-service-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-hospitality-and-food-service-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-hospitality-and-food-service-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-manufacturing",
+   "block": "Sample Files: industry grid, tile 8 of 17",
+   "purpose": "Icon for Manufacturing on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-manufacturing-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-manufacturing-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-manufacturing-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-mining-and-quarrying",
+   "block": "Sample Files: industry grid, tile 9 of 17",
+   "purpose": "Icon for Mining and quarrying on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-mining-and-quarrying-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-mining-and-quarrying-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-mining-and-quarrying-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-office-and-professional-services",
+   "block": "Sample Files: industry grid, tile 10 of 17",
+   "purpose": "Icon for Office and professional services on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-office-and-professional-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-office-and-professional-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-office-and-professional-services-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-petrochemical-and-fuel-retail",
+   "block": "Sample Files: industry grid, tile 11 of 17",
+   "purpose": "Icon for Petrochemical and fuel retail on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-retail-and-wholesale",
+   "block": "Sample Files: industry grid, tile 12 of 17",
+   "purpose": "Icon for Retail and wholesale on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-retail-and-wholesale-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-retail-and-wholesale-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-retail-and-wholesale-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-security-services",
+   "block": "Sample Files: industry grid, tile 13 of 17",
+   "purpose": "Icon for Security services on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-security-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-security-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-security-services-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-telecommunications-and-tower-work",
+   "block": "Sample Files: industry grid, tile 14 of 17",
+   "purpose": "Icon for Telecommunications and tower work on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-transport-and-logistics",
+   "block": "Sample Files: industry grid, tile 15 of 17",
+   "purpose": "Icon for Transport and logistics on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-transport-and-logistics-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-transport-and-logistics-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-transport-and-logistics-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-utilities-and-energy",
+   "block": "Sample Files: industry grid, tile 16 of 17",
+   "purpose": "Icon for Utilities and energy on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-utilities-and-energy-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-utilities-and-energy-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-utilities-and-energy-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-icon-waste-management",
+   "block": "Sample Files: industry grid, tile 17 of 17",
+   "purpose": "Icon for Waste management on the tile that opens that industry's sample Health and Safety File.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile takes a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-waste-management-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-waste-management-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-waste-management-icon.svg (SVG). Shows at 32 x 32 px beside the industry name. SVG stays sharp at every density; 64 x 64 is the 2x size if a PNG is ever needed. The same file serves sample.html, health-and-safety-file.html and hsf-sample.html, so the set is drawn once. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it."
+  },
+  {
+   "id": "hsf-three-checks-illustration",
+   "block": "The law behind your File: the three checks",
+   "purpose": "A simple three step diagram of how an instrument earns its place in a File: checked against its primary text, corroborated by an independent source, and checked for currency on the day. An instrument that fails a check is left out, and the element shows as awaiting verification.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 1200,
+   "height": 360,
+   "ratio": "10:3",
+   "max_kb": 40,
+   "colour": "Charcoal #1A1A1A line work and Montserrat labels on white, Care Net red #C5141B for the three check marks, amber #8A5A00 on #FDF3DC for the awaiting verification state",
+   "alt": "Three checks before any instrument is cited: its primary text, an independent source, and currency on the day",
+   "file_name": "hsf-three-checks-1200x360.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-three-checks-1200x360.svg",
+   "status": "needed",
+   "notes": "Would sit at the top of the law card, full card width (up to about 950 px), so the PNG fallback is 2400 x 720 for 2x; supply hsf-three-checks-2400x720.png beside the SVG. Label the steps in the page's own plain words. No instrument names, no section or regulation numbers and no gazette numbers on the artwork, because what may be cited changes as the register is reviewed. It must not look like a seal or stamp of approval, and no wording on it may claim that a workplace meets the law. Until it is delivered the card shows text only."
+  },
+  {
+   "id": "hsf-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

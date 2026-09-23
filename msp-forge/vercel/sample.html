@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
 <meta name="description" content="View a sample Medical Surveillance Plan for your industry, produced by the Care Net Method from fictitious company data.">
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/sample-og-1200x630.jpg" data-asset="sample-og">
 <style>
   :root { --red: #ED1B24; --charcoal: #1A1A1A; }
   * { box-sizing: border-box; }
@@ -98,6 +99,10 @@
   /* The header is sticky, so anything linked to sits clear of it. */
   :target { scroll-margin-top: 130px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -113,7 +118,7 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="sample-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
@@ -136,19 +141,19 @@
       <h1 id="title">Sample Medical Surveillance Plan</h1>
       <p class="lede">View a sample Medical Surveillance Plan for your industry, produced by the Care Net Method from fictitious company data.</p>
       <div class="chips">
-        <a class="chip" href="/pilot.html">How it works</a>
-        <a class="chip" href="/method.html">The Care Net Method</a>
-        <a class="chip" href="/shop.html">Build your Plan</a>
+        <a class="chip" href="/pilot.html" data-cta="chip_how_it_works">How it works</a>
+        <a class="chip" href="/method.html" data-cta="chip_method">The Care Net Method</a>
+        <a class="chip" href="/shop.html" data-cta="chip_build_your_plan">Build your Plan</a>
       </div>
     </div>
     <div class="heroimg">
-      <img src="https://img.carenetcdn.com/medical-surveillance/New-Site_carenet-medical-surveillance-planning-pc-mockup.webp.1920x1200px.webp" alt="A Medical Surveillance Plan open on a desktop screen" width="1920" height="1080" fetchpriority="high" decoding="async">
+      <img data-asset="sample-hero" src="https://img.carenetcdn.com/medical-surveillance/New-Site_carenet-medical-surveillance-planning-pc-mockup.webp.1920x1200px.webp" alt="A Medical Surveillance Plan open on a desktop screen" width="1920" height="1080" fetchpriority="high" decoding="async">
     </div>
   </div>
 </section>
 
 <!-- Africa pattern strip, closing the hero off, as on the landing page. -->
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="sample-pattern"></div>
 
 <main id="main">
   <!-- The grid, shown when no industry has been chosen yet. -->
@@ -160,9 +165,9 @@
 
   <!-- Which one is open, and the way back to the grid. -->
   <div class="chosen" id="chosen" hidden>
-    <img id="chosen-icon" src="" alt="" width="40" height="40" decoding="async">
+    <img id="chosen-icon" data-asset="sample-chosen-industry-icon" src="" alt="" width="40" height="40" decoding="async">
     <b id="chosen-name">&nbsp;</b>
-    <a class="back" href="/sample.html">Choose a different industry</a>
+    <a class="back" href="/sample.html" data-cta="choose_different_industry">Choose a different industry</a>
   </div>
   <div class="bar" id="bar" hidden>
     <div class="note"><strong>Sample for viewing only.</strong> Produced by the Care Net Method from entirely fictitious company data and watermarked on every page. It cannot be downloaded or printed. Your own Plan is delivered as a signed document with your branding.</div>
@@ -171,8 +176,8 @@
   <div id="pages" class="pages"></div>
   <div class="cta" id="cta" hidden>
     <p>This is what your Plan looks like. Yours is built from your own sites, job categories and measured exposures, and reviewed by a registered Occupational Medical Practitioner before release.</p>
-    <a class="btn" href="/">Start your assessment</a>
-    <a class="btn secondary" href="/shop.html">Build your Plan</a>
+    <a class="btn" href="/" data-cta="start_assessment">Start your assessment</a>
+    <a class="btn secondary" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
   </div>
 </main>
 <div id="printmsg">This sample Medical Surveillance Plan is for on-screen viewing only and cannot be printed. Visit carenetconsultants.co.za to request your own Plan.</div>
@@ -184,7 +189,7 @@
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="sample-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -222,6 +227,8 @@
   ];
   var ICONS = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
   function iconFor(slug) { return ICONS + 'cnc-medical-surveillance-' + slug + '-icon.svg'; }
+  /* Designer asset slot id for each tile icon, matching the cnc-asset-spec block. */
+  function iconSlot(slug) { return 'sample-icon-' + slug; }
 
   var q = new URLSearchParams(location.search);
   var want = (q.get('industry') || '').toLowerCase();
@@ -243,8 +250,8 @@
 
     var grid = document.getElementById('icongrid');
     grid.innerHTML = INDUSTRIES.map(function (i) {
-      return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '">'
-           + '<img src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
+      return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '" data-cta="sample_industry:' + i[0] + '">'
+           + '<img data-asset="' + iconSlot(i[0]) + '" src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
            + '<span>' + i[2] + '</span></a></li>';
     }).join('');
     elChooser.hidden = false;
@@ -286,5 +293,464 @@
 })();
 </script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/sample.html",
+ "title": "Sample Plan",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "sample-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Sample Medical Surveillance Plan\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "A sample Medical Surveillance Plan from Care Net Consultants",
+   "file_name": "sample-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/sample-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before. The page is not indexed (noindex), but links to it are shared, so it still needs a card."
+  },
+  {
+   "id": "sample-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "sample-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "The hero image for Sample Plan: a Medical Surveillance Plan open on a desktop screen (device mockup).",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 250,
+   "colour": "Clean desk setting on the charcoal hero; the Plan on screen carries the Care Net band in red",
+   "alt": "A Medical Surveillance Plan open on a desktop screen",
+   "file_name": "New-Site_carenet-medical-surveillance-planning-pc-mockup.webp.1920x1200px.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_carenet-medical-surveillance-planning-pc-mockup.webp.1920x1200px.webp",
+   "status": "existing",
+   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Preloaded with high fetch priority, so keep it under 250 KB. To refresh the photograph, replace it in place at the same address. Model release needed for anyone identifiable. The file name says 1920 x 1200 while the card is 16:9 (the markup declares 1920 x 1080), so a strip is cropped from the top and bottom: supply the replacement at 16:9 with the screen inside the central area. Fictitious company data only on the screen, with the watermark visible."
+  },
+  {
+   "id": "sample-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "sample-icon-agriculture-and-forestry",
+   "block": "Choose your industry: icon grid, tile 1 of 17",
+   "purpose": "Tile icon for Agriculture and forestry. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-agriculture-and-forestry-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-agriculture-and-forestry-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-agriculture-and-forestry-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-cleaning-and-hygiene-services",
+   "block": "Choose your industry: icon grid, tile 2 of 17",
+   "purpose": "Tile icon for Cleaning and hygiene services. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-cleaning-and-hygiene-services-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-construction",
+   "block": "Choose your industry: icon grid, tile 3 of 17",
+   "purpose": "Tile icon for Construction. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-construction-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-construction-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-construction-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-education",
+   "block": "Choose your industry: icon grid, tile 4 of 17",
+   "purpose": "Tile icon for Education. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-education-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-education-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-education-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-government-and-municipal",
+   "block": "Choose your industry: icon grid, tile 5 of 17",
+   "purpose": "Tile icon for Government and municipal. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-government-and-municipal-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-government-and-municipal-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-government-and-municipal-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-healthcare-and-laboratories",
+   "block": "Choose your industry: icon grid, tile 6 of 17",
+   "purpose": "Tile icon for Healthcare and laboratories. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-healthcare-and-laboratories-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-healthcare-and-laboratories-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-healthcare-and-laboratories-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-hospitality-and-food-service",
+   "block": "Choose your industry: icon grid, tile 7 of 17",
+   "purpose": "Tile icon for Hospitality and food service. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-hospitality-and-food-service-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-hospitality-and-food-service-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-hospitality-and-food-service-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-manufacturing",
+   "block": "Choose your industry: icon grid, tile 8 of 17",
+   "purpose": "Tile icon for Manufacturing. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-manufacturing-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-manufacturing-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-manufacturing-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-mining-and-quarrying",
+   "block": "Choose your industry: icon grid, tile 9 of 17",
+   "purpose": "Tile icon for Mining and quarrying. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-mining-and-quarrying-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-mining-and-quarrying-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-mining-and-quarrying-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-office-and-professional-services",
+   "block": "Choose your industry: icon grid, tile 10 of 17",
+   "purpose": "Tile icon for Office and professional services. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-office-and-professional-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-office-and-professional-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-office-and-professional-services-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-petrochemical-and-fuel-retail",
+   "block": "Choose your industry: icon grid, tile 11 of 17",
+   "purpose": "Tile icon for Petrochemical and fuel retail. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-petrochemical-and-fuel-retail-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-retail-and-wholesale",
+   "block": "Choose your industry: icon grid, tile 12 of 17",
+   "purpose": "Tile icon for Retail and wholesale. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-retail-and-wholesale-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-retail-and-wholesale-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-retail-and-wholesale-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-security-services",
+   "block": "Choose your industry: icon grid, tile 13 of 17",
+   "purpose": "Tile icon for Security services. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-security-services-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-security-services-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-security-services-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-telecommunications-and-tower-work",
+   "block": "Choose your industry: icon grid, tile 14 of 17",
+   "purpose": "Tile icon for Telecommunications and tower work. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-telecommunications-and-tower-work-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-transport-and-logistics",
+   "block": "Choose your industry: icon grid, tile 15 of 17",
+   "purpose": "Tile icon for Transport and logistics. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-transport-and-logistics-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-transport-and-logistics-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-transport-and-logistics-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-utilities-and-energy",
+   "block": "Choose your industry: icon grid, tile 16 of 17",
+   "purpose": "Tile icon for Utilities and energy. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-utilities-and-energy-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-utilities-and-energy-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-utilities-and-energy-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-icon-waste-management",
+   "block": "Choose your industry: icon grid, tile 17 of 17",
+   "purpose": "Tile icon for Waste management. The tile opens that industry's sample Plan.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 144,
+   "height": 144,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Match the existing Care Net industry icon set; the tile is white with a red border on hover",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "cnc-medical-surveillance-waste-management-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-waste-management-icon.svg",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/cnc-medical-surveillance-waste-management-icon.svg (SVG). Shows at 72 x 72 px in the grid (56 x 56 on small phones) and 40 x 40 px once chosen. SVG stays sharp at every density; 144 x 144 is the 2x size if a PNG is ever needed. Deliver the set to the address given; the page keeps the R2 development address until img.carenetcdn.com carries it. medical-surveillance-plans.html uses a second, raster icon family for nine of these industries: one family across both pages is recommended."
+  },
+  {
+   "id": "sample-chosen-industry-icon",
+   "block": "Viewing one sample: industry icon beside the name",
+   "purpose": "Repeats the chosen industry's grid icon at small size above the sample pages.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 80,
+   "height": 80,
+   "ratio": "1:1",
+   "max_kb": 12,
+   "colour": "Same icon as the grid tile",
+   "alt": "Decorative, no alternative text (the industry name sits beside it)",
+   "file_name": "cnc-medical-surveillance-SLUG-icon.svg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/Icons/cnc-medical-surveillance-SLUG-icon.svg",
+   "status": "existing",
+   "notes": "No separate artwork: the page sets this to the grid icon of the chosen industry, where SLUG is that industry's slug (for example construction). Shows at 40 x 40 px, so 80 x 80 is the 2x size for any PNG fallback. Only visible after an industry is chosen (?industry=construction)."
+  },
+  {
+   "id": "sample-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

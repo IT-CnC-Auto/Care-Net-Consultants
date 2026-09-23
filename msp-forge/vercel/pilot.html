@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Walk the whole Medical Surveillance Plan journey end to end: what Care Net asks you, what the framework does with it, what the practitioner reviews, and what you receive.">
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/pilot-og-1200x630.jpg" data-asset="pilot-og">
 <title>Care Net Pilot Journey</title>
 <!-- Care Net house faces and the shared site header. Both are front end only:
      no endpoints, no data handling, nothing that touches the app's plumbing. -->
@@ -52,6 +53,10 @@
   /* The header is sticky, so anything linked to sits clear of it. */
   :target { scroll-margin-top: 130px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -67,7 +72,7 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="pilot-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
@@ -90,19 +95,19 @@
       <h1>The pilot journey: <span class="r">from sign up to a signed Plan</span></h1>
       <p class="lede">Walk the whole Medical Surveillance Plan journey end to end: what Care Net asks you, what the framework does with it, what the practitioner reviews, and what you receive.</p>
       <div class="chips">
-        <a class="chip" href="/method.html">The Care Net Method</a>
-        <a class="chip" href="/shop.html">Build your Plan</a>
-        <a class="chip" href="/sample.html">Sample Plan</a>
+        <a class="chip" href="/method.html" data-cta="chip_method">The Care Net Method</a>
+        <a class="chip" href="/shop.html" data-cta="chip_build_your_plan">Build your Plan</a>
+        <a class="chip" href="/sample.html" data-cta="chip_sample_plan">Sample Plan</a>
       </div>
     </div>
     <div class="heroimg">
-      <img src="https://img.carenetcdn.com/medical-surveillance/capture-consultation.webp" alt="A Care Net consultation, capturing a worker’s details at the start of the assessment" width="1920" height="1080" fetchpriority="high" decoding="async">
+      <img data-asset="pilot-hero" src="https://img.carenetcdn.com/medical-surveillance/capture-consultation.webp" alt="A Care Net consultation, capturing a worker’s details at the start of the assessment" width="1920" height="1080" fetchpriority="high" decoding="async">
     </div>
   </div>
 </section>
 
 <!-- Africa pattern strip, closing the hero off, as on the landing page. -->
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="pilot-pattern"></div>
 
 <main id="main">
   <p style="font-size:14px;line-height:1.6">This page is the complete journey, live. Every step below links into the real system: the same account flow, the same assessment, the same engine, and the same clinical review your Plan goes through. Walk it end to end in about ten minutes.</p>
@@ -110,7 +115,7 @@
   <div class="step" id="step-1">
     <h2><span class="n">1</span>Sign in or create your company</h2>
     <p>One door for everyone: enter your work email, receive a secure sign in link, and either land on your company's status or register a new company on the spot. The moment you are signed in, the system checks two things automatically: an active service level agreement with Care Net, and whether you do 100 or more occupational medicals a year with us. Either one releases your Plan without a watermark.</p>
-    <a class="btn" href="/">Try the real sign in</a>
+    <a class="btn" href="/" data-cta="try_real_sign_in">Try the real sign in</a>
   </div>
 
   <div class="step" id="step-2">
@@ -125,19 +130,19 @@
     </table>
     </div>
     <p class="muted">The calculator gives you the figure for your own headcount. A sales executive confirms it against your industry and complexity before anything begins.</p>
-    <a class="btn" href="/shop.html#calc">Work out my review fee</a>
+    <a class="btn" href="/shop.html#calc" data-cta="work_out_review_fee">Work out my review fee</a>
   </div>
 
   <div class="step" id="step-3">
     <h2><span class="n">3</span>Complete the smart assessment</h2>
     <p>Eleven sections capture everything the engine needs: your sites and contacts, regulatory context, risk assessment and hygiene results, workforce profile, every job category with its hazards and controls, current surveillance arrangements, incident history, your industry from the governed list, your branding (your logo joins the Care Net band on every page of your Plan), POPIA consent, and the declaration. Roughly 30 to 45 minutes with your risk assessment at hand.</p>
     <p class="muted">The real form opens below in demo preview: everything is visible, nothing is stored, and submission is disabled. Clients receive a secure single use link instead.</p>
-    <a class="btn" href="/assess.html?demo=1">Preview the real assessment</a>
+    <a class="btn" href="/assess.html?demo=1" data-cta="preview_assessment">Preview the real assessment</a>
   </div>
 
   <div class="step" id="step-4">
     <h2><span class="n">4</span>The engine drafts your Plan</h2>
-    <p>Your answers run through <a href="/method.html" style="color:var(--red);font-weight:bold">the Care Net Method</a>: our maintained, triple verified body of South African occupational health law. It classifies your operation, frames the exact legal instruments that govern it, profiles every job against the hazard map, prescribes the surveillance battery with a legal basis for every test, composes the document, and then checks its own work. Nine checks must pass before a draft exists at all, among them:</p>
+    <p>Your answers run through <a href="/method.html" style="color:var(--red);font-weight:bold" data-cta="care_net_method_link">the Care Net Method</a>: our maintained, triple verified body of South African occupational health law. It classifies your operation, frames the exact legal instruments that govern it, profiles every job against the hazard map, prescribes the surveillance battery with a legal basis for every test, composes the document, and then checks its own work. Nine checks must pass before a draft exists at all, among them:</p>
     <ul class="muted">
       <li><span class="check">PASS</span> every citation resolves to a verified instrument</li>
       <li><span class="check">PASS</span> every test carries dual justification: the hazard and Employment Equity Act section 7</li>
@@ -154,13 +159,13 @@
   <div class="step" id="step-6">
     <h2><span class="n">6</span>Delivery, hosting, and revisions</h2>
     <p>Your signed Plan is delivered for download and hosted securely with revision numbers. When your operations or the law change, the revision runs through the same method and the same clinical review. Below is a real sample, generated from entirely fictitious company data and watermarked on every page:</p>
-    <a class="btn secondary" href="/sample.html">View the sample Plan for your industry</a>
+    <a class="btn secondary" href="/sample.html" data-cta="view_sample_plan">View the sample Plan for your industry</a>
   </div>
 
   <div class="step" style="border-left-color:#1A1A1A">
     <h2 style="color:#1A1A1A">Ready to run it for real?</h2>
-    <a class="btn" href="/">Sign in or create your company</a>
-    <a class="btn secondary" href="/shop.html">Build your Plan</a>
+    <a class="btn" href="/" data-cta="sign_in_or_create_company">Sign in or create your company</a>
+    <a class="btn secondary" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
   </div>
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
@@ -171,7 +176,7 @@
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="pilot-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -214,5 +219,122 @@
 </nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/pilot.html",
+ "title": "How it works (the pilot journey)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "pilot-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"From sign up to a signed Plan\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "The Care Net pilot journey, from sign up to a signed Medical Surveillance Plan",
+   "file_name": "pilot-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/pilot-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before."
+  },
+  {
+   "id": "pilot-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "pilot-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "The hero photograph for How it works: a Care Net consultation capturing a worker's details at the start of the assessment.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 250,
+   "colour": "Natural light; the card sits on the charcoal hero, so a mid to dark photograph with a touch of Care Net red (a lanyard, a folder, a hard hat) reads best",
+   "alt": "A Care Net consultation, capturing a worker’s details at the start of the assessment",
+   "file_name": "capture-consultation.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/capture-consultation.webp",
+   "status": "existing",
+   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Preloaded with high fetch priority, so keep it under 250 KB. To refresh the photograph, replace it in place at the same address. Model release needed for anyone identifiable. Any screen or form in shot must show no readable personal or health information."
+  },
+  {
+   "id": "pilot-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "pilot-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>
