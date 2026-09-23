@@ -1823,8 +1823,8 @@ B12.1 These items enter msp_confirmation_item in Phase 2.
 
 | Code | Kind | Item | Owner | Status |
 | --- | --- | --- | --- | --- |
-| HSF-1 | confirm | Who signs safety content for Care Net, in what registered capacity, and who signs for construction Files | Director | Open, required before Phase 6 |
-| HSF-2 | confirm | Commercial model for the File (parameters only, no published price); watermark rule for the File | Director | Open |
+| HSF-1 | confirm | Who signs safety content for Care Net, in what registered capacity, and who signs for construction Files. Director's instruction 23/09/2026: a registered Health and Safety Manager signs the safety content. Still open: the named person, the registration body and number (SACPCMP for construction Files), before Phase 6 | Director | Partly resolved 23/09/2026 |
+| HSF-2 | confirm | Commercial model for the File. Director's instruction 23/09/2026: the File is free to build for every client; sign off by a registered Health and Safety Manager is priced at the researched market average (hsf/PRICING-RESEARCH.md, published through vercel/hsf/pricing.js), and Care Net clients pay that average less 25%. Amounts are published on health-and-safety-file.html, a deliberate departure from the MSP no price rule. Still open: the watermark rule for the File, and moving the figures and the 25% into msp_env_parameter in Phase 4 | Director | Partly resolved 23/09/2026 |
 | HSF-3 | confirm | MCO interface contract for medicals and training, and the person identifier to match on (extends CR-13.12) | Director and MCO owner | Open, required before Phase 5 |
 | HSF-4 | decision | Audit table: shared msp_audit with hsf_file_id (B4.9) | Build | Resolved in this Part, subject to Director approval |
 | HSF-5 | confirm | Retention where an instrument sets none (every row marked HSF-5 in B6) | OMP and Director | Open |
