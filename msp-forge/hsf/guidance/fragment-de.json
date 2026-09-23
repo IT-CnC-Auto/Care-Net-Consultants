@@ -1,0 +1,906 @@
+{
+  "sections": {
+    "D": {
+      "intro": "Section D proves that every person doing the work knows the hazards, has been trained for the job they actually do, and holds any licence or permit the work needs. It starts from a training needs analysis per job role, is tracked in one training matrix, and is backed by the certificates, induction records and toolbox talk registers themselves.",
+      "what_goes_here": [
+        "A training needs analysis listing what each job role must be trained in",
+        "A training matrix showing every person, every required course, the date done, the expiry date and where the proof is",
+        "Signed induction records for employees, contractors and visitors",
+        "Certificates for statutory and safety critical courses such as first aid, fire fighting and health and safety representative training",
+        "Copies of licences and permits held by people, such as professional driving permits and operator certificates",
+        "Toolbox talk registers with attendance signatures, and competency assessment records"
+      ],
+      "who_usually_holds": [
+        "TRAIN",
+        "HR",
+        "SHE",
+        "OPS"
+      ],
+      "first_file_tips": [
+        "Do the training needs analysis first, from your risk assessment in Section C; it stops you paying for courses nobody needs and missing the ones the work demands.",
+        "Build the matrix in one spreadsheet before chasing certificates, then fill the gaps oldest expiry first.",
+        "Keep a clear copy of every certificate and licence, front and back, and write the expiry date on the matrix, not only on the card.",
+        "If nobody in your business is competent to assess risk, train or sign competency assessments, ask a sales executive about onboarding a registered Health and Safety practitioner through Care Net's Recruitment Portal."
+      ]
+    },
+    "E": {
+      "intro": "Section E shows that people are fit for the work and exposures your risk assessment found, and that their health information is handled confidentially. Its key document is your Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner (OMP), and this section is signed off by the OMP only. Care Net screens fitness for work and does not diagnose. Clinical records stay with the occupational health practitioner; your File holds only the outcome for each person: fit, fit with restrictions or unfit.",
+      "what_goes_here": [
+        "The released Medical Surveillance Plan signed by the OMP",
+        "Certificates of fitness per employee: baseline, periodic and exit",
+        "Construction, driving permit and mine fitness certificates where that work applies",
+        "Outcomes of the specific examinations your exposures call for, such as lead, noise or hazardous chemical agents",
+        "A register of fitness restrictions and how each one was reflected in the person's job",
+        "Occupational disease reports, first aid records and a note on how medical records are kept confidential"
+      ],
+      "who_usually_holds": [
+        "OH",
+        "HR",
+        "SHE"
+      ],
+      "first_file_tips": [
+        "Finish your risk assessment in Section C first; the Medical Surveillance Plan is built from the exposures it finds, not from job titles.",
+        "Never upload clinical notes, test results or doctors' letters to your File. Upload only the certificate of fitness showing the outcome.",
+        "Put each person's certificate expiry date in your training and medical diary so nobody works past it.",
+        "If a certificate says fit with restrictions, record what you changed in the person's job; that record matters as much as the certificate."
+      ]
+    }
+  },
+  "elements": {
+    "HSF-D-01": {
+      "what_to_submit": [
+        "Training needs analysis listing each job role and the training it requires",
+        "The risk assessment or job descriptions it was built from",
+        "Signature and date of your section 16(2) assignee approving it"
+      ],
+      "why": "It links the hazards in your risk assessment to the training each role needs, so nobody is sent to work untrained and you do not pay for courses that do not fit the job. Your section 16(2) assignee reviews it once a year and whenever a role, process or piece of equipment changes.",
+      "example": "Example: Sithole Precast in Brits lists five roles; the batching plant operator needs forklift, hazardous chemical handling and hearing conservation training, while the yard cleaner needs induction, ergonomics and emergency evacuation.",
+      "common_gaps": [
+        "Listing people instead of roles, so the analysis breaks when staff change",
+        "Copying a generic course list that ignores your own risk assessment",
+        "Forgetting supervisors, appointees and office staff who visit the floor"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-D-02": {
+      "what_to_submit": [
+        "Training matrix naming every person, each required course, date completed and expiry date",
+        "A reference to where each certificate is filed",
+        "A monthly sign off or date stamp showing the matrix was checked"
+      ],
+      "why": "The matrix is the one page an inspector, auditor or client looks at to see whether your people are trained and in date. Checking it every month lets you book refresher training before a certificate lapses; where Care Net delivered the training, the record can arrive from MyClinicOnline once it is connected.",
+      "example": "Example: Mokoena Logistics in Germiston keeps a matrix of its 34 staff; in the June check the safety officer, Lerato Dlamini, flags two forklift certificates expiring and books the refresher before month end.",
+      "common_gaps": [
+        "A matrix with no expiry column, so lapses go unnoticed",
+        "New starters added to payroll but not to the matrix",
+        "Entries marked done with no certificate on file to prove it"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-D-03": {
+      "what_to_submit": [
+        "Signed induction record for each employee, with the date and the modules covered",
+        "Contractor induction records before they start work on site",
+        "Visitor register or visitor induction slip showing site rules were explained"
+      ],
+      "why": "Induction is where every person first learns the hazards, the emergency route and how to report a problem, so it protects people from day one. An inspector will often pick names from your staff list and ask to see their induction record; complete one each time a new person, contractor or visitor arrives.",
+      "example": "Example: Naidoo Food Packers in Pinetown inducts new packer Sipho Zulu on his first morning; he initials the modules on noise zones, chemical labels and the evacuation route, and his supervisor countersigns.",
+      "common_gaps": [
+        "Inducting in a language or way the person cannot follow",
+        "No induction for contractors or temporary workers",
+        "Records without the employee's own signature"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-D-04": {
+      "what_to_submit": [
+        "Certificate of each statutory or safety critical course, per person",
+        "Attendance register or provider confirmation for group training",
+        "Training provider's accreditation or the trainer's credentials",
+        "Matrix entry showing the expiry date"
+      ],
+      "why": "These courses are what the risk assessment and your appointments rely on: without them first aiders, representatives and operators are named on paper but not able to act. Renew each one before the certificate expires; where Care Net delivered the course the record can come from MyClinicOnline once it is connected.",
+      "example": "Example: Botha Steel Fabricators in Vanderbijlpark files its fire fighting, first aid and working at height certificates per person, each cross referenced to its training matrix.",
+      "common_gaps": [
+        "Keeping certificates for people who have left while current staff have none",
+        "Accepting certificates from providers you cannot verify",
+        "Letting refresher dates slip because nobody owns the diary"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-D-05": {
+      "what_to_submit": [
+        "Clear copy of each licence, permit or registration card, front and back",
+        "A record of the date you checked it was valid",
+        "Matrix entry showing the expiry date"
+      ],
+      "why": "Some work may only be done by a person who holds a licence, permit or registration, and an incident involving an unlicensed person is hard to defend to an inspector, client or insurer. Check each one before the person starts and renew it before it expires.",
+      "example": "Example: Khoza Transport in Polokwane copies each driver's licence and professional driving permit on the first working day of the month and notes the expiry dates on its matrix.",
+      "common_gaps": [
+        "Copying the licence once at hiring and never checking it again",
+        "No licence on file for relief or temporary operators"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-D-06": {
+      "what_to_submit": [
+        "Toolbox talk register with topic, date, presenter and attendee signatures",
+        "The short talk notes or handout used",
+        "Any action raised during the talk and who followed it up"
+      ],
+      "why": "Short regular talks keep hazards front of mind and show that you keep informing people after induction, especially after an incident or a change. Your supervisor records each talk as it happens; auditors look for talks that match your real risks and recent incidents.",
+      "example": "Example: Pillay Plumbing's supervisor in Durban runs a Monday talk on trench collapse after a near miss, and six workers sign the register.",
+      "common_gaps": [
+        "The same talk repeated every week regardless of what is happening on site",
+        "Registers signed by people who were not there",
+        "No link between talks and recent incidents or new hazards"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-D-07": {
+      "what_to_submit": [
+        "Competency assessment record per person, naming the task and the outcome",
+        "The assessor's name and credentials",
+        "Any observation checklist or practical test used"
+      ],
+      "why": "Some roles need proof that a person can actually do the task safely, not only that they sat in a class. A signed assessment shows the person was watched doing the work and judged competent; reassess before the assessment expires or when the task changes.",
+      "example": "Example: Mathebula Mining Supplies in Rustenburg has its workshop foreman, a qualified assessor, watch forklift operator Neo Molefe complete a practical route and signs him competent, filing the checklist.",
+      "common_gaps": [
+        "Treating an attendance certificate as proof of competence",
+        "Assessments signed by someone who is not competent to assess",
+        "No reassessment after a person returns from long absence"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-E-01": {
+      "what_to_submit": [
+        "The released Medical Surveillance Plan, signed by the OMP",
+        "The list of exposure groups and jobs the Plan covers",
+        "Record of the yearly review and any changes"
+      ],
+      "why": "The Plan is Section E's key evidence: it sets out which people need which examinations, based on the exposures your risk assessment found. It is a separate Care Net product signed by the occupational medical practitioner, and it is reviewed once a year and whenever your exposures change.",
+      "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan signed by its OMP, covering welders for noise and fumes and stores staff for manual handling only.",
+      "common_gaps": [
+        "A Plan copied from another company that does not match your exposures",
+        "An unsigned draft filed as the final Plan",
+        "No review after a new process or chemical is introduced"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-02": {
+      "what_to_submit": [
+        "Certificate of fitness per employee showing the outcome: fit, fit with restrictions or unfit",
+        "Baseline certificate for new starters, periodic certificates, and exit certificates for leavers",
+        "The Plan protocol or exposure group each certificate relates to"
+      ],
+      "why": "Certificates show that each person was screened against the exposures in the Plan before and while doing the work. Care Net screens fitness for work and does not diagnose; clinical records stay with the occupational health practitioner and only the outcome goes in your File, renewed before each certificate expires.",
+      "example": "Example: Molefe Bricks in Brakpan files a baseline certificate for new kiln operator Themba Mahlangu marked fit, and an exit certificate for a retiring operator marked fit, with no clinical notes attached.",
+      "common_gaps": [
+        "Filing clinical results or doctors' letters in the File",
+        "No exit certificates, so later disease claims cannot be traced to a start point",
+        "Letting certificates expire while the person keeps working"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-03": {
+      "what_to_submit": [
+        "Construction medical certificate of fitness for each person working on the site",
+        "A site list matching each worker to a current certificate",
+        "Certificates for contractors' workers, obtained from each contractor"
+      ],
+      "why": "The Construction Regulations, 2014 expect workers on a construction site to have a valid medical certificate of fitness for the work they do, and the principal contractor checks this at the gate. Only the fitness outcome goes in your File; renew each certificate before it expires.",
+      "example": "Example: Shabangu Civils in Emalahleni keeps a site list for a road upgrade that ticks each of its 22 workers against a current construction certificate of fitness from Care Net.",
+      "common_gaps": [
+        "Allowing a worker on site while the certificate is being renewed",
+        "Not collecting certificates from subcontractors",
+        "Certificates that do not state the type of work assessed, such as work at height"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-04": {
+      "what_to_submit": [
+        "Medical certificate for each professional driving permit holder",
+        "Copy of the driver's current professional driving permit",
+        "A diary of permit and medical expiry dates"
+      ],
+      "why": "A professional driving permit needs a medical fitness declaration, and a driver who becomes unfit puts other road users at risk. Keep the fitness outcome with the permit copy and renew both before they expire.",
+      "example": "Example: Venter Bus Services in Bloemfontein files each driver's permit medical from its occupational health provider next to the permit copy, and checks both every month.",
+      "common_gaps": [
+        "Keeping the permit copy but not the medical behind it",
+        "No check that relief drivers hold a current permit and medical"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-05": {
+      "what_to_submit": [
+        "Mine certificate of fitness for each person working at the mine",
+        "The fitness to perform work procedure or code of practice your mine follows",
+        "Access control record linking entry to a current certificate"
+      ],
+      "why": "Mines work under the MHSA regime, which has its own fitness requirements and codes of practice, so people must be certified fit before they go underground or into the plant. Only the outcome goes in your File; renew before expiry.",
+      "example": "Example: Themba Drilling Contractors, working at a quarry near Kuruman, files a mine certificate of fitness for each driller and checks it against the mine's access card list.",
+      "common_gaps": [
+        "Using an ordinary certificate of fitness where the mine requires its own",
+        "Contract workers entering on another company's certificate"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-06": {
+      "what_to_submit": [
+        "Certificate of fitness for each specific examination your exposures call for",
+        "The Plan protocol that sets the examination and how often it is done",
+        "The exposure group list showing who needs each examination"
+      ],
+      "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner.",
+      "example": "Example: Govender Battery Recyclers in Pietermaritzburg files the lead examination outcome for each of its twelve smelter workers, while the blood results stay with the occupational health practitioner.",
+      "common_gaps": [
+        "Examining everyone for everything instead of by exposure",
+        "Missing the examination for workers moved into an exposed job",
+        "Filing test results instead of the fitness outcome"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-07": {
+      "what_to_submit": [
+        "Register of fitness restrictions with the person, the restriction as the OMP worded it and its review date",
+        "Record of how each restriction was reflected in the person's job or duties",
+        "Signed acknowledgement by the employee and supervisor"
+      ],
+      "why": "A restriction only protects the person if the job actually changes, and the employer may hold only what it needs to act on, not the medical reason. Record each change as it happens and review it when the certificate is renewed.",
+      "example": "Example: Dube Furniture in Pinetown records that sander Mpho Kekana is fit with restrictions, no work above ladder height, and moves him to bench finishing, with both signatures.",
+      "common_gaps": [
+        "Writing the diagnosis in the register instead of the restriction",
+        "Recording the restriction but not what changed in the job",
+        "Dismissing or moving a person without following a fair process"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-E-08": {
+      "what_to_submit": [
+        "Occupational disease report and referral letter for each case, showing the outcome without clinical detail",
+        "COIDA claim reference and correspondence",
+        "Actions taken in the workplace after the case"
+      ],
+      "why": "When a disease may be caused by work, it must be reported and the person referred, so they get care and compensation under COIDA and you can fix the cause. Keep a record each time it happens; clinical details stay with the occupational health practitioner.",
+      "example": "Example: Radebe Panelbeaters in Soweto files the report and COIDA claim reference after its OMP refers a spray painter for suspected work related asthma, plus the record of its spray booth ventilation repair.",
+      "common_gaps": [
+        "Treating an occupational disease as a private medical matter and not reporting it",
+        "No follow up on the workplace cause"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-E-09": {
+      "what_to_submit": [
+        "Current list of first aiders per site and shift, with certificate expiry dates",
+        "Monthly first aid box inspection checklist, signed",
+        "First aid treatment register"
+      ],
+      "why": "Someone trained must be able to help an injured person quickly, with a stocked box, on every shift. Your appointed first aider checks the boxes every month, and the treatment register often reveals injuries nobody reported.",
+      "example": "Example: Mahlaba Hardware in Nelspruit has two first aiders per shift; its store manager, Zanele Mthethwa, ticks the box checklist on the last Friday of every month and replaces used plasters and gloves.",
+      "common_gaps": [
+        "First aiders whose certificates have lapsed",
+        "Boxes checked but items never replaced",
+        "Night shift or weekends with no first aider on site"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-E-10": {
+      "what_to_submit": [
+        "A signed note describing which medical information the employer holds, which the occupational health practitioner holds, and why",
+        "Who in your company may see certificates of fitness and how they are stored",
+        "Your consent and privacy notice for employees",
+        "Record of the yearly review"
+      ],
+      "why": "Health information is sensitive, and privacy law expects you to hold only what you need, for a clear purpose, and keep it secure. The note shows that clinical records stay with the occupational health practitioner and that your File holds only outcomes; review it once a year.",
+      "example": "Example: Petersen Laundry in Paarl files a one page note: certificates of fitness sit in a locked HR cabinet and a restricted folder, clinical records stay with its occupational health provider, and only the HR officer and section 16(2) assignee may see outcomes.",
+      "common_gaps": [
+        "Medical files kept in the general personnel file",
+        "Managers emailing certificates around without control",
+        "No written purpose for holding each kind of record"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-AGRI-02": {
+      "what_to_submit": [
+        "Cholinesterase surveillance outcome per person who mixes or sprays organophosphate or carbamate pesticides: fit, fit with restrictions or unfit",
+        "Your list of spray workers and the pesticides they use",
+        "The Plan protocol for pesticide exposure, signed by the OMP"
+      ],
+      "why": "Some pesticides slow an enzyme in the blood, and surveillance picks up overexposure before a worker becomes seriously ill; the Hazardous Chemical Agents Regulations drive this for exposed farm workers. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Van der Merwe Citrus near Citrusdal files a fit outcome for each of its six sprayers before the spraying season, and moves one to packing when the OMP records a temporary restriction.",
+      "common_gaps": [
+        "Testing only after someone falls ill instead of before and during the season",
+        "Filing laboratory values instead of the outcome"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-AGRI-04": {
+      "what_to_submit": [
+        "Chainsaw operator competency certificate per operator",
+        "Tree felling or harvesting machine competency records for forestry crews",
+        "Record of the practical assessment and the assessor's name"
+      ],
+      "why": "Chainsaws and harvesting machines cause severe cuts and crush injuries, so only people assessed as competent should operate them in the plantation. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Shongwe Forestry Contractors near Sabie files a chainsaw competency certificate and practical assessment for each of its nine fellers.",
+      "common_gaps": [
+        "Crews trained informally by a colleague with no record",
+        "Operators moved from brush cutting to felling without a new assessment"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-OV-CONSTR-09": {
+      "what_to_submit": [
+        "Construction medical certificate of fitness for every person on the site, your own workers and contractors' workers",
+        "Site access list checked against current certificates",
+        "Contractor confirmations that their workers' certificates are current"
+      ],
+      "why": "On a construction project the Construction Regulations, 2014 expect every person on site to be certified fit for the work they do, and the principal contractor is expected to check this for the whole site. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Ntuli Construction, principal contractor on a school extension in Mthatha, checks every name on its daily site register against a current certificate of fitness, including its two subcontractors' teams.",
+      "common_gaps": [
+        "Checking your own workers but not subcontractors",
+        "Day labourers starting before they are assessed"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-GOV-02": {
+      "what_to_submit": [
+        "Fitness outcome per firefighter, traffic officer or emergency responder, against the inherent requirements of the job",
+        "The written inherent job requirements the assessment was made against",
+        "Restriction and placement record for anyone not fully fit"
+      ],
+      "why": "Emergency and traffic services work is physically demanding and affects public safety, so fitness is assessed against the real demands of the job, and testing must be justified by those demands. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Lindiwe Valley Municipality, a fictitious council, files fitness outcomes for its 30 firefighters, assessed against its written firefighter job requirements.",
+      "common_gaps": [
+        "Testing without written inherent job requirements to justify it",
+        "Restrictions not reflected in shift allocation"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-HEALTH-01": {
+      "what_to_submit": [
+        "Written immunisation and post exposure protocol signed by the OMP",
+        "Record per worker that immunisation was offered, and accepted or declined, as an outcome only",
+        "Post exposure incident log, such as needle stick injuries, without clinical detail"
+      ],
+      "why": "Healthcare and laboratory staff can catch infections from patients and samples, and the Hazardous Biological Agents Regulations expect you to protect them, including a plan for what happens straight after an exposure. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Kekana Family Clinic in Tzaneen files its post exposure protocol, a log showing a nurse's needle stick injury was reported the same day, and each worker's immunisation offer record.",
+      "common_gaps": [
+        "No protocol for after hours exposures",
+        "Vaccination records with clinical details kept in the File"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-HOSP-02": {
+      "what_to_submit": [
+        "Food handler fitness outcome per kitchen and service worker",
+        "Illness reporting procedure staff sign on appointment",
+        "Record of staff excluded from food handling while ill, without clinical detail"
+      ],
+      "why": "In hospitality one ill food handler can infect many guests, and the municipal environmental health practitioner will ask how you know your food handlers are fit to work. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Mthimkhulu Guest House in Port Alfred files fitness outcomes for its cook and two kitchen assistants and a signed illness reporting procedure for each.",
+      "common_gaps": [
+        "Seasonal staff starting in the kitchen before assessment",
+        "No record of who was sent home ill"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-MANU-05": {
+      "what_to_submit": [
+        "Forklift operator competency record per operator, naming the machine type used in your plant",
+        "Company authorisation card per operator",
+        "Periodic practical reassessment record"
+      ],
+      "why": "In a factory forklifts share space with people on foot, so each operator must be competent on the specific machines and routes in your plant, not only in general. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Mathe Plastics in Isando reassesses its eight forklift operators each year on its own reach trucks and loading bay route, and renews their authorisation cards.",
+      "common_gaps": [
+        "Operators trained on counterbalance forklifts driving reach trucks",
+        "Authorisation cards never withdrawn after a serious incident"
+      ],
+      "suggested_department": "TRAIN"
+    },
+    "HSF-OV-MINING-10": {
+      "what_to_submit": [
+        "Your mine's written certificate of fitness procedure",
+        "Register linking each person to a current certificate of fitness",
+        "Access control rules that stop people without a current certificate"
+      ],
+      "why": "Under the MHSA regime a mine runs a system to make sure nobody works without being certified fit, and inspectors look at the system, not just single certificates. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Kgosi Aggregates, a quarry near Brits, files its fitness procedure and a monthly register that its access control office uses to block expired certificates.",
+      "common_gaps": [
+        "A procedure on paper that access control does not enforce",
+        "Contractors' certificates tracked outside the system"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-SEC-01": {
+      "what_to_submit": [
+        "PSIRA registration certificate per officer showing the grade",
+        "Your company's PSIRA registration as a security service provider",
+        "Post list showing the grade each post requires and who fills it"
+      ],
+      "why": "Security work falls under the PSIRA regime, and clients check that every officer is registered and graded for the post, so an officer placed on the wrong post puts the contract and the public at risk. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Letsoalo Protection Services in Mokopane matches each of its 25 officers to a post list and moves an officer whose grade is below what the client contract asks for off the supervisor post.",
+      "common_gaps": [
+        "Grade on the certificate lower than the post requires",
+        "Officers whose registration lapsed while still on duty"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-SEC-02": {
+      "what_to_submit": [
+        "Firearm competency certificate per armed officer for each firearm type carried",
+        "Licence for each company firearm and the safe register",
+        "Firearm issue and return register per shift"
+      ],
+      "why": "Armed security work carries a risk to officers and the public, and firearms law expects competency for each firearm type and strict control of who holds which firearm. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Mabunda Cash Services in Giyani checks each armed officer's competency against the firearm issued and reconciles the safe register at every shift change.",
+      "common_gaps": [
+        "Issuing a shotgun to an officer only certified for handguns",
+        "Firearms leaving the safe with no signature"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-TRANS-04": {
+      "what_to_submit": [
+        "Rail safety critical fitness outcome per train driver, shunter or other safety critical worker",
+        "List of safety critical roles and who fills them",
+        "Restriction and removal from duty record where a person is not fit"
+      ],
+      "why": "A rail worker who is not fit for a safety critical task can cause a derailment or collision, and the rail safety regulator expects operators to manage their fitness. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Mosia Rail Logistics in De Aar files a fit outcome for each of its locomotive drivers and shunters and removes one from duty until a restriction is reviewed.",
+      "common_gaps": [
+        "Safety critical roles not listed, so people in them are missed",
+        "Returning a worker to duty before the OMP reviews a restriction"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-WASTE-01": {
+      "what_to_submit": [
+        "Waste management licence or registration for each facility or activity that needs one",
+        "Waste manifests or safe disposal certificates for each load",
+        "Training record for staff who complete manifests and handle hazardous waste"
+      ],
+      "why": "Environmental waste law controls how waste is stored, moved and disposed of, and a missing manifest can leave you responsible for waste dumped by someone else. Staff who fill in manifests must know how. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Ngcobo Waste Solutions in Hammarsdale files its waste licence, a manifest for each hazardous load collected, and the disposal site's safe disposal certificate that closes it off.",
+      "common_gaps": [
+        "Manifests started but never closed with a disposal certificate",
+        "Licence conditions not read by the people doing the work"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-WASTE-03": {
+      "what_to_submit": [
+        "Immunisation offer record per worker exposed to biological agents, accepted or declined, as outcome only",
+        "Your biological agent risk assessment showing who is exposed",
+        "Post exposure procedure for needle stick and sewage contact"
+      ],
+      "why": "Waste and sewage workers can be exposed to blood, needles and sewage, and the Hazardous Biological Agents Regulations expect you to protect them, including offering immunisation the practitioner recommends. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
+      "example": "Example: Sithebe Waste Management in Hammarsdale files an immunisation offer record for each collection worker and its procedure for a needle found in a bag.",
+      "common_gaps": [
+        "Offering immunisation but not recording who declined",
+        "No procedure for sharps found in general waste"
+      ],
+      "suggested_department": "OH"
+    }
+  },
+  "classes": {
+    "D04-01": {
+      "what_to_submit": [
+        "Health and safety representative training certificate per designated representative",
+        "Designation letter from Section B for the same person",
+        "Matrix entry with the training date"
+      ],
+      "why": "Representatives inspect the workplace and raise concerns for their colleagues, and they can only do that well once trained. An inspector will ask to see both the designation and the training. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Jacobs Printing in Epping designates Fatima Adams as representative for the press floor and files her representative training certificate next to her designation letter.",
+      "common_gaps": [
+        "Designating a representative and never training them",
+        "Training someone who was not elected or designated"
+      ]
+    },
+    "D04-02": {
+      "what_to_submit": [
+        "First aid certificate per first aider, with its level and expiry date",
+        "Provider's approval to train first aiders",
+        "First aider list per site and shift"
+      ],
+      "why": "Trained first aiders keep an injured person alive and stable until help arrives, and you need enough of them on every shift. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Mthembu Poultry in Camperdown keeps first aid certificates for four supervisors so each of its two shifts always has two trained first aiders.",
+      "common_gaps": [
+        "Certificates from a provider that is not approved to train first aiders",
+        "All first aiders on the day shift and none at night"
+      ]
+    },
+    "D04-03": {
+      "what_to_submit": [
+        "Fire fighting training certificate or attendance register per person",
+        "Content outline showing practical use of the extinguishers you actually have"
+      ],
+      "why": "People who know how to use an extinguisher can stop a small fire before it spreads and know when to leave instead. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Moodley Timber in Isipingo sends eight yard staff for fire fighting training and files the provider's attendance register and certificates.",
+      "common_gaps": [
+        "Training on extinguisher types you do not have on site",
+        "No practical session, only a talk"
+      ]
+    },
+    "D04-04": {
+      "what_to_submit": [
+        "Working at height and fall arrest training certificate per person",
+        "Record of harness and rescue practice",
+        "Link to the fall protection plan in Section C"
+      ],
+      "why": "Falls from height are one of the most common causes of serious injury, and the Construction Regulations, 2014 expect people working at height to be trained for it. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Zwane Roofing in Kempton Park files a working at height certificate for each roofer, cross referenced to the fall protection plan for its warehouse reroof.",
+      "common_gaps": [
+        "No rescue training, so nobody knows how to bring down a person hanging in a harness",
+        "Training certificates with no link to the actual fall protection plan"
+      ]
+    },
+    "D04-05": {
+      "what_to_submit": [
+        "Scaffold erector certificate for each person who erects scaffolding",
+        "Scaffold inspector certificate for the person who signs scaffolds off",
+        "Scaffold inspection register entries signed by that person"
+      ],
+      "why": "A poorly built or uninspected scaffold can collapse under the people on it, so both the builders and the inspector must be competent. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Baloyi Scaffolding in Tembisa files erector certificates for its crew and an inspector certificate for foreman Kabelo Maluleke, who signs the weekly scaffold tags.",
+      "common_gaps": [
+        "Scaffolds signed off by someone with only erector training",
+        "Hired scaffold with no proof of the erector's training"
+      ]
+    },
+    "D04-06": {
+      "what_to_submit": [
+        "Confined space entry training certificate per entrant, standby person and supervisor",
+        "Record of rescue drill participation",
+        "Link to the confined space permit procedure in Section G"
+      ],
+      "why": "Confined spaces can hold toxic gas or too little oxygen, and many deaths are would be rescuers, so everyone involved must be trained, including the person standing by outside. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Hlongwane Water Services in Witbank trains a three person team in confined space entry and rescue before cleaning a municipal reservoir, and files the certificates and drill record.",
+      "common_gaps": [
+        "Training the entrant but not the standby person",
+        "Gas detector training left out"
+      ]
+    },
+    "D04-07": {
+      "what_to_submit": [
+        "Operator training certificate for each person who operates a crane, hoist or lifting machine",
+        "Rigger or slinger training record for people who attach loads",
+        "Link to the lifting machine register in Section F"
+      ],
+      "why": "A dropped load or overturned crane can kill people nearby, so operators and riggers must be trained on the type of machine they use. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Kruger Engineering in Vereeniging files an overhead crane operator certificate for two workshop staff and a rigging certificate for the slinger who works with them.",
+      "common_gaps": [
+        "Training on one type of crane but operating another",
+        "Riggers with no training at all"
+      ]
+    },
+    "D04-08": {
+      "what_to_submit": [
+        "Forklift or mobile plant operator training certificate per operator, stating the machine type",
+        "Operator's authorisation card issued by your company",
+        "Record of the pre use check training"
+      ],
+      "why": "Forklifts and mobile plant cause many workplace deaths through tipping and collisions with people on foot, so only trained, authorised operators may drive them. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Moloi Distribution in Midrand files counterbalance forklift certificates for six operators and issues each a company authorisation card after a practical check.",
+      "common_gaps": [
+        "Anyone with a key allowed to drive",
+        "Certificates for a different class of machine than the one used"
+      ]
+    },
+    "D04-09": {
+      "what_to_submit": [
+        "Hazard identification and risk assessment training certificate per person who assesses risk",
+        "An example of a risk assessment that person completed"
+      ],
+      "why": "Your risk assessments in Section C are only as good as the people who do them, and an inspector will ask who assessed and how they are competent. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Nel Agricultural Services in Bethlehem sends its farm manager and two supervisors on risk assessment training before they review the baseline risk assessment.",
+      "common_gaps": [
+        "Risk assessments signed by people with no training at all"
+      ]
+    },
+    "D04-10": {
+      "what_to_submit": [
+        "Incident investigation training certificate per investigator",
+        "An investigation report that person completed"
+      ],
+      "why": "Trained investigators find the real cause of an incident rather than blaming the injured person, so the same thing does not happen again. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Makhubu Security Services in Pretoria trains its operations manager in incident investigation, and her first report finds a broken gate light behind a guard's fall.",
+      "common_gaps": [
+        "Investigations that stop at worker carelessness",
+        "Only one trained investigator for several sites"
+      ]
+    },
+    "D04-11": {
+      "what_to_submit": [
+        "Hazardous chemical handling training record per person who handles chemicals",
+        "Content covering your own safety data sheets, labels, storage and personal protective equipment",
+        "Link to your chemical inventory and hazardous chemical agent risk assessment"
+      ],
+      "why": "The Hazardous Chemical Agents Regulations expect people exposed to chemicals to know the risks and controls, since chemicals can burn, poison or cause disease years later. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Mkhize Cleaning Services in Umhlanga trains its cleaners on the four chemicals they use, working through each safety data sheet and the correct gloves.",
+      "common_gaps": [
+        "Generic chemical training that ignores the products you actually use",
+        "No training when a new chemical arrives"
+      ]
+    },
+    "D04-12": {
+      "what_to_submit": [
+        "Asbestos awareness training record per person who may disturb asbestos",
+        "Link to your asbestos inventory or survey where you have one"
+      ],
+      "why": "Older buildings and plant may contain asbestos, and people who drill, cut or demolish without knowing can breathe in fibres that cause disease decades later. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Smit Maintenance in Kimberley trains its maintenance team in asbestos awareness before work on a school built in the 1970s, and files the attendance register.",
+      "common_gaps": [
+        "Assuming asbestos is gone from all older buildings",
+        "Training staff but not subcontractors who do the drilling"
+      ]
+    },
+    "D04-13": {
+      "what_to_submit": [
+        "Lead awareness training record per person exposed to lead",
+        "Content covering hygiene, eating areas and change routines"
+      ],
+      "why": "The Lead Regulations expect exposed workers to understand how lead enters the body and how hygiene and controls protect them and their families. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Mabena Radiator Works in Benoni trains its soldering staff on lead hygiene, including washing before eating and leaving work clothes at work.",
+      "common_gaps": [
+        "No training for cleaners who handle lead dust",
+        "Eating allowed in the work area after training"
+      ]
+    },
+    "D04-14": {
+      "what_to_submit": [
+        "Hearing conservation training record per person working in noise zones",
+        "Record of hearing protector fit and care instruction",
+        "Link to your noise survey and zone map"
+      ],
+      "why": "Noise induced hearing loss is permanent and builds slowly, so people must know where the noise zones are and how to wear protection properly. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Dlamini Sawmills in Sabie trains its mill staff on noise zones and earplug fitting, with each worker demonstrating a correct fit.",
+      "common_gaps": [
+        "Issuing earplugs without showing how to fit them",
+        "Office staff who walk through noise zones left out"
+      ]
+    },
+    "D04-15": {
+      "what_to_submit": [
+        "Ergonomics training record per person in lifting, repetitive or screen based work",
+        "Link to the ergonomics risk assessment"
+      ],
+      "why": "Back, neck and wrist injuries from lifting, repetitive work or poor workstations are common and costly, and simple training on safe postures prevents many of them. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Khumalo Call Centre in Durban trains its agents on chair and screen set up after its ergonomics assessment, and files the attendance register.",
+      "common_gaps": [
+        "Training without changing the workstations themselves"
+      ]
+    },
+    "D04-16": {
+      "what_to_submit": [
+        "Emergency evacuation training record per person, including fire marshals",
+        "Evacuation drill report from Section H showing who took part"
+      ],
+      "why": "In a fire or gas leak everyone must know the alarm, the route and the assembly point without thinking. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Maseko Office Supplies in Polokwane trains its marshals and then runs a drill; the report shows the building cleared in time and one blocked exit fixed.",
+      "common_gaps": [
+        "Training marshals but never running a drill",
+        "New starters not shown the evacuation route"
+      ]
+    },
+    "D04-17": {
+      "what_to_submit": [
+        "Food handler hygiene training record per food handler",
+        "Content covering hand washing, illness reporting and cross contamination"
+      ],
+      "why": "Food handlers who do not follow hygiene rules can make customers seriously ill, and your municipal environmental health practitioner will ask for proof of training. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
+      "example": "Example: Mabuza Catering in Nelspruit trains its kitchen staff in food hygiene and files the certificates next to their food handling fitness outcomes in Section E.",
+      "common_gaps": [
+        "Training kitchen staff but not the people who serve or deliver food"
+      ]
+    },
+    "D05-01": {
+      "what_to_submit": [
+        "Copy of the driver's licence and professional driving permit, front and back",
+        "Date you last checked both were valid",
+        "Link to the permit medical in Section E"
+      ],
+      "why": "Drivers carrying passengers, dangerous goods or heavy loads need a professional driving permit, and a lapsed permit can void insurance after a crash. Check it before the person drives and renew it before it expires.",
+      "example": "Example: Mahlangu Couriers in Centurion files permit copies for its eleven truck drivers and checks them on the first of every month.",
+      "common_gaps": [
+        "A permit copy with no expiry date recorded",
+        "Relief drivers driving without a permit check"
+      ]
+    },
+    "D05-02": {
+      "what_to_submit": [
+        "Operator certificate for each person operating plant or machinery, naming the machine type",
+        "Company authorisation to operate that machine",
+        "Expiry or reassessment date"
+      ],
+      "why": "Plant and lifting machinery can crush or kill when misused, so only certified, authorised operators may use it. Check the certificate before the person operates and renew it before it expires.",
+      "example": "Example: Mabaso Earthworks in Kathu files a front end loader certificate and company authorisation for each of its four operators.",
+      "common_gaps": [
+        "Certificates for a different machine type than the one operated",
+        "No company authorisation, so anyone certified elsewhere can drive"
+      ]
+    },
+    "D05-03": {
+      "what_to_submit": [
+        "Copy of the electrician's registration card as an electrical tester, installation electrician or master installation electrician",
+        "The electrical certificate for any installation work they signed off",
+        "Registration expiry or renewal date"
+      ],
+      "why": "Only a registered person may sign off electrical installation work, and faulty electrical work causes fires and electrocution. Check registration before work starts and keep it current.",
+      "example": "Example: Nkosi Electrical Contractors in Roodepoort files the registration card of master installation electrician Busisiwe Nkosi with each certificate she issues.",
+      "common_gaps": [
+        "Using an unregistered electrician because they are cheaper",
+        "Accepting a certificate with no registration number on it"
+      ]
+    },
+    "D05-04": {
+      "what_to_submit": [
+        "Copy of the gas practitioner's registration card, showing the gas type and category they may work on",
+        "Certificate of the gas installation they signed off",
+        "Registration expiry date"
+      ],
+      "why": "Gas leaks and badly installed cylinders cause fires and explosions, so only a registered gas practitioner may install or alter gas systems. Check the registration category matches the work.",
+      "example": "Example: Sibiya Grill House in Soweto files the gas practitioner registration and installation certificate for its new LPG cooking line.",
+      "common_gaps": [
+        "A practitioner registered for a different gas type or category",
+        "No certificate after a cylinder bank was moved"
+      ]
+    },
+    "D05-05": {
+      "what_to_submit": [
+        "Copy of the explosives licence or blasting certificate held by each person handling explosives",
+        "Magazine or storage licence where you store explosives",
+        "Licence expiry dates"
+      ],
+      "why": "Explosives are tightly controlled because misuse can kill many people at once, so only licensed or certificated people may handle, store or use them. Check each licence before any work and keep copies current.",
+      "example": "Example: Themba Quarrying near Kuruman files the blasting certificate of its blaster, Andile Mokoena, and the licence for its explosives magazine.",
+      "common_gaps": [
+        "Assistants handling explosives with no licence of their own",
+        "Storage licence not renewed when the magazine moved"
+      ]
+    },
+    "D05-06": {
+      "what_to_submit": [
+        "Firearm competency certificate for each person who carries a firearm at work",
+        "Firearm licence for each company firearm and the register of who holds it",
+        "Record of regular practical shooting or proficiency training"
+      ],
+      "why": "An armed person without proven competence is a danger to themselves and the public, and firearms law requires competency for each firearm type. Check competency before issuing a firearm and keep records current.",
+      "example": "Example: Ngubane Armed Response in Richards Bay files the competency certificate for each armed officer next to the firearm issue register.",
+      "common_gaps": [
+        "Issuing a firearm type the person is not certified for",
+        "No record of who held which firearm on which shift"
+      ]
+    },
+    "D05-07": {
+      "what_to_submit": [
+        "PSIRA registration certificate for each security officer, showing their grade",
+        "Company's PSIRA registration as a security service provider",
+        "Date you last checked each registration was active"
+      ],
+      "why": "The private security industry is regulated under the PSIRA regime, so every officer must be registered at a grade that matches the post they fill. Clients often check this before a contract starts.",
+      "example": "Example: Mokoena Guarding in Klerksdorp files PSIRA certificates for its 18 officers and checks that the site supervisor holds the grade the client contract asks for.",
+      "common_gaps": [
+        "Officers placed on posts above their registered grade",
+        "Registrations lapsed because fees were not paid"
+      ]
+    },
+    "E06-01": {
+      "what_to_submit": [
+        "Lead examination outcome per exposed worker: fit, fit with restrictions or unfit",
+        "The Plan's lead protocol and exposure group list"
+      ],
+      "why": "The Lead Regulations expect exposed workers to be under medical surveillance, because lead builds up in the body and harms the nerves, kidneys and unborn children. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Govender Battery Recyclers in Pietermaritzburg files the lead fitness outcome for each smelter worker; the laboratory results stay with the occupational health practitioner.",
+      "common_gaps": [
+        "Filing blood lead results in the File",
+        "Not moving a worker when the OMP says unfit for lead work"
+      ]
+    },
+    "E06-02": {
+      "what_to_submit": [
+        "Asbestos examination outcome per person exposed to asbestos",
+        "Link to the asbestos work plan or abatement contract",
+        "Exit examination outcome when the person leaves the work"
+      ],
+      "why": "Asbestos diseases appear many years after exposure, so people who work with it are examined before, during and at the end of the work. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Petersen Demolition in Kraaifontein files asbestos fitness outcomes for its removal team before stripping roof sheets from an old factory.",
+      "common_gaps": [
+        "No exit examination when the job ends",
+        "Contractors' teams working without outcomes on file"
+      ]
+    },
+    "E06-03": {
+      "what_to_submit": [
+        "Hazardous chemical agent examination outcome per exposed worker",
+        "The Plan protocol linked to your chemical risk assessment"
+      ],
+      "why": "The Hazardous Chemical Agents Regulations call for medical surveillance where the risk assessment shows a chemical may harm health, so early changes are picked up before disease sets in. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Mbatha Paints in Chloorkop files fitness outcomes for its mixers exposed to solvents, as set out in its Plan.",
+      "common_gaps": [
+        "Surveillance for chemicals that are no longer used, while new ones are missed"
+      ]
+    },
+    "E06-04": {
+      "what_to_submit": [
+        "Hazardous biological agent examination outcome per exposed worker",
+        "Vaccination offered and accepted or declined, as outcome only",
+        "The Plan protocol linked to your biological risk assessment"
+      ],
+      "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Sithebe Waste Management in Hammarsdale files fitness outcomes for its collection crews and a record that each was offered hepatitis B vaccination.",
+      "common_gaps": [
+        "Keeping vaccination cards with clinical details in the File"
+      ]
+    },
+    "E06-05": {
+      "what_to_submit": [
+        "Hearing examination outcome per worker in a noise zone: baseline, periodic and exit",
+        "The Plan's noise protocol and noise zone list",
+        "Evidence that the testing was done by a competent person with suitable equipment"
+      ],
+      "why": "Hearing loss from noise is permanent, so baseline and follow up tests show whether your controls are working and protect you in a later compensation claim. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Dlamini Sawmills in Sabie files baseline hearing outcomes for new mill staff and an exit outcome for each person who leaves.",
+      "common_gaps": [
+        "No baseline test, so later loss cannot be measured",
+        "Audiograms filed instead of the outcome"
+      ]
+    },
+    "E06-06": {
+      "what_to_submit": [
+        "Radiation worker examination outcome per worker",
+        "The radiation licence conditions that set the examination",
+        "Link to the dose monitoring records kept by the radiation protection officer"
+      ],
+      "why": "People who work with X ray units or radioactive sources must be fit for that work and monitored, as the radiation control authority's licence conditions set. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Sebego Radiology in Mahikeng files the fitness outcome for each radiographer, with dose records kept separately by its radiation protection officer.",
+      "common_gaps": [
+        "Mixing personal dose results into the medical outcome file"
+      ]
+    },
+    "E06-07": {
+      "what_to_submit": [
+        "Fitness for work at height outcome per person on the fall protection plan",
+        "Link to the working at height training record in Section D"
+      ],
+      "why": "A dizzy spell, fear of heights or uncontrolled condition can cause a fatal fall, and the Construction Regulations, 2014 expect people working at height to be fit for it. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Zwane Roofing in Kempton Park files a fit outcome for work at height for each roofer before the warehouse reroof starts.",
+      "common_gaps": [
+        "Assuming a general certificate covers work at height when it does not say so"
+      ]
+    },
+    "E06-08": {
+      "what_to_submit": [
+        "Fitness for confined space work outcome per entrant and standby person",
+        "Link to the confined space training in Section D"
+      ],
+      "why": "Confined spaces are hot, cramped and may need breathing apparatus, so entrants and rescuers must be fit enough to work and get out safely. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Hlongwane Water Services in Witbank files confined space fitness outcomes for its reservoir team, including the standby rescuer.",
+      "common_gaps": [
+        "Standby rescuers never assessed"
+      ]
+    },
+    "E06-09": {
+      "what_to_submit": [
+        "Night work health assessment outcome per regular night worker",
+        "Record of any move to day work the OMP recommended"
+      ],
+      "why": "Regular night work can affect health, and employment law gives night workers protection, including access to a health assessment; your Plan sets how you handle it. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Moodley Bakeries in Chatsworth files night work fitness outcomes for its night shift bakers and moves one to day shift on the OMP's advice.",
+      "common_gaps": [
+        "No assessment offered to long term night workers"
+      ]
+    },
+    "E06-10": {
+      "what_to_submit": [
+        "Food handler fitness outcome per food handler",
+        "Illness reporting and exclusion record, as outcome only"
+      ],
+      "why": "Food handlers who are ill can spread infection to customers, so they must be fit to handle food and report illness before a shift. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Mabuza Catering in Nelspruit files a fit to handle food outcome for each cook and keeps a sign off sheet where staff report stomach illness before shift.",
+      "common_gaps": [
+        "Filing medical notes for sick leave instead of the outcome"
+      ]
+    }
+  }
+}

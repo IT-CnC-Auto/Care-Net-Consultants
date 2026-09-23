@@ -1,0 +1,1028 @@
+{
+ "elements": {
+  "HSF-OV-HOSP-05": {
+   "what_to_submit": [
+    "Pool safety procedure covering opening hours, supervision and depth signage",
+    "Lifeguard or pool attendant roster with their current lifesaving and first aid certificates",
+    "Daily pool water testing and chemical dosing log",
+    "Copy of your municipality's pool by law requirements, if your municipality sets any"
+   ],
+   "why": "A guest pool can drown a child in minutes, and a pool plant room holds strong chemicals. Guests, insurers and the municipality will ask who watches the pool and how the water is kept safe. The rules come mostly from local by laws, so check with your municipality; review this at least once a year.",
+   "example": "Example: Mabaso Country Lodge in Clarens keeps its pool rules, a roster showing that Sipho Radebe is on duty from 09:00 to 18:00, his lifesaving certificate and the daily chlorine log in one folder.",
+   "common_gaps": [
+    "No record of who was supervising the pool on a given day",
+    "Lifesaving certificates that have lapsed",
+    "Pool chemicals stored next to the guest area"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-OV-HOSP-06": {
+   "what_to_submit": [
+    "List of every cleaning and laundry chemical your housekeepers use, with its safety data sheet",
+    "Housekeeping chemical risk assessment and safe handling procedure",
+    "Training record showing housekeepers were taught dilution, mixing dangers and first aid for splashes",
+    "Photos or inspection notes of the chemical store and dispensing points"
+   ],
+   "why": "Housekeepers handle bleach, degreasers and oven cleaners every day, often in small unventilated rooms. Mixing the wrong products can release toxic gas, and splashes cause eye and skin burns. This record shows you manage these substances as the Hazardous Chemical Agents Regulations expect; review it at least once a year.",
+   "example": "Example: Jacobs Guest House in Knysna keeps a chemical list of eleven products, each safety data sheet, and a signed record of Nomvula Dube training the six housekeepers on dilution charts in March 2026.",
+   "common_gaps": [
+    "Safety data sheets missing for products bought from a local supplier",
+    "Chemicals decanted into unlabelled cooldrink bottles",
+    "No eye wash near the dispensing point"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MANU-01": {
+   "what_to_submit": [
+    "Machine register listing every machine by type, location and guard type",
+    "Guarding inspection checklist for each machine class, signed and dated",
+    "Photos of guards and interlocks in place",
+    "Defect log showing what was found and when it was fixed"
+   ],
+   "why": "Unguarded presses, saws, rollers and conveyors cause amputations. An inspector will walk the floor and compare what they see with your register. Grouping machines by class (presses, saws, conveyors, lathes) keeps checks consistent; review the whole set at least once a year and after any change to a machine.",
+   "example": "Example: Mokoena Metal Works in Germiston lists its 23 machines in five classes, and its maintenance planner Pieter van Wyk signs a monthly guarding checklist for each class, with photos of the fixed guard on the guillotine.",
+   "common_gaps": [
+    "Guards removed for maintenance and never refitted",
+    "Interlocks bypassed with cable ties",
+    "New machines not added to the register"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-MANU-02": {
+   "what_to_submit": [
+    "Chemical register for the process: solvents, welding consumables, isocyanate paints and hardeners",
+    "Risk assessment for each process, with the controls (extraction, enclosure, respirators)",
+    "Latest air monitoring report and extraction system test record, where your practitioner requires them",
+    "Respirator fit test and issue records"
+   ],
+   "why": "Solvents, welding fume and isocyanates in spray paints can cause lasting lung and nerve damage, and isocyanates can trigger asthma that ends a career. This record shows you know which substances each process uses and how you keep exposure down, as the Hazardous Chemical Agents Regulations expect. Review it at least once a year and whenever a product or process changes.",
+   "example": "Example: Zwane Auto Body in Pinetown keeps its spray booth extraction test, the isocyanate risk assessment and fit test records for its three spray painters in one file for its client audits.",
+   "common_gaps": [
+    "Monitoring done once years ago and never repeated after a process change",
+    "Dust masks used where the risk assessment calls for air fed respirators",
+    "No link between the chemical register and medical surveillance"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MANU-03": {
+   "what_to_submit": [
+    "Ergonomic risk assessment for each production line or workstation",
+    "Records of changes made, such as adjustable benches, lifting aids or job rotation",
+    "Staff complaints or early symptom reports and what you did about them",
+    "Training record on safe lifting and posture"
+   ],
+   "why": "Repetitive work, awkward reaching and heavy lifting on a line lead to back, shoulder and wrist injuries that build up slowly and cost you in absence and claims. Showing that you assessed each line and acted on it is what an inspector or client will look for. Review it at least once a year and when a line is redesigned.",
+   "example": "Example: Dlamini Packaging in Pietermaritzburg assessed its three packing lines in April 2026, raised two benches, added a vacuum lifter for 25 kg bags and started hourly task rotation.",
+   "common_gaps": [
+    "Assessing the office but not the factory floor",
+    "No follow through after staff report aches",
+    "One generic assessment used for every line"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MANU-04": {
+   "what_to_submit": [
+    "Register of vessels, tanks, silos and pits that count as confined spaces",
+    "Confined space entry procedure and permit form",
+    "Completed entry permits with gas test readings",
+    "Rescue plan and training record for entrants, attendants and rescuers"
+   ],
+   "why": "Mixing vessels and tanks can hold toxic vapours or too little oxygen, and many deaths are rescuers who went in after a collapsed worker. A signed permit with gas readings proves the space was tested and made safe before entry. Review the register and procedure at least once a year.",
+   "example": "Example: Khumalo Chemicals in Sasolburg keeps a register of nine vessels, and every entry into reactor R3 has a permit signed by the supervisor with the gas reading taken before entry and a named standby attendant.",
+   "common_gaps": [
+    "Permits issued without a gas test",
+    "No trained standby person outside",
+    "Rescue plan that relies on calling the fire brigade only"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MANU-06": {
+   "what_to_submit": [
+    "Register of dangerous goods held on site, with quantities and storage location",
+    "Safety data sheets and storage layout showing separation of incompatible goods",
+    "Transport documents and driver training records for dangerous goods you dispatch",
+    "Fire and spill equipment inspection records for the store"
+   ],
+   "why": "Flammable, corrosive and toxic goods stored or loaded incorrectly cause fires, explosions and spills that reach neighbours and roads. Clients, your insurer and traffic officials will ask for storage and transport documents. Review this at least once a year and whenever you add a new product.",
+   "example": "Example: Naidoo Resins in Durban keeps a dangerous goods register, a store plan showing acids kept apart from solvents, and the transport paperwork and driver training record for every load it sends out.",
+   "common_gaps": [
+    "Incompatible products stored on the same shelf",
+    "Using your own bakkie for dangerous goods without the right documents",
+    "Spill kits empty or missing"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MINING-01": {
+   "what_to_submit": [
+    "Signed statement of the employer's health and safety duties under the MHSA regime",
+    "Mine health and safety policy and the organogram showing who holds each responsibility",
+    "Written appointments of managers and supervisors made under the MHSA regime",
+    "Risk assessment summary for the mine"
+   ],
+   "why": "On a mine the MHSA regime applies instead of the OHS Act, and the employer's duties there are wide and personal. This record shows the mine inspector who holds each duty and that the employer understands them. The exact requirements are still being verified in the File library, so ask your practitioner; review at least once a year.",
+   "example": "Example: Pretorius Aggregates, a small quarry near Brits, keeps its signed employer duties statement, policy, organogram and the written appointment of its mine manager Johan Botha in this section.",
+   "common_gaps": [
+    "Using an OHS Act File on a mine or quarry",
+    "Appointments that do not match the current organogram",
+    "No risk assessment behind the policy"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-OV-MINING-02": {
+   "what_to_submit": [
+    "Mandatory code of practice on fitness to perform work, signed off by the employer",
+    "Record of how the code was drawn up with the health and safety committee",
+    "List of occupations and the fitness requirements set for each",
+    "Certificate of fitness outcomes only (fit, fit with restrictions, unfit), with clinical records kept by the occupational health practitioner"
+   ],
+   "why": "Mines must show that every person doing risky work is fit to do it safely. Care Net screens fitness and does not diagnose; the occupational health practitioner keeps the clinical records and only the outcome goes in the File. Follow the Chief Inspector of Mines' guideline your practitioner works from and review at least once a year.",
+   "example": "Example: Pretorius Aggregates keeps its fitness to perform work code, the committee minutes where it was agreed, and a list showing that its haul truck operators hold current certificates of fitness marked fit.",
+   "common_gaps": [
+    "Filing full medical reports in the File instead of the outcome",
+    "A code copied from another mine that lists occupations you do not have",
+    "No consultation record with the committee"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-OV-MINING-03": {
+   "what_to_submit": [
+    "Mandatory code of practice on noise, signed and dated",
+    "Noise survey showing zones and the people exposed",
+    "Hearing protection issue records and hearing conservation training",
+    "Audiometry outcomes from the medical surveillance programme, outcomes only"
+   ],
+   "why": "Crushers, drills and haul trucks cause permanent hearing loss. The code sets how the mine measures noise, reduces it and protects and tests the people exposed, and the inspector will check that practice matches the code. Review at least once a year, or as your practitioner sets.",
+   "example": "Example: Maseko Sand Mining keeps its noise code, the survey that marked the crusher and screening plant as noise zones, and signed hearing protector issue cards for the eight people who work there.",
+   "common_gaps": [
+    "Noise survey older than the current plant layout",
+    "Hearing protectors issued without training on fitting them",
+    "Zones not marked with signs on site"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-04": {
+   "what_to_submit": [
+    "Mandatory code of practice on airborne pollutants such as dust and silica",
+    "Occupational hygiene sampling reports",
+    "Dust suppression and ventilation controls in place, with maintenance records",
+    "Respirator fit test and issue records"
+   ],
+   "why": "Silica and other mine dusts cause silicosis and other lung diseases that show up years later and are compensated under a separate law for mines and works. The code and sampling records prove you measure and control the dust. Review at least once a year, or as your practitioner sets.",
+   "example": "Example: Maseko Sand Mining keeps its airborne pollutants code, the hygienist's sampling report for the screening plant, and water spray maintenance records for the haul road.",
+   "common_gaps": [
+    "Sampling done only once when the mine opened",
+    "Water sprays broken for weeks without a record",
+    "Dust masks issued without fit testing"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-05": {
+   "what_to_submit": [
+    "Mandatory code of practice on thermal stress",
+    "Heat and cold stress assessment for the workings or surface areas",
+    "Heat acclimatisation, water and rest break procedure",
+    "Records of heat related incidents and what was changed"
+   ],
+   "why": "Deep or poorly ventilated workings and open pits in summer can cause heat exhaustion and heat stroke, which can kill. The code shows how you measure heat, acclimatise new workers and protect people. Review at least once a year and before the hot season.",
+   "example": "Example: Letsoalo Chrome, an example underground operation, keeps its thermal stress code, the ventilation officer's heat readings and the acclimatisation log for new starters.",
+   "common_gaps": [
+    "No acclimatisation for workers returning from leave",
+    "Water points not checked",
+    "Assessment done in winter only"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-06": {
+   "what_to_submit": [
+    "Mandatory code of practice on fatigue management",
+    "Shift rosters and overtime records",
+    "Fatigue risk assessment for drivers and plant operators",
+    "Records of fatigue related incidents or near misses and what you changed"
+   ],
+   "why": "Tired operators of heavy machinery cause serious accidents, especially on night shift and long overtime. The code sets how you plan shifts and spot fatigue, and the rosters prove it works in practice. Review at least once a year and when shift patterns change.",
+   "example": "Example: Pretorius Aggregates keeps its fatigue code, the monthly roster and a register where supervisors note any operator stood down for fatigue, such as a night shift loader driver sent home on 14 May 2026.",
+   "common_gaps": [
+    "A code that does not match the rosters actually worked",
+    "Overtime not tracked for contractors",
+    "No way for workers to report fatigue"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MINING-07": {
+   "what_to_submit": [
+    "Mandatory code of practice on trackless mobile machinery",
+    "Register of machines with their pre use inspection checklists",
+    "Traffic management plan with road rules, speed limits and pedestrian separation",
+    "Operator licences and training records"
+   ],
+   "why": "Collisions between haul trucks, loaders, light vehicles and people on foot are a leading cause of mine deaths. The code and its records prove each machine is checked, each operator is trained and routes are planned. Review at least once a year and when the pit layout changes.",
+   "example": "Example: Maseko Sand Mining keeps its code, a traffic plan showing separate light vehicle routes, and daily pre use checklists for its two front end loaders and three tipper trucks.",
+   "common_gaps": [
+    "Pre use checklists signed without the check being done",
+    "Contractor machines not in the register",
+    "Traffic plan not updated as the pit moves"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MINING-08": {
+   "what_to_submit": [
+    "Mandatory code of practice on fall of ground",
+    "Geotechnical or rock engineering assessment and inspection reports",
+    "Support standards and making safe procedure",
+    "Records of falls of ground and near misses"
+   ],
+   "why": "Falls of rock underground and highwall or slope failures in pits kill and injure. The code sets how ground is assessed, supported and inspected, and the inspection records show it happens every shift. Review at least once a year and whenever ground conditions change.",
+   "example": "Example: Letsoalo Chrome keeps its fall of ground code, the rock engineer's quarterly report and the shift supervisor's entry examination book for each working place.",
+   "common_gaps": [
+    "Inspection books not signed every shift",
+    "Support standards not updated after a fall of ground",
+    "Surface slopes left out of the code"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MINING-09": {
+   "what_to_submit": [
+    "Mandatory code of practice on emergency preparedness and response",
+    "Emergency response plan with contact numbers and assembly points",
+    "Drill records with what went wrong and what was fixed",
+    "Agreements with the rescue or emergency services you rely on"
+   ],
+   "why": "A mine emergency such as fire, flooding or a fall of ground needs a plan that people know and have practised. The inspector will ask for the plan and the last drill report. Review at least once a year and after every drill or real emergency.",
+   "example": "Example: Pretorius Aggregates keeps its emergency code, a plan naming the nearest hospital in Brits, and the report of its June 2026 evacuation drill, which found that one siren was too quiet at the crusher.",
+   "common_gaps": [
+    "Emergency numbers out of date",
+    "Drills held but no report written",
+    "Contractors not included in drills"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-11": {
+   "what_to_submit": [
+    "List of current and former workers who need benefit examinations for occupational lung disease",
+    "Record of examination dates and referral letters",
+    "Proof that results were submitted to the certification body where required",
+    "Outcomes only in the File; the clinical records stay with the occupational health practitioner"
+   ],
+   "why": "Mine and works employees exposed to dust are entitled to lung disease examinations and compensation under a separate law for mines and works. Your records show that people were examined and referred so their claims are not lost; Care Net screens fitness and does not diagnose, and the occupational health practitioner keeps the clinical records. Ask your practitioner which examinations apply and review at least once a year.",
+   "example": "Example: Maseko Sand Mining keeps a list of its 14 dust exposed workers, the date each was examined in 2026 and the referral letter for one worker, with the medical details kept by its occupational health practitioner.",
+   "common_gaps": [
+    "Forgetting former workers and exit examinations",
+    "Filing X ray reports in the File",
+    "No proof of submission"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-OV-MINING-12": {
+   "what_to_submit": [
+    "Election records for health and safety representatives",
+    "Appointment letters and training records for each representative",
+    "Health and safety committee terms of reference, meeting schedule and minutes",
+    "Inspection reports from representatives and your responses"
+   ],
+   "why": "Under the MHSA regime workers take part in safety through elected representatives and committees. The records show the inspector that representatives were properly chosen, trained and listened to. Review at least once a year, or as your practitioner sets.",
+   "example": "Example: Letsoalo Chrome keeps the ballot results that elected Lerato Mabena as representative for the shaft, her training certificate, and the committee minutes where her inspection findings were closed out.",
+   "common_gaps": [
+    "Representatives appointed by management instead of elected",
+    "Minutes without action owners",
+    "Representatives not trained"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-13": {
+   "what_to_submit": [
+    "Explosives permits and licences held by the mine or blasting contractor",
+    "Magazine register and stock reconciliation",
+    "Blasting certificates of every person who handles explosives",
+    "Blasting procedure, misfire procedure and blast records"
+   ],
+   "why": "Explosives cause catastrophic injuries and are also a security risk if they go missing. Police, the inspector and your insurer will check permits, stock records and who is certified to blast. Review at least once a year and every time the contractor or permit changes.",
+   "example": "Example: Pretorius Aggregates uses a blasting contractor, and keeps the contractor's permits, the certificate of blaster Themba Zulu and a signed blast record for every blast in 2026.",
+   "common_gaps": [
+    "Stock register not reconciled after each blast",
+    "Contractor certificates not checked",
+    "No written misfire procedure"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-MINING-14": {
+   "what_to_submit": [
+    "Register of winders, hoists, cranes and lifting equipment",
+    "Inspection and test certificates by a competent person",
+    "Daily or shift checks by operators",
+    "Maintenance and defect records"
+   ],
+   "why": "Failure of a winder, hoist or lifting device can kill many people at once. The certificates and checks prove each machine has been tested by someone competent and is watched every shift. Review at least once a year and use the inspection intervals your practitioner or engineer sets.",
+   "example": "Example: Letsoalo Chrome keeps its winder register, the engineer's test certificate for the man winder and the daily banksman checklist in the engineering office.",
+   "common_gaps": [
+    "Certificates held by the contractor only",
+    "Slings and chains not in the register",
+    "No defect follow up record"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-MINING-15": {
+   "what_to_submit": [
+    "Ventilation plan and survey results",
+    "Gas and air quality measurement records",
+    "Self rescuer issue and training records",
+    "Mine rescue arrangements or agreement with a rescue service"
+   ],
+   "why": "Poor ventilation lets gas, heat and dust build up, and if something goes wrong underground people must be able to escape or be rescued. The records show the air is measured and that people know how to use their self rescuers. Review at least once a year and whenever the workings change.",
+   "example": "Example: Letsoalo Chrome keeps its ventilation plan, the weekly gas readings, the self rescuer issue register and its agreement with an example regional rescue service.",
+   "common_gaps": [
+    "Self rescuers issued but not checked",
+    "Ventilation plan not updated as workings advance",
+    "No rescue agreement for a small operation"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-MINING-16": {
+   "what_to_submit": [
+    "Register of accidents, dangerous occurrences and occupational diseases reported to the mine inspectorate",
+    "Copies of each report and the inspectorate's acknowledgement",
+    "Investigation reports and actions taken",
+    "Inspectorate instructions or notices and your responses"
+   ],
+   "why": "The mine inspectorate must be told about serious accidents and certain occurrences, and it can stop work if it is not. Keeping each report and acknowledgement proves you told them on time and followed up. Ask your practitioner exactly what must be reported and when; review at least once a year.",
+   "example": "Example: Maseko Sand Mining keeps a reporting register listing a conveyor injury in February 2026, the report sent to the inspectorate, the acknowledgement and the closed investigation.",
+   "common_gaps": [
+    "Reporting to the Department of Employment and Labour instead of the mine inspectorate",
+    "No acknowledgement kept",
+    "Instructions from the inspector not closed out"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-OFFICE-01": {
+   "what_to_submit": [
+    "Workstation assessment for each person who works at a screen",
+    "Record of changes made, such as chairs, screen height or keyboards",
+    "Short training record on setting up a workstation",
+    "Home working checklist where staff work remotely"
+   ],
+   "why": "Long hours at a screen with a poor chair or badly placed monitor lead to neck, back, wrist and eye strain. A simple assessment and fix list shows you took reasonable steps, which clients and inspectors expect. Review at least once a year and when someone moves desk or starts working from home.",
+   "example": "Example: Molefe and Partners Attorneys in Rosebank completed workstation assessments for its 18 staff, bought four footrests and two laptop stands, and repeats the checklist each March.",
+   "common_gaps": [
+    "Assessing only new staff",
+    "Forgetting people who work from home",
+    "Complaints not recorded"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-OFFICE-02": {
+   "what_to_submit": [
+    "Night shift roster and records of health assessments offered to night workers",
+    "Headset and acoustic exposure assessment for call agents",
+    "Headset issue, hygiene and replacement records",
+    "Procedure for reporting acoustic shock or hearing complaints"
+   ],
+   "why": "Contact centre agents working at night face fatigue and health effects, and headsets can expose them to loud sudden sounds. This record shows you plan night work with your people's health in mind and check what headsets deliver. Follow your practitioner's advice on assessments and review at least once a year.",
+   "example": "Example: Govender Contact Solutions, a contact centre in Umhlanga, keeps its night roster, a record that all 40 night agents were offered a health assessment, and the headset supplier's sound limiting specification.",
+   "common_gaps": [
+    "No health assessment offered to night workers",
+    "Shared headsets without hygiene covers",
+    "Hearing complaints not logged"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-OV-OFFICE-03": {
+   "what_to_submit": [
+    "Lone working and travel procedure",
+    "Check in log or tracking arrangement for staff working alone or travelling",
+    "Travel risk assessment for regular routes or destinations",
+    "Emergency contact list and incident reports"
+   ],
+   "why": "Staff who visit clients alone, work late or drive long distances are at risk of crime, accidents and medical emergencies with no one to help. A check in routine and travel plan show you know where your people are and can respond. Review at least once a year.",
+   "example": "Example: Ndlovu Property Valuers in Polokwane requires valuers to send a WhatsApp check in to the office manager after each site visit, and keeps the log with its lone working procedure.",
+   "common_gaps": [
+    "Procedure exists but no one monitors the check ins",
+    "Sales executives travelling after dark without a plan",
+    "No emergency contact on file"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-OV-OFFICE-04": {
+   "what_to_submit": [
+    "Psychosocial risk assessment covering workload, harassment, violence and trauma",
+    "Policy on harassment and bullying, with the reporting channel",
+    "Record of support offered, such as an employee wellness programme",
+    "Staff survey results or complaint summaries, with personal details removed"
+   ],
+   "why": "Stress, bullying and trauma harm health as surely as physical hazards and drive absence and staff turnover. Showing that you assessed these risks and offer support is increasingly what clients and inspectors ask about. Review at least once a year.",
+   "example": "Example: Van der Merwe Accounting in Bloemfontein ran an anonymous staff survey in May 2026, found deadline pressure in tax season, and added temporary staff and a wellness helpline.",
+   "common_gaps": [
+    "Treating stress as a private matter only",
+    "No safe way to report a manager",
+    "Keeping named survey answers in the File"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-OV-PETRO-01": {
+   "what_to_submit": [
+    "Written assessment of whether your site holds hazardous substances above the major hazard threshold, signed by your practitioner",
+    "Where it is a major hazard installation: the risk assessment by an approved inspection authority and the notifications made",
+    "On site emergency plan and proof it was shared with the local emergency services",
+    "Record of information given to neighbours and the public, where required"
+   ],
+   "why": "A major hazard installation can cause a fire, explosion or toxic release that affects people well beyond your fence. Whether the full set of rules applies depends on what you store and in what quantity, so the first document you need is the threshold assessment. Do not guess the thresholds; ask your practitioner and review at least once a year.",
+   "example": "Example: Kotze Fuels depot in Beaufort West keeps its practitioner's letter confirming that its bulk diesel storage falls within the major hazard rules, the risk assessment and the emergency plan shared with the municipal fire service.",
+   "common_gaps": [
+    "Assuming a small depot is exempt without checking",
+    "Risk assessment not updated after adding tanks",
+    "Emergency plan never shared with the fire service"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-PETRO-02": {
+   "what_to_submit": [
+    "Hazardous area classification drawing showing the zones",
+    "Register of electrical equipment in each zone with its explosion protection rating",
+    "Certificate of compliance for the electrical installation",
+    "Inspection records by a competent electrical person"
+   ],
+   "why": "Ordinary electrical equipment can spark and ignite fuel vapour. The zone drawing shows where only intrinsically safe or explosion protected equipment may be used, and the register proves what is installed there. Review at least once a year and whenever equipment is added or replaced.",
+   "example": "Example: Mabuza Motors fuel station in Mthatha keeps its zone drawing for the pump islands and tank fills, and a register showing each pump and light fitting in the zone with its protection rating.",
+   "common_gaps": [
+    "Ordinary cell phones and extension leads used in zones",
+    "Replacement lights not checked for rating",
+    "Zone drawing missing after renovations"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-PETRO-03": {
+   "what_to_submit": [
+    "Transport documents for each dangerous goods load",
+    "Driver training records and professional driving permits",
+    "Vehicle inspection records and emergency equipment checks",
+    "Contracts with transporters stating who is responsible for the load"
+   ],
+   "why": "Fuel tankers and dangerous goods vehicles in a crash can cause fires and spills on public roads. Traffic officials and clients will ask for the documents, driver training and vehicle checks. Review at least once a year and when you change transporters.",
+   "example": "Example: Kotze Fuels keeps a transport document for every delivery, the dangerous goods training certificate of driver Andile Mthembu and the weekly check of the tanker's fire extinguishers.",
+   "common_gaps": [
+    "Using a transporter without checking their driver training",
+    "Emergency information missing from the cab",
+    "No record of who owns the load in transit"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-PETRO-04": {
+   "what_to_submit": [
+    "Emergency plan for the forecourt and tank farm",
+    "Fire equipment inspection and service records",
+    "Drill reports for fire, spill and robbery scenarios",
+    "Contact list and agreement with the local fire service"
+   ],
+   "why": "A fuel spill or fire on a forecourt puts customers, staff and passers by at risk. Staff need to know how to use the emergency stop, fight a small fire and evacuate. Review the plan at least once a year and after every drill.",
+   "example": "Example: Mabuza Motors keeps its forecourt emergency plan, the extinguisher service record and the report of an April 2026 drill where attendants practised the emergency stop.",
+   "common_gaps": [
+    "Attendants not shown where the emergency stop is",
+    "Extinguishers past their service date",
+    "No drill on night shift"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-PETRO-05": {
+   "what_to_submit": [
+    "Earthing and bonding test records for tanks, pumps and loading points",
+    "Procedure for bonding tankers during delivery",
+    "Inspection checklist for earthing cables and clamps",
+    "Training records for staff who receive deliveries"
+   ],
+   "why": "Static electricity can spark and ignite fuel vapour when fuel flows. Earthing and bonding records prove the electrical path to ground is tested and used on every delivery. Review at least once a year and use the test interval your electrical practitioner sets.",
+   "example": "Example: Kotze Fuels keeps the electrician's earthing test report for its loading bay and a delivery checklist where the receiving attendant ticks that the bonding clamp was attached.",
+   "common_gaps": [
+    "Damaged clamps left in use",
+    "No test record after electrical work",
+    "Delivery checklist not used on weekends"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-PETRO-06": {
+   "what_to_submit": [
+    "Spill response procedure and spill kit inspection records",
+    "Records of spills and how they were cleaned up and reported",
+    "Tank and pipeline leak testing or monitoring results",
+    "Any environmental authorisation or permit you hold for the site"
+   ],
+   "why": "Fuel and chemical spills pollute soil and groundwater and can lead to cleanup orders and claims. Your records show that you can contain a spill quickly and that you watch for leaks. Environmental permits vary by site, so check with your practitioner; review at least once a year.",
+   "example": "Example: Mabuza Motors keeps its spill procedure, the monthly spill kit check and the record of a 20 litre diesel spill on 3 August 2026, contained with absorbent and disposed of through a registered waste company.",
+   "common_gaps": [
+    "Spill kits used and not restocked",
+    "Small spills not recorded",
+    "Wet stock readings not checked for leaks"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-RETAIL-01": {
+   "what_to_submit": [
+    "Racking layout plan showing bays and safe load signs",
+    "Racking inspection reports by a competent person, and weekly checks by your own staff",
+    "Damage register showing damage found and repairs done",
+    "Supplier's load ratings for the racking"
+   ],
+   "why": "Overloaded or damaged racking can collapse and crush staff or customers. Inspection reports and a damage register prove you check it and act before it fails. Review at least once a year and use the inspection intervals your practitioner or racking supplier sets.",
+   "example": "Example: Mahlaba Wholesalers in Mbombela keeps a racking plan with load signs, a weekly check signed by the warehouse supervisor and the inspector's report that red tagged two damaged uprights in June 2026.",
+   "common_gaps": [
+    "Load signs missing",
+    "Damaged uprights left in use",
+    "Racking moved without the supplier's approval"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-RETAIL-02": {
+   "what_to_submit": [
+    "Loading dock traffic plan showing vehicle routes, pedestrian walkways and reversing areas",
+    "Dock rules for drivers and staff",
+    "Records of dock equipment checks such as dock levellers and wheel chocks",
+    "Incident and near miss records at the dock"
+   ],
+   "why": "Reversing trucks, forklifts and people on foot in the same space cause crush injuries. A clear plan and rules separate people from vehicles. Review at least once a year and whenever the dock layout or deliveries change.",
+   "example": "Example: Mahlaba Wholesalers painted a pedestrian walkway at its receiving dock, keeps its dock rules signed by delivery drivers and logs daily wheel chock checks.",
+   "common_gaps": [
+    "Visiting drivers never told the rules",
+    "No banksman for reversing",
+    "Walkways blocked by pallets"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-RETAIL-03": {
+   "what_to_submit": [
+    "Assessment of cold room, freezer and hot area exposure",
+    "Cold room procedures: maximum time inside, protective clothing, door release checks",
+    "Issue records for thermal clothing",
+    "Checks that the inside door release and alarm work"
+   ],
+   "why": "Staff working in freezers or hot bakeries and storerooms can suffer cold or heat illness, and people have been trapped in cold rooms. The procedure and door checks show you protect them. Use the exposure limits your practitioner sets and review at least once a year.",
+   "example": "Example: Moloi Supermarket in Kimberley keeps its cold room procedure, a weekly test of the inside door release and a register of freezer jackets issued to six staff.",
+   "common_gaps": [
+    "Inside release not tested",
+    "No thermal clothing for relief staff",
+    "Heat in the bakery never assessed"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-RETAIL-04": {
+   "what_to_submit": [
+    "Security risk assessment for the store, cash office and after hours work",
+    "Cash handling and robbery procedure",
+    "Training records on how to act during and after a robbery",
+    "Incident reports and support offered to staff afterwards"
+   ],
+   "why": "Retail staff face armed robbery, which causes physical and lasting psychological harm. A procedure that tells staff not to resist, limits cash on hand and provides support afterwards shows you have taken reasonable steps. Review at least once a year and after every incident.",
+   "example": "Example: Moloi Supermarket trained its 12 cashiers on its robbery procedure in February 2026 and arranged counselling for two staff after an attempted robbery in July.",
+   "common_gaps": [
+    "No trauma support after an incident",
+    "Too much cash left in tills",
+    "New staff not trained"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-OV-RETAIL-05": {
+   "what_to_submit": [
+    "Evacuation plan and floor plan showing exits and assembly points",
+    "Fire equipment inspection and service records",
+    "Fire marshal appointments and training",
+    "Evacuation drill reports that include moving customers out"
+   ],
+   "why": "A fire in a shop full of customers who do not know the building can cause panic and deaths. Clear exits, trained marshals and practised drills protect both staff and the public. Your municipality's fire department may have its own requirements, so check with them; review at least once a year.",
+   "example": "Example: Mahlaba Wholesalers held a drill during trading hours in May 2026, cleared the store in four minutes, and moved stock that was blocking an emergency exit.",
+   "common_gaps": [
+    "Emergency exits locked or blocked by stock",
+    "Marshals who have left the company",
+    "Drills only held after hours"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-OV-SEC-03": {
+   "what_to_submit": [
+    "Cash in transit vehicle specifications and inspection records",
+    "Route planning and variation procedure",
+    "Crew firearm licences, competency certificates and security officer registration under the PSIRA regime",
+    "Incident and attack reports with lessons learnt"
+   ],
+   "why": "Cash in transit crews are targets of violent attacks. Vehicle checks, varied routes and competent crews reduce the risk and are what clients and insurers ask to see. Review at least once a year and after every incident.",
+   "example": "Example: Sibiya Cash Services in Ekurhuleni keeps daily vehicle inspection sheets, a route plan that changes weekly and the competency records of its crews.",
+   "common_gaps": [
+    "Routes that never change",
+    "Vehicle defects not repaired before use",
+    "Firearm competencies that have lapsed"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-SEC-04": {
+   "what_to_submit": [
+    "Post incident support procedure",
+    "Record of debriefs and counselling offered after incidents, without personal clinical details",
+    "Agreement with a counselling or employee wellness provider",
+    "Return to work plan template"
+   ],
+   "why": "Security officers who face violence, shootings or death on duty can develop lasting trauma. Offering support quickly helps them recover and return to work, and shows you care for their health. Review at least once a year.",
+   "example": "Example: Ngcobo Security in Richards Bay keeps a log showing that officer Bongani Cele was offered counselling within 24 hours of an armed robbery at the site he guarded.",
+   "common_gaps": [
+    "Waiting for the officer to ask for help",
+    "Keeping counselling notes in the File",
+    "No return to work plan"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-OV-SEC-05": {
+   "what_to_submit": [
+    "Canine handler training records",
+    "Dog health, vaccination and fitness records from the veterinarian",
+    "Kennel hygiene and bite incident procedure",
+    "Records of bite incidents and actions taken"
+   ],
+   "why": "Working dogs can bite handlers, colleagues and the public, and kennels carry disease risks. Training and health records show the dogs are managed safely. Review at least once a year.",
+   "example": "Example: Ngcobo Security keeps handler Mandla Khoza's training certificate, the vet record for his dog Shaka and a bite incident log with no entries for 2026.",
+   "common_gaps": [
+    "Dogs handled by untrained guards",
+    "Vaccinations out of date",
+    "Kennels not cleaned on a schedule"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-SEC-06": {
+   "what_to_submit": [
+    "Ergonomic assessment of control room workstations and screens",
+    "Shift and break schedule for controllers",
+    "Lighting and noise checks in the control room",
+    "Record of changes made after complaints"
+   ],
+   "why": "Controllers watch many screens for long hours, often at night, which causes eye strain, fatigue and musculoskeletal problems. The assessment and break schedule show you designed the work with their health in mind. Review at least once a year and when the control room changes.",
+   "example": "Example: Sibiya Cash Services assessed its control room in March 2026, installed adjustable monitor arms and set a ten minute screen break every two hours.",
+   "common_gaps": [
+    "No breaks planned for single controller shifts",
+    "Chairs not suitable for 24 hour use",
+    "Glare from windows not fixed"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-SEC-07": {
+   "what_to_submit": [
+    "Lone posting procedure with check in times",
+    "Panic button or radio test records",
+    "Emergency response plan for posts that are alone or remote",
+    "Records of missed check ins and what was done"
+   ],
+   "why": "An officer alone at a post who is attacked or falls ill may not be able to call for help. Regular check ins and tested panic buttons make sure someone notices quickly. Review at least once a year.",
+   "example": "Example: Ngcobo Security requires hourly radio check ins from officers on lone posts, and its control room log shows a supervisor was sent when an officer missed a check in on 9 June 2026.",
+   "common_gaps": [
+    "Missed check ins not followed up",
+    "Panic buttons never tested",
+    "No plan for posts without cell signal"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TEL-01": {
+   "what_to_submit": [
+    "Tower rescue plan for each type of structure",
+    "Rescue kit inspection records",
+    "Rescue training records for every climbing team",
+    "Rescue drill reports"
+   ],
+   "why": "If a climber is injured or collapses on a tower, suspension in a harness can become fatal quickly, and emergency services may take too long to arrive. The plan and drill records prove the team on site can bring a person down. Review at least once a year and follow the Construction Regulations, 2014 where towers are built.",
+   "example": "Example: Nkosi Tower Services in Nelspruit keeps a rescue plan for monopoles and lattice towers, the monthly rescue kit inspection and a drill report from April 2026 where the team lowered a dummy in under ten minutes.",
+   "common_gaps": [
+    "Relying on the fire brigade for rescue",
+    "Rescue kit not on site",
+    "Climbers never practise a rescue"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-TEL-02": {
+   "what_to_submit": [
+    "Radio frequency exposure assessment for each site or antenna type",
+    "Procedure for switching off or reducing power before climbing near antennas",
+    "Signage and exclusion zone records",
+    "Training records for climbers on radio frequency hazards"
+   ],
+   "why": "Standing close to transmitting antennas can heat body tissue. Knowing the exclusion zones and making sure power is reduced before work protects climbers. The detailed rules are still being verified in the File library, so use the limits your practitioner sets; review at least once a year.",
+   "example": "Example: Nkosi Tower Services keeps a power down request form signed by the network operator before every antenna job, and photos of the exclusion zone signs at each site.",
+   "common_gaps": [
+    "Climbing without confirming power down",
+    "Signs missing on rooftop sites",
+    "Contractors not trained"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-TEL-03": {
+   "what_to_submit": [
+    "Register of manholes, cable chambers and plant rooms that count as confined spaces",
+    "Entry permit and gas test records",
+    "Rescue arrangements for each entry",
+    "Training records for entrants and standby persons"
+   ],
+   "why": "Manholes and cable chambers can fill with toxic gas or lack oxygen, and data centre plant rooms can hold fire suppression gas. Permits with gas readings prove each entry was made safe. Review at least once a year.",
+   "example": "Example: Adams Fibre Networks in Cape Town issues a permit for every manhole entry, and the permit for chamber CH14 shows the gas test reading and the name of the standby person.",
+   "common_gaps": [
+    "No gas detector on the team",
+    "Standby person going in to help",
+    "Suppression gas risk ignored in plant rooms"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TEL-04": {
+   "what_to_submit": [
+    "Emergency response plan for remote sites, with nearest medical facilities",
+    "First aid kit and first aider records for field teams",
+    "Communication plan where there is no cell signal",
+    "Travel and check in records"
+   ],
+   "why": "Remote tower sites can be hours from help. A plan that names the nearest clinic, trained first aiders and a way to call for help reduces the time to treatment. Review at least once a year.",
+   "example": "Example: Nkosi Tower Services keeps a site card for each rural tower listing the nearest clinic and helicopter landing area, and every field team carries a satellite messenger.",
+   "common_gaps": [
+    "Nearest clinic not identified",
+    "No first aider in the team",
+    "Check ins not monitored"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-TRANS-01": {
+   "what_to_submit": [
+    "Fleet register with each vehicle's licence, roadworthy status and operator card",
+    "Driver licence and professional driving permit copies with expiry dates",
+    "Vehicle inspection and maintenance records",
+    "Traffic fines and accident records per driver"
+   ],
+   "why": "Unroadworthy vehicles and unlicensed drivers cause crashes on public roads and put your business at legal risk. Traffic officials, clients and insurers will check your fleet documents. Review at least once a year and track every expiry date.",
+   "example": "Example: Mthembu Logistics in Pietermaritzburg keeps a fleet register for its nine trucks showing each operator card and roadworthy date, with copies of every driver's professional driving permit.",
+   "common_gaps": [
+    "Driving permits that expired without anyone noticing",
+    "Operator cards missing for trailers",
+    "Maintenance done but not recorded"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TRANS-02": {
+   "what_to_submit": [
+    "List of dangerous goods you carry and their classes",
+    "Transport documents and emergency information for each load",
+    "Dangerous goods driver training records",
+    "Vehicle placarding and emergency equipment checks"
+   ],
+   "why": "Carrying dangerous goods without proper documents, placards and trained drivers endangers other road users and emergency responders. Clients and traffic officials will ask for these records. Review at least once a year and when you carry a new product.",
+   "example": "Example: Mthembu Logistics keeps a folder for each dangerous goods load with the transport document, and a register of the four drivers trained to carry them.",
+   "common_gaps": [
+    "Placards missing or wrong",
+    "Untrained relief drivers",
+    "Emergency information not in the cab"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TRANS-03": {
+   "what_to_submit": [
+    "Driver hours and rest records",
+    "Fatigue management procedure",
+    "Tracking or logbook data showing driving time",
+    "Records of fatigue incidents and actions"
+   ],
+   "why": "Tired drivers cause serious crashes. Records of hours and rest breaks show you plan trips so drivers can rest. Follow your employment agreements and practitioner's advice on hours; review at least once a year.",
+   "example": "Example: Mthembu Logistics uses tracking data to check that drivers on the Durban to Johannesburg route take a rest stop at Harrismith, and its supervisor reviews the report weekly.",
+   "common_gaps": [
+    "Overtime not recorded",
+    "No overnight stop planned on long routes",
+    "Drivers paid per trip, which pushes them to skip rest"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TRANS-05": {
+   "what_to_submit": [
+    "Summary of the port rules and permits that apply to your work",
+    "Port access permits and inductions for your workers",
+    "Risk assessments for quayside and cargo handling",
+    "Agreements with the port authority or terminal operator on safety responsibilities"
+   ],
+   "why": "Work in ports falls under separate maritime and port rules as well as general safety law, and terminal operators set their own conditions. Keeping the permits and agreements shows you know which rules apply. Ask your practitioner which regime governs your work; review at least once a year.",
+   "example": "Example: Reddy Stevedoring in Richards Bay keeps port access permits for its 30 workers, the terminal operator's induction record and its quayside lashing risk assessment.",
+   "common_gaps": [
+    "Assuming only the OHS Act applies in a port",
+    "Expired port permits",
+    "No agreement on who manages quayside traffic"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-OV-TRANS-06": {
+   "what_to_submit": [
+    "Summary of the aviation rules and airport requirements that apply to your ground handling work",
+    "Airside permits and driver authorisations",
+    "Risk assessments for apron work, aircraft towing and baggage handling",
+    "Airport operator safety inductions and audit reports"
+   ],
+   "why": "Airside work mixes aircraft, vehicles, jet blast and noise, and falls under aviation rules as well as general safety law. Airports will not let your staff airside without the right permits and training. Ask your practitioner which rules apply; review at least once a year.",
+   "example": "Example: Petersen Ground Handling at an example regional airport keeps airside permits for its 25 staff and the airport's last safety audit report with all findings closed.",
+   "common_gaps": [
+    "Airside driving permits expired",
+    "No hearing protection plan for apron staff",
+    "Findings from the airport audit left open"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-TRANS-07": {
+   "what_to_submit": [
+    "Load securing procedure for your types of cargo",
+    "Inspection records for straps, chains and securing equipment",
+    "Driver training records on load securing",
+    "Records of shifted or lost loads and what was changed"
+   ],
+   "why": "A load that shifts or falls can overturn a truck or kill other road users. The procedure and equipment checks show loads leave your yard secured. Review at least once a year and when you carry a new type of cargo.",
+   "example": "Example: Mthembu Logistics keeps a load securing checklist that the dispatcher signs for every truck, and replaced six frayed straps after its July 2026 inspection.",
+   "common_gaps": [
+    "Damaged straps still in use",
+    "No check before the truck leaves",
+    "Overloading not checked"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-UTIL-01": {
+   "what_to_submit": [
+    "Register of electrical installations and equipment you generate or distribute with",
+    "Appointment of the competent electrical person responsible",
+    "Inspection, test and maintenance records for substations and lines",
+    "Certificates of compliance for installations"
+   ],
+   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you do not yet have a competent person, Care Net's Recruitment Portal can place and onboard a registered practitioner with the appointment letter your File needs. Review at least once a year.",
+   "example": "Example: Mashaba Solar Farm near Tzaneen keeps its installation register, the appointment letter of its responsible engineer and the annual inspection report for its main substation.",
+   "common_gaps": [
+    "Contractor work not tested before energising",
+    "No appointment for the responsible person",
+    "Records held only by a former contractor"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-UTIL-02": {
+   "what_to_submit": [
+    "Switching and isolation procedure",
+    "List of people authorised to switch and isolate",
+    "Completed switching instructions and permits to work",
+    "Lockout and tagging equipment records"
+   ],
+   "why": "Most electrical deaths happen when equipment someone believed was dead was still live. Written switching instructions, authorised people and lockout prove the equipment was isolated and proven dead before work. Review at least once a year and whenever the network changes.",
+   "example": "Example: Mashaba Solar Farm keeps a list of three authorised switching operators and a signed permit to work for every job on its inverter stations, each showing the lockout points.",
+   "common_gaps": [
+    "Unauthorised people switching",
+    "Locks shared or not personal",
+    "No test before touch"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-UTIL-03": {
+   "what_to_submit": [
+    "Risk assessment for chlorine and dosing chemicals",
+    "Safety data sheets and storage and handling procedures",
+    "Leak detection and alarm test records",
+    "Emergency response plan and breathing apparatus inspection records"
+   ],
+   "why": "A chlorine leak can kill workers and harm the public nearby. Your assessment, alarm tests and emergency plan show you control this chemical as the Hazardous Chemical Agents Regulations expect. Review at least once a year and after any leak.",
+   "example": "Example: Hadebe Water Services keeps its chlorine risk assessment, the monthly alarm test and records showing its operators practised putting on breathing apparatus in March 2026.",
+   "common_gaps": [
+    "Alarms never tested",
+    "Breathing apparatus not serviced",
+    "Neighbours not included in the emergency plan"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-UTIL-04": {
+   "what_to_submit": [
+    "Arc flash risk assessment and labels for switchgear",
+    "Arc rated protective clothing issue and inspection records",
+    "Safe working distances and procedures for live work",
+    "Training records for electrical staff"
+   ],
+   "why": "An arc flash can cause severe burns, blindness and hearing loss in a fraction of a second. The assessment and labels tell workers the danger at each panel and what protection to wear. Use the values your electrical practitioner sets and review at least once a year.",
+   "example": "Example: Mashaba Solar Farm labelled every switchboard with its arc flash category after its assessment and keeps issue records for arc rated suits for its four electricians.",
+   "common_gaps": [
+    "No labels on panels",
+    "Ordinary overalls used instead of arc rated clothing",
+    "Assessment not updated after changes"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-OV-UTIL-05": {
+   "what_to_submit": [
+    "Register of assets the public can reach, such as substations, reservoirs and pipelines",
+    "Fencing, signage and security inspection records",
+    "Records of trespass, vandalism and cable theft and how you responded",
+    "Public awareness or community notices"
+   ],
+   "why": "Under the OHS Act you must also protect people who are not your employees, such as children climbing into substations or people stealing cable. Inspection records and incident follow up show you keep the public away from danger. Review at least once a year.",
+   "example": "Example: Hadebe Water Services inspects the fences around its three reservoirs monthly and repaired a cut fence within two days in August 2026, with photos in the File.",
+   "common_gaps": [
+    "Damaged fences left for weeks",
+    "No danger signs in local languages",
+    "Incidents reported to police but not recorded"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-OV-UTIL-06": {
+   "what_to_submit": [
+    "List of environmental authorisations, licences and permits for your sites",
+    "Copy of each authorisation with its conditions",
+    "Records showing how you meet the conditions",
+    "Correspondence with the environmental authorities"
+   ],
+   "why": "Utilities often need environmental authorisations to build and operate, and each comes with conditions. Keeping them with proof you follow the conditions avoids fines and shutdowns. Which authorisations apply depends on your activities, so check with your practitioner; review at least once a year.",
+   "example": "Example: Mashaba Solar Farm keeps its environmental authorisation, the list of conditions and the environmental control officer's monthly reports during construction.",
+   "common_gaps": [
+    "Authorisations held by the developer, not the operator",
+    "Conditions never tracked",
+    "Expired permits"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-OV-WASTE-02": {
+   "what_to_submit": [
+    "Waste classification and handling procedure for hazardous and healthcare risk waste",
+    "Waste manifests or tracking documents for every collection",
+    "Disposal certificates from the treatment or disposal site",
+    "Training and protective equipment records for waste handlers"
+   ],
+   "why": "Hazardous and healthcare risk waste can injure, infect or poison handlers and the public. Manifests and disposal certificates prove the waste went where it should, and training records show handlers know the risks. Review at least once a year.",
+   "example": "Example: Shabalala Waste in Pretoria keeps a manifest for every collection from its clinic clients and the matching disposal certificate from the treatment plant.",
+   "common_gaps": [
+    "Missing disposal certificates",
+    "Handlers without gloves or puncture resistant clothing",
+    "Waste mixed with general waste"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-WASTE-04": {
+   "what_to_submit": [
+    "Landfill gas monitoring records",
+    "Register of confined spaces such as leachate sumps and gas wells",
+    "Entry permits with gas test readings",
+    "Rescue plan and training records"
+   ],
+   "why": "Landfills produce methane and other gases that can explode or suffocate workers in pits, sumps and buildings. Gas monitoring and entry permits prove you test before people go in. Review at least once a year.",
+   "example": "Example: Modise Landfill Services monitors gas at its site office and sumps weekly, and every sump entry has a permit showing the gas reading and the standby person.",
+   "common_gaps": [
+    "Offices built on the landfill not monitored",
+    "No gas detector for sump work",
+    "Rescue plan not practised"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-WASTE-05": {
+   "what_to_submit": [
+    "Traffic management plan for the site with routes and pedestrian areas",
+    "Reversing procedure with banksman or camera requirements",
+    "Vehicle reversing alarm and camera checks",
+    "Incident and near miss records"
+   ],
+   "why": "Waste trucks reverse often, and workers on foot on landfills and at kerbside collection are regularly run over. A plan, trained banksmen and working alarms keep people out of the danger zone. Review at least once a year and when the site layout changes.",
+   "example": "Example: Shabalala Waste fitted reversing cameras to its eight compactor trucks, and its daily check sheet records that each alarm and camera works before the truck leaves.",
+   "common_gaps": [
+    "Workers riding on the back of trucks",
+    "Faulty alarms not reported",
+    "No banksman at the tipping face"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-OV-WASTE-06": {
+   "what_to_submit": [
+    "Sharps handling procedure",
+    "Needle stick injury reporting and post exposure procedure",
+    "Puncture resistant glove issue records",
+    "Register of needle stick injuries and follow up, with clinical details kept by the occupational health practitioner"
+   ],
+   "why": "Hidden needles in waste can transmit blood borne diseases. Your procedure and register show staff know how to avoid injuries and what to do immediately afterwards, as the Hazardous Biological Agents Regulations expect. Clinical follow up stays with the occupational health practitioner, and only the outcome goes in the File; review at least once a year.",
+   "example": "Example: Shabalala Waste recorded a needle stick injury to a sorter in April 2026, sent her to the clinic within an hour under its procedure, and then switched to thicker gloves.",
+   "common_gaps": [
+    "Injuries not reported",
+    "No quick access to post exposure care",
+    "Clinical details kept in the File"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-OV-WASTE-07": {
+   "what_to_submit": [
+    "Dust risk assessment for the transfer station",
+    "Dust monitoring or occupational hygiene reports where your practitioner requires them",
+    "Dust suppression system maintenance records",
+    "Respirator issue and fit test records"
+   ],
+   "why": "Tipping and compacting waste, rubble and soil raises dust that may contain silica, which damages lungs over time. Monitoring and suppression records show you know how much dust there is and keep it down, as the Hazardous Chemical Agents Regulations expect. Review at least once a year.",
+   "example": "Example: Modise Landfill Services keeps the hygienist's dust report for its transfer station and a daily log showing the water spray system was running.",
+   "common_gaps": [
+    "Spray systems off during water restrictions without another control",
+    "Respirators not fit tested",
+    "No monitoring after the site started taking rubble"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-OV-WASTE-08": {
+   "what_to_submit": [
+    "Environmental monitoring plan required by your licence",
+    "Groundwater, surface water and air monitoring results",
+    "Reports submitted to the authorities",
+    "Corrective actions taken when results are high"
+   ],
+   "why": "Waste sites can pollute water and air around them, and licences usually require regular monitoring. Keeping results and actions shows you meet the conditions and protect neighbours. The monitoring required depends on your licence, so check its conditions; review at least once a year.",
+   "example": "Example: Modise Landfill Services keeps its quarterly borehole results and the report sent to the authorities, including the extra leachate control it added after one high reading.",
+   "common_gaps": [
+    "Monitoring results never reviewed",
+    "Reports not submitted",
+    "No action on high readings"
+   ],
+   "suggested_department": "SHE"
+  }
+ }
+}
