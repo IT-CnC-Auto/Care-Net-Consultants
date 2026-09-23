@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CNC HSF FORGE | KRN-GROK-01 v1.1.0 | Example bridge: a Grok bot answering from the Care Net Cognitive Kernel
+// CNC HSF FORGE | KRN-GROK-01 v1.2.0 | Example bridge: a Grok bot answering from the Care Net Cognitive Kernel
 // Version 1.0 | 23/09/2026 | For Odendaal. Dependency free: Node 18 or later (global fetch), no npm packages.
 //
 // What it does, for one question:
@@ -30,6 +30,9 @@
 //
 // Run:     node grok/bridge-example.mjs "Which instruments apply to construction?"
 //          echo "What does the kernel hold on noise?" | node grok/bridge-example.mjs
+//          node --env-file=grok/.env grok/bridge-example.mjs "..."   (Node 20.6 or later,
+//          with the .env that grok/setup.mjs checks and completes; variables already
+//          set in the environment win over the file)
 // Import:  import { answer } from './bridge-example.mjs';
 //          const { text } = await answer('Which File elements cover scaffolding?');
 //
@@ -42,12 +45,14 @@
 // the xAI key, on the first question (the command line and a host calling
 // resolveModel(config) at start) and then at most once a day. It keeps ids that
 // start with "grok", drops ids containing image, imagine, vision, embed, mini,
-// fast or code, and takes the one with the greatest "created". If the call fails
+// fast or code, and takes the one with the greatest "created" (the rule is in
+// grok/model-pick.mjs, which must sit beside this file). If the call fails
 // it keeps the last good choice; with no good choice yet it tries again after
 // MODEL_RETRY_MS and the question fails with a plain reason. The list shape
 // assumed ({data: [{id, created}]}, OpenAI style) is to be checked against xAI's
 // documentation with the other details below; if xAI publishes an official
-// latest alias, set XAI_MODEL to it and prefer it over this choice.
+// latest alias, set XAI_MODEL to it and prefer it over this choice; grok/setup.mjs
+// looks for one and writes XAI_MODEL into grok/.env (KERNEL-API.md section 8.6).
 //
 // What the kernel API returns (KERNEL-API.md section 2, vercel/kernel-api/openapi.yaml):
 // every 200 body is {kernel_release, as_at, notice, data}, passed to Grok as it
@@ -70,6 +75,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
+import { pickLatestModel } from './model-pick.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
@@ -89,7 +95,6 @@ const KERNEL_TIMEOUT_MS = 20000;
 const MODEL_LIST_TIMEOUT_MS = 20000;
 const MODEL_REFRESH_MS = 24 * 60 * 60 * 1000; // the model list is read at most once a day
 const MODEL_RETRY_MS = 15 * 60 * 1000;        // until a first model is chosen
-const MODEL_EXCLUDE = Object.freeze(['image', 'imagine', 'vision', 'embed', 'mini', 'fast', 'code']);
 
 const KEY_RE = /^cnck_[0-9a-f]{64}$/;
 const CODE_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}(?:-[A-Za-z0-9_]{1,31}){0,4}$/;
@@ -149,20 +154,8 @@ export function readConfig(env = process.env) {
 
 // 1a. The latest Grok model ------------------------------------------------------
 
-// The latest chat model in an xAI model list, or null. Pure: no network.
-export function pickLatestModel(list) {
-  const rows = Array.isArray(list) ? list : (list && Array.isArray(list.data) ? list.data : []);
-  let best = null;
-  for (const row of rows) {
-    const id = row && typeof row.id === 'string' ? row.id.trim() : '';
-    const low = id.toLowerCase();
-    if (!low.startsWith('grok') || MODEL_EXCLUDE.some((w) => low.includes(w))) continue;
-    const created = Number(row.created);
-    if (!Number.isFinite(created)) continue;
-    if (!best || created > best.created || (created === best.created && id > best.id)) best = { id, created };
-  }
-  return best ? best.id : null;
-}
+// The newest rule itself lives in model-pick.mjs, shared with setup.mjs.
+export { pickLatestModel };
 
 // Reads the model list at most once a day and remembers the last good choice.
 // fetchImpl, now and log are there for tests.

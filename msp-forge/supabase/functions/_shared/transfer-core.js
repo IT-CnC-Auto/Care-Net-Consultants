@@ -7,11 +7,15 @@
 // The rules this module exists to keep:
 //   1. While a document is being transferred, its staging object is deleted only
 //      when the adapter outcome is 'received' AND the server fingerprint equals
-//      the client fingerprint equals the receipt fingerprint AND the database has
-//      recorded the upload as transferred. Held, error and mismatch never delete
-//      anything at that step, and an error returns the upload to 'uploaded'.
-//   2. Nothing is sent unless its security scan passed (contract 10.4): the
-//      transfer claim returns only scan_status 'clean', and the worker checks it
+//      the receipt fingerprint equals the cleaned fingerprint (sha256_clean,
+//      contract 11.1) AND the database has recorded the upload as transferred.
+//      Held, error and mismatch never delete anything at that step, and an error
+//      returns the upload to 'uploaded'. The browser fingerprint stays on record
+//      as the proof of what the client sent; the bytes that move are the
+//      cleaned bytes the scan pass wrote back.
+//   2. Nothing is sent unless its security scan passed and its hidden details
+//      were removed (contracts 10.4 and 11.1): the transfer claim returns only
+//      scan_status 'clean' with a cleaned fingerprint, and the worker checks both
 //      again before it reads the bytes.
 //   3. Every other deletion comes only from a database queue: the cleanup queue
 //      (hsf_transfer_cleanup_queue, contracts 9.5 and 10.5) lists uploads still
@@ -28,10 +32,10 @@
 //   1. check the row, its scan status and its staging path
 //      <client_account_id>/<upload_id>/<safe_name>
 //   2. download the object and take the server SHA 256
-//   3. server hash differs from the client hash: record hash_mismatch, stop
+//   3. server hash differs from the cleaned hash: record hash_mismatch, stop
 //   4. send through the adapter (hold, fixture or live)
 //   5. record the outcome with hsf_transfer_record
-//   6. only for received with three equal hashes and a 'transferred' reply:
+//   6. only for received with server = receipt = cleaned and a 'transferred' reply:
 //      delete the object from Storage, then hsf_mark_staging_deleted
 //
 // Per run (runTransfer), contracts 9.5 and 10.4:
@@ -39,10 +43,16 @@
 //      an unknown mode, on live without MCO_BASE_URL and MCO_API_TOKEN, and on
 //      fixture unless the environment allows it
 //   2. hsf_sweep_stale_uploads(24): uploads never completed within 24 hours
-//      become 'failed'
-//   3. scan pass: hsf_scan_claim(10), then for each row download, check the
-//      fingerprint, inspectBytes, the antivirus engine and hsf_scan_record
-//      (scan-core.js). Runs in every mode, hold included
+//      become 'failed', and a blocked upload whose transfer stopped part way
+//      (claimed more than 30 minutes ago) returns to 'uploaded'
+//   3. scan pass: hsf_scan_claim(10) (each claimed row is held for 30 minutes),
+//      then for each row download, check the fingerprint, inspectBytes, the
+//      antivirus engine, remove the hidden details (metadata-clean.js), announce
+//      the cleaned fingerprint with hsf_scan_write_back (refused once the upload
+//      has left the scan, and then nothing is written), write the cleaned bytes
+//      back over the staged object and record hsf_scan_record_clean;
+//      every other result is recorded with hsf_scan_record (scan-core.js). Runs
+//      in every mode, hold included
 //   4. claim with hsf_transfer_claim(10) (the database locks the rows, marks them
 //      'transferring' and leaves out blocked and unscanned uploads) and process
 //      the rows one at a time
@@ -72,7 +82,7 @@ export const STALE_UPLOAD_HOURS = 24;
 export const MODE_PARAMETER = 'hsf.mco_transfer_mode';
 export const DEFAULT_MODE = 'hold';
 
-// The database functions the worker calls (contracts 9.5, 10.3 and 10.4).
+// The database functions the worker calls (contracts 9.5, 10.3, 10.4 and 11.1).
 // Nothing else.
 export const RPC = Object.freeze({
   mode: 'hsf_transfer_mode',
@@ -83,6 +93,8 @@ export const RPC = Object.freeze({
   markDeleted: 'hsf_mark_staging_deleted',
   scanClaim: 'hsf_scan_claim',
   scanRecord: 'hsf_scan_record',
+  scanRecordClean: 'hsf_scan_record_clean',
+  scanWriteBack: 'hsf_scan_write_back',
   retention: 'hsf_retention_queue',
   markExpired: 'hsf_mark_expired',
 });
@@ -91,6 +103,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const SEGMENT_RE = /^[A-Za-z0-9._-]{1,160}$/;
 const FUNCTION_RE = /^[a-z_][a-z0-9_]{0,62}$/;
 const REASON_RE = /^[A-Za-z_ ]{1,60}$/;
+const MIME_RE = /^[a-z]+\/[a-z0-9.+-]{1,120}$/i;
 // 'transferring' is what hsf_transfer_claim sets on the rows it hands out.
 const TRANSFERABLE = new Set(['uploaded', 'held', 'transferring']);
 // hsf_mark_staging_deleted leaves a failed, rejected, client deleted or expired
@@ -199,16 +212,17 @@ export function checkStagingPath(row) {
 // 4. The deletion rule ------------------------------------------------------------
 
 // The single predicate that allows the one destructive step. Pure and tested.
+// Contract 11.1: server = receipt = sha256_clean.
 export function mayDeleteStaging(f) {
   const x = f || {};
   const server = lowerHex(x.serverSha256);
-  const client = lowerHex(x.clientSha256);
+  const clean = lowerHex(x.cleanSha256);
   const receipt = lowerHex(x.receiptSha256);
   return x.outcome === 'received'
     && x.recordedStatus === 'transferred'
     && isSha256Hex(server)
-    && server === client
-    && client === receipt;
+    && server === clean
+    && clean === receipt;
 }
 
 // 5. One upload -----------------------------------------------------------------
@@ -291,8 +305,10 @@ export async function processUpload(row, deps) {
   // error (back to 'uploaded') and nothing is read or sent.
   if (row.scan_status !== 'clean') return stop('error', { error: 'The upload has not passed its security scan.' });
 
-  const client = lowerHex(row.sha256_client);
-  if (!isSha256Hex(client)) return stop('error', { error: 'The upload carries no valid browser fingerprint.' });
+  // Contract 11.1: the bytes in staging are the cleaned bytes, so they are
+  // checked against the cleaned fingerprint the scan pass recorded.
+  const clean = lowerHex(row.sha256_clean);
+  if (!isSha256Hex(clean)) return stop('error', { error: 'The upload has no cleaned fingerprint, so its hidden details were not removed.' });
 
   const p = checkStagingPath(row);
   if (!p.ok) return stop('error', { error: p.reason });
@@ -312,10 +328,10 @@ export async function processUpload(row, deps) {
   }
   if (!isSha256Hex(server)) return stop('error', { error: 'The server fingerprint could not be computed.' });
 
-  if (server !== client) {
+  if (server !== clean) {
     return stop('hash_mismatch', {
       serverSha: server,
-      error: 'The staged file does not match the SHA 256 fingerprint taken in the browser.',
+      error: 'The staged file does not match the SHA 256 fingerprint recorded when its hidden details were removed.',
     });
   }
 
@@ -349,7 +365,7 @@ export async function processUpload(row, deps) {
   if (!ref) {
     return stop('error', { serverSha: server, receipt, error: 'MyClinicOnline acknowledged the document without a reference.' });
   }
-  if (receipt !== server || receipt !== client) {
+  if (receipt !== server || receipt !== clean) {
     return stop('hash_mismatch', {
       serverSha: server,
       ref,
@@ -358,7 +374,7 @@ export async function processUpload(row, deps) {
     });
   }
 
-  // All three fingerprints agree. Record first: the database runs the same check
+  // Server, receipt and cleaned fingerprints agree. Record first: the database runs the same check
   // and only its 'transferred' reply lets the staging object go.
   report.outcome = 'received';
   const r = await record('received', { serverSha: server, ref, receipt });
@@ -370,7 +386,7 @@ export async function processUpload(row, deps) {
   }
   const recordedStatus = r.res && typeof r.res === 'object' ? r.res.status : null;
 
-  if (!mayDeleteStaging({ outcome, recordedStatus, serverSha256: server, clientSha256: client, receiptSha256: receipt })) {
+  if (!mayDeleteStaging({ outcome, recordedStatus, serverSha256: server, cleanSha256: clean, receiptSha256: receipt })) {
     report.action = 'not_confirmed';
     report.error = 'The database did not confirm the transfer, so the staging object is kept.';
     log(`hsf-mco-transfer ${id}: ${report.error}`);
@@ -555,6 +571,8 @@ async function queuePass(section, label, fn, limit, handle, d, log) {
 // deps: {
 //   rpc, download, remove    as for processUpload; remove(path, { allowAbsent: true })
 //                            resolves 'absent' when Storage confirms nothing is there
+//   upload                   async (path, bytes, mimeType): writes the cleaned bytes
+//                            back over the staged object (scan pass, contract 11.1)
 //   createAdapter            from mco-adapter.js
 //   mco?:          { baseUrl, token, fetch? } for live mode
 //   allowFixture?: boolean (the deployed worker reads HSF_MCO_ALLOW_FIXTURE)
@@ -643,9 +661,12 @@ export async function runTransfer(deps) {
       const rep = await scanUpload(row, {
         rpc: d.rpc,
         download: d.download,
+        upload: d.upload,
         av,
         checkPath: checkStagingPath,
         recordFn: RPC.scanRecord,
+        recordCleanFn: RPC.scanRecordClean,
+        writeBackFn: RPC.scanWriteBack,
         sha256Hex: d.sha256Hex,
         log,
       });
@@ -698,7 +719,7 @@ export async function runTransfer(deps) {
 
 // 8. Supabase bindings ---------------------------------------------------------------
 
-// The three I/O dependencies over the Supabase REST, Storage and rpc endpoints,
+// The I/O dependencies over the Supabase REST, Storage and rpc endpoints,
 // with the service role key. fetch is injectable for tests. The key is sent only
 // in the apikey and Authorization headers and never appears in an error.
 
@@ -758,6 +779,24 @@ export function createSupabaseIo(options) {
     return new Uint8Array(await res.arrayBuffer());
   }
 
+  // POST /storage/v1/object/hsf-staging/<path> with x-upsert: true writes the
+  // cleaned bytes over the staged object at the same path (contract 11.1).
+  // Only a 2xx reply counts as written.
+  async function upload(path, bytes, mimeType) {
+    const enc = encodeStagingPath(path);
+    const body = toUint8(bytes);
+    const type = typeof mimeType === 'string' && MIME_RE.test(mimeType.trim()) ? mimeType.trim() : '';
+    if (!type) throw new Error('The cleaned file has no usable content type.');
+    const res = await doFetch(`${base}/storage/v1/object/${STAGING_BUCKET}/${enc}`, {
+      method: 'POST',
+      headers: headers({ 'Content-Type': type, 'x-upsert': 'true', 'Cache-Control': 'no-store' }),
+      body,
+    });
+    try { await res.arrayBuffer(); } catch (_) { /* drain only */ }
+    if (!res.ok) throw new Error(`Storage refused the cleaned file (HTTP ${res.status}).`);
+    return true;
+  }
+
   // HEAD /storage/v1/object/hsf-staging/<path>: true when the object is there,
   // false when Storage answers 400 or 404 (its "not found"), throws otherwise.
   async function exists(path) {
@@ -798,5 +837,5 @@ export function createSupabaseIo(options) {
     throw new Error('Storage did not confirm that the staging object was removed.');
   }
 
-  return { rpc, download, remove, exists };
+  return { rpc, download, upload, remove, exists };
 }

@@ -181,17 +181,18 @@ Person ──question──▶ Bot host (bridge) ──messages + tools──▶
 
 8.2 Steps.
 8.2.1 Get a key (section 4) and store it in the bot host's secret store as `CNC_KERNEL_API_KEY`.
-8.2.2 Set `XAI_API_KEY` (from the xAI console, owned by whoever pays for xAI) in the same secret store. Leave `XAI_MODEL` unset (or `auto`) so the bridge runs on the latest Grok model (section 1.3), or set it to xAI's official latest alias once Odendaal has confirmed one exists. Never type the key into chat or code.
+8.2.2 Set `XAI_API_KEY` (from the xAI console, owned by whoever pays for xAI) in the same secret store. Leave `XAI_MODEL` unset (or `auto`) so the bridge runs on the latest Grok model (section 1.3), or set it to xAI's official latest alias once Odendaal has confirmed one exists; the setup script (8.6) looks for that alias and writes the choice. Never type the key into chat or code.
 8.2.3 Set `CNC_KERNEL_API_BASE` to the origin that serves `/api/kernel` (the Forge host; pending, section 10). `https` only.
-8.2.4 Copy `grok/bridge-example.mjs`, `grok/kernel-tools.json` and `grok/system-prompt.md` to the bot host together (the bridge reads the other two from its own folder). Node 18 or later; no packages.
+8.2.4 Copy `grok/bridge-example.mjs`, `grok/model-pick.mjs`, `grok/setup.mjs`, `grok/kernel-tools.json`, `grok/system-prompt.md` and `grok/.gitignore` to the bot host together, into one folder (the bridge imports `model-pick.mjs` and reads the prompt and the tools from its own folder). Node 20 or later for the setup script, 20.6 or later to load the `.env` with `--env-file`; no packages.
 8.2.5 Smoke test the API first, from the bot host, with the key taken from the environment (the key never appears on the command line history if you use the variable):
 
 ```sh
 curl -sS -H "Authorization: Bearer $CNC_KERNEL_API_KEY" "$CNC_KERNEL_API_BASE/api/kernel?r=industries"
 ```
 
-8.2.6 Then the bridge: `node bridge-example.mjs "Which instruments does the kernel hold for construction?"`. The answer ends with the notice.
-8.2.7 Put the bot's own front door (website chat, internal tool, messaging channel) in front of the bridge with its own sign in or abuse control: every question costs xAI tokens and kernel calls. Where the bot is offered is a Director decision (section 10).
+8.2.6 Run the setup script (8.6) and fix whatever it reports until it ends with "All checks passed.".
+8.2.7 Then the bridge: `node --env-file=grok/.env grok/bridge-example.mjs "Which instruments does the kernel hold for construction?"` (or plain `node grok/bridge-example.mjs "..."` when every variable sits in the host's secret store). The answer ends with the notice.
+8.2.8 Put the bot's own front door (website chat, internal tool, messaging channel) in front of the bridge with its own sign in or abuse control: every question costs xAI tokens and kernel calls. Where the bot is offered is a Director decision (section 10).
 
 8.3 What the bridge does for safety, in code rather than in the prompt.
 8.3.1 Refuses a question that carries an identity number, an email address or a telephone number before anything is sent to xAI, and refuses such text as a search term.
@@ -206,19 +207,47 @@ curl -sS -H "Authorization: Bearer $CNC_KERNEL_API_KEY" "$CNC_KERNEL_API_BASE/ap
 
 8.5 Not recommended: adding the kernel to a personal Grok account through the consumer connectors screen. The key would sit in a personal account, outside Care Net's control.
 
+8.6 The setup script, `grok/setup.mjs` (contract 11.6). Odendaal runs it on the bot host from the folder above `grok`, first with `--check`, then without:
+
+```sh
+node grok/setup.mjs --check   # checks everything, writes nothing
+node grok/setup.mjs           # checks everything, then writes XAI_MODEL=<chosen id> into grok/.env
+node grok/setup.mjs --auto    # checks everything, then writes XAI_MODEL=auto (the bridge chooses once a day)
+```
+
+8.6.1 Where the settings come from. `XAI_API_KEY`, `CNC_KERNEL_API_KEY` and `CNC_KERNEL_API_BASE` (and the optional `XAI_API_BASE`) are read from the environment, or else from `grok/.env` beside the script. The environment wins, as it does with `node --env-file`. If the keys sit in a `.env`, it must be that one file on the bot host, readable by the bot's user only (`chmod 600`; the script creates a new one that way and warns about a looser one). `grok/.gitignore` keeps `.env` out of the repository; a `.env` never goes into a repository, a ticket or a chat (section 4.4).
+8.6.2 What it checks, each step numbered on screen: (1) the Node version; (2) that the three settings are present, that the kernel key has the `cnck_` form and that both bases use https; (3) the kernel API, `GET <CNC_KERNEL_API_BASE>/api/kernel?r=industries`, reporting the exact status and, on success, the number of industries and the kernel release; (4) xAI's model list, `GET https://api.x.ai/v1/language-models`, falling back to `GET https://api.x.ai/v1/models` when the first gives no usable choice; (5) the `.env`.
+8.6.3 How it chooses the model. If the list carries aliases, it takes an official alias that ends in `latest` for the flagship Grok family (the alias and the model it points at start with `grok` and contain none of the excluded words of section 1.3.1; among several, the alias of the newest model). If no such alias is listed, it uses the bridge's own newest rule (section 1.3.1). Both rules sit in `grok/model-pick.mjs`, which the bridge and the script share. With a fixed id written, the bridge uses that id as it stands and no longer reads the list daily; run the script again (or use `--auto`) to move to a newer model.
+8.6.4 To confirm on the first real run. The script was built and tested with mocked replies only, because xAI could not be reached from the build environment. The `aliases` field, the name of the list (`models` or `data`) and the `/v1/language-models` endpoint itself are assumptions. The script prints what it found: the endpoint that answered, its status, how many models it listed, whether an aliases field was present, the Grok chat models left after the filter, the aliases listed and the id chosen with the reason. Odendaal compares that with xAI's own documentation and records the result under section 10 item 8.
+8.6.5 What it writes. Only `XAI_MODEL=<id>` (or `XAI_MODEL=auto`) in `grok/.env`, replacing an existing `XAI_MODEL` line and keeping every other line as it was; a missing `.env` is created with that one line. Nothing is written with `--check`, and nothing is written at all unless the checks in steps 1 to 4 passed. No other file is ever written.
+8.6.6 What it never shows. Neither key is printed or logged, not even in part: replies are reported by status only, no reply body is echoed, and every line passes a redaction of both keys before it is shown. The tests in `test/mco/grok-setup.test.mjs` capture the output of every case and fail if a key appears.
+8.6.7 Exit codes, for a host that runs it from a script:
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Every check passed (and the `.env` was written, unless `--check`) |
+| 1 | A setting is missing or malformed, the `.env` could not be read, or an option is wrong |
+| 2 | Node is older than 20 |
+| 3 | The kernel API check failed (the status is shown; 401 is a refused key, 403 a key without kernel.read, 404 a wrong base) |
+| 4 | The xAI check failed: the key was refused (401 or 403), xAI could not be reached, or no Grok chat model could be chosen |
+| 5 | The `.env` could not be written |
+
+When both network checks fail, the kernel's code (3) is returned; both are still reported.
+
 ## 9. Security checklist for go live
 
 | Number | Check | Owner |
 | --- | --- | --- |
 | 1 | Key issued by a forge_admin, one per bot and environment, stored only in the bot host's secret store | Forge admin, Odendaal |
-| 2 | Latest model: `XAI_MODEL` unset or `auto`, or set to xAI's official latest alias once confirmed in xAI's own documentation; the model list call answers from the bot host and the log shows the chosen id; no model name in any file | Odendaal |
+| 2 | Latest model: `node grok/setup.mjs` ends with "All checks passed." on the bot host; `XAI_MODEL` is `auto`, or the official latest alias the script found, or the newest id it chose; the alias field and the model list's shape it printed have been compared with xAI's own documentation (section 8.6.4); no model name in any file in the repository | Odendaal |
 | 3 | No web, X or other built in xAI tools enabled for this bot | Odendaal |
 | 4 | The bot's front door has its own sign in or abuse limit | Odendaal |
 | 5 | The notice appears at the end of every answer (test with three questions and one refusal) | Odendaal |
 | 6 | A question with an identity number is refused without an xAI call (check the xAI usage log shows no request) | Odendaal |
 | 7 | xAI recorded as an operator for the question text; its retention setting reviewed (HSF-PORTAL-ARCHITECTURE.md section 5) | Director, Information Officer |
 | 8 | System prompt changes reviewed by the Director before they go live | Director |
-| 9 | Revocation tested: revoke a test key and see 401 | Forge admin |
+| 9 | Revocation tested: revoke a test key and see 401 (the setup script's step 3 shows it) | Forge admin |
+| 10 | Keys only in the bot host's secret store or in `grok/.env` on that host, readable by the bot's user only; `grok/.gitignore` present; `git status` on the host shows no `.env` | Odendaal |
 
 ## 10. Open items
 

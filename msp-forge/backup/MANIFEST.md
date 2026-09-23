@@ -59,12 +59,13 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 051_hsf_generate_and_compliance.sql (27990 bytes)
 - 052_hsf_launch_controls.sql (81071 bytes)
 - 053_hsf_signoff_rule.sql (29728 bytes)
+- 054_hsf_console_and_metadata.sql (125413 bytes)
 
 ## CNC HSF FORGE
 
-Rebuild script regenerated 23/09/2026 with migrations 047 to 053 (052 adds the launch controls, 053 the File sign off rule) (the Health and Safety File engine, company documents with consent, the MCO transfer, the kernel API and File generation). The concatenation reproduces the earlier script for 001 to 046 byte for byte, and was proved by replaying it into an empty database: 256 File elements, 41 appointment types, 49 triggers, 34 element classes, 37 verified instruments, 17 industries, 316 roles, and all 82 HSF core checks and the launch and sign off checks passed.
+Rebuild script regenerated 23/09/2026 with migrations 047 to 054 (the Health and Safety File engine, company documents with consent, the MCO transfer, the kernel API and File generation; 052 adds the launch controls, 053 the File sign off rule, and 054 the staff console, metadata removal before a document leaves staging and the point of use register check). The script is the plain concatenation of every migration in order; it reproduces the earlier script for 001 to 053 byte for byte and adds 054. It was proved on 23/09/2026 by loading test/sql/00_supabase_stub.sql and replaying it into a fresh local database: 256 File elements, 41 appointment types, 49 triggers, 34 element classes, 37 verified instruments, 17 industries, 316 roles; HSF core checks 82 of 82, and the flow (239), launch (202), sign off (66) and console (157) checks all passed.
 
-Migrations 047 to 053 are in the repository and are not applied to the live project. Migration 048 refuses to run until 042 is applied (HSF-7). Company documents are staging data, not kernel content, and are never part of this backup.
+Migrations 047 to 054 are in the repository and are not applied to the live project. Migration 048 refuses to run until 042 is applied (HSF-7). Company documents are staging data, not kernel content, and are never part of this backup.
 
 ## Not SQL, and therefore not in the rebuild script
 
@@ -72,9 +73,9 @@ Migrations 047 to 053 are in the repository and are not applied to the live proj
 - vercel/settings.html, the settings page that reads and writes the parameter store.
 - WIRING.html, the system reference: every page, endpoint, table, function, parameter and scheduled job, read from the live project.
 - supabase/functions/hsf-mco-transfer/index.ts with supabase/functions/_shared/, the MCO transfer worker. It runs in hold mode until the MCO contract is agreed (HSF-3).
-- vercel/api/ and vercel/lib/ (including hsf-consent.js, hsf-upload.js, hsf-file.js, kernel.js and portal-summary.js), with server/serve.js for hosting outside Vercel.
-- The portal and builder pages (vercel/portal.html, vercel/hsf-builder.html) and the shared scripts under vercel/js/.
-- Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project. The same rule holds for MCO_API_TOKEN (worker secret, once HSF-3 is agreed) and every kernel API key, which lives only in the bot host's secret store; the database keeps a hash. HSF_MCO_ALLOW_FIXTURE is a test switch and is never set in production.
+- vercel/api/ and vercel/lib/ (including hsf-consent.js, hsf-upload.js, hsf-file.js, hsf-delete.js, hsf-staff.js, kernel.js and portal-summary.js), with server/serve.js for hosting outside Vercel.
+- The portal, builder and staff console pages (vercel/portal.html, vercel/hsf-builder.html, vercel/hsf-staff.html) and the shared scripts under vercel/js/.
+- Two secrets that are never in this repository and never in the database: ANTHROPIC_API_KEY in Supabase secrets, and the service role key in the Vercel project. The same rule holds for MCO_API_TOKEN (worker secret, once HSF-3 is agreed) and every kernel API key, which lives only in the bot host's secret store; the database keeps a hash. HSF_AV_TOKEN (the antivirus engine's token) is a worker secret too. HSF_MCO_ALLOW_FIXTURE and HSF_SCAN_ALLOW_FIXTURE are test switches and are never set in production.
 
 ## Rebuild procedure
 
@@ -85,4 +86,4 @@ Migrations 047 to 053 are in the repository and are not applied to the live proj
 5. Deploy the assistant connection: supabase/functions/msp-assistant/index.ts, and set ANTHROPIC_API_KEY in the project's function secrets. Without that key the connection answers that it is not configured and records the refusal.
 6. Confirm the schedule: msp_agent_schedule_status() should show job msp_monthly_audit on the day and hour held in the agent parameters.
 7. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent, the parameter store, the kernel API and version control.
-8. For HSF FORGE, confirm the private hsf-staging bucket exists (migration 049 creates it), deploy the hsf-mco-transfer function, and prove the rebuild with test/sql/hsf_core_checks.sql, hsf_flow_checks.sql, hsf_launch_checks.sql and hsf_signoff_checks.sql.
+8. For HSF FORGE, confirm the private hsf-staging bucket exists (migration 049 creates it), deploy the hsf-mco-transfer function, and prove the rebuild with test/sql/hsf_core_checks.sql, hsf_flow_checks.sql, hsf_launch_checks.sql, hsf_signoff_checks.sql and hsf_console_checks.sql, run after a full replay.

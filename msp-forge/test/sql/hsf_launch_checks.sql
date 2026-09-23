@@ -94,14 +94,28 @@ begin
   return v_id;
 end $$;
 -- The ids a claim returns, sorted, as a json array.
+-- One scan pass. From migration 054 (contract 11.1) a pass holds what it claims
+-- for 30 minutes; each call here is a new worker run after the last one ended,
+-- so the holds of earlier passes are aged first.
+create function pg_temp.scan_claim(p_limit int) returns setof hsf_upload language plpgsql as $$
+begin
+  update hsf_upload set scan_claimed_at = now() - interval '31 minutes' where scan_claimed_at is not null;
+  return query select * from hsf_scan_claim(p_limit);
+end $$;
 create function pg_temp.scan_ids() returns jsonb language sql as $$
-  select coalesce(jsonb_agg(q.id::text order by q.id::text), '[]'::jsonb) from hsf_scan_claim(100) q $$;
+  select coalesce(jsonb_agg(q.id::text order by q.id::text), '[]'::jsonb) from pg_temp.scan_claim(100) q $$;
 create function pg_temp.claim_ids() returns jsonb language sql as $$
   select coalesce(jsonb_agg(q.id::text order by q.id::text), '[]'::jsonb) from hsf_transfer_claim(100) q $$;
 create function pg_temp.ids(variadic p text[]) returns jsonb language sql as $$
   select jsonb_agg(x order by x) from unnest(p) x $$;
 create function pg_temp.status_of(p_k text) returns text language sql as $$
   select status from hsf_upload where id = pg_temp.ctx(p_k)::uuid $$;
+-- From migration 054 (contract 11.1) a clean scan is recorded with the cleaned
+-- copy's fingerprint. Here the cleaner found nothing to remove, so the cleaned
+-- copy is the client's bytes and its fingerprint the client's.
+create function pg_temp.scan_clean(p_k text, p_engine text) returns jsonb language sql as $$
+  select hsf_scan_record_clean(u.id, p_engine, '[]'::jsonb, u.sha256_client, '[]'::jsonb, u.size_bytes)
+    from hsf_upload u where u.id = pg_temp.ctx(p_k)::uuid $$;
 
 -- The role checks below run as anon and authenticated, which still read and write the context.
 grant select, insert, update on ctx to anon, authenticated;
@@ -434,6 +448,9 @@ select pg_temp.ok('the scan claim takes uploaded, pending rows with bytes, oldes
                                         pg_temp.ctx('up_d'), pg_temp.ctx('up_e'))
   and (select bool_and(scan_attempts = 1) from hsf_upload where status = 'uploaded')
   and (select scan_attempts = 0 from hsf_upload where id = pg_temp.ctx('up_f')::uuid));
+-- From migration 054 (contract 11.1) a claimed upload is held by its pass for
+-- 30 minutes; the hold is aged here so the limit is seen on the same rows.
+update hsf_upload set scan_claimed_at = now() - interval '31 minutes' where scan_claimed_at is not null;
 select pg_temp.ok('the scan claim respects its limit', (select count(*) = 2 from hsf_scan_claim(2)));
 select pg_temp.ok('the scan claim takes row locks with skip locked, so parallel workers never share a row',
   pg_get_functiondef('hsf_scan_claim(int)'::regprocedure) ~* 'for update of u skip locked');
@@ -441,11 +458,11 @@ select pg_temp.ok('the scan claim takes row locks with skip locked, so parallel 
 select pg_temp.refuses('an unknown scan result is refused',
   format('select hsf_scan_record(%L, ''fine'', null, null)', pg_temp.ctx('up_b')), 'unknown scan result');
 select pg_temp.refuses('scan findings must be a list',
-  format('select hsf_scan_record(%L, ''clean'', null, ''{"a":1}''::jsonb)', pg_temp.ctx('up_b')), 'must be a list');
+  format('select hsf_scan_record(%L, ''error'', null, ''{"a":1}''::jsonb)', pg_temp.ctx('up_b')), 'must be a list');
 select pg_temp.refuses('an upload that has not arrived cannot be scanned',
-  format('select hsf_scan_record(%L, ''clean'', null, null)', pg_temp.ctx('up_f')), 'not waiting for a security scan');
+  format('select pg_temp.scan_clean(%L, null)', 'up_f'), 'not waiting for a security scan');
 
-select pg_temp.act('r', format('select hsf_scan_record(%L, ''clean'', ''ClamAV test 1.0'', ''[]''::jsonb)', pg_temp.ctx('up_b')));
+select pg_temp.act('r', 'select pg_temp.scan_clean(''up_b'', ''ClamAV test 1.0'')');
 select pg_temp.ok('clean: scan_status clean, the upload stays uploaded, engine and time recorded, audited',
   pg_temp.r('r') ->> 'scan_status' = 'clean' and pg_temp.r('r') ->> 'status' = 'uploaded'
   and exists (select 1 from hsf_upload where id = pg_temp.ctx('up_b')::uuid and status = 'uploaded'
@@ -519,7 +536,7 @@ select pg_temp.ok('scanning never touched a transfer claim: nothing is transferr
 
 -- E (client B) passes, so both accounts have clean staged uploads for what follows.
 select pg_temp.ok('client B''s upload passes the scan',
-  hsf_scan_record(pg_temp.ctx('up_e')::uuid, 'clean', 'ClamAV test 1.0', null) ->> 'scan_status' = 'clean');
+  pg_temp.scan_clean('up_e', 'ClamAV test 1.0') ->> 'scan_status' = 'clean');
 
 -- 5. Revoking a verification blocks and deletes nothing (contract 10.2) ------------------------------
 
@@ -546,7 +563,7 @@ select pg_temp.ok('revocation blocks the account''s untransferred uploads and de
      from hsf_upload where client_account_id = pg_temp.ctx('acc2')::uuid)
   and not exists (select 1 from hsf_upload where client_account_id = pg_temp.ctx('acc1')::uuid and transfer_blocked_reason is not null));
 select pg_temp.ok('blocked uploads are neither scanned, claimed for transfer nor queued for cleanup',
-  not exists (select 1 from hsf_scan_claim(100) q where q.client_account_id = pg_temp.ctx('acc2')::uuid)
+  not exists (select 1 from pg_temp.scan_claim(100) q where q.client_account_id = pg_temp.ctx('acc2')::uuid)
   and not exists (select 1 from hsf_transfer_claim(100) q where q.client_account_id = pg_temp.ctx('acc2')::uuid)
   and not exists (select 1 from jsonb_array_elements(hsf_transfer_cleanup_queue(100)) x
                    where x ->> 'upload_id' in (pg_temp.ctx('up_e'), pg_temp.ctx('up_g'))));
@@ -656,7 +673,7 @@ begin
     'department_code', 'SHE', 'original_name', 'Risk assessment v2.pdf', 'mime_type', 'application/pdf', 'size_bytes', 4096, 'sha256', pg_temp.ctx('sha_b'))));
   perform pg_temp.put('up_j', pg_temp.upload('u1', pg_temp.ctx('reg_ok')::jsonb));
   perform pg_temp.put('up_k', pg_temp.upload('u1', pg_temp.ctx('reg_ok')::jsonb));
-  perform hsf_scan_record(pg_temp.ctx('up_k')::uuid, 'clean', 'ClamAV test 1.0', null);
+  perform pg_temp.scan_clean('up_k', 'ClamAV test 1.0');
 end $$;
 update msp_env_parameter set value = 'fixture' where key = 'hsf.mco_transfer_mode';
 select pg_temp.act('claim', 'select pg_temp.claim_ids()');
@@ -803,9 +820,13 @@ select pg_temp.refuses('a client deleted upload cannot be chosen again',
 select pg_temp.refuses('a client deleted upload is not transferred',
   format('select hsf_transfer_record(%L, ''fixture'', ''error'', null, null, null, null)', pg_temp.ctx('up_a')), 'not waiting for transfer');
 select pg_temp.refuses('a client deleted upload is not scanned',
-  format('select hsf_scan_record(%L, ''clean'', null, null)', pg_temp.ctx('up_j')), 'not waiting for a security scan');
+  format('select pg_temp.scan_clean(%L, null)', 'up_j'), 'not waiting for a security scan');
 
--- Five attempts, then locked.
+-- Five attempts, then locked. From migration 054 (contract 11.3) an account has
+-- five PIN attempts an hour over all its requests, the same number as one
+-- request, so the attempt already counted on the first request is set aside
+-- here: this proves the lock of the request itself.
+update hsf_deletion_request set attempts = 0 where id = pg_temp.ctx('req1')::uuid;
 select pg_temp.act('req2', format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u1'), pg_temp.ctx('up_b')));
 select pg_temp.put('req2', pg_temp.r('req2') ->> 'request_id');
 select hsf_deletion_request_pin_sent(pg_temp.ctx('u1')::uuid, pg_temp.ctx('req2')::uuid);
@@ -832,6 +853,8 @@ select pg_temp.ok('a locked request stays locked and allows nothing',
 select pg_temp.refuses('a locked request cannot be confirmed',
   format('select hsf_deletion_request_confirm(%L, %L)', pg_temp.ctx('u1'), pg_temp.ctx('req2')), 'no longer open');
 select pg_temp.ok('B was not deleted', pg_temp.status_of('up_b') = 'uploaded');
+-- The five attempts of the locked request are set aside too, for the same reason.
+update hsf_deletion_request set attempts = 0 where id = pg_temp.ctx('req2')::uuid;
 
 -- Expiry after 10 minutes.
 select pg_temp.act('req3', format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u1'), pg_temp.ctx('up_b')));
@@ -906,8 +929,8 @@ select hsf_deletion_request_pin_sent(pg_temp.ctx('u1')::uuid, pg_temp.ctx('req7'
 update hsf_deletion_request set attempts = 5
  where client_account_id = pg_temp.ctx('acc1')::uuid and requested_at > now() - interval '1 hour'
    and id <> pg_temp.ctx('req7')::uuid;
-select pg_temp.ok('ten PIN attempts in the hour on the account: the next is refused as rate_limited and not counted',
-  (select sum(attempts) >= 10 from hsf_deletion_request
+select pg_temp.ok('five PIN attempts in the hour on the account (contract 11.3): the next is refused as rate_limited and not counted',
+  (select sum(attempts) >= 5 from hsf_deletion_request
     where client_account_id = pg_temp.ctx('acc1')::uuid and requested_at > now() - interval '1 hour')
   and hsf_deletion_request_attempt(pg_temp.ctx('u1')::uuid, pg_temp.ctx('req7')::uuid)
       = '{"allowed": false, "attempts_left": 5, "status": "rate_limited"}'::jsonb
@@ -950,7 +973,7 @@ declare
   i int;
 begin
   for i in 1..6 loop
-    if not exists (select 1 from hsf_scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid) then
+    if not exists (select 1 from pg_temp.scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid) then
       raise exception 'CHECK FAILED: S1 was not claimed for its scan on round %', i;
     end if;
     perform hsf_scan_record(pg_temp.ctx('up_s1')::uuid, 'error', 'CNC structural check',
@@ -960,7 +983,7 @@ begin
 end $$;
 select pg_temp.ok('six engine outages in a row: S1 keeps its attempts and is still claimed for a scan',
   (select scan_status = 'error' and scan_attempts = 0 and status = 'uploaded' from hsf_upload where id = pg_temp.ctx('up_s1')::uuid)
-  and exists (select 1 from hsf_scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid));
+  and exists (select 1 from pg_temp.scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid));
 update hsf_upload set scan_attempts = 0 where id = pg_temp.ctx('up_s1')::uuid;
 
 -- Five inspection errors use the attempts up; staff see it and give a fresh start.
@@ -969,14 +992,14 @@ declare
   i int;
 begin
   for i in 1..5 loop
-    perform hsf_scan_claim(100);
+    perform pg_temp.scan_claim(100);
     perform hsf_scan_record(pg_temp.ctx('up_s1')::uuid, 'error', 'CNC structural check',
       '[{"code":"could_not_inspect","message":"The file could not be checked: the archive directory is damaged."}]'::jsonb);
   end loop;
 end $$;
 select pg_temp.ok('five inspection errors: S1 is no longer claimed, and the staging alerts list it as scan_exhausted',
   (select scan_attempts = 5 from hsf_upload where id = pg_temp.ctx('up_s1')::uuid)
-  and not exists (select 1 from hsf_scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid)
+  and not exists (select 1 from pg_temp.scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid)
   and exists (select 1 from jsonb_array_elements(hsf_staging_alerts_list()) x
                where x ->> 'upload_id' = pg_temp.ctx('up_s1') and (x ->> 'scan_exhausted')::boolean)
   and exists (select 1 from information_schema.columns where table_name = 'hsf_staging_alerts' and column_name = 'scan_exhausted'));
@@ -989,7 +1012,7 @@ select pg_temp.refuses('a clean upload cannot be reset',
 select set_config('request.jwt.claims', '', true);
 select pg_temp.ok('the scan reset gives S1 its attempts back, it is claimed again, audited',
   pg_temp.r('r') ->> 'scan_attempts' = '0'
-  and exists (select 1 from hsf_scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid)
+  and exists (select 1 from pg_temp.scan_claim(100) q where q.id = pg_temp.ctx('up_s1')::uuid)
   and exists (select 1 from msp_audit where event_type = 'hsf_upload_scan_reset' and actor = 'service_role'
                 and event_detail ->> 'upload_id' = pg_temp.ctx('up_s1') and (event_detail ->> 'attempts_before')::int = 5));
 
@@ -1000,7 +1023,7 @@ select pg_temp.ok('fingerprint mismatch at the scan: the upload fails with the r
   pg_temp.r('r') ->> 'status' = 'failed'
   and (select status = 'failed' and reject_reason = 'The stored file does not match the fingerprint taken when it was uploaded.'
          from hsf_upload where id = pg_temp.ctx('up_s2')::uuid)
-  and not exists (select 1 from hsf_scan_claim(100) q where q.id = pg_temp.ctx('up_s2')::uuid)
+  and not exists (select 1 from pg_temp.scan_claim(100) q where q.id = pg_temp.ctx('up_s2')::uuid)
   and exists (select 1 from msp_audit where event_type = 'hsf_upload_scan_rejected' and event_detail ->> 'upload_id' = pg_temp.ctx('up_s2'))
   and exists (select 1 from jsonb_array_elements(hsf_transfer_cleanup_queue(100)) x
                where x ->> 'upload_id' = pg_temp.ctx('up_s2') and x ->> 'reason' = 'failed'));
@@ -1036,9 +1059,9 @@ select pg_temp.ok('a blocked failed upload that did complete still waits for the
 -- A transfer in flight: not deletable, not expired, and a late receipt is kept.
 do $$
 begin
-  perform hsf_scan_record(pg_temp.ctx('up_t1')::uuid, 'clean', 'ClamAV test 1.0', null);
-  perform hsf_scan_record(pg_temp.ctx('up_t2')::uuid, 'clean', 'ClamAV test 1.0', null);
-  perform hsf_scan_record(pg_temp.ctx('up_t3')::uuid, 'clean', 'ClamAV test 1.0', null);
+  perform pg_temp.scan_clean('up_t1', 'ClamAV test 1.0');
+  perform pg_temp.scan_clean('up_t2', 'ClamAV test 1.0');
+  perform pg_temp.scan_clean('up_t3', 'ClamAV test 1.0');
 end $$;
 update msp_env_parameter set value = 'fixture' where key = 'hsf.mco_transfer_mode';
 select pg_temp.act('claim', 'select pg_temp.claim_ids()');
@@ -1051,13 +1074,22 @@ select pg_temp.ok('a transfer in flight is not deletable in the builder',
     where x ->> 'upload_id' = pg_temp.ctx('up_t1')));
 select pg_temp.refuses('a transfer in flight cannot be chosen for deletion',
   format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u2'), pg_temp.ctx('up_t1')), 'being moved there now');
--- T3's claim is over 30 minutes old when the client asks, then a worker claims it again.
+-- From migration 054 (contract 11.2) a transfer in flight is never deletable,
+-- whatever the age of its claim. T3's claim is over 30 minutes old.
 update hsf_upload set transfer_claimed_at = now() - interval '31 minutes' where id = pg_temp.ctx('up_t3')::uuid;
+select pg_temp.refuses('a transfer in flight whose claim is over 30 minutes old still cannot be chosen for deletion',
+  format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u2'), pg_temp.ctx('up_t3')), 'being moved there now');
+-- The transfer errors, so T3 is uploaded and deletable again; the client asks,
+-- then a worker claims it again before the client confirms.
+select hsf_transfer_record(pg_temp.ctx('up_t3')::uuid, 'fixture', 'error', null, null, null, 'Adapter timed out');
 select pg_temp.act('req8', format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u2'), pg_temp.ctx('up_t3')));
 select pg_temp.put('req8', pg_temp.r('req8') ->> 'request_id');
 select hsf_deletion_request_pin_sent(pg_temp.ctx('u2')::uuid, pg_temp.ctx('req8')::uuid);
 select hsf_deletion_request_attempt(pg_temp.ctx('u2')::uuid, pg_temp.ctx('req8')::uuid);
-update hsf_upload set transfer_claimed_at = now() - interval '1 minute' where id = pg_temp.ctx('up_t3')::uuid;
+update msp_env_parameter set value = 'fixture' where key = 'hsf.mco_transfer_mode';
+select pg_temp.act('claim', 'select pg_temp.claim_ids()');
+update msp_env_parameter set value = 'hold' where key = 'hsf.mco_transfer_mode';
+select pg_temp.ok('the worker claims T3 again', pg_temp.r('claim') = pg_temp.ids(pg_temp.ctx('up_t3')));
 select pg_temp.refuses('a request whose document was claimed for transfer after the request cannot be confirmed',
   format('select hsf_deletion_request_confirm(%L, %L)', pg_temp.ctx('u2'), pg_temp.ctx('req8')), 'no longer be deleted');
 
@@ -1067,17 +1099,23 @@ select pg_temp.ok('a transfer in flight is not taken by the two year limit',
 select pg_temp.refuses('a transfer in flight cannot be expired',
   format('select hsf_mark_expired(%L)', pg_temp.ctx('up_t2')), 'being transferred');
 
--- A transfer that stopped part way (claimed over 30 minutes ago) is deletable
--- again; if MyClinicOnline answers after the deletion, its receipt is kept.
+-- A transfer that stopped part way (claimed over 30 minutes ago) stays not
+-- deletable (contract 11.2) until the transfer errors and returns it to
+-- uploaded; if MyClinicOnline answers after the deletion, its receipt is kept.
 update hsf_upload set transfer_claimed_at = now() - interval '31 minutes' where id = pg_temp.ctx('up_t1')::uuid;
-select pg_temp.ok('a stopped transfer, claimed over 30 minutes ago, is deletable again',
-  (select (x ->> 'deletable')::boolean from jsonb_array_elements(hsf_my_uploads(pg_temp.ctx('u2')::uuid)) x
+select pg_temp.ok('a stopped transfer, claimed over 30 minutes ago, is still not deletable',
+  (select not (x ->> 'deletable')::boolean from jsonb_array_elements(hsf_my_uploads(pg_temp.ctx('u2')::uuid)) x
+    where x ->> 'upload_id' = pg_temp.ctx('up_t1')));
+select hsf_transfer_record(pg_temp.ctx('up_t1')::uuid, 'fixture', 'error', null, null, null, 'Adapter timed out');
+select pg_temp.ok('once the transfer errors, the upload is deletable again',
+  (select (x ->> 'deletable')::boolean and x ->> 'status' = 'uploaded'
+     from jsonb_array_elements(hsf_my_uploads(pg_temp.ctx('u2')::uuid)) x
     where x ->> 'upload_id' = pg_temp.ctx('up_t1')));
 select pg_temp.act('req9', format('select hsf_deletion_request_create(%L, array[%L]::uuid[], ''email'', true)', pg_temp.ctx('u2'), pg_temp.ctx('up_t1')));
 select pg_temp.put('req9', pg_temp.r('req9') ->> 'request_id');
 select hsf_deletion_request_pin_sent(pg_temp.ctx('u2')::uuid, pg_temp.ctx('req9')::uuid);
 select hsf_deletion_request_attempt(pg_temp.ctx('u2')::uuid, pg_temp.ctx('req9')::uuid);
-select pg_temp.ok('the client deletes the stopped transfer',
+select pg_temp.ok('the client deletes the document whose transfer stopped',
   hsf_deletion_request_confirm(pg_temp.ctx('u2')::uuid, pg_temp.ctx('req9')::uuid) ->> 'status' = 'confirmed'
   and pg_temp.status_of('up_t1') = 'client_deleted');
 select pg_temp.act('r', format('select hsf_transfer_record(%L, ''fixture'', ''received'', %L, ''FIXTURE-LATE'', %L, null)',

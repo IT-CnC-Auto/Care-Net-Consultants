@@ -1,9 +1,10 @@
-// CNC HSF FORGE | tests for the latest model choice in grok/bridge-example.mjs (node --test)
+// CNC HSF FORGE | tests for the latest model choice in grok/model-pick.mjs and grok/bridge-example.mjs (node --test)
 // No network: every fetch is mocked. The model ids below are made up fixtures
 // shaped like an OpenAI style model list; none of them names a real model.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { pickLatestModel, createModelPicker, readConfig, resolveModel, answer } from '../../grok/bridge-example.mjs';
+import * as pick from '../../grok/model-pick.mjs';
 
 const KERNEL_KEY = `cnck_${'a'.repeat(64)}`;
 const XAI_KEY = 'xai-UNIT-TEST-key-must-never-appear';
@@ -133,4 +134,39 @@ test('answer() sends the chosen model to chat completions', async (t) => {
   assert.equal(f.calls[1].url, 'https://xai.invalid/v1/chat/completions');
   assert.equal(JSON.parse(f.calls[1].init.body).model, 'grok-fixture-new');
   assert.match(out.text, /^From the kernel\./);
+});
+
+test('the bridge uses the shared rule in model-pick.mjs', () => {
+  assert.equal(pickLatestModel, pick.pickLatestModel);
+  assert.deepEqual(pick.MODEL_EXCLUDE, ['image', 'imagine', 'vision', 'embed', 'mini', 'fast', 'code']);
+});
+
+test('pickLatestAlias takes an alias ending in latest for the flagship family only', () => {
+  const list = {
+    models: [
+      { id: 'grok-fixture-2', created: 200, aliases: ['grok-fixture-2-0101', 'grok-fixture-2-latest'] },
+      { id: 'grok-fixture-3', created: 300, aliases: ['grok-fixture-3-0923'] },
+      { id: 'grok-fixture-3-fast', created: 900, aliases: ['grok-fixture-fast-latest'] },
+      { id: 'grok-fixture-4', created: 400, aliases: ['grok-fixture-mini-latest'] },
+      { id: 'other-fixture', created: 999, aliases: ['other-latest'] },
+      { id: 'grok-fixture-5', created: 500, aliases: ['grok-fixture latest'] },
+    ],
+  };
+  assert.equal(pick.pickLatestAlias(list), 'grok-fixture-2-latest',
+    'a fast model, a mini alias, another family and an alias with a space are all passed over');
+  assert.equal(pick.listHasAliases(list), true);
+  assert.deepEqual(pick.pickModel(list), { id: 'grok-fixture-2-latest', how: 'alias' });
+  assert.equal(pick.pickLatestAlias({ data: [{ id: 'grok-fixture-a', created: 1, aliases: ['grok-fixture-a-LATEST'] }] }), 'grok-fixture-a-LATEST',
+    'the data key and any case of latest are read');
+});
+
+test('pickModel falls back to the newest rule, and gives nothing for an empty or odd list', () => {
+  assert.deepEqual(pick.pickModel(LIST), { id: 'grok-fixture-new', how: 'newest' });
+  assert.equal(pick.listHasAliases(LIST), false);
+  assert.deepEqual(pick.pickModel({ models: [{ id: 'grok-fixture-x', created: 1, aliases: [] }] }), { id: 'grok-fixture-x', how: 'newest' },
+    'an empty alias list falls back to the newest rule');
+  assert.deepEqual(pick.pickModel({ models: [] }), { id: null, how: null });
+  assert.deepEqual(pick.pickModel({ unexpected: true }), { id: null, how: null });
+  assert.deepEqual(pick.pickModel({ data: [{ id: 'grok-fixture\nXAI_API_KEY=x', created: 5 }] }), { id: null, how: null },
+    'an id that is not a plain token is never chosen for the .env');
 });

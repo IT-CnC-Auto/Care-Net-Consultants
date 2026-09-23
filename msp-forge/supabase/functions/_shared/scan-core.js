@@ -24,17 +24,41 @@
 //      A fixture engine that answers clean exists for tests only and needs
 //      HSF_SCAN_ALLOW_FIXTURE=1, which is never set in production.
 //
+// A file that passes both then has its hidden details removed (contract 11.1,
+// metadata-clean.js). inspectBytes on its own still flags GPS in an image as
+// harmful; the scan pass instead lets the cleaner remove the location (11.1
+// lists location among the details removed) and rejects the file only if the
+// cleaned copy still carries it.
+//
 // Anything that cannot be inspected (a truncated structure, a zip64 or
 // encrypted archive, a compression method the runtime cannot read, a runtime
 // without DecompressionStream) is 'error', never 'clean'. Harmful wins over
 // error, and error wins over clean.
 //
 // scanUpload runs one claimed upload: download, fingerprint check, inspectBytes,
-// the antivirus engine, then hsf_scan_record. One document in memory at a time.
-// Findings carry plain words for the client and never the file name, the file
-// content or a key.
+// the antivirus engine, then the removal of hidden details (contract 11.1,
+// metadata-clean.js). A file that passed both checks is cleaned, written back
+// over the staged object at the same path (the original bytes are not kept) and
+// recorded with hsf_scan_record_clean together with the fingerprint of the
+// cleaned bytes; a file the cleaner refuses, or whose cleaned copy is empty, is
+// recorded harmful with the plain reason. Every other result goes through
+// hsf_scan_record. One document in memory at a time. Findings carry plain words
+// for the client and never the file name, the file content or a key.
+//
+// The write back is the one step that changes staging, so it is announced
+// first: hsf_scan_write_back records the cleaned fingerprint while the upload
+// is still held by this pass's claim (scan_claim_id, a 30 minute lease that the
+// announcement renews) and refuses once the upload has left the scan, for
+// example because the client deleted it; nothing is then written, so a deleted
+// document is never put back in staging. While the lease holds, the cleanup and
+// retention queues leave the object alone and no other run claims the upload.
+// If the pass stops after the write (the record refused, the worker ended), the
+// next pass finds the announced cleaned copy in staging, accepts it as the
+// upload's own bytes and scans it again, instead of reading it as a
+// fingerprint mismatch.
 
 import { isSha256Hex, sha256Hex as defaultSha256Hex } from './mco-adapter.js';
+import { cleanMetadata, CLEAN_ENGINE } from './metadata-clean.js';
 
 export const INSPECT_ENGINE = 'hsf-inspect-1.0';
 export const METADATA_LIMIT_BYTES = 256 * 1024;
@@ -80,6 +104,8 @@ const MESSAGES = Object.freeze({
   oversized_metadata: 'The image carries more than 256 KB of hidden details (metadata).',
   fingerprint_mismatch: 'The stored file does not match the fingerprint taken when it was uploaded.',
   malware: 'The antivirus scan found a known threat.',
+  write_back_failed: 'The file could not be saved to staging after its hidden details were removed.',
+  empty_file: 'The file is empty.',
 });
 
 // 1. Small helpers --------------------------------------------------------------
@@ -724,7 +750,11 @@ export async function inspectBytes(input) {
   const o = input || {};
   const findings = [];
   const seen = new Set();
+  // With locationRemovable (the scan pass, which cleans the file next), image
+  // location details are reported as location: true instead of a finding.
+  let location = false;
   const add = (code) => {
+    if (code === 'location_metadata' && o.locationRemovable === true) { location = true; return; }
     if (seen.has(code)) return;
     seen.add(code);
     findings.push({ code, message: MESSAGES[code] });
@@ -764,9 +794,10 @@ export async function inspectBytes(input) {
     fail(err instanceof InspectError ? err.message : 'the check could not finish');
   }
 
-  if (findings.length) return { verdict: 'harmful', findings };
-  if (why) return { verdict: 'error', findings: [{ code: 'could_not_inspect', message: `The file could not be checked: ${why}.` }] };
-  return { verdict: 'clean', findings: [] };
+  const extra = location ? { location: true } : {};
+  if (findings.length) return { verdict: 'harmful', findings, ...extra };
+  if (why) return { verdict: 'error', findings: [{ code: 'could_not_inspect', message: `The file could not be checked: ${why}.` }], ...extra };
+  return { verdict: 'clean', findings: [], ...extra };
 }
 
 // 8. The antivirus engine ----------------------------------------------------------
@@ -875,19 +906,28 @@ export function createAvEngine(options) {
 // deps: {
 //   rpc:        async (fn, args) => parsed JSON reply; throws on refusal
 //   download:   async (path) => Uint8Array | ArrayBuffer; throws when unreadable
+//   upload:     async (path, bytes, mimeType) => resolves when Storage has the
+//               cleaned bytes at the same path (x-upsert); throws otherwise
 //   av:         an engine from createAvEngine
 //   checkPath:  (row) => { ok, path, reason } (transfer-core checkStagingPath)
-//   recordFn?:  the database function name (default 'hsf_scan_record')
+//   recordFn?:      the database function for every result but clean
+//                   (default 'hsf_scan_record')
+//   recordCleanFn?: the database function for a clean, cleaned result
+//                   (default 'hsf_scan_record_clean')
+//   writeBackFn?:   the database function that announces the write back
+//                   (default 'hsf_scan_write_back')
 //   sha256Hex?, log?
 // }
-// Returns { uploadId, result, action, findings: [codes], error }.
+// Returns { uploadId, result, action, findings: [codes], metadata, removed: [codes], error }.
 export async function scanUpload(row, deps) {
   const d = deps || {};
   const hash = typeof d.sha256Hex === 'function' ? d.sha256Hex : defaultSha256Hex;
   const log = typeof d.log === 'function' ? d.log : () => {};
   const recordFn = typeof d.recordFn === 'string' ? d.recordFn : 'hsf_scan_record';
+  const recordCleanFn = typeof d.recordCleanFn === 'string' ? d.recordCleanFn : 'hsf_scan_record_clean';
+  const writeBackFn = typeof d.writeBackFn === 'string' ? d.writeBackFn : 'hsf_scan_write_back';
   const id = row && typeof row.id === 'string' ? row.id : null;
-  const report = { uploadId: id, result: null, action: null, findings: [], error: null };
+  const report = { uploadId: id, result: null, action: null, findings: [], metadata: null, removed: [], error: null };
 
   if (!id || !UUID_RE.test(id)) {
     report.action = 'skipped';
@@ -934,7 +974,9 @@ export async function scanUpload(row, deps) {
   }
 
   // The bytes scanned must be the bytes fingerprinted: the server fingerprint
-  // when the database holds one, and always the browser fingerprint.
+  // when the database holds one, and always the browser fingerprint. The
+  // cleaned copy an earlier pass announced (hsf_scan_write_back) and may have
+  // written is the upload's own bytes too; it is scanned again as it is.
   let actual;
   try {
     actual = lowerHex(await hash(bytes));
@@ -942,14 +984,20 @@ export async function scanUpload(row, deps) {
     actual = '';
   }
   const expected = [lowerHex(row.sha256_server), lowerHex(row.sha256_client)].filter(Boolean);
-  if (!isSha256Hex(actual) || !expected.length || expected.some((h) => h !== actual)) {
+  const announced = row.scan_write_back && typeof row.scan_write_back === 'object' ? row.scan_write_back : null;
+  const again = !!announced && isSha256Hex(lowerHex(announced.sha256_clean)) && lowerHex(announced.sha256_clean) === actual;
+  if (!isSha256Hex(actual) || ((!expected.length || expected.some((h) => h !== actual)) && !again)) {
     return record('error', INSPECT_ENGINE, [{ code: 'fingerprint_mismatch', message: MESSAGES.fingerprint_mismatch }], null);
   }
 
-  const inspected = await inspectBytes({ bytes, mimeType: row.mime_type, fileName: row.safe_name });
+  // 1. The structural check. Image location details are removed by the cleaner
+  // in step 3 (contract 11.1), so they do not reject the file here; the cleaned
+  // copy is checked for them again before it is recorded.
+  const inspected = await inspectBytes({ bytes, mimeType: row.mime_type, fileName: row.safe_name, locationRemovable: true });
   if (inspected.verdict === 'harmful') return record('harmful', INSPECT_ENGINE, inspected.findings, null);
   if (inspected.verdict !== 'clean') return record('error', INSPECT_ENGINE, inspected.findings, null);
 
+  // 2. The antivirus engine.
   const av = d.av && typeof d.av.scan === 'function' ? d.av : createAvEngine({});
   let verdict;
   try {
@@ -957,14 +1005,109 @@ export async function scanUpload(row, deps) {
   } catch (err) {
     verdict = { result: 'error', error: `The antivirus engine failed. ${messageOf(err)}` };
   }
-  bytes = null;
   const engine = verdict && verdict.engine ? `${INSPECT_ENGINE} + ${verdict.engine}` : INSPECT_ENGINE;
-  if (verdict && verdict.result === 'clean') return record('clean', engine, [], null);
-  if (verdict && verdict.result === 'infected') {
-    const message = verdict.signature ? `${MESSAGES.malware.slice(0, -1)} (${verdict.signature}).` : MESSAGES.malware;
-    return record('infected', engine, [{ code: 'malware', message }], null);
+  if (!verdict || verdict.result !== 'clean') {
+    bytes = null;
+    if (verdict && verdict.result === 'infected') {
+      const message = verdict.signature ? `${MESSAGES.malware.slice(0, -1)} (${verdict.signature}).` : MESSAGES.malware;
+      return record('infected', engine, [{ code: 'malware', message }], null);
+    }
+    const why = verdict && typeof verdict.error === 'string' ? verdict.error : 'The antivirus engine gave no result.';
+    const code = why.startsWith(AV_NOT_CONFIGURED) ? 'av_not_configured' : 'av_error';
+    return record('error', engine, [{ code, message: code === 'av_not_configured' ? AV_NOT_CONFIGURED : 'The antivirus scan could not finish.' }], why);
   }
-  const why = verdict && typeof verdict.error === 'string' ? verdict.error : 'The antivirus engine gave no result.';
-  const code = why.startsWith(AV_NOT_CONFIGURED) ? 'av_not_configured' : 'av_error';
-  return record('error', engine, [{ code, message: code === 'av_not_configured' ? AV_NOT_CONFIGURED : 'The antivirus scan could not finish.' }], why);
+
+  // 3. Hidden details removed (contract 11.1). A file the cleaner cannot clean
+  // is rejected with its plain reason; it is never passed as it is.
+  const cleanEngine = `${engine} + ${CLEAN_ENGINE}`;
+  const cleaned = await cleanMetadata({
+    bytes, mimeType: row.mime_type, fileName: row.safe_name, uploadedAt: row.uploaded_at ?? row.created_at ?? null,
+  });
+  bytes = null;
+  report.metadata = cleaned.outcome;
+  if (cleaned.outcome === 'refused' || !(cleaned.bytes instanceof Uint8Array)) {
+    report.metadata = 'refused';
+    return record('harmful', cleanEngine, [{ code: 'metadata_not_removable', message: cleaned.reason || 'The hidden details of this file could not be removed.' }], null);
+  }
+  // What an earlier pass removed from this copy is still what was removed.
+  const removedList = again && Array.isArray(announced.metadata_removed)
+    ? announced.metadata_removed.filter((r) => r && typeof r.code === 'string' && !cleaned.removed.some((x) => x.code === r.code))
+      .map((r) => ({ code: r.code, message: typeof r.message === 'string' ? r.message : r.code })).concat(cleaned.removed)
+    : cleaned.removed;
+  report.removed = removedList.map((r) => r.code);
+
+  // A file with nothing left once its hidden details are gone (for example a
+  // CSV that held only a byte order mark) is not a document.
+  if (!cleaned.bytes.length) {
+    return record('harmful', cleanEngine, [{ code: 'empty_file', message: MESSAGES.empty_file }], null);
+  }
+
+  // The location must be gone from the cleaned copy before it is written back.
+  if (inspected.location) {
+    const after = await inspectBytes({ bytes: cleaned.bytes, mimeType: row.mime_type, fileName: row.safe_name });
+    if (after.findings.some((f) => f.code === 'location_metadata')) {
+      return record('harmful', cleanEngine, [{ code: 'location_metadata', message: MESSAGES.location_metadata }], null);
+    }
+  }
+
+  // 4. Announce the write back, then write over the staged object at the same
+  // path. A refused announcement means the upload has left the scan (deleted,
+  // failed, or claimed by another pass): nothing is written or recorded.
+  let out = cleaned.bytes;
+  if (typeof d.upload !== 'function') {
+    return record('error', cleanEngine, [{ code: 'write_back_failed', message: MESSAGES.write_back_failed }], 'No staging upload was given to the scan.');
+  }
+  let sha;
+  try {
+    sha = lowerHex(await hash(out));
+  } catch (_) {
+    sha = '';
+  }
+  const size = out.length;
+  if (!isSha256Hex(sha)) {
+    return record('error', cleanEngine, [{ code: 'could_not_inspect', message: 'The file could not be checked: its cleaned fingerprint could not be taken.' }], null);
+  }
+  try {
+    await d.rpc(writeBackFn, {
+      p_upload_id: id,
+      p_claim_id: typeof row.scan_claim_id === 'string' ? row.scan_claim_id : null,
+      p_sha256_clean: sha,
+      p_size_bytes: size,
+      p_metadata_removed: removedList,
+    });
+  } catch (err) {
+    report.action = 'skipped';
+    report.error = `The cleaned file was not written, because the upload is no longer held by this scan: ${messageOf(err)}`;
+    log(`hsf-mco-transfer scan ${id}: ${report.error}`);
+    return report;
+  }
+  try {
+    await d.upload(p.path, out, row.mime_type);
+  } catch (err) {
+    return record('error', cleanEngine, [{ code: 'write_back_failed', message: MESSAGES.write_back_failed }], messageOf(err));
+  }
+  out = null;
+
+  // 5. Record scan clean with the fingerprint of the bytes now in staging.
+  report.result = 'clean';
+  report.findings = [];
+  try {
+    await d.rpc(recordCleanFn, {
+      p_upload_id: id,
+      p_engine: cleanEngine,
+      p_findings: [],
+      p_sha256_clean: sha,
+      p_metadata_removed: removedList,
+      p_size_bytes: size,
+    });
+    report.action = 'clean';
+  } catch (err) {
+    // The cleaned bytes are in staging and their fingerprint was announced,
+    // so the next pass (once the lease ends) scans that copy again and records
+    // it; the file never transfers unrecorded.
+    report.action = 'record_failed';
+    report.error = `The cleaned file is in staging, but the scan result could not be recorded: ${messageOf(err)}`;
+    log(`hsf-mco-transfer scan ${id}: ${report.error}`);
+  }
+  return report;
 }

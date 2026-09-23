@@ -14,7 +14,7 @@
 //        <- { request_id, expires_at, channel, destination_hint }
 //   POST /api/hsf-delete { action: 'confirm', request_id, pin }
 //        -> hsf_deletion_request_attempt (counts the attempt first; 5 then locked;
-//           10 minutes then expired; at most 10 per account per hour), then
+//           10 minutes then expired; at most 5 per account per hour, contract 11.3), then
 //           POST {SUPABASE_URL}/auth/v1/verify { type: 'email'|'sms', email|phone, token }
 //           (a 200 whose user id equals the signed in user is a pass), then
 //           hsf_deletion_request_confirm

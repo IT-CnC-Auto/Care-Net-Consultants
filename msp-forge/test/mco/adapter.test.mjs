@@ -30,6 +30,9 @@ const PATH = `${ACCOUNT_ID}/${UPLOAD_ID}/${SAFE_NAME}`;
 const BYTES = new TextEncoder().encode('Synthetic test document for Section F. Not a real record.');
 const SHA = await sha256Hex(BYTES);
 const WRONG_SHA = 'ab'.repeat(32);
+// What the browser fingerprinted before the scan pass removed the hidden
+// details (contract 11.1). It stays on record and is never the bytes that move.
+const CLIENT_SHA = 'cd'.repeat(32);
 const SUPABASE_URL = 'https://unit-test.supabase.invalid';
 const SERVICE_KEY = 'svc-role-key-UNIT-TEST-must-never-appear-0123456789';
 const MCO_BASE = 'https://mco.unit-test.invalid';
@@ -47,8 +50,9 @@ function uploadRow(over) {
     safe_name: SAFE_NAME,
     mime_type: 'application/pdf',
     size_bytes: BYTES.length,
-    sha256_client: SHA,
+    sha256_client: CLIENT_SHA,
     sha256_server: null,
+    sha256_clean: SHA,
     storage_bucket: STAGING_BUCKET,
     storage_path: PATH,
     status: 'uploaded',
@@ -211,8 +215,8 @@ test('adapter live placeholder: a well formed receipt is received; failures are 
 
 // 4. The deletion rule ----------------------------------------------------------------
 
-test('mayDeleteStaging: only received, transferred and three equal hashes', () => {
-  const ok = { outcome: 'received', recordedStatus: 'transferred', serverSha256: SHA, clientSha256: SHA, receiptSha256: SHA };
+test('mayDeleteStaging: only received, transferred and server = receipt = cleaned fingerprint', () => {
+  const ok = { outcome: 'received', recordedStatus: 'transferred', serverSha256: SHA, cleanSha256: SHA, receiptSha256: SHA };
   assert.equal(mayDeleteStaging(ok), true);
   assert.equal(mayDeleteStaging({ ...ok, serverSha256: SHA.toUpperCase() }), true);
   assert.equal(mayDeleteStaging({ ...ok, outcome: 'held' }), false);
@@ -220,9 +224,9 @@ test('mayDeleteStaging: only received, transferred and three equal hashes', () =
   assert.equal(mayDeleteStaging({ ...ok, recordedStatus: 'failed' }), false);
   assert.equal(mayDeleteStaging({ ...ok, recordedStatus: undefined }), false);
   assert.equal(mayDeleteStaging({ ...ok, serverSha256: WRONG_SHA }), false);
-  assert.equal(mayDeleteStaging({ ...ok, clientSha256: WRONG_SHA }), false);
+  assert.equal(mayDeleteStaging({ ...ok, cleanSha256: WRONG_SHA }), false);
   assert.equal(mayDeleteStaging({ ...ok, receiptSha256: WRONG_SHA }), false);
-  assert.equal(mayDeleteStaging({ ...ok, serverSha256: '', clientSha256: '', receiptSha256: '' }), false);
+  assert.equal(mayDeleteStaging({ ...ok, serverSha256: '', cleanSha256: '', receiptSha256: '' }), false);
   assert.equal(mayDeleteStaging(undefined), false);
 });
 
@@ -282,12 +286,12 @@ test('fixture success: record received, then delete from Storage, then mark stag
   assert.equal(r.error, null);
 });
 
-test('hash mismatch (browser against server): recorded, never sent, never deleted', async () => {
+test('hash mismatch (cleaned fingerprint against server): recorded, never sent, never deleted', async () => {
   let sent = 0;
   const adapter = { async send() { sent++; return { outcome: 'received', mcoDocumentRef: 'X', receiptSha256: SHA }; } };
   const f = fakeDeps({ mode: 'fixture', adapter });
-  const r = await processUpload(uploadRow({ sha256_client: WRONG_SHA }), f.deps);
-  assert.equal(sent, 0, 'a file that does not match the browser fingerprint was sent to MCO');
+  const r = await processUpload(uploadRow({ sha256_clean: WRONG_SHA }), f.deps);
+  assert.equal(sent, 0, 'a file that does not match the cleaned fingerprint was sent to MCO');
   const a = recordArgs(f.calls);
   assert.equal(a.p_outcome, 'hash_mismatch');
   assert.equal(a.p_server_sha256, SHA);
@@ -422,6 +426,27 @@ test('an upload that has not passed its security scan is never read, sent or del
     assert.equal(r.deleted, false);
   }
   assert.equal(sent, 0);
+});
+
+test('an upload without a cleaned fingerprint is never read, sent or deleted; the browser fingerprint alone is not enough', async () => {
+  let sent = 0;
+  const adapter = { async send() { sent++; return { outcome: 'received', mcoDocumentRef: 'X', receiptSha256: SHA }; } };
+  for (const clean of [undefined, null, '', 'not a hash']) {
+    const f = fakeDeps({ mode: 'fixture', adapter });
+    const r = await processUpload(uploadRow({ status: 'transferring', sha256_client: SHA, sha256_clean: clean }), f.deps);
+    assert.deepEqual(f.names(), ['rpc:hsf_transfer_record'], String(clean));
+    assert.equal(recordArgs(f.calls).p_outcome, 'error');
+    assert.match(recordArgs(f.calls).p_error, /cleaned fingerprint/);
+    assert.equal(r.deleted, false);
+  }
+  assert.equal(sent, 0);
+  // The browser fingerprint differs from the cleaned one after cleaning; the
+  // cleaned bytes still move, and the adapter is given the cleaned fingerprint.
+  let given = null;
+  const f = fakeDeps({ mode: 'fixture', adapter: { async send(doc) { given = doc.sha256; return { outcome: 'received', mcoDocumentRef: 'REF-1', receiptSha256: doc.sha256 }; } } });
+  const r = await processUpload(uploadRow({ sha256_client: CLIENT_SHA }), f.deps);
+  assert.equal(given, SHA);
+  assert.equal(r.action, 'staging_deleted');
 });
 
 test('rows that are not waiting for transfer are skipped untouched', async () => {
@@ -646,7 +671,7 @@ test('run: held, error and mismatch outcomes delete nothing in the transfer pass
   assertNoDeletion(r.f.calls);
 
   // mismatch
-  r = runDeps('fixture', { allowFixture: true, queue: [uploadRow({ sha256_client: WRONG_SHA })] });
+  r = runDeps('fixture', { allowFixture: true, queue: [uploadRow({ sha256_clean: WRONG_SHA })] });
   s = await runTransfer(r.deps);
   assert.equal(s.results[0].action, 'hash_mismatch');
   assert.equal(s.results[0].deleted, false);
@@ -862,7 +887,7 @@ test('run: rows are processed one at a time and counted by action', async () => 
   const second = '2e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c6c';
   const queue = [
     uploadRow(),
-    uploadRow({ id: second, storage_path: `${ACCOUNT_ID}/${second}/${SAFE_NAME}`, sha256_client: WRONG_SHA }),
+    uploadRow({ id: second, storage_path: `${ACCOUNT_ID}/${second}/${SAFE_NAME}`, sha256_clean: WRONG_SHA }),
   ];
   const { f, deps } = runDeps('fixture', { allowFixture: true, queue });
   const s = await runTransfer(deps);
@@ -1075,6 +1100,7 @@ const SHIPPED = {
   adapter: here('../../supabase/functions/_shared/mco-adapter.js'),
   core: here('../../supabase/functions/_shared/transfer-core.js'),
   scan: here('../../supabase/functions/_shared/scan-core.js'),
+  clean: here('../../supabase/functions/_shared/metadata-clean.js'),
   worker: here('../../supabase/functions/hsf-mco-transfer/index.ts'),
 };
 
@@ -1089,7 +1115,7 @@ test('shipped files: no em or en dashes, no compliance stamps, no secrets', () =
 });
 
 test('shared modules use no Deno or Node specific APIs', () => {
-  for (const file of [SHIPPED.adapter, SHIPPED.core, SHIPPED.scan]) {
+  for (const file of [SHIPPED.adapter, SHIPPED.core, SHIPPED.scan, SHIPPED.clean]) {
     const src = readFileSync(file, 'utf8').replace(/^\s*\/\/.*$/gm, '');
     for (const api of [/\bDeno\./, /\bprocess\.(env|exit|argv|version)/, /\brequire\(/, /\bBuffer\b/, /['"]node:/]) {
       assert.ok(!api.test(src), `${file} uses ${api}`);

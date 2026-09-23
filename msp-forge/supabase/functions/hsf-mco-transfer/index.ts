@@ -1,7 +1,7 @@
-// CNC HSF FORGE | HSF-MCO-01 v1.1.0 | MyClinicOnline transfer worker 23/09/2026
+// CNC HSF FORGE | HSF-MCO-01 v1.2.0 | MyClinicOnline transfer worker 23/09/2026
 //
 // Scans the documents that companies dropped into their Health and Safety File,
-// moves the clean ones from the private hsf-staging bucket to MyClinicOnline
+// removes their hidden details (metadata), moves the clean ones from the private hsf-staging bucket to MyClinicOnline
 // (MCO), then removes them from Care Net staging. It also removes the bytes of
 // uploads that failed their fingerprint or security check, were rejected, were
 // deleted by the client, or were never completed within 24 hours, and of every
@@ -12,23 +12,34 @@
 // token. Nobody else may run it: the check is made here, not left to the
 // gateway, because any valid project key would pass the gateway.
 //
-// This file is deliberately thin. All logic lives in three plain ES modules that
-// are unit tested with node --test (test/mco/adapter.test.mjs, test/mco/scan.test.mjs):
+// This file is deliberately thin. All logic lives in four plain ES modules that
+// are unit tested with node --test (test/mco/adapter.test.mjs, test/mco/scan.test.mjs,
+// test/mco/metadata-clean.test.mjs):
 //   ../_shared/mco-adapter.js    hold, fixture and the live PLACEHOLDER
 //   ../_shared/scan-core.js      the structural check, the antivirus engine and
 //                                the per upload scan
+//   ../_shared/metadata-clean.js the removal of hidden details (contract 11.1)
 //   ../_shared/transfer-core.js  the run order, the per upload flow, the deletion
 //                                rule and the Supabase REST, Storage and rpc bindings
 //
-// Each run (contracts 9.5, 10.3 and 10.4, all through service role only
+// Each run (contracts 9.5, 10.3, 10.4 and 11.1, all through service role only
 // database functions):
 //   1. hsf_transfer_mode() reads msp_env_parameter hsf.mco_transfer_mode
 //   2. hsf_sweep_stale_uploads(24) fails uploads never completed within a day
-//   3. hsf_scan_claim(10) hands out uploads waiting for their security scan;
-//      each is downloaded, its fingerprint checked, inspected, sent to the
-//      antivirus engine and recorded with hsf_scan_record
-//   4. hsf_transfer_claim(10) hands out clean uploads to transfer, locked and
-//      marked 'transferring'; blocked accounts are left out
+//      and returns a blocked transfer that stopped part way to 'uploaded'
+//   3. hsf_scan_claim(10) hands out uploads waiting for their security scan,
+//      each held for 30 minutes; each is downloaded, its fingerprint checked,
+//      inspected and sent to the antivirus engine; a file that passes has its
+//      hidden details removed, its cleaned fingerprint announced with
+//      hsf_scan_write_back (nothing is written once the upload has left the
+//      scan), is written back over the same staged path (Storage upload,
+//      x-upsert) and is recorded with hsf_scan_record_clean. Every
+//      other result, including a file the cleaner refuses, is recorded with
+//      hsf_scan_record
+//   4. hsf_transfer_claim(10) hands out clean, cleaned uploads to transfer,
+//      locked and marked 'transferring'; blocked accounts are left out. The
+//      staged bytes must match sha256_clean, and only server = receipt =
+//      sha256_clean lets the staging object go
 //   5. hsf_transfer_cleanup_queue(25) lists uploads whose bytes must leave
 //      staging (transferred, failed, rejected, client deleted); each object is
 //      deleted, then hsf_mark_staging_deleted records it
@@ -87,6 +98,7 @@ Deno.serve(async (req: Request) => {
     const summary = await runTransfer({
       rpc: io.rpc,
       download: io.download,
+      upload: io.upload,
       remove: io.remove,
       createAdapter,
       sha256Hex,

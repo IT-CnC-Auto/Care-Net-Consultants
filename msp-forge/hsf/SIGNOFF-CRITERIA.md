@@ -2,6 +2,8 @@
 
 Prepared 23/09/2026 for the Director, on the instruction that Occupational Medical Practitioners do not sign Health and Safety Files: a competent, health and safety qualified person does.
 
+Section 6 updated 23/09/2026 with the Director's answers on the launch controls (contract section 11, Amendment 3): credentials checked at the point of use, the 60 day expiry alert and the staff console, built in migration 054.
+
 ## 1. How this was researched, and its limits
 
 1.1 Desk research on 23/09/2026. Every source page was blocked by the build environment, so each point below rests on search engine extracts only, not on a direct reading. The sources are listed in section 7.
@@ -85,11 +87,21 @@ SAMTRAC and the NEBOSH International General Certificate are market practice and
 6.2 A release is refused when:
 - the registration has expired on the decision date;
 - the body or category does not fit the File type;
-- the register check is missing;
-- the appointment letter or the engagement letter is missing;
+- the register check is missing, none is dated on or before the decision date, or the latest one on or before it is older than the limit of 6.4;
+- the appointment letter or the engagement letter is missing, or is dated after the decision date;
 - the client's section 16(2) acceptance is missing.
 
 6.3 An ID number is not stored. The registration number identifies the practitioner, and POPIA minimality applies.
+
+6.4 Credentials are checked at the point of use (Director's answer of 23/09/2026, contract 11.4). A register check proves the registration only on the day it was made, so the check a sign off relies on must be recent when the decision is made, not merely on record.
+6.4.1 The parameter `hsf.signoff_register_check_max_days` (default 30, held between 1 and 365) sets the limit. The release gate reads the latest register check on or before the decision date and refuses the sign off when that check is more than the limit in days before it. A check dated after the decision date does not count for that decision.
+6.4.2 The decision date is the South African calendar day of the decision.
+6.4.3 Credentials that support a released File are frozen, so what the release relied on never changes. A fresh register check of frozen credentials is recorded as a dated entry of its own, with the reference of its saved proof, each later than the last check on record; nothing already recorded is changed.
+6.4.4 The staff console shows each signatory's latest register check, its age and the limit the release gate applies, taken from the parameter.
+
+6.5 Registrations about to expire are raised before they block a release (contract 11.4). The staff view `hsf_signatory_expiry_alerts`, with the service role function `hsf_signatory_expiry_alerts_list()` for scheduled notices and the staff console, lists every signatory whose registration expires within 60 days or has expired, soonest first, with the days left, whether a renewal is recorded, and the Files the signatory signed that are not yet released. A renewed registration stays on the list only while an unreleased File still rests on the old one.
+
+6.6 Staff record signatories and sign off decisions in the staff console (`vercel/hsf-staff.html`, contract 11.5), which refuses an OMP sign off of a File and shows, for each File revision, whether it may be released and every reason it may not. The readiness check runs exactly the rules of the release gate and records nothing.
 
 ## 7. Sources (search engine extracts only; none read directly)
 

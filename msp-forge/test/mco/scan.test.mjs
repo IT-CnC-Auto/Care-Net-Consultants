@@ -8,10 +8,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { sha256Hex } from '../../supabase/functions/_shared/mco-adapter.js';
+import { isSha256Hex, sha256Hex } from '../../supabase/functions/_shared/mco-adapter.js';
 import {
   inspectBytes, createAvEngine, scanUpload, AV_NOT_CONFIGURED, INSPECT_ENGINE, METADATA_LIMIT_BYTES,
 } from '../../supabase/functions/_shared/scan-core.js';
+import { CLEAN_ENGINE } from '../../supabase/functions/_shared/metadata-clean.js';
 import {
   runTransfer, checkStagingPath, createSupabaseIo, RPC, SCAN_LIMIT, RETENTION_LIMIT, STAGING_BUCKET,
 } from '../../supabase/functions/_shared/transfer-core.js';
@@ -596,6 +597,7 @@ function scanWorld(opts) {
   const calls = [];
   const objects = new Map(Object.entries(o.objects || { [`${ACCOUNT_ID}/${SCAN_ID}/${SAFE_NAME}`]: CLEAN_PDF }));
   const scanned = new Map();
+  const cleanSha = new Map();
   let inMemory = 0;
   let peak = 0;
   const deps = {
@@ -609,13 +611,26 @@ function scanWorld(opts) {
           if (o.scanClaimFails) throw new Error('hsf_scan_claim was refused (HTTP 500)');
           return o.scanQueue ?? [scanRow()];
         case RPC.scanRecord:
+          // From 054 a plain clean result is refused: it must carry the cleaned fingerprint.
+          if (args.p_result === 'clean') throw new Error('hsf_scan_record was refused (HTTP 400): a clean result must carry the cleaned fingerprint');
           scanned.set(args.p_upload_id, args.p_result);
           inMemory = 0;
-          return { upload_id: args.p_upload_id, scan_status: args.p_result, status: args.p_result === 'clean' || args.p_result === 'error' ? 'uploaded' : 'rejected' };
+          return { upload_id: args.p_upload_id, scan_status: args.p_result, status: args.p_result === 'error' ? 'uploaded' : 'rejected' };
+        case RPC.scanWriteBack:
+          // The announcement before the write back: under the claim, with the
+          // fingerprint of the bytes about to be written.
+          assert.ok(isSha256Hex(args.p_sha256_clean));
+          return { upload_id: args.p_upload_id, sha256_clean: args.p_sha256_clean };
+        case RPC.scanRecordClean:
+          if (o.recordCleanFails) throw new Error('hsf_scan_record_clean was refused (HTTP 500)');
+          scanned.set(args.p_upload_id, 'clean');
+          cleanSha.set(args.p_upload_id, args.p_sha256_clean);
+          inMemory = 0;
+          return { upload_id: args.p_upload_id, scan_status: 'clean', status: 'uploaded' };
         case RPC.claim: {
-          // As the database does: only clean uploads are handed out.
-          const rows = (o.scanQueue ?? [scanRow()]).filter((r) => scanned.get(r.id) === 'clean');
-          return rows.map((r) => Object.assign({}, r, { scan_status: 'clean', status: 'transferring' }));
+          // As the database does: only clean uploads with a cleaned fingerprint are handed out.
+          const rows = (o.scanQueue ?? [scanRow()]).filter((r) => scanned.get(r.id) === 'clean' && cleanSha.has(r.id));
+          return rows.map((r) => Object.assign({}, r, { scan_status: 'clean', status: 'transferring', sha256_clean: cleanSha.get(r.id) }));
         }
         case RPC.record:
           inMemory = 0;
@@ -641,15 +656,25 @@ function scanWorld(opts) {
       objects.delete(path);
       return true;
     },
+    async upload(path, bytes, mimeType) {
+      calls.push(['upload', path, bytes, mimeType]);
+      if (o.uploadFails) throw new Error('Storage refused the cleaned file (HTTP 500).');
+      objects.set(path, bytes);
+      return true;
+    },
     createAdapter,
     avEngine: o.avEngine,
     allowScanFixture: o.allowScanFixture,
     av: o.av,
   };
-  return { deps, calls, scanned, peak: () => peak };
+  return { deps, calls, scanned, objects, peak: () => peak };
 }
 
-const recordsOf = (calls) => calls.filter((c) => c[0] === 'rpc' && c[1] === RPC.scanRecord).map((c) => c[2]);
+// Every scan result recorded, clean ones (hsf_scan_record_clean) given p_result
+// 'clean' so the two functions read alike in the assertions below.
+const recordsOf = (calls) => calls
+  .filter((c) => c[0] === 'rpc' && (c[1] === RPC.scanRecord || c[1] === RPC.scanRecordClean))
+  .map((c) => (c[1] === RPC.scanRecordClean ? Object.assign({ p_result: 'clean' }, c[2]) : c[2]));
 const order = (calls) => calls.map((c) => (c[0] === 'rpc' ? c[1] : c[0]));
 
 test('run order: mode, sweep, scan, transfer, cleanup, retention', async () => {
@@ -658,7 +683,7 @@ test('run order: mode, sweep, scan, transfer, cleanup, retention', async () => {
   assert.equal(s.ok, true);
   assert.deepEqual(order(w.calls), [
     'hsf_transfer_mode', 'hsf_sweep_stale_uploads',
-    'hsf_scan_claim', 'download', 'hsf_scan_record',
+    'hsf_scan_claim', 'download', 'hsf_scan_write_back', 'upload', 'hsf_scan_record_clean',
     'hsf_transfer_claim', 'download', 'hsf_transfer_record',
     'hsf_transfer_cleanup_queue',
     'hsf_retention_queue', 'remove', 'hsf_mark_expired',
@@ -666,7 +691,10 @@ test('run order: mode, sweep, scan, transfer, cleanup, retention', async () => {
   assert.equal(s.scan.engine, 'fixture');
   assert.deepEqual(s.scan.counts, { clean: 1 });
   assert.equal(s.results[0].action, 'held', 'a clean upload is held in hold mode');
-  assert.deepEqual(recordsOf(w.calls)[0], { p_upload_id: SCAN_ID, p_result: 'clean', p_engine: `${INSPECT_ENGINE} + fixture`, p_findings: [] });
+  assert.deepEqual(recordsOf(w.calls)[0], {
+    p_result: 'clean', p_upload_id: SCAN_ID, p_engine: `${INSPECT_ENGINE} + fixture + ${CLEAN_ENGINE}`, p_findings: [],
+    p_sha256_clean: CLEAN_SHA, p_metadata_removed: [], p_size_bytes: CLEAN_PDF.length,
+  });
 });
 
 test('scan: without an antivirus engine every scan records error and nothing transfers', async () => {
@@ -779,7 +807,7 @@ test('scan: one document in memory at a time, and a scan claim failure does not 
   assert.deepEqual(s.scan.counts, { clean: 2 });
   assert.equal(w.peak(), 1, 'a second document was downloaded before the first was recorded');
   const scanPart = order(w.calls).slice(order(w.calls).indexOf('hsf_scan_claim') + 1, order(w.calls).indexOf('hsf_transfer_claim'));
-  assert.deepEqual(scanPart, ['download', 'hsf_scan_record', 'download', 'hsf_scan_record']);
+  assert.deepEqual(scanPart, ['download', 'hsf_scan_write_back', 'upload', 'hsf_scan_record_clean', 'download', 'hsf_scan_write_back', 'upload', 'hsf_scan_record_clean']);
 
   const f = scanWorld({ allowScanFixture: true, scanClaimFails: true });
   const r = await runTransfer(f.deps);
@@ -823,8 +851,12 @@ test('end to end over REST: the scan pass and the retention pass use the Supabas
       if (fn === 'hsf_transfer_mode') return json(200, 'hold');
       if (fn === 'hsf_sweep_stale_uploads') return json(200, 0);
       if (fn === 'hsf_scan_claim') return json(200, [scanRow()]);
-      if (fn === 'hsf_scan_record') {
-        assert.equal(args.p_result, 'clean');
+      if (fn === 'hsf_scan_write_back') {
+        assert.equal(args.p_sha256_clean, CLEAN_SHA);
+        return json(200, { upload_id: args.p_upload_id, sha256_clean: args.p_sha256_clean });
+      }
+      if (fn === 'hsf_scan_record_clean') {
+        assert.equal(args.p_sha256_clean, CLEAN_SHA);
         return json(200, { upload_id: args.p_upload_id, scan_status: 'clean' });
       }
       if (fn === 'hsf_transfer_claim') return json(200, []);
@@ -837,6 +869,13 @@ test('end to end over REST: the scan pass and the retention pass use the Supabas
       steps.push('GET storage');
       return new Response(CLEAN_PDF, { status: 200 });
     }
+    if (method === 'POST' && u === `${SUPABASE_URL}/storage/v1/object/${STAGING_BUCKET}/${path}`) {
+      steps.push('POST storage');
+      assert.equal(init.headers['x-upsert'], 'true');
+      assert.equal(init.headers['Content-Type'], MIME.pdf);
+      assert.deepEqual(new Uint8Array(init.body), CLEAN_PDF);
+      return json(200, { Key: `${STAGING_BUCKET}/${path}` });
+    }
     if (method === 'DELETE' && u === `${SUPABASE_URL}/storage/v1/object/${STAGING_BUCKET}`) {
       steps.push('DELETE storage');
       assert.deepEqual(JSON.parse(init.body), { prefixes: [oldPath] });
@@ -845,9 +884,9 @@ test('end to end over REST: the scan pass and the retention pass use the Supabas
     return json(404, { message: 'unexpected call' });
   };
   const io = createSupabaseIo({ url: SUPABASE_URL, serviceKey: SERVICE_KEY, fetch: fetchImpl });
-  const s = await runTransfer({ rpc: io.rpc, download: io.download, remove: io.remove, createAdapter, allowScanFixture: true });
+  const s = await runTransfer({ rpc: io.rpc, download: io.download, upload: io.upload, remove: io.remove, createAdapter, allowScanFixture: true });
   assert.deepEqual(steps, [
-    'rpc:hsf_transfer_mode', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_scan_claim', 'GET storage', 'rpc:hsf_scan_record',
+    'rpc:hsf_transfer_mode', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_scan_claim', 'GET storage', 'rpc:hsf_scan_write_back', 'POST storage', 'rpc:hsf_scan_record_clean',
     'rpc:hsf_transfer_claim', 'rpc:hsf_transfer_cleanup_queue', 'rpc:hsf_retention_queue', 'DELETE storage', 'rpc:hsf_mark_expired',
   ]);
   assert.deepEqual(s.retention.counts, { expired: 1 });
@@ -864,10 +903,16 @@ test('scanUpload: without a path check or an engine it records error, never clea
   r = await scanUpload(scanRow(), { rpc, download: async () => CLEAN_PDF, checkPath: checkStagingPath });
   assert.equal(r.action, 'error');
   assert.deepEqual(calls[0][1].p_findings, [{ code: 'av_not_configured', message: AV_NOT_CONFIGURED }]);
+  // Without a way to write the cleaned bytes back it records error, never clean.
+  calls.length = 0;
+  r = await scanUpload(scanRow(), { rpc, download: async () => CLEAN_PDF, checkPath: checkStagingPath, av: createAvEngine({ allowFixture: true }) });
+  assert.equal(r.action, 'error');
+  assert.deepEqual(calls.map((c) => c[0]), ['hsf_scan_record']);
+  assert.deepEqual(calls[0][1].p_findings.map((f) => f.code), ['write_back_failed']);
   // A record that fails is reported, not hidden.
   r = await scanUpload(scanRow(), {
-    rpc: async () => { throw new Error('hsf_scan_record was refused (HTTP 500)'); },
-    download: async () => CLEAN_PDF, checkPath: checkStagingPath, av: createAvEngine({ allowFixture: true }),
+    rpc: async (fn) => { if (fn === 'hsf_scan_record_clean') throw new Error('hsf_scan_record_clean was refused (HTTP 500)'); return {}; },
+    download: async () => CLEAN_PDF, upload: async () => true, checkPath: checkStagingPath, av: createAvEngine({ allowFixture: true }),
   });
   assert.equal(r.action, 'record_failed');
   assert.equal(r.result, 'clean');

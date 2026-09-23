@@ -39,7 +39,13 @@
    Verification  POST /api/hsf-upload {action: 'request_verification'}.
    Uploads view  scan state, "Kept in Care Net staging until <date>",
                  why a transfer is blocked, and that MyClinicOnline
-                 deletes what it holds.
+                 deletes what it holds. Contract 11.1: "Hidden details
+                 removed: <labels>" from metadata_removed once the
+                 cleaned copy is recorded. Contract 11.2: a document
+                 being moved to MyClinicOnline is never offered for
+                 deletion, whatever the server says; it is offered
+                 again only if the move stops and it is back to
+                 uploaded.
    Deletion      /api/hsf-delete: select, warning, unticked
                  acknowledgement, email (or SMS when the gate offers
                  it), one time PIN from Supabase Auth, confirm.
@@ -2199,6 +2205,7 @@ async function processOne(q) {
       setTimeout(() => {
         if (row.status !== 'uploaded') return; /* deleted in the meantime */
         row.status = 'held'; row.scan_status = 'clean';
+        row.metadata_removed = /^image\//.test(row.mime_type || '') ? ['location', 'camera details'] : (row.mime_type === 'text/csv' ? [] : ['author', 'dates and times']);
         q.state = 'held'; q.message = 'Demonstration: in a live File this document now waits in Care Net staging until MyClinicOnline takes it.';
         update(); refreshElementUploads(); renderDelBar();
       }, 1400);
@@ -2287,6 +2294,17 @@ function queueItemHtml(q) {
     + prog + stepHtml + uploadExtras(q)
     + (q.message ? '<div class="qmsg' + (st.cls === 's-no' ? ' err' : '') + '">' + esc(q.message) + '</div>' : '');
 }
+/* Contract 11.1: the plain labels of the hidden details the cleaner removed
+   (author, company, location and so on), each once. An empty list means the
+   document carried none; null means the cleaned copy is not recorded yet. */
+function removedLabels(v) {
+  const out = [];
+  (Array.isArray(v) ? v : []).forEach((x) => {
+    const l = String(x && typeof x === 'object' ? (x.label || '') : (x == null ? '' : x)).trim();
+    if (l && !out.includes(l)) out.push(l);
+  });
+  return out;
+}
 /* What the server says about a stored document (contract 10.3 to 10.6): its
    security scan, why its transfer is blocked, how long Care Net may keep it,
    and who deletes it once MyClinicOnline holds it. */
@@ -2308,15 +2326,17 @@ function uploadExtras(q) {
   } else if ((st === 'rejected' || st === 'failed') && u.reject_reason) {
     out.push('<div class="qx scan-no">' + esc(u.reject_reason) + '</div>');
   }
-  if (st === 'transferring' && !u.deletable) {
-    out.push('<div class="qx">This document is being moved to MyClinicOnline, so it cannot be deleted here just now. Refresh in a little while.</div>');
+  const hidden = removedLabels(u.metadata_removed);
+  if (hidden.length && scan === 'clean') out.push('<div class="qx">Hidden details removed: ' + esc(hidden.join(', ')) + '</div>');
+  if (st === 'transferring') {
+    out.push('<div class="qx">This document is being moved to MyClinicOnline, so it cannot be deleted here. If the move stops, you can delete it again; once MyClinicOnline holds it, it is deleted through MyClinicOnline\u2019s own process.</div>');
   }
-  if (u.transfer_blocked_reason && u.deletable) {
+  if (u.transfer_blocked_reason && canDelete(u)) {
     out.push('<div class="qx blocked">' + esc(BLOCKED[u.transfer_blocked_reason] || ('Transfer blocked: ' + u.transfer_blocked_reason + '.')) + '</div>');
   }
-  if (u.expires_on && u.deletable) out.push('<div class="qx">Kept in Care Net staging until ' + esc(dmy(u.expires_on)) + '</div>');
+  if (u.expires_on && canDelete(u)) out.push('<div class="qx">Kept in Care Net staging until ' + esc(dmy(u.expires_on)) + '</div>');
   if (st === 'transferred' || st === 'staging_deleted') out.push('<div class="qx">MyClinicOnline holds this document. To delete it, use MyClinicOnline\u2019s own process.</div>');
-  if (u.transfer_blocked_reason && u.deletable && u.upload_id) {
+  if (u.transfer_blocked_reason && canDelete(u) && u.upload_id) {
     out.push('<div class="qacts"><button type="button" class="btn plain sm inl" data-del-one="' + esc(u.upload_id) + '" data-cta="hsf_builder_delete_blocked" aria-label="Delete ' + esc(u.original_name || 'this document') + '">Delete this document</button></div>');
   }
   return out.join('');
@@ -2424,7 +2444,10 @@ async function requestVerification() {
    (SMS only when the gate offers it), receive a one time PIN from Supabase
    Auth, enter it, confirm. The PIN is never kept on this page after it is sent. */
 const D = { step: null, ids: [], req: null, left: null, msg: '', busy: false, deleted: 0, back: null, demoTries: 0 };
-const deletableUploads = () => (S.serverUploads || []).filter((u) => u && u.upload_id && u.deletable);
+/* Contract 11.2: a document on its way to MyClinicOnline may already be there,
+   so it is never offered for deletion, even if an older server says it may be. */
+const canDelete = (u) => !!(u && u.deletable && u.status !== 'transferring');
+const deletableUploads = () => (S.serverUploads || []).filter((u) => u && u.upload_id && canDelete(u));
 function renderDelBar() {
   const bar = $('del-bar'); if (!bar) return;
   bar.hidden = !deletableUploads().length && !D.step;
@@ -2751,10 +2774,11 @@ function demoUploads() {
   const row = (o) => Object.assign({ file_id: 'demo', element_code: null, mime_type: 'application/pdf', transfer_blocked_reason: null,
     reject_reason: null, transferred_at: null, staging_deleted_at: null, deletable: true }, o);
   return [
-    row({ upload_id: 'demo-fx-1', original_name: 'Baseline risk assessment 2026 (fictitious).pdf', section_code: 'C', department_code: 'SHE', size_bytes: 482113, status: 'held', scan_status: 'clean', expires_on: '2028-08-13' }),
+    row({ upload_id: 'demo-fx-1', original_name: 'Baseline risk assessment 2026 (fictitious).pdf', section_code: 'C', department_code: 'SHE', size_bytes: 482113, status: 'held', scan_status: 'clean', metadata_removed: ['author', 'company', 'dates and times'], expires_on: '2028-08-13' }),
     row({ upload_id: 'demo-fx-2', original_name: 'Toolbox talk register, August (fictitious).xlsx', section_code: 'D', department_code: 'TRAIN', size_bytes: 88210, mime_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', status: 'uploaded', scan_status: 'pending', expires_on: '2028-09-21' }),
-    row({ upload_id: 'demo-fx-3', original_name: 'Scaffold inspection photo (fictitious).jpg', section_code: 'F', department_code: 'ENG', size_bytes: 1934000, mime_type: 'image/jpeg', status: 'rejected', scan_status: 'harmful', reject_reason: SCAN_FAIL_PREFIX + 'the photo carries location details (GPS). Remove the location from the photo and upload it again.', expires_on: null }),
-    row({ upload_id: 'demo-fx-4', original_name: 'Emergency plan 2025 (fictitious).docx', section_code: 'H', department_code: 'SHE', size_bytes: 240512, mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', status: 'held', scan_status: 'clean', transfer_blocked_reason: 'consent withdrawn', expires_on: '2028-07-30' }),
+    row({ upload_id: 'demo-fx-3', original_name: 'Scaffold inspection register 2019 (fictitious).doc', section_code: 'F', department_code: 'ENG', size_bytes: 193400, mime_type: 'application/msword', status: 'rejected', scan_status: 'harmful', reject_reason: SCAN_FAIL_PREFIX + 'Older Word and Excel files cannot have their hidden details removed. Please save it as a .docx or .xlsx file and upload it again.', expires_on: null }),
+    row({ upload_id: 'demo-fx-4', original_name: 'Emergency plan 2025 (fictitious).docx', section_code: 'H', department_code: 'SHE', size_bytes: 240512, mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', status: 'held', scan_status: 'clean', metadata_removed: ['author', 'company', 'manager', 'comments'], transfer_blocked_reason: 'consent withdrawn', expires_on: '2028-07-30' }),
+    row({ upload_id: 'demo-fx-7', original_name: 'Hazardous chemical register (fictitious).xlsx', section_code: 'F', department_code: 'SHE', size_bytes: 150210, mime_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', status: 'transferring', scan_status: 'clean', metadata_removed: ['author', 'custom properties'], deletable: false, expires_on: '2028-09-10' }),
     row({ upload_id: 'demo-fx-5', original_name: 'Fire equipment register (fictitious).pdf', section_code: 'F', department_code: 'FAC', size_bytes: 301777, status: 'staging_deleted', scan_status: 'clean', transferred_at: '2026-09-02T10:00:00Z', staging_deleted_at: '2026-09-02T10:05:00Z', deletable: false, expires_on: null }),
     row({ upload_id: 'demo-fx-6', original_name: 'Visitor register, July (fictitious).pdf', section_code: 'K', department_code: 'PROC', size_bytes: 120400, status: 'client_deleted', scan_status: 'clean', deletable: false, expires_on: null })
   ];

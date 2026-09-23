@@ -74,13 +74,18 @@ end $$;
 
 -- Migration 052 (contract 10.4): an upload moves only after the scan pass has
 -- recorded it clean. This runs the pass for the named uploads, as the worker would.
+-- From migration 054 (contract 11.1) a clean result carries the cleaned copy's
+-- fingerprint; here the cleaner found nothing to remove, so the cleaned copy is
+-- the client's bytes and the transfer fingerprints below stay the client's.
 create function pg_temp.scan_clean(variadic p_keys text[]) returns void language plpgsql as $$
 declare
   k text;
 begin
   perform 1 from hsf_scan_claim(100);
   foreach k in array p_keys loop
-    perform hsf_scan_record(pg_temp.ctx(k)::uuid, 'clean', 'flow test engine', '[]'::jsonb);
+    perform hsf_scan_record_clean(pg_temp.ctx(k)::uuid, 'flow test engine', '[]'::jsonb,
+                                  (select sha256_client from hsf_upload where id = pg_temp.ctx(k)::uuid), '[]'::jsonb,
+                                  (select size_bytes from hsf_upload where id = pg_temp.ctx(k)::uuid));
   end loop;
 end $$;
 
