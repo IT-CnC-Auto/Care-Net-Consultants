@@ -380,3 +380,67 @@ test('unknown action is 400; other methods are 405', async t => {
   }
   assert.equal(byKind(calls, '/rest/').length, 0);
 });
+
+// Contract 10.1: the builder reads the upload gate to know what to show.
+test('GET ?gate=1 returns the upload gate as five booleans, for the verified user only', async t => {
+  const seen = [];
+  const calls = supabase(t, { rpc: { hsf_upload_gate: a => { seen.push(a); return { uploads_open: false, client_verified: true, verification_requested: false, consent_complete: true, deletion_sms_available: 'yes', extra: 1 }; } } });
+  const res = await call({ headers: AUTH, query: { gate: '1' } });
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(res.body, { uploads_open: false, client_verified: true, verification_requested: false, consent_complete: true, deletion_sms_available: false });
+  assert.deepEqual(seen, [{ p_auth_user: USER_ID }]);
+  assert.equal(byKind(calls, 'hsf_my_uploads').length, 0, 'the gate does not list uploads');
+});
+
+test('GET ?gate= anything but 1, or repeated, is 400 without a database call', async t => {
+  const calls = supabase(t, {});
+  for (const gate of ['0', 'yes', ['1', '1']]) {
+    const res = await call({ headers: AUTH, query: { gate } });
+    assert.equal(res.statusCode, 400);
+  }
+  assert.equal(byKind(calls, '/rest/').length, 0);
+});
+
+test('GET ?gate=1 when the gate function is refused or unreachable: plain error, no key', async t => {
+  supabase(t, { rpc: { hsf_upload_gate: () => json(500, { code: 'XX000', message: `internal ${SERVICE_KEY}` }) } });
+  const res = await call({ headers: AUTH, query: { gate: '1' } });
+  assert.equal(res.statusCode, 500);
+  assert.equal(typeof res.body.error, 'string');
+});
+
+// Contract 10.2: asking Care Net to verify the company as a client.
+test('POST request_verification calls hsf_request_client_verification and returns its status', async t => {
+  const seen = [];
+  supabase(t, { rpc: { hsf_request_client_verification: a => { seen.push(a); return { client_account_id: ACCOUNT_ID, status: 'requested', requested_at: '2026-09-23T08:00:00Z', verified_at: null }; } } });
+  const res = await call({ method: 'POST', headers: AUTH, body: { action: 'request_verification', client_account_id: FILE_ID } });
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(res.body, { status: 'requested', requested_at: '2026-09-23T08:00:00Z', verified_at: null });
+  assert.deepEqual(seen, [{ p_auth_user: USER_ID }], 'only the verified user id is sent; a body account id is ignored');
+});
+
+test('POST request_verification passes on a refusal in plain words', async t => {
+  supabase(t, { rpc: { hsf_request_client_verification: () => json(400, { code: 'P0001', message: 'Register your company account before asking for verification.' }) } });
+  const res = await call({ method: 'POST', headers: AUTH, body: { action: 'request_verification' } });
+  assert.equal(res.statusCode, 400);
+  assert.deepEqual(res.body, { error: 'Register your company account before asking for verification.', code: 'refused' });
+});
+
+test('POST request_verification with an unexpected reply is 502', async t => {
+  supabase(t, { rpc: { hsf_request_client_verification: () => null } });
+  const res = await call({ method: 'POST', headers: AUTH, body: { action: 'request_verification' } });
+  assert.equal(res.statusCode, 502);
+});
+
+test('register: the uploads closed and unverified refusals reach the builder word for word', async t => {
+  const msgs = [
+    'Document uploads open soon. Your File can be built now, and uploads will open once Care Net has finished testing.',
+    'Uploads are for verified Care Net Consultants clients. Ask for verification in the builder, or WhatsApp a sales executive.',
+  ];
+  for (const message of msgs) {
+    const calls = supabase(t, { rpc: { hsf_register_upload: () => json(400, { code: 'P0001', message }) }, sign: signOk });
+    const res = await call({ method: 'POST', headers: AUTH, body: registerBody() });
+    assert.equal(res.statusCode, 400);
+    assert.deepEqual(res.body, { error: message, code: 'refused' });
+    assert.equal(byKind(calls, '/storage/').length, 0, 'no upload URL is signed after a refusal');
+  }
+});

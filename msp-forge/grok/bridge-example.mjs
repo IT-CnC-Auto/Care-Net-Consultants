@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CNC HSF FORGE | KRN-GROK-01 v1.0.0 | Example bridge: a Grok bot answering from the Care Net Cognitive Kernel
+// CNC HSF FORGE | KRN-GROK-01 v1.1.0 | Example bridge: a Grok bot answering from the Care Net Cognitive Kernel
 // Version 1.0 | 23/09/2026 | For Odendaal. Dependency free: Node 18 or later (global fetch), no npm packages.
 //
 // What it does, for one question:
@@ -16,8 +16,11 @@
 //
 // Environment (set as secrets in the bot host; never in this file, never in chat):
 //   XAI_API_KEY          xAI API key.
-//   XAI_MODEL            The Grok model to use. Read from here only: this file
-//                        never names a model.
+//   XAI_MODEL            Optional. Unset or "auto" (the default): the bridge
+//                        chooses the latest Grok model itself (section 1a). Any
+//                        other value is used as the model id as it stands, for
+//                        example an official latest alias if xAI's own
+//                        documentation confirms one. This file never names a model.
 //   CNC_KERNEL_API_KEY   Care Net kernel key, cnck_ followed by 64 hex characters,
 //                        issued once by a forge_admin (KERNEL-API.md section 4).
 //   CNC_KERNEL_API_BASE  The origin that serves /api/kernel, for example
@@ -31,7 +34,20 @@
 //          const { text } = await answer('Which File elements cover scaffolding?');
 //
 // Never logged: keys, the question, tool arguments or answers. Errors printed to
-// stderr carry a status and a short reason with any key redacted.
+// stderr carry a status and a short reason with any key redacted. The model id
+// the bridge chooses is logged to stderr when it is chosen or changes.
+//
+// Latest model (hsf/BUILD-CONTRACT.md 10.10): with XAI_MODEL unset or "auto" the
+// bridge calls xAI's OpenAI compatible model list, GET <XAI_API_BASE>/models with
+// the xAI key, on the first question (the command line and a host calling
+// resolveModel(config) at start) and then at most once a day. It keeps ids that
+// start with "grok", drops ids containing image, imagine, vision, embed, mini,
+// fast or code, and takes the one with the greatest "created". If the call fails
+// it keeps the last good choice; with no good choice yet it tries again after
+// MODEL_RETRY_MS and the question fails with a plain reason. The list shape
+// assumed ({data: [{id, created}]}, OpenAI style) is to be checked against xAI's
+// documentation with the other details below; if xAI publishes an official
+// latest alias, set XAI_MODEL to it and prefer it over this choice.
 //
 // What the kernel API returns (KERNEL-API.md section 2, vercel/kernel-api/openapi.yaml):
 // every 200 body is {kernel_release, as_at, notice, data}, passed to Grok as it
@@ -70,6 +86,10 @@ const MAX_TOOL_RESULT_CHARS = 60000;   // a larger kernel result is cut down bef
 const MAX_QUESTION_CHARS = 2000;
 const XAI_TIMEOUT_MS = 120000;
 const KERNEL_TIMEOUT_MS = 20000;
+const MODEL_LIST_TIMEOUT_MS = 20000;
+const MODEL_REFRESH_MS = 24 * 60 * 60 * 1000; // the model list is read at most once a day
+const MODEL_RETRY_MS = 15 * 60 * 1000;        // until a first model is chosen
+const MODEL_EXCLUDE = Object.freeze(['image', 'imagine', 'vision', 'embed', 'mini', 'fast', 'code']);
 
 const KEY_RE = /^cnck_[0-9a-f]{64}$/;
 const CODE_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}(?:-[A-Za-z0-9_]{1,31}){0,4}$/;
@@ -104,7 +124,7 @@ function baseUrl(raw, label) {
 }
 
 export function readConfig(env = process.env) {
-  const need = ['XAI_API_KEY', 'XAI_MODEL', 'CNC_KERNEL_API_KEY', 'CNC_KERNEL_API_BASE'];
+  const need = ['XAI_API_KEY', 'CNC_KERNEL_API_KEY', 'CNC_KERNEL_API_BASE'];
   const missing = need.filter((k) => !env[k] || !String(env[k]).trim());
   if (missing.length) {
     throw new Error(`Missing environment variables: ${missing.join(', ')}. Set them as secrets in the bot host.`);
@@ -113,13 +133,101 @@ export function readConfig(env = process.env) {
   if (!KEY_RE.test(kernelKey)) {
     throw new Error('CNC_KERNEL_API_KEY is not a Care Net kernel key (cnck_ followed by 64 lowercase hex characters).');
   }
+  const xaiKey = String(env.XAI_API_KEY).trim();
+  const xaiBase = baseUrl(env.XAI_API_BASE || XAI_DEFAULT_BASE, 'XAI_API_BASE');
+  const fixed = String(env.XAI_MODEL || '').trim();
+  const auto = !fixed || fixed.toLowerCase() === 'auto';
   return Object.freeze({
-    xaiKey: String(env.XAI_API_KEY).trim(),
-    model: String(env.XAI_MODEL).trim(),
+    xaiKey,
+    model: auto ? null : fixed,
+    modelPicker: auto ? sharedModelPicker(xaiBase, xaiKey) : null,
     kernelKey,
     kernelBase: baseUrl(env.CNC_KERNEL_API_BASE, 'CNC_KERNEL_API_BASE'),
-    xaiBase: baseUrl(env.XAI_API_BASE || XAI_DEFAULT_BASE, 'XAI_API_BASE'),
+    xaiBase,
   });
+}
+
+// 1a. The latest Grok model ------------------------------------------------------
+
+// The latest chat model in an xAI model list, or null. Pure: no network.
+export function pickLatestModel(list) {
+  const rows = Array.isArray(list) ? list : (list && Array.isArray(list.data) ? list.data : []);
+  let best = null;
+  for (const row of rows) {
+    const id = row && typeof row.id === 'string' ? row.id.trim() : '';
+    const low = id.toLowerCase();
+    if (!low.startsWith('grok') || MODEL_EXCLUDE.some((w) => low.includes(w))) continue;
+    const created = Number(row.created);
+    if (!Number.isFinite(created)) continue;
+    if (!best || created > best.created || (created === best.created && id > best.id)) best = { id, created };
+  }
+  return best ? best.id : null;
+}
+
+// Reads the model list at most once a day and remembers the last good choice.
+// fetchImpl, now and log are there for tests.
+export function createModelPicker({ xaiBase, xaiKey, fetchImpl, now = Date.now, log } = {}) {
+  const doFetch = fetchImpl || ((url, init) => fetch(url, init));
+  const say = log || ((line) => process.stderr.write(`${line}\n`));
+  let chosen = null;
+  let checkedAt = null;
+  let inflight = null;
+
+  async function refresh() {
+    checkedAt = now();
+    let picked = null;
+    let reason = '';
+    try {
+      const res = await doFetch(`${xaiBase}/models`, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${xaiKey}`, Accept: 'application/json' },
+        signal: AbortSignal.timeout(MODEL_LIST_TIMEOUT_MS),
+      });
+      if (!res.ok) reason = `the model list answered ${res.status}`;
+      else picked = pickLatestModel(await res.json());
+      if (res.ok && !picked) reason = 'the model list held no Grok chat model';
+    } catch (err) {
+      reason = 'the model list could not be read';
+    }
+    if (picked) {
+      if (picked !== chosen) say(`bridge: xAI model chosen: ${picked}`);
+      chosen = picked;
+    } else if (chosen) {
+      say(`bridge: ${reason}; keeping ${chosen}`);
+    } else {
+      say(`bridge: ${reason}; no model chosen yet`);
+    }
+  }
+
+  async function model() {
+    const age = checkedAt === null ? Infinity : now() - checkedAt;
+    if (age >= (chosen ? MODEL_REFRESH_MS : MODEL_RETRY_MS)) {
+      if (!inflight) inflight = refresh().finally(() => { inflight = null; });
+      await inflight;
+    }
+    if (!chosen) {
+      throw new Error('No Grok model could be chosen from the xAI model list. Check XAI_API_KEY, or set XAI_MODEL to a model id.');
+    }
+    return chosen;
+  }
+
+  return Object.freeze({ model, state: () => ({ chosen, checkedAt }) });
+}
+
+// One picker per xAI account and base, so answer() called again and again from
+// one host reads the model list at most once a day.
+const pickers = new Map();
+function sharedModelPicker(xaiBase, xaiKey) {
+  const k = `${xaiBase}\n${xaiKey}`;
+  if (!pickers.has(k)) pickers.set(k, createModelPicker({ xaiBase, xaiKey }));
+  return pickers.get(k);
+}
+
+// The model for the next request: XAI_MODEL as set, or the latest Grok model.
+export async function resolveModel(cfg) {
+  if (cfg.model) return cfg.model;
+  if (cfg.modelPicker) return cfg.modelPicker.model();
+  throw new Error('No model is configured: set XAI_MODEL, or leave it unset for the latest Grok model.');
 }
 
 // Replaces any configured secret in a message before it is shown or logged.
@@ -244,13 +352,13 @@ function toolContent(result) {
 
 // 5. The xAI chat completions API ---------------------------------------------
 
-async function chat(cfg, messages, tools) {
+async function chat(cfg, model, messages, tools) {
   let res;
   try {
     res = await fetchWithTimeout(`${cfg.xaiBase}/chat/completions`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${cfg.xaiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: cfg.model, messages, tools, tool_choice: 'auto' }),
+      body: JSON.stringify({ model, messages, tools, tool_choice: 'auto' }),
     }, XAI_TIMEOUT_MS);
   } catch (err) {
     throw new Error(`The xAI API could not be reached: ${redact(err && err.message, cfg)}`);
@@ -300,7 +408,8 @@ export async function answer(question, options = {}) {
     };
   }
 
-  const [systemPrompt, tools] = await Promise.all([
+  const [model, systemPrompt, tools] = await Promise.all([
+    resolveModel(cfg),
     options.systemPrompt ? Promise.resolve(options.systemPrompt) : loadSystemPrompt(),
     options.tools ? Promise.resolve(options.tools) : loadTools(),
   ]);
@@ -315,7 +424,7 @@ export async function answer(question, options = {}) {
   let asAt = null;
 
   for (let round = 1; round <= MAX_ROUNDS; round++) {
-    const msg = await chat(cfg, messages, tools);
+    const msg = await chat(cfg, model, messages, tools);
     const calls = Array.isArray(msg.tool_calls) ? msg.tool_calls : [];
 
     if (calls.length === 0) {

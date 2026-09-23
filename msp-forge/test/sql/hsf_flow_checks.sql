@@ -1,9 +1,12 @@
 -- CNC MSP FORGE | HSF-UPL-01, KRN-API-01 and HSF-GEN-01 flow checks | local test harness only.
 -- Proves migrations 049 (consent, uploads, MCO transfer bookkeeping), 050 (kernel
 -- API) and 051 (generation and compliance), with Amendment 1 of the build
--- contract (sections 9.1 to 9.8), against a replayed database. Never
--- applied to Supabase. Everything runs in one transaction that is rolled back, so
--- the fictitious auth users, company accounts and Files it creates never persist.
+-- contract (sections 9.1 to 9.8), against a replayed database. Migration 052
+-- (Amendment 2, launch controls) is in force here: the flow opens uploads,
+-- verifies its accounts and runs the scan pass before any transfer, and
+-- hsf_launch_checks.sql proves those controls. Never applied to Supabase.
+-- Everything runs in one transaction that is rolled back, so the fictitious
+-- auth users, company accounts and Files it creates never persist.
 --
 -- Usage (from msp-forge/):
 --   test/sql/replay.sh
@@ -67,6 +70,18 @@ begin
   return null;
 exception when others then
   return sqlstate;
+end $$;
+
+-- Migration 052 (contract 10.4): an upload moves only after the scan pass has
+-- recorded it clean. This runs the pass for the named uploads, as the worker would.
+create function pg_temp.scan_clean(variadic p_keys text[]) returns void language plpgsql as $$
+declare
+  k text;
+begin
+  perform 1 from hsf_scan_claim(100);
+  foreach k in array p_keys loop
+    perform hsf_scan_record(pg_temp.ctx(k)::uuid, 'clean', 'flow test engine', '[]'::jsonb);
+  end loop;
 end $$;
 
 -- The role checks below run as anon and authenticated, which still read the context.
@@ -264,6 +279,17 @@ select pg_temp.ok('hsf_evidence.upload_id references hsf_upload',
   exists (select 1 from pg_constraint where conname = 'hsf_evidence_upload_fk' and confrelid = 'hsf_upload'::regclass));
 
 -- 2. Consent ---------------------------------------------------------------------------------
+
+-- Migration 052 (contract 10.1 and 10.2): uploads stay closed until the Director
+-- opens them, and only verified Care Net Consultants clients upload. This flow
+-- runs with uploads open and both accounts verified by the service role;
+-- hsf_launch_checks.sql proves the gate, the verification and the refusal order.
+update msp_env_parameter set value = 'true' where key = 'hsf.uploads_open';
+select set_config('request.jwt.claims', '{"role": "service_role"}', true);
+select pg_temp.ok('both test accounts are verified as Care Net Consultants clients (migration 052)',
+  hsf_verify_client(pg_temp.ctx('acc1')::uuid, 'client_register', 'FLOW-TEST-REGISTER-1') ->> 'status' = 'verified'
+  and hsf_verify_client('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'client_register', 'FLOW-TEST-REGISTER-2') ->> 'status' = 'verified');
+select set_config('request.jwt.claims', '', true);
 
 select pg_temp.ok('consent status starts incomplete, with the account and wording version',
   (select s ->> 'complete' = 'false' and s ->> 'client_account_id' = pg_temp.ctx('acc1')
@@ -511,6 +537,11 @@ select pg_temp.ok('hsf_my_uploads filters by File and shows nothing to another a
   and jsonb_array_length(hsf_my_uploads(pg_temp.ctx('u2')::uuid)) = 0);
 
 -- 6. Transfer bookkeeping ---------------------------------------------------------------------------
+
+select pg_temp.scan_clean('up_a', 'up_b', 'up_c');
+select pg_temp.ok('the scan pass recorded A, B and C clean (migration 052)',
+  (select count(*) = 3 from hsf_upload where scan_status = 'clean'
+      and id in (pg_temp.ctx('up_a')::uuid, pg_temp.ctx('up_b')::uuid, pg_temp.ctx('up_c')::uuid)));
 
 select pg_temp.ok('the transfer queue holds the three uploaded files, oldest first',
   (select count(*) = 3 from hsf_transfer_queue(10) q
@@ -817,6 +848,7 @@ select pg_temp.ok('an element upload recomputes and caches the compliance figure
   and (select count(*) = pg_temp.ctx('audit_before_f')::int + 1 from msp_audit
         where event_type = 'hsf_compliance_computed' and hsf_file_id = pg_temp.ctx('file_c')::uuid));
 select pg_temp.act('r', format('select hsf_mark_uploaded(%L, %L)', pg_temp.ctx('u1'), pg_temp.ctx('up_g')));
+select pg_temp.scan_clean('up_f', 'up_g');
 
 -- The claim runs as its own statement (pg_temp.act), so the checks see what it wrote.
 create function pg_temp.claim_ids() returns jsonb language sql as $$

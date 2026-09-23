@@ -1,9 +1,9 @@
 # Care Net Cognitive Kernel API and the Grok connection pack
 
-Document reference: CNC-HSF-KRN-API-V1.0-2026 | Version 1.1 | 23/09/2026 | Classification: INTERNAL
+Document reference: CNC-HSF-KRN-API-V1.0-2026 | Version 1.2 | 23/09/2026 | Classification: INTERNAL
 Prepared for: Odendaal, to link a Grok bot to the Care Net Cognitive Kernel
-Binding sources: hsf/BUILD-CONTRACT.md sections 3 (migration 050), 4 (vercel/api/kernel.js), 8 and 9 (Amendment 1, which wins where it differs); SPEC.md Part B
-Version 1.1 reconciles sections 2 to 5 and 10 with migration 050 and `vercel/api/kernel.js` as they now stand in the repository.
+Binding sources: hsf/BUILD-CONTRACT.md sections 3 (migration 050), 4 (vercel/api/kernel.js), 8, 9 (Amendment 1, which wins where it differs) and 10.10 (Amendment 2: the latest Grok model); SPEC.md Part B
+Version 1.1 reconciles sections 2 to 5 and 10 with migration 050 and `vercel/api/kernel.js` as they now stand in the repository. Version 1.2 records the Director's decision that the bot always runs on the latest Grok model (sections 1.3, 8.2.2, 8.3.7, 9 and 10).
 
 ## 1. What this pack is
 
@@ -19,7 +19,11 @@ Version 1.1 reconciles sections 2 to 5 and 10 with migration 050 and `vercel/api
 | 4 | `grok/system-prompt.md` | The guardrails the bot runs under |
 | 5 | `grok/bridge-example.mjs` | A dependency free Node example that joins Grok, the tools and the API |
 
-1.3 Nothing in this pack names a Grok model. The bridge reads the model from the environment variable `XAI_MODEL`, which Odendaal sets in the bot host.
+1.3 Nothing in this pack names a Grok model. The Director's decision is that the bot always runs on the latest Grok model, so the bridge chooses it itself:
+1.3.1 With `XAI_MODEL` unset or set to `auto` (the default), the bridge reads xAI's OpenAI compatible model list, `GET https://api.x.ai/v1/models` with the xAI key, on the first question and then at most once a day. It keeps the ids that start with `grok`, drops ids containing `image`, `imagine`, `vision`, `embed`, `mini`, `fast` or `code`, and takes the one with the greatest `created` date. It logs the id it chose.
+1.3.2 If the list cannot be read, the bridge keeps its last good choice. With no good choice yet it tries again after 15 minutes, and the question fails with a plain reason rather than guessing a model.
+1.3.3 Any other value of `XAI_MODEL` is used as it stands. Odendaal should confirm against xAI's own documentation whether xAI publishes an official alias that always points at its latest model; if it does, set `XAI_MODEL` to that alias and prefer it over the bridge's own choice, since xAI then decides what "latest" means.
+1.3.4 A new model can answer differently from the last one. The checks in section 9 (numbers 5 and 6) are repeated whenever the log shows a new model id.
 
 1.4 Status on 23/09/2026:
 1.4.1 In the repository: the API (`vercel/api/kernel.js`) with its unit tests (`test/api/kernel.test.js`), and migration `050_kernel_api.sql` (currency holds, the citable views, the key table, the call log, key issue and revoke, the authorisation function and the read functions). 050 replays cleanly into a local database with `test/sql/replay.sh`, and `test/sql/hsf_flow_checks.sql` exercises it there.
@@ -161,7 +165,7 @@ The audit row then names the actor `service_role` rather than a person, so Route
 | 6 | For remote MCP, `allowed_tools` limits which server tools the model may use and `authorization` supplies a token that xAI sends to the MCP server; the key and URL go with every request. The OpenAI Responses fields `require_approval` and `connector_id` are reported as not supported. | https://ai-x.chat/docs/remote-mcp-tools/ | Medium (third party page summarising xAI) |
 | 7 | By default xAI stores API requests and responses for 30 days for abuse monitoring and does not train on API data without permission; enterprise accounts can switch on zero data retention, which disables some stateful features. | https://docs.x.ai/developers/faq/security | Medium (search extract of xAI's security FAQ); relevant to section 8 and to HSF-PORTAL-ARCHITECTURE.md section 5 |
 
-7.3 Uncertain and to be checked by Odendaal: the exact response fields of the current chat completions API for the model chosen (some reasoning models return extra fields, which the bridge ignores); whether chat completions accepts remote MCP (assume not); whether `strict` schemas are honoured (the tools do not rely on it; the bridge and the API both validate arguments); and the current rate limits and prices of the xAI account.
+7.3 Uncertain and to be checked by Odendaal: the model list (`GET /v1/models`, assumed OpenAI style `{data: [{id, created}]}`) and whether xAI offers an official latest alias (section 1.3.3); the exact response fields of the current chat completions API for the model chosen (some reasoning models return extra fields, which the bridge ignores); whether chat completions accepts remote MCP (assume not); whether `strict` schemas are honoured (the tools do not rely on it; the bridge and the API both validate arguments); and the current rate limits and prices of the xAI account.
 
 ## 8. How to connect a Grok bot
 
@@ -177,7 +181,7 @@ Person ──question──▶ Bot host (bridge) ──messages + tools──▶
 
 8.2 Steps.
 8.2.1 Get a key (section 4) and store it in the bot host's secret store as `CNC_KERNEL_API_KEY`.
-8.2.2 Set `XAI_API_KEY` (from the xAI console, owned by whoever pays for xAI) and `XAI_MODEL` (the model Odendaal chooses) in the same secret store. Never type either into chat or code.
+8.2.2 Set `XAI_API_KEY` (from the xAI console, owned by whoever pays for xAI) in the same secret store. Leave `XAI_MODEL` unset (or `auto`) so the bridge runs on the latest Grok model (section 1.3), or set it to xAI's official latest alias once Odendaal has confirmed one exists. Never type the key into chat or code.
 8.2.3 Set `CNC_KERNEL_API_BASE` to the origin that serves `/api/kernel` (the Forge host; pending, section 10). `https` only.
 8.2.4 Copy `grok/bridge-example.mjs`, `grok/kernel-tools.json` and `grok/system-prompt.md` to the bot host together (the bridge reads the other two from its own folder). Node 18 or later; no packages.
 8.2.5 Smoke test the API first, from the bot host, with the key taken from the environment (the key never appears on the command line history if you use the variable):
@@ -195,7 +199,8 @@ curl -sS -H "Authorization: Bearer $CNC_KERNEL_API_KEY" "$CNC_KERNEL_API_BASE/ap
 8.3.3 Checks every tool argument against the same patterns as the API before calling it.
 8.3.4 Caps the question (2 000 characters), the model turns (6), the tool calls honoured per turn (8) and each tool result (60 000 characters). The unfiltered element list is longer than that cap, so the bridge cuts it and tells Grok to filter by industry; `kernel-tools.json` asks for the filter too.
 8.3.5 Appends the notice once, word for word, and removes em and en dashes from the answer.
-8.3.6 Logs nothing but errors, with keys redacted; never logs a question, an argument or an answer.
+8.3.6 Logs nothing but errors and the model id it chooses, with keys redacted; never logs a question, an argument or an answer.
+8.3.7 Chooses the latest Grok model from xAI's model list at most once a day and keeps the last good choice when the list cannot be read (section 1.3); `test/mco/grok-model.test.mjs` covers the choice with a mocked list.
 
 8.4 Alternative route: remote MCP (not built). xAI can call an MCP server itself (section 7.2, findings 5 and 6). Care Net's API is a REST endpoint, not an MCP server, so this route needs a small MCP server that wraps `/api/kernel` with the same six tools. Two consequences decide against it for now: the Care Net key would travel to xAI in the `authorization` field of every request, and xAI would call Care Net directly, so the bot host could no longer screen questions and tool arguments for personal information in code. It also needs the Responses API. Revisit only if Odendaal's platform cannot run a bridge, and then with a separate, tightly limited key.
 
@@ -206,7 +211,7 @@ curl -sS -H "Authorization: Bearer $CNC_KERNEL_API_KEY" "$CNC_KERNEL_API_BASE/ap
 | Number | Check | Owner |
 | --- | --- | --- |
 | 1 | Key issued by a forge_admin, one per bot and environment, stored only in the bot host's secret store | Forge admin, Odendaal |
-| 2 | `XAI_MODEL` set in the environment; no model name in any file | Odendaal |
+| 2 | Latest model: `XAI_MODEL` unset or `auto`, or set to xAI's official latest alias once confirmed in xAI's own documentation; the model list call answers from the bot host and the log shows the chosen id; no model name in any file | Odendaal |
 | 3 | No web, X or other built in xAI tools enabled for this bot | Odendaal |
 | 4 | The bot's front door has its own sign in or abuse limit | Odendaal |
 | 5 | The notice appears at the end of every answer (test with three questions and one refusal) | Odendaal |
@@ -226,7 +231,7 @@ curl -sS -H "Authorization: Bearer $CNC_KERNEL_API_KEY" "$CNC_KERNEL_API_BASE/ap
 | 5 | A function to change a key's hourly limit without a service role update | Build | Open |
 | 6 | Where the bot is offered (website, internal, messaging) and who may use it | Director | Open |
 | 7 | xAI as an operator: agreement, retention setting (default 30 days per xAI's FAQ, zero data retention for enterprise accounts), cross border note in the privacy policy | Director, Information Officer, attorney | Open |
-| 8 | Direct read of the xAI documentation pages in section 7 before go live, since they could not be opened from the build environment | Odendaal | Open |
+| 8 | Direct read of the xAI documentation pages in section 7 before go live, since they could not be opened from the build environment, including the model list and any official latest alias (section 1.3) | Odendaal | Open |
 | 9 | Kernel currency: the live kernel is on release 1.0.0 (HSF-7). The holds in 050 keep the repealed NIHL Regulations, 2003 and Environmental Regulations for Workplaces, 1987 out of the API, but the kernel release reported will stay 1.0.0 until 042 or its successor is applied | Director, OMP | Open, blocking Phase 2 |
 | 10 | Asbestos Abatement Regulations, 2020: the amendment notice is GN R.2092 in one record and GN R.11435 in the other (HSF-9). Held from citation by 050 until verified against the Gazette and corrected | Build, forge_verifier | Open |
 | 11 | Phase 2 re verification of the safety instruments and their File provisions (SPEC B8): until then no File element has a citable basis (section 2.3.2) | Build, forge_verifier | Open; waits for HSF-7 (SPEC B8.2) |

@@ -1,6 +1,8 @@
 // CNC HSF FORGE | tests for the MyClinicOnline transfer worker (node --test)
 // supabase/functions/_shared/mco-adapter.js   hold, fixture, live placeholder
 // supabase/functions/_shared/transfer-core.js per upload flow, deletion rule, run, REST bindings
+// The security scan (scan-core.js) and the scan and retention passes of the run
+// are tested in test/mco/scan.test.mjs.
 // The edge function supabase/functions/hsf-mco-transfer/index.ts only wires these
 // together; Deno is not needed to run this file.
 
@@ -14,8 +16,8 @@ import {
 } from '../../supabase/functions/_shared/mco-adapter.js';
 import {
   processUpload, runTransfer, resolveMode, checkStagingPath, mayDeleteStaging, isServiceCaller,
-  createSupabaseIo, encodeStagingPath, checkCleanupItem, cleanupUpload,
-  QUEUE_LIMIT, CLAIM_LIMIT, CLEANUP_LIMIT, STALE_UPLOAD_HOURS, MODE_PARAMETER, STAGING_BUCKET, RPC,
+  createSupabaseIo, encodeStagingPath, checkCleanupItem, cleanupUpload, checkRetentionItem, expireUpload,
+  QUEUE_LIMIT, CLAIM_LIMIT, CLEANUP_LIMIT, SCAN_LIMIT, RETENTION_LIMIT, STALE_UPLOAD_HOURS, MODE_PARAMETER, STAGING_BUCKET, RPC,
 } from '../../supabase/functions/_shared/transfer-core.js';
 
 // 1. Fixtures ------------------------------------------------------------------
@@ -50,6 +52,7 @@ function uploadRow(over) {
     storage_bucket: STAGING_BUCKET,
     storage_path: PATH,
     status: 'uploaded',
+    scan_status: 'clean',
   }, over || {});
 }
 
@@ -406,6 +409,21 @@ test('an upload blocked by a consent withdrawal is never read, sent or deleted; 
   assert.equal((await processUpload(uploadRow({ transfer_blocked_reason: null }), g.deps)).action, 'staging_deleted');
 });
 
+test('an upload that has not passed its security scan is never read, sent or deleted; it is recorded as an error', async () => {
+  let sent = 0;
+  const adapter = { async send() { sent++; return { outcome: 'received', mcoDocumentRef: 'X', receiptSha256: SHA }; } };
+  for (const scan of ['pending', 'error', 'infected', 'harmful', undefined, null, 'CLEAN']) {
+    const f = fakeDeps({ mode: 'fixture', adapter });
+    const r = await processUpload(uploadRow({ status: 'transferring', scan_status: scan }), f.deps);
+    assert.deepEqual(f.names(), ['rpc:hsf_transfer_record'], String(scan));
+    assert.equal(recordArgs(f.calls).p_outcome, 'error');
+    assert.match(recordArgs(f.calls).p_error, /security scan/);
+    assert.equal(r.action, 'error');
+    assert.equal(r.deleted, false);
+  }
+  assert.equal(sent, 0);
+});
+
 test('rows that are not waiting for transfer are skipped untouched', async () => {
   for (const status of ['transferred', 'staging_deleted', 'failed', 'awaiting_upload']) {
     const f = fakeDeps({ mode: 'fixture' });
@@ -425,11 +443,12 @@ const FAILED_ID = '3e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c6d';
 const REJECTED_ID = '4e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c6e';
 const LEFTOVER_ID = '5e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c6f';
 
-// The run level fake for the contract 9.5 functions: hsf_transfer_mode,
-// hsf_transfer_claim, hsf_sweep_stale_uploads and hsf_transfer_cleanup_queue
-// here; hsf_transfer_record and hsf_mark_staging_deleted through the per upload
-// fake (which logs its own calls). The retired msp_env_get and
-// hsf_transfer_queue fail the test if they are ever called.
+// The run level fake for the contract 9.5, 10.3 and 10.4 functions:
+// hsf_transfer_mode, hsf_sweep_stale_uploads, hsf_scan_claim, hsf_scan_record,
+// hsf_transfer_claim, hsf_transfer_cleanup_queue, hsf_retention_queue and
+// hsf_mark_expired here; hsf_transfer_record and hsf_mark_staging_deleted
+// through the per upload fake (which logs its own calls). The retired
+// msp_env_get and hsf_transfer_queue fail the test if they are ever called.
 function runDeps(modeValue, opts) {
   const o = opts || {};
   const f = fakeDeps(o.fake);
@@ -460,6 +479,26 @@ function runDeps(modeValue, opts) {
       if (o.cleanupFails) throw new Error('hsf_transfer_cleanup_queue was refused (HTTP 500)');
       return o.cleanup === undefined ? [] : o.cleanup;
     }
+    if (fn === RPC.scanClaim) {
+      f.calls.push(['rpc', fn, args]);
+      assert.deepEqual(args, { p_limit: SCAN_LIMIT });
+      if (o.scanClaimFails) throw new Error('hsf_scan_claim was refused (HTTP 500)');
+      return o.scanQueue === undefined ? [] : o.scanQueue;
+    }
+    if (fn === RPC.scanRecord) {
+      f.calls.push(['rpc', fn, args]);
+      return { upload_id: args.p_upload_id, scan_status: args.p_result };
+    }
+    if (fn === RPC.retention) {
+      f.calls.push(['rpc', fn, args]);
+      assert.deepEqual(args, { p_limit: RETENTION_LIMIT });
+      if (o.retentionFails) throw new Error('hsf_retention_queue was refused (HTTP 500)');
+      return o.retention === undefined ? [] : o.retention;
+    }
+    if (fn === RPC.markExpired) {
+      f.calls.push(['rpc', fn, args]);
+      return { upload_id: args.p_upload_id, status: o.expiredStatus || 'expired' };
+    }
     if (fn === RPC.markDeleted && statusOf.has(args.p_upload_id)) {
       f.calls.push(['rpc', fn, args]);
       if (o.markStatus) return { upload_id: args.p_upload_id, status: o.markStatus };
@@ -473,6 +512,7 @@ function runDeps(modeValue, opts) {
     deps: {
       rpc, download: f.deps.download, remove: f.deps.remove,
       createAdapter: o.createAdapter || createAdapter, mco: o.mco, allowFixture: o.allowFixture,
+      avEngine: o.avEngine, allowScanFixture: o.allowScanFixture,
     },
   };
 }
@@ -536,7 +576,8 @@ test('run: the mode comes from hsf_transfer_mode() and the rows from hsf_transfe
   const { f, deps } = runDeps('hold');
   const s = await runTransfer(deps);
   assert.equal(s.ok, true);
-  assert.deepEqual(rpcOrder(f.calls).slice(0, 2), ['hsf_transfer_mode', 'hsf_transfer_claim']);
+  assert.equal(rpcOrder(f.calls)[0], 'hsf_transfer_mode');
+  assert.equal(rpcOrder(f.calls).filter((fn) => fn === 'hsf_transfer_claim').length, 1);
   const src = readFileSync(fileURLToPath(new URL('../../supabase/functions/_shared/transfer-core.js', import.meta.url)), 'utf8');
   assert.ok(!/msp_env_get/.test(src), 'the worker still names msp_env_get');
   assert.ok(!/hsf_transfer_queue/.test(src), 'the worker still names hsf_transfer_queue');
@@ -556,16 +597,24 @@ test('run: rows the claim marked transferring are transferred in fixture mode an
   assertNoDeletion(r.f.calls);
 });
 
-test('run: a claim that fails or is not a list refuses the run: no sweep, no cleanup, nothing deleted', async () => {
+test('run: a claim that fails or is not a list transfers nothing; the cleanup and retention queues still run', async () => {
   for (const o of [{ claimFails: true }, { queue: { rows: [] } }]) {
     const { f, deps } = runDeps('fixture', Object.assign({ allowFixture: true, cleanup: [cleanupRow(FAILED_ID, 'failed')] }, o));
     const s = await runTransfer(deps);
     assert.equal(s.ok, false);
     assert.match(s.refused, /claim/);
-    assert.deepEqual(rpcOrder(f.calls), ['hsf_transfer_mode', 'hsf_transfer_claim']);
-    assert.ok(!f.calls.some((c) => c[0] === 'remove'));
-    assert.equal(s.sweep.ran, false);
-    assert.equal(s.cleanup.ran, false);
+    assert.deepEqual(rpcOrder(f.calls), [
+      'hsf_transfer_mode', 'hsf_sweep_stale_uploads', 'hsf_scan_claim', 'hsf_transfer_claim',
+      'hsf_transfer_cleanup_queue', 'hsf_mark_staging_deleted', 'hsf_retention_queue',
+    ]);
+    assert.equal(s.processed, 0);
+    assert.ok(!f.calls.some((c) => c[0] === 'download'), 'nothing was read for transfer');
+    assert.ok(!f.calls.some((c) => c[0] === 'rpc' && c[1] === 'hsf_transfer_record'));
+    // The only removal is the database listed cleanup row.
+    assert.deepEqual(f.calls.filter((c) => c[0] === 'remove').map((c) => c[1]), [cleanupRow(FAILED_ID, 'failed').storage_path]);
+    assert.equal(s.sweep.ran, true);
+    assert.equal(s.cleanup.ran, true);
+    assert.equal(s.retention.ran, true);
   }
 });
 
@@ -604,13 +653,16 @@ test('run: held, error and mismatch outcomes delete nothing in the transfer pass
   assertNoDeletion(r.f.calls);
 });
 
-test('run: every run sweeps stale uploads once, with 24 hours, after the transfer pass and before the cleanup', async () => {
+test('run: every run sweeps stale uploads once, with 24 hours, right after the mode and before the scan and transfer passes', async () => {
   assert.equal(STALE_UPLOAD_HOURS, 24);
   const { f, deps } = runDeps('hold', { swept: 3 });
   const s = await runTransfer(deps);
   assert.equal(s.ok, true);
   assert.deepEqual(s.sweep, { ran: true, failed: 3, error: null });
-  assert.deepEqual(rpcOrder(f.calls), ['hsf_transfer_mode', 'hsf_transfer_claim', 'hsf_transfer_record', 'hsf_sweep_stale_uploads', 'hsf_transfer_cleanup_queue']);
+  assert.deepEqual(rpcOrder(f.calls), [
+    'hsf_transfer_mode', 'hsf_sweep_stale_uploads', 'hsf_scan_claim', 'hsf_transfer_claim', 'hsf_transfer_record',
+    'hsf_transfer_cleanup_queue', 'hsf_retention_queue',
+  ]);
   assert.equal(f.calls.filter((c) => c[1] === RPC.sweep).length, 1);
 });
 
@@ -618,7 +670,10 @@ test('run: the sweep runs even when nothing was claimed', async () => {
   const { f, deps } = runDeps('hold', { queue: [] });
   const s = await runTransfer(deps);
   assert.equal(s.processed, 0);
-  assert.deepEqual(rpcOrder(f.calls), ['hsf_transfer_mode', 'hsf_transfer_claim', 'hsf_sweep_stale_uploads', 'hsf_transfer_cleanup_queue']);
+  assert.deepEqual(rpcOrder(f.calls), [
+    'hsf_transfer_mode', 'hsf_sweep_stale_uploads', 'hsf_scan_claim', 'hsf_transfer_claim',
+    'hsf_transfer_cleanup_queue', 'hsf_retention_queue',
+  ]);
 });
 
 test('run cleanup: transferred leftovers, failed and rejected rows are deleted, then marked, one by one', async () => {
@@ -630,7 +685,7 @@ test('run cleanup: transferred leftovers, failed and rejected rows are deleted, 
   assert.equal(s.cleanup.listed, 3);
   assert.deepEqual(s.cleanup.counts, { removed: 3 });
   // For each row: remove (allowing an object already gone), then mark.
-  const tail = f.calls.slice(f.calls.findIndex((c) => c[1] === RPC.cleanup) + 1);
+  const tail = f.calls.slice(f.calls.findIndex((c) => c[1] === RPC.cleanup) + 1, f.calls.findIndex((c) => c[1] === RPC.retention));
   assert.deepEqual(tail.map((c) => (c[0] === 'rpc' ? `rpc:${c[1]}:${c[2].p_upload_id}` : `remove:${c[1]}`)), [
     `remove:${cleanup[0].storage_path}`, `rpc:hsf_mark_staging_deleted:${LEFTOVER_ID}`,
     `remove:${cleanup[1].storage_path}`, `rpc:hsf_mark_staging_deleted:${FAILED_ID}`,
@@ -751,6 +806,58 @@ test('checkCleanupItem and cleanupUpload: the path must be this upload under a c
   assert.deepEqual(calls.map((c) => c[0]), ['remove', 'rpc']);
 });
 
+test('run cleanup: a client deleted row is removed and marked, even when it had been blocked', async () => {
+  const CLIENT_DELETED_ID = '6e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c60';
+  const rows = [
+    cleanupRow(CLIENT_DELETED_ID, 'client_deleted', { status: 'client_deleted' }),
+    cleanupRow(FAILED_ID, 'client_deleted', { transfer_blocked_reason: 'consent withdrawn' }),
+  ];
+  const { f, deps } = runDeps('hold', { queue: [], cleanup: rows });
+  const s = await runTransfer(deps);
+  assert.deepEqual(s.cleanup.counts, { removed: 2 });
+  assert.deepEqual(f.calls.filter((c) => c[0] === 'remove').map((c) => c[1]), rows.map((r) => r.storage_path));
+  assert.deepEqual(s.cleanup.results.map((r) => r.reason), ['client_deleted', 'client_deleted']);
+  assert.equal(checkCleanupItem(cleanupRow(FAILED_ID, 'client_deleted', { status: 'client_deleted' })).ok, true);
+  // Any other blocked row is still kept for a decision.
+  assert.equal(checkCleanupItem(cleanupRow(FAILED_ID, 'rejected', { transfer_blocked_reason: 'client verification revoked' })).ok, false);
+  for (const status of ['expired', 'uploaded']) {
+    assert.equal(checkCleanupItem(cleanupRow(FAILED_ID, 'failed', { status })).ok, false, status);
+  }
+});
+
+test('checkRetentionItem and expireUpload: reason retention, own path, blocked rows accepted', async () => {
+  const ok = cleanupRow(FAILED_ID, 'retention');
+  assert.deepEqual(checkRetentionItem(ok), { ok: true, id: FAILED_ID, path: ok.storage_path });
+  assert.equal(checkRetentionItem(cleanupRow(FAILED_ID, 'retention', { transfer_blocked_reason: 'consent withdrawn', status: 'held' })).ok, true);
+  assert.equal(checkRetentionItem(cleanupRow(FAILED_ID, 'failed')).ok, false);
+  assert.equal(checkRetentionItem(cleanupRow(FAILED_ID, 'retention', { status: 'expired' })).ok, false);
+  assert.equal(checkRetentionItem(cleanupRow(FAILED_ID, 'retention', { storage_path: `${ACCOUNT_ID}/${UPLOAD_ID}/${SAFE_NAME}` })).ok, false);
+  assert.equal(checkRetentionItem(cleanupRow(FAILED_ID, 'retention', { client_account_id: OTHER_ACCOUNT })).ok, false);
+  assert.equal(checkRetentionItem(null).ok, false);
+
+  const calls = [];
+  const rep = await expireUpload(ok, {
+    async remove(p, o) { calls.push(['remove', p, o]); return true; },
+    async rpc(fn, a) { calls.push(['rpc', fn, a]); return { upload_id: a.p_upload_id, status: 'expired' }; },
+  });
+  assert.equal(rep.action, 'expired');
+  assert.deepEqual(calls, [['remove', ok.storage_path, { allowAbsent: true }], ['rpc', 'hsf_mark_expired', { p_upload_id: FAILED_ID }]]);
+
+  // A mark reply other than expired is reported; a failed removal is never marked.
+  const bad = await expireUpload(ok, {
+    async remove() { return true; },
+    async rpc(fn, a) { return { upload_id: a.p_upload_id, status: 'staging_deleted' }; },
+  });
+  assert.equal(bad.action, 'mark_failed');
+  const kept = [];
+  const nope = await expireUpload(ok, {
+    async remove() { throw new Error('Storage refused the removal (HTTP 500).'); },
+    async rpc(fn) { kept.push(fn); return {}; },
+  });
+  assert.equal(nope.action, 'delete_failed');
+  assert.deepEqual(kept, []);
+});
+
 test('run: rows are processed one at a time and counted by action', async () => {
   const second = '2e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c6c';
   const queue = [
@@ -823,6 +930,20 @@ function fakeSupabase(opts) {
         assert.deepEqual(args, { p_limit: 25 });
         return reply(200, o.cleanup ?? []);
       }
+      if (fn === 'hsf_scan_claim') {
+        assert.deepEqual(args, { p_limit: 10 });
+        return reply(200, o.scanClaim ?? []);
+      }
+      if (fn === 'hsf_scan_record') {
+        return reply(200, { upload_id: args.p_upload_id, scan_status: args.p_result });
+      }
+      if (fn === 'hsf_retention_queue') {
+        assert.deepEqual(args, { p_limit: 25 });
+        return reply(200, o.retention ?? []);
+      }
+      if (fn === 'hsf_mark_expired') {
+        return reply(200, { upload_id: args.p_upload_id, status: 'expired' });
+      }
       return reply(404, { message: 'no such function' });
     }
     const objectPrefix = `${SUPABASE_URL}/storage/v1/object/${STAGING_BUCKET}/`;
@@ -837,7 +958,7 @@ function fakeSupabase(opts) {
       if (o.deleteStatus) return reply(o.deleteStatus, { message: 'Storage failure' });
       const { prefixes } = JSON.parse(c.body);
       assert.equal(prefixes.length, 1);
-      const known = [PATH, ...(o.cleanup || []).map((r) => r.storage_path)];
+      const known = [PATH, ...(o.cleanup || []).map((r) => r.storage_path), ...(o.retention || []).map((r) => r.storage_path)];
       assert.ok(known.includes(prefixes[0]), `DELETE of an unexpected path ${prefixes[0]}`);
       return reply(200, o.deleteEmpty ? [] : [{ name: prefixes[0], bucket_id: STAGING_BUCKET }]);
     }
@@ -863,8 +984,9 @@ async function runOverRest(opts) {
 test('end to end over REST: fixture success runs the calls in order, then the sweep and the cleanup queue', async () => {
   const { s, sb } = await runOverRest({});
   assert.deepEqual(steps(sb.calls), [
-    'rpc:hsf_transfer_mode', 'rpc:hsf_transfer_claim', 'GET storage', 'rpc:hsf_transfer_record', 'DELETE storage', 'rpc:hsf_mark_staging_deleted',
-    'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_transfer_cleanup_queue',
+    'rpc:hsf_transfer_mode', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_scan_claim',
+    'rpc:hsf_transfer_claim', 'GET storage', 'rpc:hsf_transfer_record', 'DELETE storage', 'rpc:hsf_mark_staging_deleted',
+    'rpc:hsf_transfer_cleanup_queue', 'rpc:hsf_retention_queue',
   ]);
   assert.equal(s.results[0].action, 'staging_deleted');
   const del = sb.calls.find((c) => c.method === 'DELETE');
@@ -874,8 +996,9 @@ test('end to end over REST: fixture success runs the calls in order, then the sw
 test('end to end over REST: hold never calls DELETE', async () => {
   const { s, sb } = await runOverRest({ mode: 'hold' });
   assert.deepEqual(steps(sb.calls), [
-    'rpc:hsf_transfer_mode', 'rpc:hsf_transfer_claim', 'GET storage', 'rpc:hsf_transfer_record',
-    'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_transfer_cleanup_queue',
+    'rpc:hsf_transfer_mode', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_scan_claim',
+    'rpc:hsf_transfer_claim', 'GET storage', 'rpc:hsf_transfer_record',
+    'rpc:hsf_transfer_cleanup_queue', 'rpc:hsf_retention_queue',
   ]);
   assert.equal(s.results[0].action, 'held');
 });
@@ -884,8 +1007,10 @@ test('end to end over REST: the cleanup queue deletes each object, then marks it
   const cleanup = [cleanupRow(FAILED_ID, 'failed'), cleanupRow(REJECTED_ID, 'rejected')];
   const { s, sb } = await runOverRest({ mode: 'hold', claim: [], cleanup });
   assert.deepEqual(steps(sb.calls), [
-    'rpc:hsf_transfer_mode', 'rpc:hsf_transfer_claim', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_transfer_cleanup_queue',
+    'rpc:hsf_transfer_mode', 'rpc:hsf_sweep_stale_uploads', 'rpc:hsf_scan_claim', 'rpc:hsf_transfer_claim',
+    'rpc:hsf_transfer_cleanup_queue',
     'DELETE storage', 'rpc:hsf_mark_staging_deleted', 'DELETE storage', 'rpc:hsf_mark_staging_deleted',
+    'rpc:hsf_retention_queue',
   ]);
   const dels = sb.calls.filter((c) => c.method === 'DELETE').map((c) => JSON.parse(c.body).prefixes[0]);
   assert.deepEqual(dels, cleanup.map((r) => r.storage_path));
@@ -895,7 +1020,7 @@ test('end to end over REST: the cleanup queue deletes each object, then marks it
 test('end to end over REST: cleanup of an object already gone looks again before it marks', async () => {
   // Storage deletes nothing (empty list) and HEAD says not found: already absent, so mark.
   let r = await runOverRest({ mode: 'hold', claim: [], cleanup: [cleanupRow(FAILED_ID, 'failed')], deleteEmpty: true, headStatus: 400 });
-  assert.deepEqual(steps(r.sb.calls).slice(-3), ['DELETE storage', 'HEAD storage', 'rpc:hsf_mark_staging_deleted']);
+  assert.deepEqual(steps(r.sb.calls).slice(-4), ['DELETE storage', 'HEAD storage', 'rpc:hsf_mark_staging_deleted', 'rpc:hsf_retention_queue']);
   assert.deepEqual(r.s.cleanup.counts, { already_absent: 1 });
 
   // Storage deletes nothing but HEAD finds the object: not marked.
@@ -912,7 +1037,7 @@ test('end to end over REST: the transfer pass never takes an empty delete list a
   // Outside the cleanup pass, an empty list is a failure even if the object is gone.
   const { s, sb } = await runOverRest({ deleteEmpty: true, headStatus: 404 });
   assert.equal(s.results[0].action, 'delete_failed');
-  const transferPass = steps(sb.calls).slice(0, steps(sb.calls).indexOf('rpc:hsf_sweep_stale_uploads'));
+  const transferPass = steps(sb.calls).slice(0, steps(sb.calls).indexOf('rpc:hsf_transfer_cleanup_queue'));
   assert.ok(!transferPass.includes('HEAD storage'));
   assert.ok(!transferPass.includes('rpc:hsf_mark_staging_deleted'));
 });
@@ -949,6 +1074,7 @@ const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 const SHIPPED = {
   adapter: here('../../supabase/functions/_shared/mco-adapter.js'),
   core: here('../../supabase/functions/_shared/transfer-core.js'),
+  scan: here('../../supabase/functions/_shared/scan-core.js'),
   worker: here('../../supabase/functions/hsf-mco-transfer/index.ts'),
 };
 
@@ -963,7 +1089,7 @@ test('shipped files: no em or en dashes, no compliance stamps, no secrets', () =
 });
 
 test('shared modules use no Deno or Node specific APIs', () => {
-  for (const file of [SHIPPED.adapter, SHIPPED.core]) {
+  for (const file of [SHIPPED.adapter, SHIPPED.core, SHIPPED.scan]) {
     const src = readFileSync(file, 'utf8').replace(/^\s*\/\/.*$/gm, '');
     for (const api of [/\bDeno\./, /\bprocess\.(env|exit|argv|version)/, /\brequire\(/, /\bBuffer\b/, /['"]node:/]) {
       assert.ok(!api.test(src), `${file} uses ${api}`);
@@ -973,5 +1099,8 @@ test('shared modules use no Deno or Node specific APIs', () => {
   assert.match(worker, /from "\.\.\/_shared\/mco-adapter\.js"/);
   assert.match(worker, /from "\.\.\/_shared\/transfer-core\.js"/);
   assert.match(worker, /isServiceCaller\(/);
+  for (const name of ['HSF_AV_ENDPOINT', 'HSF_AV_TOKEN', 'HSF_SCAN_ALLOW_FIXTURE']) {
+    assert.match(worker, new RegExp(`Deno\\.env\\.get\\("${name}"\\)`), name);
+  }
   assert.ok(!/\bfetch\(/.test(worker), 'the worker makes its own network calls instead of using the tested bindings');
 });

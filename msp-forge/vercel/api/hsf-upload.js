@@ -19,10 +19,21 @@
 //        -> checks the object is in the bucket at the registered size, then
 //           hsf_mark_uploaded
 //        <- { upload_id, status }
-//   GET  /api/hsf-upload?file_id=<uuid>   -> hsf_my_uploads (file_id optional)
+//   GET  /api/hsf-upload?file_id=<uuid>   -> hsf_my_uploads (file_id optional),
+//        each row with its scan state, expires_on (the last day it may stay in
+//        Care Net staging) and transfer_blocked_reason (contract 10.3, 10.4, 10.6)
+//   GET  /api/hsf-upload?gate=1           -> hsf_upload_gate (contract 10.1)
+//        <- { uploads_open, client_verified, verification_requested,
+//             consent_complete, deletion_sms_available }
+//   POST /api/hsf-upload { action: 'request_verification' }
+//        -> hsf_request_client_verification (contract 10.2)
+//        <- { status, requested_at, verified_at }
 //
-// Consent (all three kinds), the allowed types and the size limit are enforced
-// by hsf_register_upload from msp_env_parameter, never from constants here.
+// Whether uploads are open (hsf.uploads_open), whether the company is a
+// verified Care Net Consultants client, consent (all three kinds), the allowed
+// types and the size limit are all enforced by hsf_register_upload from the
+// database, never from constants here. The gate only tells the builder what to
+// show; a refusal from hsf_register_upload is passed on in its plain words.
 // The service role key is used only in server to server calls and is never
 // returned; the signed URL carries its own short lived token.
 
@@ -156,6 +167,23 @@ async function register(user, b) {
   return { upload_id: uploadId, upload_url: uploadUrl };
 }
 
+// Contract 10.2: asks Care Net to verify the caller's company as a Care Net
+// Consultants client. The database finds the account from the verified user id
+// and returns the existing request when there is one.
+async function requestVerification(user) {
+  const v = await rpc('hsf_request_client_verification', { p_auth_user: user.id });
+  const status = v && typeof v.status === 'string' ? v.status : null;
+  if (!status) {
+    console.error('hsf verification request failure', 'unexpected response shape');
+    throw httpError(502, 'Your request could not be sent just now. Please try again.', 'upstream_error');
+  }
+  return {
+    status,
+    requested_at: v.requested_at || null,
+    verified_at: v.verified_at || null,
+  };
+}
+
 async function findUpload(user, uploadId) {
   const url = `${process.env.SUPABASE_URL}/rest/v1/hsf_upload`
     + `?id=eq.${uploadId}&auth_user_id=eq.${user.id}`
@@ -219,6 +247,19 @@ module.exports = async (req, res) => {
     const user = await requireUser(req);
 
     if (req.method === 'GET') {
+      const gate = queryValue(req, 'gate');
+      if (gate !== null) {
+        if (gate !== '1') throw httpError(400, 'Use gate=1 to read the upload gate.', 'bad_request');
+        const g = await rpc('hsf_upload_gate', { p_auth_user: user.id });
+        res.status(200).json({
+          uploads_open: Boolean(g && g.uploads_open === true),
+          client_verified: Boolean(g && g.client_verified === true),
+          verification_requested: Boolean(g && g.verification_requested === true),
+          consent_complete: Boolean(g && g.consent_complete === true),
+          deletion_sms_available: Boolean(g && g.deletion_sms_available === true),
+        });
+        return;
+      }
       const fileId = queryValue(req, 'file_id');
       const list = await rpc('hsf_my_uploads', {
         p_auth_user: user.id,
@@ -237,7 +278,11 @@ module.exports = async (req, res) => {
       res.status(200).json(await complete(user, b));
       return;
     }
-    throw httpError(400, "Unknown action. Use 'register' or 'complete'.", 'bad_request');
+    if (b.action === 'request_verification') {
+      res.status(200).json(await requestVerification(user));
+      return;
+    }
+    throw httpError(400, "Unknown action. Use 'register', 'complete' or 'request_verification'.", 'bad_request');
   } catch (err) {
     sendError(res, err, 'hsf upload');
   }

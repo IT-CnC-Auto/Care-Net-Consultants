@@ -1,7 +1,7 @@
 // CNC HSF FORGE | HSF-WEB-01 v1.0.0 | Signed in user check and shared request helpers
-// Used by the Health and Safety File endpoints (hsf-consent, hsf-upload, hsf-file)
-// and by the kernel API. Server side only: the service role key is read from
-// the environment at call time and never leaves this process.
+// Used by the Health and Safety File endpoints (hsf-consent, hsf-upload, hsf-file,
+// hsf-delete) and by the kernel API. Server side only: the service role key is
+// read from the environment at call time and never leaves this process.
 //
 //   requireUser(req)  reads "Authorization: Bearer <access_token>", asks Supabase
 //                     Auth who the token belongs to (GET /auth/v1/user), then
@@ -136,6 +136,7 @@ function queryValue(req, key) {
 // SQLSTATE P0002 ('no_data_found', raised for a missing or foreign record, contract
 // 9.2) is a 404 whatever HTTP status PostgREST gave it, with a generic message, so a
 // record of another account and one that does not exist answer the same way.
+// SQLSTATE PT429 is a 429 with the function's own words.
 function classifyDbError(err) {
   const m = /^[a-z0-9_]+ failed: (\d{3}) ([\s\S]*)$/.exec((err && err.message) || '');
   if (!m) return null;
@@ -145,6 +146,9 @@ function classifyDbError(err) {
   const message = body && typeof body.message === 'string' ? body.message : '';
   if (code === 'P0001') return { status: 400, code: 'refused', message: cleanMessage(message) };
   if (code === 'P0002') return { status: 404, code: 'not_found', message: 'That record was not found.' };
+  // SQLSTATE PT429 is a deliberate rate limit refusal (contract 10.5); PostgREST
+  // answers it with HTTP 429 and the message was written for the client.
+  if (code === 'PT429') return { status: 429, code: 'rate_limited', message: cleanMessage(message) };
   if (code === '42501') return { status: 403, code: 'forbidden', message: 'You do not have access to that record.' };
   if (code === '23505') return { status: 409, code: 'conflict', message: 'That record already exists.' };
   if (/^22/.test(code)) return { status: 400, code: 'bad_request', message: 'The request could not be accepted.' };

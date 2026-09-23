@@ -1,4 +1,4 @@
-// CNC HSF FORGE | HSF-MCO-01 v1.0.0 | MyClinicOnline transfer worker core 23/09/2026
+// CNC HSF FORGE | HSF-MCO-01 v1.1.0 | MyClinicOnline transfer worker core 23/09/2026
 //
 // Everything the hsf-mco-transfer edge function does, as plain functions with
 // their dependencies injected, so it runs unchanged in Deno and under
@@ -10,16 +10,23 @@
 //      the client fingerprint equals the receipt fingerprint AND the database has
 //      recorded the upload as transferred. Held, error and mismatch never delete
 //      anything at that step, and an error returns the upload to 'uploaded'.
-//   2. Every other deletion comes only from the database's cleanup queue
-//      (hsf_transfer_cleanup_queue, contract 9.5): uploads still holding bytes
-//      whose status is 'transferred' (delete pending), 'failed' or 'rejected'.
-//      The database decides which rows are listed; the worker checks each path
-//      belongs to its upload before touching Storage.
-//   3. hsf_mark_staging_deleted is called only after Storage has confirmed the
-//      object is gone (removed now, or already absent on a second look).
+//   2. Nothing is sent unless its security scan passed (contract 10.4): the
+//      transfer claim returns only scan_status 'clean', and the worker checks it
+//      again before it reads the bytes.
+//   3. Every other deletion comes only from a database queue: the cleanup queue
+//      (hsf_transfer_cleanup_queue, contracts 9.5 and 10.5) lists uploads still
+//      holding bytes whose status is 'transferred' (delete pending), 'failed',
+//      'rejected' or 'client_deleted'; the retention queue (hsf_retention_queue,
+//      contract 10.3) lists uploads older than hsf.staging_retention_days, blocked
+//      ones included. The database decides which rows are listed; the worker
+//      checks each path belongs to its upload before touching Storage.
+//   4. hsf_mark_staging_deleted and hsf_mark_expired are called only after
+//      Storage has confirmed the object is gone (removed now, or already absent
+//      on a second look).
 //
 // Per upload (processUpload):
-//   1. check the row and its staging path <client_account_id>/<upload_id>/<safe_name>
+//   1. check the row, its scan status and its staging path
+//      <client_account_id>/<upload_id>/<safe_name>
 //   2. download the object and take the server SHA 256
 //   3. server hash differs from the client hash: record hash_mismatch, stop
 //   4. send through the adapter (hold, fixture or live)
@@ -27,35 +34,46 @@
 //   6. only for received with three equal hashes and a 'transferred' reply:
 //      delete the object from Storage, then hsf_mark_staging_deleted
 //
-// Per run (runTransfer), contract 9.5:
+// Per run (runTransfer), contracts 9.5 and 10.4:
 //   1. read the mode with hsf_transfer_mode() (hold when unset); refuse to run on
 //      an unknown mode, on live without MCO_BASE_URL and MCO_API_TOKEN, and on
 //      fixture unless the environment allows it
-//   2. claim with hsf_transfer_claim(10) (the database locks the rows, marks them
-//      'transferring' and leaves out accounts whose consent is withdrawn) and
-//      process the rows one at a time
-//   3. hsf_sweep_stale_uploads(24): uploads never completed within 24 hours
+//   2. hsf_sweep_stale_uploads(24): uploads never completed within 24 hours
 //      become 'failed'
-//   4. hsf_transfer_cleanup_queue(25): for each row, delete the object, then
+//   3. scan pass: hsf_scan_claim(10), then for each row download, check the
+//      fingerprint, inspectBytes, the antivirus engine and hsf_scan_record
+//      (scan-core.js). Runs in every mode, hold included
+//   4. claim with hsf_transfer_claim(10) (the database locks the rows, marks them
+//      'transferring' and leaves out blocked and unscanned uploads) and process
+//      the rows one at a time
+//   5. hsf_transfer_cleanup_queue(25): for each row, delete the object, then
 //      hsf_mark_staging_deleted
-// A refused run (mode unreadable or refused, claim unreadable) stops before any
-// Storage call, so it deletes nothing. The sweep and the cleanup pass report
-// their own failures without undoing the transfer pass.
+//   6. hsf_retention_queue(25): for each row, delete the object, then
+//      hsf_mark_expired
+// A refused run (mode unreadable or refused) stops before any Storage call, so
+// it deletes nothing. A claim that cannot be read transfers nothing but still
+// lets the cleanup and retention passes run, because those follow their own
+// database queues. Every pass reports its own failures without undoing the
+// others. One document is held in memory at a time.
 //
 // Reports carry upload identifiers, outcomes and short reasons only: never a
 // file name, file content, a fingerprint pair in prose, or a key.
 
 import { MODES, isSha256Hex, sha256Hex as defaultSha256Hex } from './mco-adapter.js';
+import { createAvEngine, scanUpload } from './scan-core.js';
 
 export const STAGING_BUCKET = 'hsf-staging';
 export const CLAIM_LIMIT = 10;
 export const QUEUE_LIMIT = CLAIM_LIMIT; // earlier name, kept for callers
 export const CLEANUP_LIMIT = 25;
+export const SCAN_LIMIT = 10;
+export const RETENTION_LIMIT = 25;
 export const STALE_UPLOAD_HOURS = 24;
 export const MODE_PARAMETER = 'hsf.mco_transfer_mode';
 export const DEFAULT_MODE = 'hold';
 
-// The database functions the worker calls (contract 9.5). Nothing else.
+// The database functions the worker calls (contracts 9.5, 10.3 and 10.4).
+// Nothing else.
 export const RPC = Object.freeze({
   mode: 'hsf_transfer_mode',
   claim: 'hsf_transfer_claim',
@@ -63,6 +81,10 @@ export const RPC = Object.freeze({
   sweep: 'hsf_sweep_stale_uploads',
   cleanup: 'hsf_transfer_cleanup_queue',
   markDeleted: 'hsf_mark_staging_deleted',
+  scanClaim: 'hsf_scan_claim',
+  scanRecord: 'hsf_scan_record',
+  retention: 'hsf_retention_queue',
+  markExpired: 'hsf_mark_expired',
 });
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -71,8 +93,11 @@ const FUNCTION_RE = /^[a-z_][a-z0-9_]{0,62}$/;
 const REASON_RE = /^[A-Za-z_ ]{1,60}$/;
 // 'transferring' is what hsf_transfer_claim sets on the rows it hands out.
 const TRANSFERABLE = new Set(['uploaded', 'held', 'transferring']);
-// hsf_mark_staging_deleted leaves a failed or rejected upload in its status.
-const MARKED_STATUSES = new Set(['staging_deleted', 'failed', 'rejected']);
+// hsf_mark_staging_deleted leaves a failed, rejected, client deleted or expired
+// upload in its status.
+const MARKED_STATUSES = new Set(['staging_deleted', 'failed', 'rejected', 'client_deleted', 'expired']);
+// Statuses the cleanup queue lists (contracts 9.5 and 10.5).
+const CLEANUP_STATUSES = new Set(['transferred', 'failed', 'rejected', 'client_deleted']);
 
 // 1. Small helpers --------------------------------------------------------------
 
@@ -261,6 +286,11 @@ export async function processUpload(row, deps) {
   // which returns it to 'uploaded', and nothing is read, sent or deleted.
   if (isBlocked(row)) return stop('error', { error: 'Transfer is blocked because consent was withdrawn.' });
 
+  // Contract 10.4: only an upload that passed its security scan may move. The
+  // claim returns clean rows only; anything else arriving is recorded as an
+  // error (back to 'uploaded') and nothing is read or sent.
+  if (row.scan_status !== 'clean') return stop('error', { error: 'The upload has not passed its security scan.' });
+
   const client = lowerHex(row.sha256_client);
   if (!isSha256Hex(client)) return stop('error', { error: 'The upload carries no valid browser fingerprint.' });
 
@@ -376,16 +406,14 @@ export async function processUpload(row, deps) {
 
 // 6. The cleanup queue -------------------------------------------------------------
 
-// A cleanup row is { upload_id, storage_path, reason } (client_account_id and
-// status are checked too when the database sends them). The path must be
-// <uuid>/<this upload_id>/<safe name>, so a wrong row can never reach another
-// upload's object.
-export function checkCleanupItem(item) {
-  if (!item || typeof item !== 'object') return { ok: false, reason: 'The cleanup queue returned something other than a row.' };
+// The path of a queue row must be <uuid>/<this upload_id>/<safe name>, so a
+// wrong row can never reach another upload's object.
+function checkQueuePath(item, queue) {
+  if (!item || typeof item !== 'object') return { ok: false, reason: `The ${queue} queue returned something other than a row.` };
   const id = typeof item.upload_id === 'string' ? item.upload_id : '';
-  if (!UUID_RE.test(id)) return { ok: false, reason: 'The cleanup queue returned a row without a valid upload identifier.' };
+  if (!UUID_RE.test(id)) return { ok: false, reason: `The ${queue} queue returned a row without a valid upload identifier.` };
   const path = item.storage_path;
-  if (typeof path !== 'string' || !path || path.length > 400) return { ok: false, reason: 'The cleanup row has no staging path.' };
+  if (typeof path !== 'string' || !path || path.length > 400) return { ok: false, reason: `The ${queue} row has no staging path.` };
   const seg = path.split('/');
   if (seg.length !== 3) return { ok: false, reason: 'The staging path does not have the expected three parts.' };
   if (!UUID_RE.test(seg[0])) return { ok: false, reason: 'The staging path does not start with a company account.' };
@@ -395,19 +423,44 @@ export function checkCleanupItem(item) {
   }
   if (seg[1].toLowerCase() !== id.toLowerCase()) return { ok: false, reason: 'The staging path does not belong to this upload.' };
   if (!SEGMENT_RE.test(seg[2]) || /^\.+$/.test(seg[2])) return { ok: false, reason: 'The staged file name is not a safe name.' };
-  if (item.status !== undefined && item.status !== null && !['transferred', 'failed', 'rejected'].includes(item.status)) {
-    return { ok: false, reason: 'The cleanup row is not transferred, failed or rejected.' };
-  }
-  // After a consent withdrawal nothing is deleted automatically (contract 9.5):
-  // the bytes wait for the Director and Information Officer decision.
-  if (isBlocked(item)) return { ok: false, reason: 'The upload is blocked because consent was withdrawn, so its bytes are kept for a decision.' };
   return { ok: true, id, path };
 }
 
-// One cleanup row: delete the object (an object already gone counts, once Storage
-// confirms it is absent), then hsf_mark_staging_deleted. Never marks without a
+// A cleanup row is { upload_id, storage_path, reason } (client_account_id and
+// status are checked too when the database sends them).
+export function checkCleanupItem(item) {
+  const c = checkQueuePath(item, 'cleanup');
+  if (!c.ok) return c;
+  if (item.status !== undefined && item.status !== null && !CLEANUP_STATUSES.has(item.status)) {
+    return { ok: false, reason: 'The cleanup row is not transferred, failed, rejected or client deleted.' };
+  }
+  // After a consent withdrawal nothing is deleted automatically (contract 9.5):
+  // the bytes wait for a decision. The one exception in this queue is the
+  // client's own confirmed deletion (contract 10.5), which the database lists
+  // with reason 'client_deleted' even when the upload had been blocked.
+  const clientDeleted = item.reason === 'client_deleted' || item.status === 'client_deleted';
+  if (isBlocked(item) && !clientDeleted) {
+    return { ok: false, reason: 'The upload is blocked because consent was withdrawn, so its bytes are kept for a decision.' };
+  }
+  return c;
+}
+
+// A retention row is { upload_id, storage_path, reason: 'retention' } (contract
+// 10.3). The two year limit overrides a block, so blocked rows are accepted.
+export function checkRetentionItem(item) {
+  const c = checkQueuePath(item, 'retention');
+  if (!c.ok) return c;
+  if (item.reason !== 'retention') return { ok: false, reason: 'The retention row does not carry the reason retention.' };
+  if (item.status !== undefined && item.status !== null && ['staging_deleted', 'expired'].includes(item.status)) {
+    return { ok: false, reason: 'The retention row no longer holds bytes in staging.' };
+  }
+  return c;
+}
+
+// One queue row: delete the object (an object already gone counts, once Storage
+// confirms it is absent), then the database mark. Never marks without a
 // confirmed removal.
-export async function cleanupUpload(item, deps) {
+async function removeThenMark(item, deps, pass) {
   const d = deps || {};
   const log = typeof d.log === 'function' ? d.log : () => {};
   // The database's short reason code only ('transferred', 'failed', ...), never free text.
@@ -417,11 +470,11 @@ export async function cleanupUpload(item, deps) {
     reason, action: null, deleted: false, absent: false, marked: false, error: null,
   };
 
-  const c = checkCleanupItem(item);
+  const c = pass.check(item);
   if (!c.ok) {
     report.action = 'skipped';
     report.error = c.reason;
-    log(`hsf-mco-transfer cleanup ${report.uploadId || 'unknown'}: ${c.reason}`);
+    log(`hsf-mco-transfer ${pass.label} ${report.uploadId || 'unknown'}: ${c.reason}`);
     return report;
   }
   report.uploadId = c.id;
@@ -434,26 +487,70 @@ export async function cleanupUpload(item, deps) {
   } catch (err) {
     report.action = 'delete_failed';
     report.error = `The staging object could not be removed: ${messageOf(err)}`;
-    log(`hsf-mco-transfer cleanup ${c.id}: ${report.error}`);
+    log(`hsf-mco-transfer ${pass.label} ${c.id}: ${report.error}`);
     return report;
   }
 
   try {
-    const res = await d.rpc(RPC.markDeleted, { p_upload_id: c.id });
-    if (res && typeof res === 'object' && 'status' in res && !MARKED_STATUSES.has(res.status)) {
+    const res = await d.rpc(pass.mark, { p_upload_id: c.id });
+    if (res && typeof res === 'object' && 'status' in res && !pass.statuses.has(res.status)) {
       throw new Error(`the database replied with status ${String(res.status).slice(0, 40)}`);
     }
     report.marked = true;
-    report.action = report.absent ? 'already_absent' : 'removed';
+    report.action = report.absent ? 'already_absent' : pass.done;
   } catch (err) {
     report.action = 'mark_failed';
     report.error = `The staging object is gone, but the upload could not be marked: ${messageOf(err)}`;
-    log(`hsf-mco-transfer cleanup ${c.id}: ${report.error}`);
+    log(`hsf-mco-transfer ${pass.label} ${c.id}: ${report.error}`);
   }
   return report;
 }
 
+const CLEANUP_PASS = Object.freeze({
+  label: 'cleanup', check: checkCleanupItem, mark: RPC.markDeleted, statuses: MARKED_STATUSES, done: 'removed',
+});
+const RETENTION_PASS = Object.freeze({
+  label: 'retention', check: checkRetentionItem, mark: RPC.markExpired, statuses: new Set(['expired']), done: 'expired',
+});
+
+// One cleanup row: delete, then hsf_mark_staging_deleted.
+export function cleanupUpload(item, deps) {
+  return removeThenMark(item, deps, CLEANUP_PASS);
+}
+
+// One retention row: delete, then hsf_mark_expired, which sets 'expired',
+// revokes the evidence and audits hsf_upload_expired.
+export function expireUpload(item, deps) {
+  return removeThenMark(item, deps, RETENTION_PASS);
+}
+
 // 7. One run ---------------------------------------------------------------------
+
+// Reads one database queue (cleanup or retention) and handles its rows one by
+// one. A failure is reported in the section and never stops the other passes.
+async function queuePass(section, label, fn, limit, handle, d, log) {
+  section.ran = true;
+  let items;
+  try {
+    items = await d.rpc(fn, { p_limit: limit });
+  } catch (err) {
+    section.error = `The ${label} queue could not be read: ${messageOf(err)}`;
+    log(`hsf-mco-transfer: ${section.error}`);
+    return;
+  }
+  if (items === null || items === undefined) items = [];
+  if (!Array.isArray(items)) {
+    section.error = `The ${label} queue reply was not a list, so nothing was removed.`;
+    log(`hsf-mco-transfer: ${section.error}`);
+    return;
+  }
+  section.listed = items.length;
+  for (const item of items.slice(0, limit)) {
+    const rep = await handle(item, { remove: d.remove, rpc: d.rpc, log });
+    section.results.push(rep);
+    section.counts[rep.action] = (section.counts[rep.action] || 0) + 1;
+  }
+}
 
 // deps: {
 //   rpc, download, remove    as for processUpload; remove(path, { allowAbsent: true })
@@ -461,6 +558,10 @@ export async function cleanupUpload(item, deps) {
 //   createAdapter            from mco-adapter.js
 //   mco?:          { baseUrl, token, fetch? } for live mode
 //   allowFixture?: boolean (the deployed worker reads HSF_MCO_ALLOW_FIXTURE)
+//   av?:           { endpoint, token, fetch? } for the antivirus engine
+//                  (HSF_AV_ENDPOINT, HSF_AV_TOKEN)
+//   allowScanFixture?: boolean (HSF_SCAN_ALLOW_FIXTURE=1; tests only)
+//   avEngine?:     an engine from createAvEngine, used instead of av (tests)
 //   sha256Hex?, log?
 // }
 export async function runTransfer(deps) {
@@ -469,7 +570,9 @@ export async function runTransfer(deps) {
   const summary = {
     ok: false, mode: null, defaulted: false, refused: null, processed: 0, counts: {}, results: [],
     sweep: { ran: false, failed: null, error: null },
+    scan: { ran: false, engine: null, claimed: 0, counts: {}, results: [], error: null },
     cleanup: { ran: false, listed: 0, counts: {}, results: [], error: null },
+    retention: { ran: false, listed: 0, counts: {}, results: [], error: null },
   };
 
   let raw;
@@ -496,45 +599,14 @@ export async function runTransfer(deps) {
     adapter = d.createAdapter({ mode: m.mode, baseUrl: mco.baseUrl, token: mco.token, fetch: mco.fetch });
   } catch (err) {
     // Live without MCO_BASE_URL and MCO_API_TOKEN lands here: the run refuses
-    // before it touches the queue.
+    // before it touches any queue.
     summary.refused = messageOf(err);
     log(`hsf-mco-transfer: ${summary.refused}`);
     return summary;
   }
 
-  let queue;
-  try {
-    queue = await d.rpc(RPC.claim, { p_limit: CLAIM_LIMIT });
-  } catch (err) {
-    summary.refused = 'The transfer queue could not be claimed, so nothing was processed.';
-    log(`hsf-mco-transfer: ${summary.refused} ${messageOf(err)}`);
-    return summary;
-  }
-  if (!Array.isArray(queue)) {
-    summary.refused = 'The transfer claim reply was not a list, so nothing was processed.';
-    log(`hsf-mco-transfer: ${summary.refused}`);
-    return summary;
-  }
-
-  // One at a time: at most one document is held in memory.
-  for (const row of queue.slice(0, CLAIM_LIMIT)) {
-    const rep = await processUpload(row, {
-      mode: m.mode,
-      adapter,
-      download: d.download,
-      remove: d.remove,
-      rpc: d.rpc,
-      sha256Hex: d.sha256Hex,
-      log,
-    });
-    summary.results.push(rep);
-    summary.counts[rep.action] = (summary.counts[rep.action] || 0) + 1;
-  }
-  summary.processed = summary.results.length;
-  summary.ok = true;
-
-  // Uploads registered but never completed within the day become 'failed', so
-  // the cleanup pass below removes any bytes they left behind.
+  // 1. Uploads registered but never completed within the day become 'failed',
+  // so the cleanup pass removes any bytes they left behind.
   summary.sweep.ran = true;
   try {
     const n = await d.rpc(RPC.sweep, { p_hours: STALE_UPLOAD_HOURS });
@@ -544,28 +616,83 @@ export async function runTransfer(deps) {
     log(`hsf-mco-transfer: ${summary.sweep.error}`);
   }
 
-  // Bytes that must leave staging: transferred (delete pending), failed, rejected.
-  summary.cleanup.ran = true;
-  let items;
+  // 2. Scan pass. Without an antivirus engine every scan records 'error', so
+  // nothing becomes clean and nothing transfers.
+  summary.scan.ran = true;
+  const av = d.avEngine && typeof d.avEngine.scan === 'function'
+    ? d.avEngine
+    : createAvEngine(Object.assign({}, d.av || {}, { allowFixture: d.allowScanFixture === true }));
+  summary.scan.engine = av.kind || null;
+  if (!av.configured) log('hsf-mco-transfer: Antivirus engine not configured, so every scan records error and nothing transfers.');
+  let toScan = null;
   try {
-    items = await d.rpc(RPC.cleanup, { p_limit: CLEANUP_LIMIT });
+    toScan = await d.rpc(RPC.scanClaim, { p_limit: SCAN_LIMIT });
+    if (toScan === null || toScan === undefined) toScan = [];
+    if (!Array.isArray(toScan)) {
+      toScan = null;
+      summary.scan.error = 'The scan claim reply was not a list, so nothing was scanned.';
+    }
   } catch (err) {
-    summary.cleanup.error = `The cleanup queue could not be read: ${messageOf(err)}`;
-    log(`hsf-mco-transfer: ${summary.cleanup.error}`);
-    return summary;
+    summary.scan.error = `The scan claim could not be read: ${messageOf(err)}`;
   }
-  if (items === null || items === undefined) items = [];
-  if (!Array.isArray(items)) {
-    summary.cleanup.error = 'The cleanup queue reply was not a list, so nothing was removed.';
-    log(`hsf-mco-transfer: ${summary.cleanup.error}`);
-    return summary;
+  if (summary.scan.error) log(`hsf-mco-transfer: ${summary.scan.error}`);
+  if (toScan) {
+    summary.scan.claimed = toScan.length;
+    // One at a time: at most one document is held in memory.
+    for (const row of toScan.slice(0, SCAN_LIMIT)) {
+      const rep = await scanUpload(row, {
+        rpc: d.rpc,
+        download: d.download,
+        av,
+        checkPath: checkStagingPath,
+        recordFn: RPC.scanRecord,
+        sha256Hex: d.sha256Hex,
+        log,
+      });
+      summary.scan.results.push(rep);
+      summary.scan.counts[rep.action] = (summary.scan.counts[rep.action] || 0) + 1;
+    }
   }
-  summary.cleanup.listed = items.length;
-  for (const item of items.slice(0, CLEANUP_LIMIT)) {
-    const rep = await cleanupUpload(item, { remove: d.remove, rpc: d.rpc, log });
-    summary.cleanup.results.push(rep);
-    summary.cleanup.counts[rep.action] = (summary.cleanup.counts[rep.action] || 0) + 1;
+
+  // 3. Transfer pass.
+  let queue = null;
+  try {
+    queue = await d.rpc(RPC.claim, { p_limit: CLAIM_LIMIT });
+    if (!Array.isArray(queue)) {
+      queue = null;
+      summary.refused = 'The transfer claim reply was not a list, so nothing was transferred.';
+      log(`hsf-mco-transfer: ${summary.refused}`);
+    }
+  } catch (err) {
+    summary.refused = 'The transfer queue could not be claimed, so nothing was transferred.';
+    log(`hsf-mco-transfer: ${summary.refused} ${messageOf(err)}`);
   }
+  if (queue) {
+    // One at a time: at most one document is held in memory.
+    for (const row of queue.slice(0, CLAIM_LIMIT)) {
+      const rep = await processUpload(row, {
+        mode: m.mode,
+        adapter,
+        download: d.download,
+        remove: d.remove,
+        rpc: d.rpc,
+        sha256Hex: d.sha256Hex,
+        log,
+      });
+      summary.results.push(rep);
+      summary.counts[rep.action] = (summary.counts[rep.action] || 0) + 1;
+    }
+    summary.processed = summary.results.length;
+    summary.ok = true;
+  }
+
+  // 4. Bytes that must leave staging: transferred (delete pending), failed,
+  // rejected, client deleted.
+  await queuePass(summary.cleanup, 'cleanup', RPC.cleanup, CLEANUP_LIMIT, cleanupUpload, d, log);
+
+  // 5. Bytes past the two year limit, blocked or not.
+  await queuePass(summary.retention, 'retention', RPC.retention, RETENTION_LIMIT, expireUpload, d, log);
+
   return summary;
 }
 

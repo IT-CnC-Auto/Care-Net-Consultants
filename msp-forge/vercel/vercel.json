@@ -17,6 +17,16 @@
       "source": "/samples/:file(.*\\.pdf)",
       "destination": "/sample.html",
       "permanent": true
+    },
+    {
+      "source": "/downloads/CNC-Legislation-Register-v1.0.0.pdf",
+      "destination": "/shop.html#law",
+      "permanent": true
+    },
+    {
+      "source": "/downloads/CNC-Legislation-Register-v1.0.0.csv",
+      "destination": "/shop.html#law",
+      "permanent": true
     }
   ],
   "headers": [

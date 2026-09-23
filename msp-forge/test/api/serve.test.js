@@ -136,6 +136,17 @@ test('vercel.json redirects and rewrites', async () => {
   assert.equal(r3.body, fs.readFileSync(path.join(VERCEL, 'shop.html'), 'utf8'));
 });
 
+test('the retired legislation register downloads redirect to the live register on the shop page', async () => {
+  for (const ext of ['pdf', 'csv']) {
+    assert.ok(!fs.existsSync(path.join(VERCEL, 'downloads', `CNC-Legislation-Register-v1.0.0.${ext}`)), `${ext} is still published`);
+    const r = await get(`/downloads/CNC-Legislation-Register-v1.0.0.${ext}`);
+    assert.equal(r.status, 308, ext);
+    assert.equal(r.headers.location, '/shop.html#law');
+  }
+  const q = await get('/downloads/CNC-Legislation-Register-v1.0.0.pdf?ref=mail');
+  assert.equal(q.headers.location, '/shop.html?ref=mail#law', 'the query goes before the fragment');
+});
+
 test('server source, config and traversal attempts are never served', async () => {
   for (const p of [
     '/api/kernel.js', '/lib/db.js', '/lib/auth.js', '/api/../lib/db.js', '/vercel.json', '/package.json',

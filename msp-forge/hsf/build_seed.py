@@ -14,7 +14,8 @@ Rules the output follows:
      an instrument the kernel already holds by short_name: exact, or the longest
      held short_name followed only by provision words (", general duty",
      " section 16", " in full" and the like). The held names come from
-     migrations 001 to 046 and the published register CSV.
+     migrations 001 to 046 and the register release 1.0.0 CSV, kept in
+     hsf/sources/ now that it is no longer published.
   3. A name the kernel does not hold becomes a candidate instrument: status
      'pending', scope 'safety', sources 'Gate a pending', 'Gate b pending',
      'Gate c pending'. It is inserted only where no row with that short_name
@@ -22,6 +23,10 @@ Rules the output follows:
   4. Links (hsf_element_instrument) carry provision 'awaiting verification'.
   5. Every statement is idempotent (on conflict do nothing / where not exists).
   6. Deterministic: the same SPEC and kernel always produce the same bytes.
+  7. Displayed names (elements, appointment types, classes, candidates) are in
+     plain words, as hsf/build_samples.py writes them: no section, regulation or
+     annexure number other than section 16(2) and section 37(2). The build
+     stops if one survives (contract 10.9(c)).
 
 Run from msp-forge/:  python3 hsf/build_seed.py          (writes 048)
                       python3 hsf/build_seed.py --report (also prints the basis map)
@@ -37,7 +42,7 @@ import build_samples as bs  # noqa: E402  (reuses the SPEC and kernel pack parse
 
 MIG = ROOT / 'supabase' / 'migrations'
 OUT = MIG / '048_hsf_library_seed.sql'
-CSV = ROOT / 'vercel' / 'downloads' / 'CNC-Legislation-Register-v1.0.0.csv'
+CSV = HERE / 'sources' / 'CNC-Legislation-Register-v1.0.0.csv'  # register release 1.0.0, no longer published (contract 10.9)
 PART_B = bs.PART_B
 
 # ---------------------------------------------------------------------------
@@ -362,6 +367,22 @@ def overlay_section(name):
     return 'C'
 
 # ---------------------------------------------------------------------------
+# 3a. Plain words (hsf/BUILD-CONTRACT.md 10.9(c)): the names the builder and the
+#     public library show carry no section, regulation or annexure number other
+#     than section 16(2) and section 37(2) of the OHS Act. The rewrite is the one
+#     hsf/build_samples.py uses for the samples, so both read the same; element
+#     codes never change. Provision numbers stay out until Phase 2 pins them.
+
+plain = bs.plain_name
+NUMBERED = re.compile(bs.NUMBERED.pattern + r'|\b(?:[Rr]egs?\.? ?\d|[Ss]s?\. ?\d|[Aa]nnexures? (?:\d|[A-Z]\b)|[Ss]chedule \d)')
+
+
+def assert_plain(kind, code, text):
+    if text and NUMBERED.search(bs.ALLOWED_NUMBERS.sub('', text)):
+        sys.exit('provision number left in a displayed %s name (contract 10.9(c)), %s: %s' % (kind, code, text))
+
+
+# ---------------------------------------------------------------------------
 # 4. SQL.
 
 
@@ -416,7 +437,8 @@ def build():
             mco = 'mco_medical'
         if code == 'HSF-D-04':
             mco = 'mco_training'
-        elements.append((code, sec, e['name'], e['name'], e['evidence'], appt, role, e['review'], retention,
+        name = plain(e['name'])
+        elements.append((code, sec, name, name, e['evidence'], appt, role, e['review'], retention,
                          'BOTH', True, trigger_expr(e['applies']), mco))
         names = resolve(e['basis'])
         if code == 'HSF-B-06':
@@ -432,7 +454,7 @@ def build():
         links += [(code, n) for n in names]
     for o in OVERLAYS:
         sec = overlay_section(o['name'])
-        name = o['name'].replace(' (Section E, MCO)', '')
+        name = plain(o['name'].replace(' (Section E, MCO)', ''))
         regime = 'MHSA' if o['industry'] == 'MINING' else 'OHSA'
         elements.append((o['code'], sec, name, name, 'document', 'APP-00', None, 'annual', 'INST', regime, False, None,
                          'mco_medical' if sec == 'E' else None))
@@ -444,22 +466,22 @@ def build():
         names = resolve(a['basis'])
         rules = rules_named(a['basis'])
         regime = 'MHSA' if a['trigger'] == 'T-MINING' else 'BOTH'
-        appts.append((a['code'], a['name'], names[0] if names else None, rules[0] if rules else None, regime,
+        appts.append((a['code'], plain(a['name']), names[0] if names else None, rules[0] if rules else None, regime,
                       trigger_expr(a['trigger'])))
         appt_links += names
 
     classes = []
     class_names = []
     for i, (c, n, t) in enumerate(COURSES, 1):
-        classes.append((c, 'HSF-D-04', 'course', i, n, t, None, 'mco_training'))
+        classes.append((c, 'HSF-D-04', 'course', i, plain(n), t, None, 'mco_training'))
     for i, (c, n, basis, t) in enumerate(LICENCES, 1):
         names = resolve(basis)
         class_names += names
-        classes.append((c, 'HSF-D-05', 'licence', i, n, t, names[0] if names else None, None))
+        classes.append((c, 'HSF-D-05', 'licence', i, plain(n), t, names[0] if names else None, None))
     for i, (c, n, basis, t) in enumerate(EXAMS, 1):
         names = resolve(basis)
         class_names += names
-        classes.append((c, 'HSF-E-06', 'examination', i, n, t, names[0] if names else None, 'mco_medical'))
+        classes.append((c, 'HSF-E-06', 'examination', i, plain(n), t, names[0] if names else None, 'mco_medical'))
 
     # Candidates: every name the library uses that the kernel does not hold.
     used = []
@@ -503,6 +525,20 @@ def build():
     order = {r[0]: i for i, r in enumerate(elements)}
     ei_rows = sorted(((k[0], k[1], v[0], ' '.join(v[1])) for k, v in ei.items()),
                      key=lambda r: (order[r[0]], bs.PACK_ORDER.index(r[1])))
+
+    # Every displayed name must now be in plain words, or the build stops.
+    for r in elements:
+        assert_plain('element', r[0], r[2])
+    for r in appts:
+        assert_plain('appointment type', r[0], r[1])
+    for r in classes:
+        assert_plain('element class', r[0], r[4])
+    for c in candidates:
+        assert_plain('candidate instrument', c, c)
+    for code, text in list(TRIGGER_TEXT.items()) + list(SECTION_TEXT.items()):
+        assert_plain('trigger or section', code, text)
+    for r in ei_rows:
+        assert_plain('element industry note', r[0], r[3])
     return elements, links, appts, classes, candidates, held_used, compounds, ei_rows
 
 
@@ -522,6 +558,8 @@ def sql():
     w('-- %d element industry rows, %d element instrument links, and %d candidate' % (len(ei_rows), len(links), len(candidates)))
     w('-- instruments entered as status pending, scope safety, gates a to c pending.')
     w('-- Every element is awaiting verification; every link reads awaiting verification.')
+    w('-- Names are in plain words: no provision numbers other than section 16(2) and')
+    w('-- section 37(2) until Phase 2 pins them (contract 10.9(c)).')
     w('-- Idempotent. Never updates or deletes an existing msp_legal_instrument row:')
     w('-- candidates are inserted only where no row carries the same short_name.')
     w('')

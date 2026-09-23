@@ -8,6 +8,8 @@
 -- 298 element industry rows, 354 element instrument links, and 36 candidate
 -- instruments entered as status pending, scope safety, gates a to c pending.
 -- Every element is awaiting verification; every link reads awaiting verification.
+-- Names are in plain words: no provision numbers other than section 16(2) and
+-- section 37(2) until Phase 2 pins them (contract 10.9(c)).
 -- Idempotent. Never updates or deletes an existing msp_legal_instrument row:
 -- candidates are inserted only where no row carries the same short_name.
 
@@ -256,7 +258,7 @@ select v.code, v.section_code, v.name, v.duty, v.evidence_type, v.responsible_ap
     ('HSF-A-10', 'A', 'Legal register for the industry, drawn from the kernel and dated', 'Legal register for the industry, drawn from the kernel and dated', 'register', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, null, null),
     ('HSF-A-11', 'A', 'Document control procedure and the File''s own revision history', 'Document control procedure and the File''s own revision history', 'document', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, null, null),
     ('HSF-B-01', 'B', 'Health and safety policy signed by the chief executive, dated, displayed, reviewed annually', 'Health and safety policy signed by the chief executive, dated, displayed, reviewed annually', 'document', null, 'Chief executive', 'annual', 'LIFE', 'BOTH', true, null, null),
-    ('HSF-B-02', 'B', 'Section 16(1) chief executive responsibility acknowledged', 'Section 16(1) chief executive responsibility acknowledged', 'document', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
+    ('HSF-B-02', 'B', 'Chief executive responsibility acknowledged', 'Chief executive responsibility acknowledged', 'document', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
     ('HSF-B-03', 'B', 'Section 16(2) assignment in writing, accepted in writing, with its scope', 'Section 16(2) assignment in writing, accepted in writing, with its scope', 'appointment', null, 'Chief executive', 'on_change', 'LIFE', 'BOTH', true, null, null),
     ('HSF-B-04', 'B', 'Health and safety representatives designated in writing after consultation, in the statutory ratio, with training evidence', 'Health and safety representatives designated in writing after consultation, in the statutory ratio, with training evidence', 'appointment', 'APP-00', null, 'on_change', 'LIFE', 'BOTH', true, 'T-HSR', null),
     ('HSF-B-05', 'B', 'Health and safety committee: constitution, membership, minutes', 'Health and safety committee: constitution, membership, minutes', 'minutes', 'APP-00', null, 'monthly', 'LIFE', 'BOTH', true, 'T-COMMITTEE', null),
@@ -294,7 +296,7 @@ select v.code, v.section_code, v.name, v.duty, v.evidence_type, v.responsible_ap
     ('HSF-D-07', 'D', 'Competency assessment records where a role requires assessment rather than attendance', 'Competency assessment records where a role requires assessment rather than attendance', 'training_record', 'APP-00', null, 'on_expiry', null, 'BOTH', true, null, null),
     ('HSF-E-01', 'E', 'The released Medical Surveillance Plan from MSP FORGE', 'The released Medical Surveillance Plan from MSP FORGE', 'document', null, 'OMP', 'annual', 'MED40', 'BOTH', true, null, null),
     ('HSF-E-02', 'E', 'Certificates of fitness per employee per protocol: baseline, periodic, exit (MCO)', 'Certificates of fitness per employee per protocol: baseline, periodic, exit (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, null, 'mco_medical'),
-    ('HSF-E-03', 'E', 'Construction Regulations Annexure 3 medical certificates of fitness (MCO)', 'Construction Regulations Annexure 3 medical certificates of fitness (MCO)', 'medical_certificate', 'APP-01', null, 'on_expiry', 'MED40', 'BOTH', true, 'T-CONSTR', 'mco_medical'),
+    ('HSF-E-03', 'E', 'Construction Regulations medical certificates of fitness (MCO)', 'Construction Regulations medical certificates of fitness (MCO)', 'medical_certificate', 'APP-01', null, 'on_expiry', 'MED40', 'BOTH', true, 'T-CONSTR', 'mco_medical'),
     ('HSF-E-04', 'E', 'Professional driving permit medicals (MCO)', 'Professional driving permit medicals (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, 'T-PRDP', 'mco_medical'),
     ('HSF-E-05', 'E', 'Mine certificate of fitness per the mandatory Code of Practice (MCO)', 'Mine certificate of fitness per the mandatory Code of Practice (MCO)', 'medical_certificate', null, 'OMP', 'on_expiry', 'MED40', 'BOTH', true, 'T-MINING', 'mco_medical'),
     ('HSF-E-06', 'E', 'Statutory examinations required by specific regulations, one item per applicable class: lead, asbestos, hazardous chemical agents, hazardous biological agents, noise, radiation, heights, confined space, night work, food handling (MCO)', 'Statutory examinations required by specific regulations, one item per applicable class: lead, asbestos, hazardous chemical agents, hazardous biological agents, noise, radiation, heights, confined space, night work, food handling (MCO)', 'medical_certificate', null, 'OMP', 'statutory', 'MED40', 'BOTH', true, null, 'mco_medical'),
@@ -344,7 +346,7 @@ select v.code, v.section_code, v.name, v.duty, v.evidence_type, v.responsible_ap
     ('HSF-H-08', 'H', 'Disaster management interface for emergency planning', 'Disaster management interface for emergency planning', 'document', 'APP-27', null, 'annual', 'LIFE', 'BOTH', true, 'T-MHI', null),
     ('HSF-I-01', 'I', 'Incident and near miss reporting procedure', 'Incident and near miss reporting procedure', 'document', 'APP-00', null, 'annual', 'LIFE', 'BOTH', true, null, null),
     ('HSF-I-02', 'I', 'Incident register', 'Incident register', 'register', 'APP-29', null, 'per_event', 'INST', 'BOTH', true, null, null),
-    ('HSF-I-03', 'I', 'Section 24 reporting and the Annexure 1 recording', 'Section 24 reporting and the Annexure 1 recording', 'report', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, null, null),
+    ('HSF-I-03', 'I', 'Incident reporting to the inspector and incident recording', 'Incident reporting to the inspector and incident recording', 'report', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, null, null),
     ('HSF-I-04', 'I', 'Investigation reports with root cause and corrective action', 'Investigation reports with root cause and corrective action', 'report', 'APP-29', null, 'per_event', 'INST', 'BOTH', true, null, null),
     ('HSF-I-05', 'I', 'COIDA claim records and employer''s reports of accidents and diseases', 'COIDA claim records and employer''s reports of accidents and diseases', 'report', 'APP-00', null, 'per_event', 'INST', 'BOTH', true, null, null),
     ('HSF-I-06', 'I', 'Occupational disease notifications', 'Occupational disease notifications', 'report', null, 'OMP', 'per_event', 'MED40', 'BOTH', true, null, null),
@@ -404,7 +406,7 @@ select v.code, v.section_code, v.name, v.duty, v.evidence_type, v.responsible_ap
     ('HSF-OV-CONSTR-06', 'C', 'Water environments controls', 'Water environments controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
     ('HSF-OV-CONSTR-07', 'C', 'Fire precautions on construction sites', 'Fire precautions on construction sites', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
     ('HSF-OV-CONSTR-08', 'C', 'Health and safety file handover to the client on completion', 'Health and safety file handover to the client on completion', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
-    ('HSF-OV-CONSTR-09', 'E', 'Annexure 3 certificate for every person on site', 'Annexure 3 certificate for every person on site', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
+    ('HSF-OV-CONSTR-09', 'E', 'Medical certificate of fitness for every person on site', 'Medical certificate of fitness for every person on site', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, 'mco_medical'),
     ('HSF-OV-EDU-01', 'C', 'Laboratory and workshop chemical controls', 'Laboratory and workshop chemical controls', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
     ('HSF-OV-EDU-02', 'C', 'Playground and sports equipment inspections', 'Playground and sports equipment inspections', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),
     ('HSF-OV-EDU-03', 'C', 'Learner transport and professional driving permits', 'Learner transport and professional driving permits', 'document', 'APP-00', null, 'annual', 'INST', 'OHSA', false, null, null),

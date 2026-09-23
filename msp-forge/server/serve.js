@@ -403,8 +403,11 @@ function createServer(options) {
     sendText(res, 404, 'Not found\n');
   }
 
+  // The query goes before any fragment (a destination such as /shop.html#law).
   function withSearch(location, search) {
-    return search && !location.includes('?') ? `${location}${search}` : location;
+    if (!search || location.includes('?')) return location;
+    const hash = location.indexOf('#');
+    return hash === -1 ? `${location}${search}` : `${location.slice(0, hash)}${search}${location.slice(hash)}`;
   }
 
   async function route(req, res) {

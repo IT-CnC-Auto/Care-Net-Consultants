@@ -164,8 +164,9 @@ select c.relname::text as t,
   from pg_class c join pg_namespace n on n.oid = c.relnamespace
  where n.nspname = 'public' and c.relkind = 'r' and c.relname like 'hsf\_%'
    and c.relname not like 'hsf\_check%'
-   -- The 047 tables only; 049 adds hsf_consent, hsf_upload and hsf_mco_transfer, checked in hsf_flow_checks.sql.
-   and c.relname not in ('hsf_consent', 'hsf_upload', 'hsf_mco_transfer');
+   -- The 047 tables only; 049 adds hsf_consent, hsf_upload and hsf_mco_transfer, checked in hsf_flow_checks.sql,
+   -- and 052 adds hsf_client_verification and hsf_deletion_request, checked in hsf_launch_checks.sql.
+   and c.relname not in ('hsf_consent', 'hsf_upload', 'hsf_mco_transfer', 'hsf_client_verification', 'hsf_deletion_request');
 
 insert into hsf_check (name, expected, actual, pass)
 select v.name, v.expected::text, v.actual::text, v.expected = v.actual
