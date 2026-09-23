@@ -20,6 +20,14 @@
 --      security definer with a fixed search path and is executable by the
 --      service role only; the web tier verifies the person's access token first
 --      and passes their auth user id.
+--   7. Contract 9.1 and 9.5 (Amendment 1): hsf_link_account links a signed in
+--      person to the company account of their confirmed email; the worker reads
+--      its mode through hsf_transfer_mode, claims work with hsf_transfer_claim,
+--      removes staged bytes listed by hsf_transfer_cleanup_queue, and stale
+--      registrations are swept by hsf_sweep_stale_uploads. Uploads older than
+--      hsf.staging_alert_days show in hsf_staging_alerts for staff. A withdrawn
+--      mco_transfer or document_storage consent blocks the account's
+--      untransferred uploads; nothing is deleted automatically.
 --
 -- Nothing here writes file content, a key or a token to msp_audit. The MCO
 -- interface contract is pending (HSF-3): no MCO endpoint is named here.
@@ -94,6 +102,8 @@ create table hsf_upload (
     ('awaiting_upload','uploaded','verified','held','transferring','transferred','staging_deleted','rejected','failed')),
   reject_reason text,
   mco_document_ref text,
+  transfer_blocked_reason text,
+  transfer_claimed_at timestamptz,
   created_at timestamptz not null default now(),
   uploaded_at timestamptz,
   verified_at timestamptz,
@@ -106,7 +116,10 @@ comment on table hsf_upload is 'HSF-UPL-01. One row per document a client drops 
 create index hsf_upload_account_idx on hsf_upload(client_account_id, created_at desc);
 create index hsf_upload_file_idx on hsf_upload(file_id);
 create index hsf_upload_item_idx on hsf_upload(file_item_id);
-create index hsf_upload_queue_idx on hsf_upload(status, uploaded_at) where status in ('uploaded','held');
+create index hsf_upload_queue_idx on hsf_upload(status, uploaded_at) where status in ('uploaded','held','transferring');
+create index hsf_upload_staged_idx on hsf_upload(status) where storage_path is not null;
+comment on column hsf_upload.transfer_blocked_reason is 'Contract 9.5. Set to ''consent withdrawn'' on every untransferred upload of the account when its mco_transfer or document_storage consent is withdrawn. A blocked upload is never claimed for transfer. Nothing is deleted automatically: what happens to the staged bytes is a Director and Information Officer decision (register item).';
+comment on column hsf_upload.transfer_claimed_at is 'Contract 9.5. When hsf_transfer_claim last moved the upload to transferring. A transferring upload claimed more than 30 minutes ago is claimed again.';
 
 create table hsf_mco_transfer (
   id bigint generated always as identity primary key,
@@ -250,6 +263,61 @@ as $$
   select a.* from msp_client_account a where p_auth_user is not null and a.auth_user_id = p_auth_user limit 1;
 $$;
 comment on function hsf_account_of is 'The company account whose contact is this auth user, or null.';
+
+-- Contract 9.1. Company accounts are created by msp_client_signon from a typed
+-- email, without a sign in, so they carry no auth user. The web tier calls this
+-- once per request after it has verified the access token: an account already
+-- linked to the person is returned; otherwise the latest account that is not
+-- declined, has no auth user yet and whose contact email equals the person's
+-- confirmed Supabase email is linked and returned. An unconfirmed email links
+-- nothing.
+create or replace function hsf_link_account(p_auth_user uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+  v_email text;
+begin
+  if p_auth_user is null then
+    return null;
+  end if;
+  -- One link at a time per person, so two parallel requests never race.
+  perform pg_advisory_xact_lock(hashtext('hsf_link_account'), hashtext(p_auth_user::text));
+  select a.id into v_id from msp_client_account a where a.auth_user_id = p_auth_user;
+  if v_id is not null then
+    return v_id;
+  end if;
+  select lower(btrim(u.email)) into v_email
+    from auth.users u
+   where u.id = p_auth_user and u.email_confirmed_at is not null;
+  if coalesce(v_email, '') = '' then
+    return null;
+  end if;
+  select a.id into v_id
+    from msp_client_account a
+   where lower(btrim(a.contact_email)) = v_email
+     and a.auth_user_id is null
+     and a.account_kind <> 'declined'
+   order by a.created_at desc, a.id desc
+   limit 1
+   for update;
+  if v_id is null then
+    return null;
+  end if;
+  update msp_client_account set auth_user_id = p_auth_user where id = v_id and auth_user_id is null;
+  if not found then
+    return (select a.id from msp_client_account a where a.auth_user_id = p_auth_user);
+  end if;
+  insert into msp_audit (actor, event_type, event_detail)
+  values (v_email, 'client_auth_linked',
+          jsonb_build_object('client_account_id', v_id, 'auth_user_id', p_auth_user));
+  return v_id;
+end;
+$$;
+comment on function hsf_link_account is 'Contract 9.1. Returns the company account linked to the auth user, linking on first use the latest non declined account with no auth user whose contact email equals the user''s confirmed email. Null when there is none. Service role only; vercel/lib/auth.js requireUser calls it after verifying the token. Audited as client_auth_linked.';
 
 create or replace function hsf_user_email(p_auth_user uuid)
 returns text
@@ -413,6 +481,7 @@ as $$
 declare
   v_acc msp_client_account;
   v_id uuid;
+  v_blocked int := 0;
 begin
   if p_kind is null or p_kind not in ('document_storage','mco_transfer','authority_to_share') then
     raise exception 'Unknown consent kind: %', coalesce(p_kind, 'none');
@@ -430,15 +499,26 @@ begin
     update hsf_consent set withdrawn_at = clock_timestamp()
      where id = v_id and granted and withdrawn_at is null;
     if found then
+      -- Contract 9.5: without storage or transfer consent nothing more moves.
+      -- Untransferred uploads are blocked from the transfer claim; nothing is
+      -- deleted automatically (Director and Information Officer decision).
+      if p_kind in ('mco_transfer','document_storage') then
+        update hsf_upload
+           set transfer_blocked_reason = 'consent withdrawn'
+         where client_account_id = v_acc.id
+           and transfer_blocked_reason is null
+           and status in ('uploaded','verified','held','transferring');
+        get diagnostics v_blocked = row_count;
+      end if;
       insert into msp_audit (actor, event_type, event_detail)
       values (coalesce(hsf_user_email(p_auth_user), 'client'), 'hsf_consent_withdrawn',
-              jsonb_build_object('client_account_id', v_acc.id, 'kind', p_kind));
+              jsonb_build_object('client_account_id', v_acc.id, 'kind', p_kind, 'blocked_uploads', v_blocked));
     end if;
   end if;
   return hsf_consent_status(p_auth_user);
 end;
 $$;
-comment on function hsf_withdraw_consent is 'Contract 049. Withdraws one consent. New uploads stop at once; with mco_transfer withdrawn the transfer queue skips the account. Audited.';
+comment on function hsf_withdraw_consent is 'Contract 049 and 9.5. Withdraws one consent. New uploads stop at once. Withdrawing mco_transfer or document_storage sets transfer_blocked_reason = ''consent withdrawn'' on the account''s untransferred uploads, which are then never claimed for transfer; a later consent does not lift the block, and nothing is deleted automatically. Audited.';
 
 -- 8. Uploads ----------------------------------------------------------------------------
 
@@ -592,12 +672,17 @@ begin
   update hsf_upload set status = 'uploaded', uploaded_at = now() where id = v_up.id;
 
   if v_up.file_item_id is not null then
+    -- Serialise completes on one File item, so two uploads never pick the same
+    -- evidence version (the second waits, then reads the committed maximum).
+    perform 1 from hsf_file_item where id = v_up.file_item_id for update;
     select coalesce(max(e.version), 0) + 1 into v_version from hsf_evidence e where e.file_item_id = v_up.file_item_id;
     select e.id into v_prev from hsf_evidence e
      where e.file_item_id = v_up.file_item_id order by e.version desc limit 1;
     insert into hsf_evidence (file_item_id, version, supersedes_id, source, storage_path, sha256, supplied_by, upload_id)
     values (v_up.file_item_id, v_version, v_prev, 'client_upload', v_up.storage_path, v_up.sha256_client, v_email, v_up.id);
     update hsf_file_item set status = 'uploaded', reason = null where id = v_up.file_item_id;
+    -- Keeps hsf_file.compliance_pct current and audits the change (migration 051).
+    perform hsf_compute_compliance(v_up.file_id);
   end if;
 
   insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
@@ -609,7 +694,7 @@ begin
   return jsonb_build_object('upload_id', v_up.id, 'status', 'uploaded');
 end;
 $$;
-comment on function hsf_mark_uploaded is 'Contract 049. awaiting_upload to uploaded, by the uploading person only. For an element upload it appends the hsf_evidence row (version n + 1, source client_upload, the browser hash) and sets the File item to uploaded. A consent withdrawn in between rejects the upload instead. Audited.';
+comment on function hsf_mark_uploaded is 'Contract 049 and 9.5. awaiting_upload to uploaded, by the uploading person only. For an element upload it locks the File item, appends the hsf_evidence row (version n + 1, source client_upload, the browser hash), sets the item to uploaded and recomputes the compliance figure. A consent withdrawn in between rejects the upload instead. Audited.';
 
 create or replace function hsf_my_uploads(p_auth_user uuid, p_file_id uuid default null)
 returns jsonb
@@ -629,6 +714,7 @@ as $$
            'mime_type', u.mime_type,
            'status', u.status,
            'reject_reason', u.reject_reason,
+           'transfer_blocked_reason', u.transfer_blocked_reason,
            'created_at', u.created_at,
            'uploaded_at', u.uploaded_at,
            'transferred_at', u.transferred_at,
@@ -658,11 +744,79 @@ as $$
     from hsf_upload u
    where u.status in ('uploaded','held')
      and u.storage_path is not null
+     and u.transfer_blocked_reason is null
      and hsf_consent_current(u.client_account_id, 'mco_transfer')
+     and hsf_consent_current(u.client_account_id, 'document_storage')
    order by u.uploaded_at nulls last, u.created_at, u.id
    limit greatest(1, least(coalesce(p_limit, 10), 100));
 $$;
-comment on function hsf_transfer_queue is 'Contract 049. Uploads waiting for MyClinicOnline (uploaded or held), oldest first, at most 100. An account whose mco_transfer consent is withdrawn is skipped.';
+comment on function hsf_transfer_queue is 'Contract 049. A read only listing of uploads waiting for MyClinicOnline (uploaded or held), oldest first, at most 100; blocked uploads and accounts without mco_transfer and document_storage consent are skipped. The worker no longer reads it: it claims work with hsf_transfer_claim (contract 9.5).';
+
+create or replace function hsf_transfer_mode()
+returns text
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select case when v in ('hold','fixture','live') then v else 'hold' end
+    from (select msp_env_get('hsf.mco_transfer_mode') as v) x;
+$$;
+comment on function hsf_transfer_mode is 'Contract 9.5. The transfer mode from hsf.mco_transfer_mode: hold, fixture or live; anything else reads as hold. Service role only; the worker calls this instead of msp_env_get.';
+
+create or replace function hsf_transfer_claim(p_limit int)
+returns setof hsf_upload
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_mode text := hsf_transfer_mode();
+  v_limit int := greatest(1, least(coalesce(p_limit, 10), 100));
+begin
+  if v_mode = 'hold' then
+    -- Hold: only fresh uploads; the worker records each as held and sends nothing.
+    return query
+      select u.*
+        from hsf_upload u
+       where u.status = 'uploaded'
+         and u.storage_path is not null
+         and u.transfer_blocked_reason is null
+         and hsf_consent_current(u.client_account_id, 'mco_transfer')
+         and hsf_consent_current(u.client_account_id, 'document_storage')
+       order by u.uploaded_at nulls last, u.created_at, u.id
+       limit v_limit
+       for update of u skip locked;
+    return;
+  end if;
+  -- Fixture or live: uploaded and held rows, and transferring rows whose claim
+  -- is more than 30 minutes old (a worker that stopped part way). Rows another
+  -- worker has locked are skipped; the claimed rows move to transferring.
+  return query
+    with c as (
+      select u.id
+        from hsf_upload u
+       where u.storage_path is not null
+         and u.transfer_blocked_reason is null
+         and (u.status in ('uploaded','held')
+              or (u.status = 'transferring'
+                  and (u.transfer_claimed_at is null or u.transfer_claimed_at < now() - interval '30 minutes')))
+         and hsf_consent_current(u.client_account_id, 'mco_transfer')
+         and hsf_consent_current(u.client_account_id, 'document_storage')
+       order by u.uploaded_at nulls last, u.created_at, u.id
+       limit v_limit
+       for update of u skip locked
+    ), claimed as (
+      update hsf_upload u
+         set status = 'transferring', transfer_claimed_at = now()
+        from c
+       where u.id = c.id
+      returning u.*
+    )
+    select * from claimed order by uploaded_at nulls last, created_at, id;
+end;
+$$;
+comment on function hsf_transfer_claim is 'Contract 9.5. The worker''s claim, oldest first, at most 100. Mode hold: uploaded rows only (the worker records them held). Mode fixture or live: uploaded and held rows plus transferring rows claimed more than 30 minutes ago, locked with for update skip locked and moved to transferring. Blocked uploads and accounts without mco_transfer and document_storage consent are never returned.';
 
 create or replace function hsf_transfer_record(
   p_upload_id uuid, p_mode text, p_outcome text, p_server_sha256 text,
@@ -680,6 +834,7 @@ declare
   v_error text := nullif(left(btrim(coalesce(p_error, '')), 500), '');
   v_outcome text := p_outcome;
   v_status text;
+  v_revoked int := 0;
 begin
   if p_mode is null or p_mode not in ('hold','fixture','live') then
     raise exception 'Unknown transfer mode: %', coalesce(p_mode, 'none');
@@ -723,12 +878,14 @@ begin
 
   if v_outcome = 'held' then
     v_status := 'held';
-    update hsf_upload set status = 'held', sha256_server = coalesce(v_server, sha256_server) where id = v_up.id;
+    update hsf_upload
+       set status = 'held', sha256_server = coalesce(v_server, sha256_server), transfer_claimed_at = null
+     where id = v_up.id;
   elsif v_outcome = 'received' then
     v_status := 'transferred';
     update hsf_upload
        set status = 'transferred', sha256_server = v_server, mco_document_ref = v_ref,
-           transferred_at = now(), verified_at = coalesce(verified_at, now())
+           transferred_at = now(), verified_at = coalesce(verified_at, now()), transfer_claimed_at = null
      where id = v_up.id;
     update hsf_evidence
        set mco_document_ref = v_ref, transferred_at = now()
@@ -737,10 +894,31 @@ begin
     v_status := 'failed';
     update hsf_upload
        set status = 'failed', sha256_server = coalesce(v_server, sha256_server),
-           reject_reason = coalesce(v_error, 'The fingerprints do not match.')
+           reject_reason = coalesce(v_error, 'The fingerprints do not match.'), transfer_claimed_at = null
      where id = v_up.id;
+    -- Bytes that failed the fingerprint check are not evidence (contract 9.5):
+    -- revoke the evidence row written at completion, return the item to
+    -- outstanding when no other unrevoked evidence holds it, and recompute.
+    if v_up.file_item_id is not null then
+      perform 1 from hsf_file_item where id = v_up.file_item_id for update;
+    end if;
+    update hsf_evidence set revoked_at = now()
+     where upload_id = v_up.id and revoked_at is null;
+    get diagnostics v_revoked = row_count;
+    if v_up.file_item_id is not null then
+      update hsf_file_item fi
+         set status = 'outstanding', reason = null
+       where fi.id = v_up.file_item_id
+         and fi.status = 'uploaded'
+         and not exists (select 1 from hsf_evidence e where e.file_item_id = fi.id and e.revoked_at is null);
+    end if;
+    if v_up.file_id is not null then
+      perform hsf_compute_compliance(v_up.file_id);
+    end if;
   else
-    v_status := v_up.status;  -- an error leaves the upload where it was, to be retried
+    -- An error returns the upload to uploaded, to be claimed again (contract 9.5).
+    v_status := 'uploaded';
+    update hsf_upload set status = 'uploaded', transfer_claimed_at = null where id = v_up.id;
   end if;
 
   insert into hsf_mco_transfer (upload_id, mode, outcome, mco_document_ref, mco_receipt_sha256, error)
@@ -749,14 +927,15 @@ begin
   insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
   values ('hsf-mco-transfer', 'hsf_transfer_recorded',
           jsonb_build_object('upload_id', v_up.id, 'mode', p_mode, 'reported_outcome', p_outcome,
-                             'outcome', v_outcome, 'status', v_status, 'mco_document_ref', v_ref),
+                             'outcome', v_outcome, 'status', v_status, 'mco_document_ref', v_ref,
+                             'evidence_revoked', v_revoked),
           v_up.file_id);
 
   return jsonb_build_object('upload_id', v_up.id, 'outcome', v_outcome, 'status', v_status,
                             'mco_document_ref', case when v_status = 'transferred' then v_ref end);
 end;
 $$;
-comment on function hsf_transfer_record is 'Contract 049. Appends hsf_mco_transfer and moves the upload: held to held; received with server, browser and receipt fingerprints equal to transferred (and the matching hsf_evidence row gains its MyClinicOnline fields); a mismatch to failed with the reason; an error leaves the status alone. Audited.';
+comment on function hsf_transfer_record is 'Contract 049 and 9.5. Accepts an upload that is uploaded, held or transferring. Appends hsf_mco_transfer and moves the upload: held to held; received with server, browser and receipt fingerprints equal to transferred (and the matching hsf_evidence row gains its MyClinicOnline fields); a mismatch to failed with the reason, revoking the upload''s evidence row, returning the File item to outstanding when no other unrevoked evidence holds it, and recomputing the compliance figure; an error back to uploaded. Audited.';
 
 create or replace function hsf_mark_staging_deleted(p_upload_id uuid)
 returns jsonb
@@ -766,28 +945,134 @@ set search_path = public
 as $$
 declare
   v_up hsf_upload;
+  v_status text;
 begin
   select u.* into v_up from hsf_upload u where u.id = p_upload_id for update;
   if v_up.id is null then
     raise exception 'That upload was not found.';
   end if;
-  if v_up.status <> 'transferred' then
-    raise exception 'Only a transferred upload can be removed from staging (status %).', v_up.status;
+  if v_up.status not in ('transferred','failed','rejected') then
+    raise exception 'Only a transferred, failed or rejected upload can be removed from staging (status %).', v_up.status;
   end if;
+  if v_up.storage_path is null then
+    raise exception 'The staging copy of this upload has already been removed.';
+  end if;
+  v_status := case when v_up.status = 'transferred' then 'staging_deleted' else v_up.status end;
   update hsf_upload
-     set status = 'staging_deleted', storage_path = null, staging_deleted_at = now()
+     set status = v_status, storage_path = null, staging_deleted_at = now()
    where id = v_up.id;
   update hsf_evidence
      set staging_deleted_at = now(), storage_path = null
    where upload_id = v_up.id and staging_deleted_at is null;
   insert into msp_audit (actor, event_type, event_detail, hsf_file_id)
   values ('hsf-mco-transfer', 'hsf_staging_deleted',
-          jsonb_build_object('upload_id', v_up.id, 'mco_document_ref', v_up.mco_document_ref),
+          jsonb_build_object('upload_id', v_up.id, 'status', v_status, 'mco_document_ref', v_up.mco_document_ref),
           v_up.file_id);
-  return jsonb_build_object('upload_id', v_up.id, 'status', 'staging_deleted');
+  return jsonb_build_object('upload_id', v_up.id, 'status', v_status);
 end;
 $$;
-comment on function hsf_mark_staging_deleted is 'Contract 049. After the worker has removed the bytes through the Storage API: transferred to staging_deleted, storage_path cleared on the upload and its evidence row. The row and both fingerprints stay. Audited.';
+comment on function hsf_mark_staging_deleted is 'Contract 049 and 9.5. After the worker has removed the bytes through the Storage API: transferred becomes staging_deleted; failed and rejected keep their status. storage_path is cleared and staging_deleted_at set on the upload and its evidence row. The row and both fingerprints stay. Audited.';
+
+create or replace function hsf_transfer_cleanup_queue(p_limit int)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object('upload_id', q.id, 'storage_path', q.storage_path, 'reason', q.status)
+                            order by q.since, q.id), '[]'::jsonb)
+    from (select u.id, u.storage_path, u.status,
+                 coalesce(u.transferred_at, u.uploaded_at, u.created_at) as since
+            from hsf_upload u
+           where u.storage_path is not null
+             and u.status in ('transferred','failed','rejected')
+             -- After a consent withdrawal nothing is deleted automatically: a
+             -- blocked upload's bytes wait for the Director and Information
+             -- Officer decision.
+             and u.transfer_blocked_reason is null
+           order by coalesce(u.transferred_at, u.uploaded_at, u.created_at), u.id
+           limit greatest(1, least(coalesce(p_limit, 10), 100))) q;
+$$;
+comment on function hsf_transfer_cleanup_queue is 'Contract 9.5. Staged bytes to remove, oldest first, at most 100: {upload_id, storage_path, reason} where reason is the status, transferred (the copy at MyClinicOnline is confirmed), failed or rejected. Uploads blocked by a consent withdrawal are left out (nothing is deleted automatically). The worker deletes the object through the Storage API and then calls hsf_mark_staging_deleted.';
+
+create or replace function hsf_sweep_stale_uploads(p_hours int default 24)
+returns int
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_hours int := coalesce(p_hours, 24);
+  v_n int;
+begin
+  if v_hours < 1 or v_hours > 8760 then
+    raise exception 'The sweep age must be between 1 and 8760 hours.';
+  end if;
+  update hsf_upload
+     set status = 'failed', reject_reason = 'The upload was not completed.'
+   where status = 'awaiting_upload'
+     and created_at < now() - make_interval(hours => v_hours);
+  get diagnostics v_n = row_count;
+  if v_n > 0 then
+    insert into msp_audit (actor, event_type, event_detail)
+    values ('hsf-mco-transfer', 'hsf_uploads_swept', jsonb_build_object('failed', v_n, 'older_than_hours', v_hours));
+  end if;
+  return v_n;
+end;
+$$;
+comment on function hsf_sweep_stale_uploads is 'Contract 9.5. Registrations still awaiting upload after p_hours (default 24) become failed with the reason ''The upload was not completed.''. Their staging path then appears in hsf_transfer_cleanup_queue, so any bytes that did arrive are removed. Audited when anything moves.';
+
+-- Staging alerts (contract 9.5): uploads still holding bytes in Care Net staging
+-- longer than hsf.staging_alert_days. Staff read the view (it filters on the
+-- forge staff roles, so a client or anon sees nothing); the service role reads
+-- hsf_staging_alerts_list(). The two carry the same rows.
+create or replace view hsf_staging_alerts as
+select u.id as upload_id,
+       u.client_account_id,
+       a.company_name,
+       u.file_id,
+       u.status,
+       u.department_code,
+       u.section_code,
+       u.size_bytes,
+       coalesce(u.uploaded_at, u.created_at) as staged_since,
+       floor(extract(epoch from now() - coalesce(u.uploaded_at, u.created_at)) / 86400)::int as days_in_staging,
+       u.transfer_blocked_reason
+  from hsf_upload u
+  join msp_client_account a on a.id = u.client_account_id
+ where u.storage_path is not null
+   and u.status <> 'awaiting_upload'
+   and coalesce(u.uploaded_at, u.created_at) < now() - make_interval(days =>
+         coalesce((select p.value::int from msp_env_parameter p where p.key = 'hsf.staging_alert_days'), 14))
+   and hsf_is_staff();
+comment on view hsf_staging_alerts is 'Contract 9.5. Uploads holding bytes in the hsf-staging bucket for longer than hsf.staging_alert_days. Staff only (forge_admin, forge_omp, forge_safety_reviewer); nobody else sees a row. No file names.';
+revoke all on hsf_staging_alerts from public, anon, authenticated;
+grant select on hsf_staging_alerts to authenticated;
+
+create or replace function hsf_staging_alerts_list()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'upload_id', u.id, 'client_account_id', u.client_account_id, 'company_name', a.company_name,
+           'file_id', u.file_id, 'status', u.status, 'department_code', u.department_code,
+           'section_code', u.section_code, 'size_bytes', u.size_bytes,
+           'staged_since', coalesce(u.uploaded_at, u.created_at),
+           'days_in_staging', floor(extract(epoch from now() - coalesce(u.uploaded_at, u.created_at)) / 86400)::int,
+           'transfer_blocked_reason', u.transfer_blocked_reason)
+         order by coalesce(u.uploaded_at, u.created_at), u.id), '[]'::jsonb)
+    from hsf_upload u
+    join msp_client_account a on a.id = u.client_account_id
+   where u.storage_path is not null
+     and u.status <> 'awaiting_upload'
+     and coalesce(u.uploaded_at, u.created_at) < now() - make_interval(days =>
+           coalesce(msp_env_get_int('hsf.staging_alert_days'), 14));
+$$;
+comment on function hsf_staging_alerts_list is 'Contract 9.5. The rows of hsf_staging_alerts for the service role (scheduled alerts), oldest first.';
 
 -- 10. Execute rights: service role only ------------------------------------------------------
 
@@ -804,7 +1089,13 @@ begin
     'hsf_my_uploads(uuid, uuid)',
     'hsf_transfer_queue(int)',
     'hsf_transfer_record(uuid, text, text, text, text, text, text)',
-    'hsf_mark_staging_deleted(uuid)'] loop
+    'hsf_mark_staging_deleted(uuid)',
+    'hsf_link_account(uuid)',
+    'hsf_transfer_mode()',
+    'hsf_transfer_claim(int)',
+    'hsf_transfer_cleanup_queue(int)',
+    'hsf_sweep_stale_uploads(int)',
+    'hsf_staging_alerts_list()'] loop
     execute format('revoke execute on function %s from public, anon, authenticated', f);
     execute format('grant execute on function %s to service_role', f);
   end loop;

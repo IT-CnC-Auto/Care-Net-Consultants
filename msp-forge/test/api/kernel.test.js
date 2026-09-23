@@ -229,6 +229,15 @@ test('404 when the industry code is not in the kernel', async t => {
   assert.equal(res.statusCode, 404);
 });
 
+test('404 when a kernel read raises SQLSTATE P0002, whatever HTTP status PostgREST used', async t => {
+  for (const status of [400, 404, 500]) {
+    kernelDb(t, OK, { kernel_api_industry: () => json(status, { code: 'P0002', message: 'No industry has that code.' }) });
+    const res = await call({ headers: BEARER, query: { r: 'industry', code: 'NOPE' } });
+    assert.equal(res.statusCode, 404, `HTTP ${status}`);
+    assert.equal(res.body.code, 'not_found');
+  }
+});
+
 test('an authorisation store failure is 503 and a read failure is 500, both plain', async t => {
   kernelDb(t, () => json(500, { code: 'XX000', message: `down at x (/srv/a.js:1:1) ${SERVICE_KEY}` }));
   const r1 = await call({ headers: BEARER, query: { r: 'industries' } });

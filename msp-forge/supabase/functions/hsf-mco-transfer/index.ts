@@ -2,8 +2,10 @@
 //
 // Moves documents that companies dropped into their Health and Safety File from
 // the private hsf-staging bucket to MyClinicOnline (MCO), then removes them from
-// Care Net staging. The row in hsf_upload and its fingerprints stay for the
-// audit trail; only the bytes leave.
+// Care Net staging. It also removes the bytes of uploads that failed their
+// fingerprint check, were rejected, or were never completed within 24 hours.
+// The row in hsf_upload and its fingerprints stay for the audit trail; only the
+// bytes leave.
 //
 // Invoked by a schedule or by hand, with the service role key as the bearer
 // token. Nobody else may run it: the check is made here, not left to the
@@ -15,11 +17,19 @@
 //   ../_shared/transfer-core.js  the per upload flow, the deletion rule and the
 //                                Supabase REST, Storage and rpc bindings
 //
-// Mode comes from msp_env_parameter hsf.mco_transfer_mode on every run. Hold is
-// the default while the MCO interface contract (HSF-3, register CR-13.12) is
-// pending: nothing leaves Care Net and nothing is deleted. Live refuses to run
-// without MCO_BASE_URL and MCO_API_TOKEN, and its request shape is a placeholder
-// until the contract arrives. Fixture is for tests and is refused unless
+// Each run (contract 9.5, all through service role only database functions):
+//   1. hsf_transfer_mode() reads msp_env_parameter hsf.mco_transfer_mode
+//   2. hsf_transfer_claim(10) hands out uploads to transfer, locked and marked
+//      'transferring'; accounts that withdrew consent are left out
+//   3. hsf_sweep_stale_uploads(24) fails uploads never completed within a day
+//   4. hsf_transfer_cleanup_queue(25) lists uploads whose bytes must leave
+//      staging (transferred, failed, rejected); each object is deleted, then
+//      hsf_mark_staging_deleted records it
+// Hold is the default while the MCO interface contract (HSF-3, register
+// CR-13.12) is pending: nothing leaves Care Net, and held documents are never
+// deleted. Live refuses to run without MCO_BASE_URL and MCO_API_TOKEN, and its
+// request shape is a placeholder until the contract arrives. Fixture is for
+// tests and is refused unless
 // HSF_MCO_ALLOW_FIXTURE is 'true' in this function's environment, which must
 // never be set on the production project.
 //
@@ -67,8 +77,10 @@ Deno.serve(async (req: Request) => {
       log: (line: string) => console.error(line),
     });
 
-    // A refused run (unknown mode, live without its settings, fixture where it
-    // is not allowed, unreadable queue) touched nothing and says why.
+    // A refused run (unreadable or unknown mode, live without its settings,
+    // fixture where it is not allowed, a claim that could not be read) touched
+    // nothing and says why. Sweep and cleanup failures are in the summary and
+    // the function logs.
     return json(summary, summary.ok ? 200 : 503);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);

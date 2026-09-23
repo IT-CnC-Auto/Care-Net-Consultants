@@ -1,13 +1,15 @@
 # CNC HSF FORGE | HSF-KRN-API v1.0.0 | OpenAPI description of the Cognitive Kernel read API
-# Version 1.0 | 23/09/2026 | hsf/BUILD-CONTRACT.md section 3 (migration 050) and section 4 (vercel/api/kernel.js)
+# Version 1.1 | 23/09/2026 | hsf/BUILD-CONTRACT.md section 3 (migration 050), section 4 (vercel/api/kernel.js)
+# and section 9 (Amendment 1: 9.3 File citations, 9.4 currency holds)
 #
 # Describes GET /api/kernel exactly as vercel/api/kernel.js implements it. The
-# payload fields under "data" follow the kernel_api_* functions of migration
-# 050_kernel_api.sql. Migration 050 was not yet in the repository when this file
-# was written: where 050 as merged names a field differently, 050 wins and this
-# file is corrected to match. Every payload object allows additional fields for
-# that reason; the envelope fields (kernel_release, as_at, notice) are fixed by
-# the contract and are required.
+# handler returns the reply of the kernel_api_* function unchanged: every
+# function wraps its payload with kernel_api_envelope, so a 200 body is
+# {kernel_release, as_at, notice, data}. The fields under data were reconciled
+# one by one with the real output of the functions of
+# supabase/migrations/050_kernel_api.sql on a local replay (test/sql/replay.sh)
+# on 23/09/2026. Every object here lists all its fields, all required and no
+# others; a field added in a later release is added here first.
 #
 # No key, host secret or model name appears in this file.
 
@@ -26,10 +28,23 @@ info:
 
     This API returns framework reference data only. It never returns client,
     engagement, intake, upload, consent, person, audit or key data, and it never
-    returns an instrument that is pending, excluded, superseded or held from
-    citation. Only instruments that have passed the three verification checks
-    (gate a primary text, gate b independent corroboration, gate c currency on the
-    day) and are in force appear, read from the view kernel_citable_instrument.
+    offers an instrument that is pending, excluded, superseded or held from
+    citation as a basis. Only instruments that have passed the three verification
+    checks (gate a primary text, gate b independent corroboration, gate c
+    currency on the day), are in force and are not under a currency hold
+    (msp_instrument_currency_hold) appear, read from the view
+    kernel_citable_instrument. Holds are seeded for the NIHL Regulations, 2003
+    and the Environmental Regulations for Workplaces, 1987 wherever the kernel
+    still marks them verified (HSF-7), and for the Asbestos Abatement
+    Regulations, 2020 (amendment notice number conflict, register HSF-9).
+
+    Health and Safety File elements cite more narrowly (contract 9.3): an
+    element's citable list comes from hsf_element_citable, which also needs the
+    instrument's scope to be safety or both and the element's provision to be
+    pinned past "awaiting verification". Until the Phase 2 re verification of
+    the safety instruments, every element's citable list is empty and its
+    instruments show under awaiting, which is the truthful state. A held
+    instrument can appear by name under awaiting; it is never a basis.
 
     Every successful response carries kernel_release, as_at and the notice below,
     and every answer built from this API must show that notice to its reader:
@@ -41,8 +56,14 @@ info:
     Keys are issued by a forge_admin through msp_api_client_issue, shown once, and
     stored by Care Net only as a SHA 256 hash. A key is for server to server use:
     never place it in a browser page, a chat message or source code. Each key has
-    an hourly call limit (msp_api_client.hourly_limit, 600 by default); calls
-    above it are refused with 429 until the rolling hour clears.
+    an hourly call limit (msp_api_client.hourly_limit, 600 by default): once the
+    key has that many authorised calls in the last hour, further calls are
+    refused with 429 until the rolling hour clears. Refused calls do not count.
+
+    Status: migration 050 is in the repository and replays locally; it has not
+    been applied to the live Supabase project and the API is not deployed, so no
+    live key exists yet. The live kernel is still on release 1.0.0 (HSF-7); a
+    local replay that includes migration 042 reports 1.1.0.
   contact:
     name: Care Net Consultants (Pty) Ltd
     url: https://www.carenetconsultants.co.za
@@ -69,19 +90,29 @@ paths:
       operationId: getKernel
       summary: Read one kernel resource
       description: |
-        Choose the resource with r. The database checks the key (active, not
-        revoked, scope kernel.read, under the hourly limit) and logs the call
-        (client, resource, status and time only: no request text, no IP address)
-        before any data is read.
+        Choose the resource with r. The handler checks, in this order: a key of
+        the right form is present (401), r is known (400), the parameters pass
+        their patterns (400), the server is configured (503). Only then does the
+        database check the key (known, active, not revoked, scope kernel.read,
+        under the hourly limit) and log the call (client, resource, the
+        authorisation status and the time only: no request text, no search words,
+        no IP address) before any data is read.
 
-        | r | Other parameters | data holds |
-        | --- | --- | --- |
-        | industries | none | every industry in the kernel |
-        | industry | code (required) | one industry with its subindustries, roles, hazards, protocols and citable instruments |
-        | instruments | industry (optional) | citable instruments, all or for one industry |
-        | protocols | industry (optional) | medical surveillance protocols, with bases from citable instruments only |
-        | elements | industry (optional) | Health and Safety File elements, with bases from citable instruments only |
-        | search | q (required) | up to 50 matches across instrument, protocol, role and element names |
+        The 200 body is the function's reply, unchanged:
+        {kernel_release, as_at, notice, data}.
+
+        | r | Other parameters | data holds | Database function |
+        | --- | --- | --- | --- |
+        | industries | none | every industry in the kernel: code, name, regime | kernel_api_industries() |
+        | industry | code (required) | one industry: code, name, regime, selectable subindustries with role titles, roles, hazards, protocols and citable instruments | kernel_api_industry(p_code) |
+        | instruments | industry (optional) | citable instruments, all or those mapped to one industry | kernel_api_instruments(p_industry) |
+        | protocols | industry (optional) | medical surveillance protocols, all or those the industry's roles call for, with a basis from citable instruments only | kernel_api_protocols(p_industry) |
+        | elements | industry (optional) | Health and Safety File elements, all or the universal elements plus the industry's overlay, with File citations (contract 9.3) and awaiting candidates | kernel_api_elements(p_industry) |
+        | search | q (required) | up to 50 matches over citable instrument names and citations, protocol names, role titles and element names | kernel_api_search(p_q) |
+
+        An industry code that does not exist answers 404: "No industry has that
+        code." for r=industry, "Nothing was found." for an industry filter on
+        instruments, protocols or elements.
       parameters:
         - $ref: '#/components/parameters/Resource'
         - $ref: '#/components/parameters/Code'
@@ -127,8 +158,8 @@ paths:
       summary: CORS preflight
       description: >
         Answers 204 with Access-Control-Allow-Origin *, Allow-Methods GET and
-        OPTIONS and Allow-Headers Authorization. No key is needed and the
-        database is not called. CORS is open because keys are used server to
+        OPTIONS, Allow-Headers Authorization and Max-Age 600. No key is needed
+        and the database is not called. CORS is open because keys are used server to
         server with no cookies; it is not an invitation to call the API from a
         browser page.
       security: []
@@ -146,6 +177,10 @@ paths:
               schema:
                 type: string
                 const: Authorization
+            Access-Control-Max-Age:
+              schema:
+                type: string
+                const: '600'
 
 components:
   securitySchemes:
@@ -155,16 +190,18 @@ components:
       bearerFormat: cnck_ followed by 64 lowercase hexadecimal characters
       description: >
         Authorization: Bearer cnck_<64 hex>. Issued once by msp_api_client_issue;
-        Care Net keeps only its SHA 256 hash. The key must carry the scope
-        kernel.read. A missing or malformed key is refused with 401 before the
-        database is called.
+        Care Net keeps only its SHA 256 hash (the handler hashes the key with
+        SHA 256 and sends only the hash to msp_api_authorise). The key must carry
+        the scope kernel.read, the only scope msp_api_client_issue accepts. A
+        missing or malformed key is refused with 401 before the database is
+        called.
 
   parameters:
     Resource:
       name: r
       in: query
       required: true
-      description: The resource to read. Lower case, sent once.
+      description: The resource to read. Lower case, sent once (a repeated parameter is refused with 400).
       schema:
         type: string
         enum: [industries, industry, instruments, protocols, elements, search]
@@ -173,16 +210,20 @@ components:
       in: query
       required: false
       description: >
-        Industry code, required when r is industry. Case is ignored (the API
-        upper cases it). Read valid codes from r=industries; codes are kernel
-        data, not a fixed list.
+        Industry code, required when r is industry (an empty value counts as
+        missing). Spaces around it are trimmed and case is ignored (the API upper
+        cases it). Read valid codes from r=industries; codes are kernel data, not
+        a fixed list. A well formed code that no industry has answers 404.
       schema:
         $ref: '#/components/schemas/IndustryCode'
     Industry:
       name: industry
       in: query
       required: false
-      description: Optional industry code filter for r=instruments, protocols or elements.
+      description: >
+        Optional industry code filter for r=instruments, protocols or elements.
+        Left out or empty, there is no filter. A well formed code that no
+        industry has answers 404.
       schema:
         $ref: '#/components/schemas/IndustryCode'
     Query:
@@ -190,15 +231,19 @@ components:
       in: query
       required: false
       description: >
-        Search text, required when r is search. 2 to 100 characters after
-        spaces are collapsed: letters, digits, spaces and . , ' ( ) & / and the
-        hyphen found in instrument names. The LIKE wildcards % and _ and the
-        backslash are refused.
+        Search text, required when r is search. Runs of spaces are collapsed and
+        the ends trimmed; the result must be 2 to 100 characters of letters,
+        digits, spaces and . , ' ( ) & / and the hyphen found in instrument
+        names. The handler's exact pattern, applied after collapsing, is
+        ^[\p{L}\p{N} .,'()&/-]+$ with the Unicode flag; the schema pattern
+        below is the portable part of it: the LIKE wildcards % and _, the
+        backslash and control characters are refused. The search words are
+        never logged.
       schema:
         type: string
         minLength: 2
         maxLength: 100
-        pattern: "^[^%_\\\\]+$"
+        pattern: '^[^%_\\\x00-\x1f\x7f-\x9f]+$'
 
   headers:
     NoStore:
@@ -214,7 +259,10 @@ components:
 
   responses:
     BadRequest:
-      description: Unknown or missing resource, missing required parameter, or a parameter that fails its pattern. Checked before the database.
+      description: >
+        Unknown or missing resource, a required parameter missing, a parameter
+        sent twice, or a parameter that fails its pattern. Checked in the
+        handler before the database is called, so nothing is logged.
       headers:
         Cache-Control:
           $ref: '#/components/headers/NoStore'
@@ -222,11 +270,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-          example:
-            error: Unknown resource. Use r=industries, industry, instruments, protocols, elements or search.
-            code: bad_resource
+          examples:
+            resource:
+              value:
+                error: Unknown resource. Use r=industries, industry, instruments, protocols, elements or search.
+                code: bad_resource
+            parameter:
+              value:
+                error: The code parameter is required for this resource.
+                code: bad_request
     Unauthorised:
-      description: Missing, malformed, unknown, inactive or revoked key.
+      description: >
+        Missing or malformed key (refused before the database is called), or a
+        key msp_api_authorise does not know, or one that is inactive or revoked.
       headers:
         WWW-Authenticate:
           schema:
@@ -242,7 +298,13 @@ components:
             error: A valid kernel API key is required.
             code: invalid_key
     Forbidden:
-      description: The key is valid but does not carry the kernel.read scope.
+      description: >
+        The key is known and active but does not carry the kernel.read scope.
+        msp_api_client_issue only issues kernel.read keys, so this arises only
+        if a key row was changed by hand.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
@@ -251,14 +313,25 @@ components:
             error: This key does not carry the kernel.read scope.
             code: forbidden
     NotFound:
-      description: No industry has that code, or nothing was found.
+      description: >
+        The read function returned null: no industry has the code given in
+        code (r=industry) or in industry (r=instruments, protocols or elements).
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-          example:
-            error: No industry has that code.
-            code: not_found
+          examples:
+            industry:
+              value:
+                error: No industry has that code.
+                code: not_found
+            filter:
+              value:
+                error: Nothing was found.
+                code: not_found
     MethodNotAllowed:
       description: Only GET and OPTIONS are accepted.
       headers:
@@ -266,6 +339,8 @@ components:
           schema:
             type: string
             const: GET, OPTIONS
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
@@ -275,9 +350,13 @@ components:
             code: method_not_allowed
     RateLimited:
       description: >
-        The key has reached its hourly call limit (msp_api_client.hourly_limit,
-        600 by default). No Retry-After header is sent; wait for the rolling
-        hour to clear.
+        The key already has hourly_limit authorised calls in the last hour
+        (msp_api_client.hourly_limit, 600 by default). No Retry-After header is
+        sent; wait for the rolling hour to clear. The refused call is logged with
+        status 429 and does not count towards the limit.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
@@ -287,6 +366,9 @@ components:
             code: rate_limited
     ServerError:
       description: The read failed. The body is always plain; no stack trace or database text is sent.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
@@ -295,7 +377,10 @@ components:
             error: The request could not be processed.
             code: server_error
     Unavailable:
-      description: The server is not configured, or the key store could not be reached.
+      description: The server is not configured (SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing), or msp_api_authorise could not be reached.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
       content:
         application/json:
           schema:
@@ -315,25 +400,24 @@ components:
       type: string
       const: Framework reference data from the Care Net Cognitive Kernel. Not legal advice and not a clinical opinion. Only instruments that have passed three verification checks and are in force are included.
 
-    Envelope:
-      type: object
-      description: Carried by every successful response.
-      required: [kernel_release, as_at, notice]
-      properties:
-        kernel_release:
-          type: [string, 'null']
-          description: The latest msp_kernel_version.semver, for example 1.0.0.
-          examples: ['1.0.0']
-        as_at:
-          type: string
-          format: date
-          description: The database current_date on the day of the call (ISO date; show it to readers as DD/MM/YYYY).
-        notice:
-          $ref: '#/components/schemas/Notice'
+    KernelRelease:
+      type: [string, 'null']
+      description: >
+        The highest msp_kernel_version.semver. The live kernel reports 1.0.0
+        until migration 042 or a reviewed successor is applied (HSF-7); a local
+        replay that includes 042 reports 1.1.0. Null only if the version table
+        is empty.
+      examples: ['1.0.0']
+
+    AsAt:
+      type: string
+      format: date
+      description: The database current_date on the day of the call, as an ISO date (show it to readers as DD/MM/YYYY).
 
     IndustryRef:
       type: object
       required: [code, name]
+      additionalProperties: false
       properties:
         code:
           type: string
@@ -342,8 +426,43 @@ components:
 
     Industry:
       type: object
-      required: [code, name]
-      additionalProperties: true
+      description: One row of msp_industry as r=industries returns it.
+      required: [code, name, regime]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          examples: [CONSTR]
+        name:
+          type: string
+          examples: [Construction]
+        regime:
+          type: string
+          enum: [OHSA, MHSA, DUAL]
+          description: msp_industry.regulatory_regime. In the kernel data MINING reads MHSA and every other industry OHSA.
+
+    Subindustry:
+      type: object
+      description: A selectable subindustry of the industry.
+      required: [code, name, roles]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          examples: [CONSTR-BUILD]
+        name:
+          type: string
+        roles:
+          type: array
+          description: Job role titles of the subindustry, in alphabetical order.
+          items:
+            type: string
+
+    IndustryDetail:
+      type: object
+      description: One industry as r=industry returns it (kernel_api_industry).
+      required: [code, name, regime, subindustries, roles, hazards, protocols, instruments]
+      additionalProperties: false
       properties:
         code:
           type: string
@@ -352,53 +471,39 @@ components:
         regime:
           type: string
           enum: [OHSA, MHSA, DUAL]
-          description: msp_industry.regulatory_regime. MINING routes to the MHSA; every other industry to the OHS Act.
-
-    IndustryDetail:
-      allOf:
-        - $ref: '#/components/schemas/Industry'
-        - type: object
-          additionalProperties: true
-          properties:
-            subindustries:
-              type: array
-              items:
-                type: object
-                additionalProperties: true
-                properties:
-                  code:
-                    type: string
-                  name:
-                    type: string
-                  roles:
-                    type: array
-                    items:
-                      type: string
-            roles:
-              type: array
-              description: Job role titles.
-              items:
-                type: string
-            hazards:
-              type: array
-              description: Hazard names.
-              items:
-                type: string
-            protocols:
-              type: array
-              items:
-                $ref: '#/components/schemas/Protocol'
-            instruments:
-              type: array
-              description: Citable instruments for this industry.
-              items:
-                $ref: '#/components/schemas/Instrument'
+        subindustries:
+          type: array
+          description: Selectable subindustries only.
+          items:
+            $ref: '#/components/schemas/Subindustry'
+        roles:
+          type: array
+          description: Distinct job role titles across the selectable subindustries.
+          items:
+            type: string
+        hazards:
+          type: array
+          description: Distinct hazard names those roles are exposed to.
+          items:
+            type: string
+        protocols:
+          type: array
+          description: The same list as r=protocols with industry set to this code.
+          items:
+            $ref: '#/components/schemas/Protocol'
+        instruments:
+          type: array
+          description: The same list as r=instruments with industry set to this code.
+          items:
+            $ref: '#/components/schemas/Instrument'
 
     Instrument:
       type: object
-      description: One row of kernel_citable_instrument (verified, in force, not superseded, not held).
-      required: [short_name, full_citation, instrument_type]
-      additionalProperties: true
+      description: >
+        One row of kernel_citable_instrument: status verified (gates a, b and c
+        passed; a superseded row is never verified) and no currency hold.
+      required: [short_name, full_citation, instrument_type, gazette_reference, effective_date, verified_on, review_due, scope, industries]
+      additionalProperties: false
       properties:
         short_name:
           type: string
@@ -414,49 +519,61 @@ components:
           type: [string, 'null']
           format: date
         verified_on:
-          type: [string, 'null']
+          type: string
           format: date
+          description: Always set for a verified instrument (a database check requires it).
         review_due:
-          type: [string, 'null']
+          type: string
           format: date
+          description: Always set for a verified instrument (a database check requires it).
         scope:
           type: string
           enum: [medical, safety, both]
+          description: >
+            msp_legal_instrument.scope. Only an instrument of scope safety or
+            both can become a File citation (contract 9.3).
         industries:
           type: array
+          description: The industries the instrument is mapped to, by code.
           items:
             $ref: '#/components/schemas/IndustryRef'
 
     Protocol:
       type: object
       description: >
-        A medical surveillance protocol. Its basis lists only citable instruments;
-        a protocol whose basis is not yet citable shows an empty basis. Exposure
+        A medical surveillance protocol (kernel_api_protocol_json). Exposure
         values and clinical reference ranges are not part of this API.
-      required: [name]
-      additionalProperties: true
+      required: [name, test_type, hazard, periodic_interval_months, basis]
+      additionalProperties: false
       properties:
         name:
           type: string
+          examples: [Audiometry]
         test_type:
           type: string
           enum: [clinical, biological_monitoring, biological_effect]
         hazard:
-          type: [string, 'null']
+          type: string
+          description: The name of the hazard the protocol answers.
         periodic_interval_months:
-          type: [integer, 'null']
+          type: integer
           minimum: 1
         basis:
           type: array
-          description: Short names of citable instruments only.
+          maxItems: 1
+          description: >
+            The protocol's legal basis as a short name when that instrument is
+            citable (kernel_instrument_citable), otherwise empty. Empty means the
+            kernel holds no citable basis for the protocol yet (none recorded, or
+            not citable); it does not mean that no law applies.
           items:
             type: string
 
     Element:
       type: object
-      description: A Health and Safety File element, as the view hsf_public_element_library carries it.
-      required: [code, name]
-      additionalProperties: true
+      description: A Health and Safety File element, one row of the view hsf_public_element_library.
+      required: [section_code, section_name, code, name, duty, universal, citable, awaiting]
+      additionalProperties: false
       properties:
         section_code:
           type: string
@@ -465,7 +582,7 @@ components:
           type: string
         code:
           type: string
-          examples: [HSF-A-01]
+          examples: [HSF-A-01, HSF-OV-MINING-03]
         name:
           type: string
         duty:
@@ -473,101 +590,141 @@ components:
           description: The duty in plain words.
         universal:
           type: boolean
+          description: True for an element every File carries (subject to its trigger); false for an industry overlay element.
         citable:
           type: array
-          description: Short names of citable instruments only.
+          description: >
+            hsf_element_citable (contract 9.3): short names of instruments that
+            are verified, not held, of scope safety or both, and linked with a
+            provision pinned past "awaiting verification". Empty for every
+            element until the Phase 2 re verification.
           items:
             type: string
         awaiting:
           type: array
-          description: Candidate instruments named for this element that are not yet citable (awaiting verification). Never cite these as a basis.
+          description: >
+            Every other pending or verified instrument named for the element,
+            including one under a currency hold. Awaiting verification: never
+            cite these as a basis.
           items:
             type: string
 
     SearchResult:
       type: object
-      required: [kind, name]
-      additionalProperties: true
+      required: [kind, name, code]
+      additionalProperties: false
       properties:
         kind:
           type: string
           enum: [instrument, protocol, role, element]
+          description: Results come in this order of kind, then by name.
         name:
           type: string
+          description: The citable short name, protocol name, role title or element name. An instrument matches on its short name or its full citation.
         code:
           type: [string, 'null']
-          description: Element code or industry code where the kind has one.
+          description: The element code for an element, the industry code for a role, null for an instrument or a protocol.
 
     IndustriesResponse:
       title: r=industries
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Industry'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Industry'
 
     IndustryResponse:
       title: r=industry
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              $ref: '#/components/schemas/IndustryDetail'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          $ref: '#/components/schemas/IndustryDetail'
 
     InstrumentsResponse:
       title: r=instruments
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Instrument'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instrument'
 
     ProtocolsResponse:
       title: r=protocols
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Protocol'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Protocol'
 
     ElementsResponse:
       title: r=elements
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/Element'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Element'
 
     SearchResponse:
       title: r=search
-      allOf:
-        - $ref: '#/components/schemas/Envelope'
-        - type: object
-          required: [data]
-          properties:
-            data:
-              type: array
-              maxItems: 50
-              items:
-                $ref: '#/components/schemas/SearchResult'
+      type: object
+      required: [kernel_release, as_at, notice, data]
+      additionalProperties: false
+      properties:
+        kernel_release:
+          $ref: '#/components/schemas/KernelRelease'
+        as_at:
+          $ref: '#/components/schemas/AsAt'
+        notice:
+          $ref: '#/components/schemas/Notice'
+        data:
+          type: array
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/SearchResult'
 
     Error:
       type: object
@@ -590,3 +747,7 @@ components:
             - server_error
             - unavailable
             - refused
+          description: >
+            refused is the shared mapping for a deliberate refusal raised by a
+            database function (vercel/lib/auth.js); the kernel read functions
+            raise none today.

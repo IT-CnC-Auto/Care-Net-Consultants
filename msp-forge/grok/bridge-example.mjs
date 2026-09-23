@@ -33,13 +33,23 @@
 // Never logged: keys, the question, tool arguments or answers. Errors printed to
 // stderr carry a status and a short reason with any key redacted.
 //
+// What the kernel API returns (KERNEL-API.md section 2, vercel/kernel-api/openapi.yaml):
+// every 200 body is {kernel_release, as_at, notice, data}, passed to Grok as it
+// comes. An unknown industry code answers 404, a malformed argument 400, a bad
+// or revoked key 401, the hourly limit 429; the bridge hands Grok a short plain
+// reason for each. File elements carry an empty citable list until the Phase 2
+// re verification (contract 9.3), so their instruments show under awaiting.
+// The unfiltered element list is longer than MAX_TOOL_RESULT_CHARS and is cut
+// with a note asking for an industry filter.
+//
 // The xAI API details this relies on (OpenAI compatible chat completions at
 // https://api.x.ai/v1/chat/completions, Bearer key, tools of type "function",
 // tool_calls in the reply, tool results sent back with role "tool" and
-// tool_call_id) were confirmed by web search on 23/09/2026 (see KERNEL-API.md
-// section 7). xAI describes chat completions as a legacy endpoint and adds new
-// features to its Responses API first; recheck the xAI documentation before go
-// live.
+// tool_call_id) were read from search engine extracts of the xAI documentation
+// on 23/09/2026; docs.x.ai itself could not be opened from the build
+// environment (KERNEL-API.md section 7). xAI describes chat completions as a
+// legacy endpoint and adds new features to its Responses API first. Read the
+// xAI documentation directly and recheck these details before go live.
 
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';

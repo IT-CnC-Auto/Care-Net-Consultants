@@ -7,11 +7,19 @@
 --   1. msp_instrument_currency_hold: a hold removes an instrument from citation
 --      even while its kernel row still reads verified. A hold only ever tightens.
 --      Seeded for the NIHL Regulations, 2003 and the Environmental Regulations
---      for Workplaces, 1987 wherever those rows are still verified (HSF-7).
---   2. kernel_citable_instrument: the one definition of "citable" (verified
---      through the three gates, not superseded, not held). Public read.
---   3. hsf_public_element_library (SPEC B4.8): the element library with citable
---      bases only and the candidates still awaiting verification. Public read.
+--      for Workplaces, 1987 wherever those rows are still verified (HSF-7), and
+--      for the Asbestos Abatement Regulations, 2020 (HSF-9, contract 9.4).
+--   2. kernel_citable_instrument: the one definition of "citable" for the
+--      register (verified through the three gates, not superseded, not held).
+--      Public read. The public register, industry profile and framework
+--      statistics views are redefined here so that a held instrument leaves
+--      them too (contract 9.4).
+--   3. hsf_element_citable (contract 9.3): the one definition of an instrument
+--      a File element may cite, used by hsf_public_element_library,
+--      hsf_file_detail, kernel_api_elements and the release gate.
+--      hsf_public_element_library (SPEC B4.8): the element library with those
+--      bases only and every other named instrument still awaiting
+--      verification. Public read.
 --   4. msp_api_client and msp_api_call_log: keys are stored as a SHA 256 hash
 --      only; the log holds the client, the resource, the status and the time,
 --      never a request body, a search term or an IP address.
@@ -44,17 +52,20 @@ with seeded as (
       ('NIHL Regulations, 2003',
        'Repealed with effect from 06/09/2026 by the Noise Exposure Regulations, 2024, as recorded in the CNC OHS Industry Kernel (23/09/2026) and in migration 042. Held from citation until the kernel row is superseded (HSF-7).'),
       ('Environmental Regulations for Workplaces, 1987',
-       'Repealed with effect from 06/09/2026 by the Physical Agents Regulations, 2024, as recorded in the CNC OHS Industry Kernel (23/09/2026) and in migration 042. Held from citation until the kernel row is superseded (HSF-7).')
+       'Repealed with effect from 06/09/2026 by the Physical Agents Regulations, 2024, as recorded in the CNC OHS Industry Kernel (23/09/2026) and in migration 042. Held from citation until the kernel row is superseded (HSF-7).'),
+      ('Asbestos Abatement Regulations, 2020',
+       'The amendment notice number conflicts: GN R.2092 against GN R.11435. Held from citation until the amendment reference is verified (register HSF-9).')
     ) as v(short_name, reason)
     join msp_legal_instrument li on li.short_name = v.short_name
    where li.status = 'verified'
   on conflict (instrument_id) do nothing
-  returning instrument_id
+  returning instrument_id, reason
 )
 insert into msp_audit (actor, event_type, event_detail)
 select 'migration_050', 'kernel_currency_hold',
        jsonb_build_object('instruments', jsonb_agg(li.short_name order by li.short_name),
-                          'reason', 'Repealed with effect from 06/09/2026 (HSF-7)')
+                          'holds', jsonb_agg(jsonb_build_object('short_name', li.short_name, 'reason', s.reason)
+                                             order by li.short_name))
   from seeded s join msp_legal_instrument li on li.id = s.instrument_id
 having count(*) > 0;
 
@@ -91,10 +102,111 @@ select li.short_name,
  where li.status = 'verified'
    and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)
  order by li.short_name;
-comment on view kernel_citable_instrument is 'KRN-API-01. Instruments a page, a File or the kernel API may name as a basis: verified three ways, in force, not superseded, not held. Public read on purpose; it carries only what Care Net publishes.';
+comment on view kernel_citable_instrument is 'KRN-API-01. Instruments a page or the kernel API may name as a basis: verified three ways, in force, not superseded, not held. A File element cites through hsf_element_citable, which also needs scope safety or both and a verified provision (contract 9.3). Public read on purpose; it carries only what Care Net publishes.';
 grant select on kernel_citable_instrument to anon, authenticated;
 
--- 3. Public element library (SPEC B4.8) ------------------------------------------------------
+-- Contract 9.4: the published views leave out held instruments too. Same column
+-- lists as migrations 047 (register) and 033 (industry profile, framework
+-- statistics); only the hold predicate is added. The predicate is written inline
+-- because a view's function calls are checked against the caller, and anon may
+-- not execute kernel_instrument_citable. The views run with the owner's rights,
+-- so anon needs no grant on msp_instrument_currency_hold.
+create or replace view msp_public_instrument_register as
+select li.short_name,
+       li.full_citation,
+       li.instrument_type,
+       li.gazette_reference,
+       li.effective_date,
+       li.amendment_history,
+       li.verified_on,
+       li.review_due,
+       (select coalesce(json_agg(json_build_object('code', i.code, 'name', i.name) order by i.name), '[]'::json)
+          from msp_industry_instrument ii
+          join msp_industry i on i.id = ii.industry_id
+         where ii.instrument_id = li.id) as industries,
+       li.scope
+  from msp_legal_instrument li
+ where li.status = 'verified'
+   and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)
+ order by li.short_name;
+comment on view msp_public_instrument_register is
+  'The legislation register as published on the website: verified instruments that are not under a currency hold, with full citation, the industries each applies to and the scope. Anonymous read.';
+grant select on msp_public_instrument_register to anon, authenticated;
+
+create or replace view msp_public_industry_profile as
+select
+  i.code,
+  i.name,
+  i.regulatory_regime as regime,
+  (select count(*) from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustry_count,
+  (select count(*) from msp_job_role r
+     join msp_subindustry s on s.id = r.subindustry_id
+    where s.industry_id = i.id) as role_count,
+  (select coalesce(json_agg(json_build_object('name', s.name, 'roles',
+            (select coalesce(json_agg(r.title order by r.title), '[]'::json)
+               from msp_job_role r where r.subindustry_id = s.id)) order by s.name), '[]'::json)
+     from msp_subindustry s where s.industry_id = i.id and s.selectable) as subindustries,
+  (select coalesce(json_agg(json_build_object('name', li.short_name, 'note', ii.applicability_note)
+            order by li.short_name), '[]'::json)
+     from msp_industry_instrument ii
+     join msp_legal_instrument li on li.id = ii.instrument_id
+    where ii.industry_id = i.id and li.status = 'verified'
+      and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)) as instruments,
+  (select coalesce(json_agg(distinct h.name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_hazard h on h.id = jh.hazard_id
+    where s.industry_id = i.id) as hazards,
+  (select coalesce(json_agg(distinct tp.test_name), '[]'::json)
+     from msp_job_hazard jh
+     join msp_job_role r on r.id = jh.job_role_id
+     join msp_subindustry s on s.id = r.subindustry_id
+     join msp_test_protocol tp on tp.hazard_id = jh.hazard_id
+    where s.industry_id = i.id) as protocols
+from msp_industry i;
+comment on view msp_public_industry_profile is
+  'Public marketing surface for the website industry pages. Aggregate, non clinical, no client data; instruments are verified and not under a currency hold. Readable by anon on purpose.';
+grant select on msp_public_industry_profile to anon, authenticated;
+
+create or replace view msp_public_framework_stats as
+select
+  (select semver from msp_kernel_version order by released_on desc, semver desc limit 1) as version,
+  (select count(*) from msp_legal_instrument li
+    where li.status = 'verified'
+      and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)) as instruments,
+  (select count(*) from msp_industry) as industries,
+  (select count(*) from msp_subindustry where selectable) as subindustries,
+  (select count(*) from msp_job_role) as roles,
+  (select count(*) from msp_test_protocol) as protocols;
+comment on view msp_public_framework_stats is
+  'Public marketing statistics for the website. Aggregate only; the instrument count leaves out held instruments. Readable by anon on purpose.';
+grant select on msp_public_framework_stats to anon, authenticated;
+
+-- 3. File citations and the public element library (contract 9.3, SPEC B4.8) -------------------
+
+create or replace function hsf_element_citable(p_element_id uuid)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(jsonb_agg(distinct li.short_name order by li.short_name), '[]'::jsonb)
+    from hsf_element_instrument ei
+    join msp_legal_instrument li on li.id = ei.instrument_id
+   where ei.element_id = p_element_id
+     and li.status = 'verified'
+     and li.scope in ('safety','both')
+     and lower(btrim(ei.provision)) <> 'awaiting verification'
+     and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id);
+$$;
+comment on function hsf_element_citable is 'Contract 9.3. The one definition of what a Health and Safety File element may cite: instruments that are verified (never superseded), not under a currency hold, of scope safety or both, and linked with a provision pinned past ''awaiting verification''. Returns the short names as a json array. Used by hsf_public_element_library, hsf_file_detail, kernel_api_elements and hsf_release_gate. Until the Phase 2 re verification every element shows its instruments as awaiting verification, which is the truthful state.';
+-- The public views call it, and a view's function calls are checked against the
+-- caller, so anon and authenticated may execute it. It returns published short
+-- names only.
+revoke execute on function hsf_element_citable(uuid) from public;
+grant execute on function hsf_element_citable(uuid) to anon, authenticated, service_role;
 
 create or replace view hsf_public_element_library as
 select e.section_code,
@@ -103,24 +215,19 @@ select e.section_code,
        e.name,
        e.duty,
        e.universal,
-       (select coalesce(json_agg(distinct li.short_name order by li.short_name), '[]'::json)
-          from hsf_element_instrument ei
-          join msp_legal_instrument li on li.id = ei.instrument_id
-         where ei.element_id = e.id
-           and li.status = 'verified'
-           and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id)) as citable,
+       c.citable::json as citable,
        (select coalesce(json_agg(distinct li.short_name order by li.short_name), '[]'::json)
           from hsf_element_instrument ei
           join msp_legal_instrument li on li.id = ei.instrument_id
          where ei.element_id = e.id
            and li.status in ('pending','verified')
-           and not (li.status = 'verified'
-                    and not exists (select 1 from msp_instrument_currency_hold h where h.instrument_id = li.id))) as awaiting
+           and not (c.citable ? li.short_name)) as awaiting
   from hsf_element e
   join hsf_section s on s.code = e.section_code
+  cross join lateral (select hsf_element_citable(e.id) as citable) c
  where e.status = 'active'
  order by s.ordinal, e.code;
-comment on view hsf_public_element_library is 'SPEC B4.8. The Health and Safety File element library: section, name, duty, the short names of citable instruments only, and the candidates named for the element that are still awaiting verification (never to be cited as a basis). No client data. Public read on purpose.';
+comment on view hsf_public_element_library is 'SPEC B4.8 and contract 9.3. The Health and Safety File element library: section, name, duty, the instruments the element may cite (hsf_element_citable) and every other instrument named for it that is still awaiting verification (never to be cited as a basis). No client data. Public read on purpose.';
 grant select on hsf_public_element_library to anon, authenticated;
 
 -- 4. API clients and the call log -------------------------------------------------------------

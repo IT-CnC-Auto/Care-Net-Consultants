@@ -22,8 +22,11 @@
  THE LAW BEHIND YOUR PLAN (section 5): the industries covered and every
  verified instrument, with full citation, gazette reference, verification
  date and next review, read live from msp_public_instrument_register and
- msp_public_industry_profile. Downloads: the register as PDF (static, dated
- release) and as CSV (built from the live view when clicked).
+ msp_public_industry_profile. Download: the register as CSV, built from the
+ live view when clicked, never from a file on disk. The static release 1.0.0
+ PDF and CSV are no longer offered: they show the NIHL Regulations, 2003 and
+ the Environmental Regulations for Workplaces, 1987, repealed from 06/09/2026,
+ as current. A new dated release follows the kernel update (HSF-7).
 
  HARD RULES: SA British English, ZAR as R4 250,00, no dashes or hyphens in
  copy, staff are sales executives, only the verified WhatsApp number
@@ -358,11 +361,10 @@
     <div class="card">
       <h2>Downloads</h2>
       <div class="dl">
-        <a href="/downloads/CNC-Legislation-Register-v1.0.0.pdf" download data-cta="download_register_pdf"><b>PDF</b><span>Legislation register<small>Every instrument with its full citation, gazette reference, verification date and next review</small></span></a>
-        <a href="/downloads/CNC-Legislation-Register-v1.0.0.csv" id="dl-csv" data-cta="download_register_csv"><b>CSV</b><span>Register as a spreadsheet<small>Built from the live framework the moment you click</small></span></a>
+        <a href="#law" id="dl-csv" data-cta="download_register_csv"><b>CSV</b><span>Register as a spreadsheet<small>Built from the live framework the moment you click</small></span></a>
         <a href="/sample.html" data-cta="view_sample_plan"><b>PLAN</b><span>Sample Plan<small>See how the register is applied in a finished Plan, for your own industry</small></span></a>
       </div>
-      <p class="regnote">Release 1.0.0 of the register, as at 20 September 2026. The table below is read live and is the version the engine drafts from today.</p>
+      <p class="regnote">The table below is read live from the framework. The Noise Exposure Regulations, 2024 and the Physical Agents Regulations, 2024 replaced the Noise Induced Hearing Loss Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 from 6 September 2026. The Plan engine is being updated to cite the new Regulations, and every Plan is reviewed by our Occupational Medical Practitioner before release. A new dated release of the register will follow that update.</p>
     </div>
     <div class="card">
       <h2>The industries covered</h2>
@@ -492,9 +494,14 @@
       el('reg-rows').innerHTML = '<tr><td colspan="3" class="regnote">The register could not be reached. Please try again shortly.</td></tr>';
     });
 
+  var csvNote = el('dl-csv').querySelector('small'), csvNoteText = csvNote ? csvNote.textContent : '';
   el('dl-csv').addEventListener('click', function (ev) {
-    if (!rows) return; /* the live view is not here yet, so the dated file on disk downloads instead */
     ev.preventDefault();
+    if (!rows) { /* the live view is not here yet; never fall back to a stale file */
+      if (csvNote) csvNote.textContent = 'The live register has not loaded yet. Please try again shortly.';
+      return;
+    }
+    if (csvNote) csvNote.textContent = csvNoteText;
     var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
     var head = ['Instrument', 'Full citation', 'Type', 'Gazette reference', 'Effective', 'Verified on', 'Next review', 'Currency note', 'Applies to industries'];
     var lines = [head.map(q).join(',')].concat(rows.map(function (r) {

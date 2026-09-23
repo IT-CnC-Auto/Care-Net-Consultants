@@ -16,18 +16,20 @@
  The Care Net login portal for CNC HSF FORGE (hsf/BUILD-CONTRACT.md
  section 6, "portal"). It joins the two spines behind one sign in:
 
-   COMMERCIAL SPINE (Care Net)
-     1. Company account and approval state   GET /api/company-lookup
-        (the existing endpoint index.html uses; see the note below)
-     2. Medical Surveillance Plans            the assessment link from
-        company-lookup; Plan status in the portal is PENDING (no read
-        endpoint exists), so the page links to the existing journey at
-        ./ and account.html
-     3. Health and Safety Files               GET /api/hsf-file and
-        GET /api/hsf-file?file_id= (newest File only, for the section
-        breakdown); links to hsf-builder.html
-     4. Quotations                            PENDING (no read endpoint);
-        links to shop.html
+   COMMERCIAL SPINE (Care Net): one read, GET /api/portal-summary
+   (contract 9.8, hsf_portal_summary: read only, mints no token)
+     1. Company account and approval state   summary.account
+     2. Medical Surveillance Plans            summary.plans, each with its
+        status; links to the journey at ./ and to shop.html
+     3. Health and Safety Files               summary.files, each with its
+        compliance figure and the three sign off rows of its current
+        revision; GET /api/hsf-file?file_id= adds the section breakdown
+        of the newest File (optional, quiet on failure); links to
+        hsf-builder.html
+     4. Quotations                            summary.quotes; links to
+        shop.html
+   Industry names come from the anonymous public view
+   msp_public_industry_profile (optional: the code shows without it).
 
    MEDICAL SPINE (MyClinicOnline)
      Certificates of fitness, training records and bookings. The MCO
@@ -49,12 +51,16 @@
  every setting (Supabase, API base, WhatsApp, privacy policy, MCO
  portal address) is read from window.CNC_CONFIG (js/cnc-config.js).
 
- NOTE ON company-lookup: that endpoint also runs
- msp_client_start_assessment, which self approves a non declined
- account and reuses or mints the single use assessment token (the MD
- ruling of 31/08/2026). The portal therefore behaves exactly like the
- signed in landing page. A read only account endpoint would be cleaner;
- recorded as an open item for the build.
+ NOTE: the portal does not call /api/company-lookup. That endpoint also
+ runs msp_client_start_assessment, which self approves an account and
+ reuses or mints the single use assessment token; the portal only reads.
+ The Plan assessment itself opens from the landing page (./).
+
+ MYCLINICONLINE TRANSFER: hsf.mco_transfer_mode is 'hold' until HSF-3
+ closes, so the documents card describes the transfer to MyClinicOnline
+ and the removal from staging as what happens once MyClinicOnline is
+ connected. Restore the present tense together with the builder's
+ notices when live transfer is switched on.
 
  HARD RULES: SA British English, ZAR as R4 250,00, no dashes in copy,
  sales executives, numbering from 1, never a compliance stamp, Care Net
@@ -175,6 +181,10 @@
   .bar { height: 10px; background: var(--grey-bg); border-radius: 6px; overflow: hidden; margin: 6px 0 8px; }
   .bar i { display: block; height: 100%; background: var(--green); width: 0; }
   .fsign { font-size: 13px; margin: 6px 0 0; line-height: 1.5; }
+  .signs { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13px; }
+  .signs li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; justify-content: space-between; padding: 6px 0; border-top: 1px solid #f0eded; }
+  .signs .sk { min-width: 0; overflow-wrap: break-word; }
+  .fpct b.zar { white-space: nowrap; font-size: 20px; }
   .card .fsign { font-size: 13px; }
   .counts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   details.bysec { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 8px; }
@@ -373,7 +383,7 @@
       </div>
       <div class="card" id="c-plans">
         <div class="chead"><span class="ico" data-asset="portal-plans-icon" aria-hidden="true">PL</span><h3 class="ct">Medical Surveillance Plans</h3></div>
-        <div id="plans-body"><p class="muted">Sign in to see your Medical Surveillance Plan assessment and where your Plan stands.</p></div>
+        <div id="plans-body"><p class="muted">Sign in to see your Medical Surveillance Plans and where each one stands.</p></div>
         <div class="row">
           <a class="btn ghost sm inl" href="shop.html" data-cta="build_my_plan">Build my Plan</a>
           <a class="btn plain sm inl" href="./" data-cta="portal_plan_journey">Start your journey</a>
@@ -400,9 +410,7 @@
     <div class="grid">
       <div class="card" id="c-quotes">
         <div class="chead"><span class="ico" data-asset="portal-quotes-icon" aria-hidden="true">QU</span><h3 class="ct">Quotations</h3></div>
-        <div id="quotes-body">
-          <p class="pending"><b>Quotations in the portal: pending.</b> The quotations prepared for you will be listed here with their reference, what they cover and how long they are valid. Until then, a sales executive sends each quotation to you directly and confirms every figure before work starts.</p>
-        </div>
+        <div id="quotes-body"><p class="muted">Sign in to see the quotations prepared for you, with their reference, what they cover, the price and how long they are valid.</p></div>
         <div class="row">
           <a class="btn ghost sm inl" href="shop.html#calc" data-cta="portal_quote_calc">Work out my practitioner review</a>
           <a class="btn plain sm inl" data-wa href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
@@ -410,7 +418,8 @@
       </div>
       <div class="card" id="c-docs">
         <div class="chead"><span class="ico" data-asset="portal-documents-icon" aria-hidden="true">DO</span><h3 class="ct">Your documents</h3></div>
-        <p>Drop the documents you already hold into your File, section by section and department by department. You give consent first. Each document is fingerprinted in your browser, held securely by Care Net, then transferred to MyClinicOnline, where special personal information is protected, and removed from Care Net staging.</p>
+        <p>Drop the documents you already hold into your File, section by section and department by department. You give consent first. Each document is fingerprinted in your browser and held securely in Care Net&rsquo;s staging environment.</p>
+        <p class="pending">MyClinicOnline is not connected to the File builder yet. Once it is, each document transfers to MyClinicOnline, where special personal information is protected, and the staging copy is deleted only after MyClinicOnline confirms it has received an identical file.</p>
         <a class="btn sm inl" href="hsf-builder.html#build" data-cta="build_my_file">Build my File</a>
       </div>
     </div>
@@ -616,20 +625,20 @@
   },
   {
    "id": "portal-pattern",
-   "block": "Pattern strip under the hero",
-   "purpose": "The shared Care Net Africa pattern strip.",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
    "type": "pattern",
-   "formats": ["png"],
-   "width": 1200,
-   "height": null,
-   "ratio": null,
-   "max_kb": 60,
-   "colour": "Brand pattern",
-   "alt": "Decorative pattern, no alternative text",
+   "formats": ["png", "webp"],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
    "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
    "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
    "status": "existing",
-   "notes": "Loaded by css/cnc-pattern.css, shown 48 px high and tiled across the page (repeat x). The source file is 1200 px wide; its pixel height is not confirmed here (pending). No change needed."
+   "notes": "Set by css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
   },
   {
    "id": "portal-signin-illustration",
@@ -668,7 +677,7 @@
   {
    "id": "portal-account-icon",
    "block": "Company and Files: Company account card",
-   "purpose": "Icon at the head of the Company account card (company name, approval and service level agreement).",
+   "purpose": "Icon at the head of the Company account card (company name and whether the account is approved).",
    "type": "icon",
    "formats": ["svg"],
    "width": 96,
@@ -986,7 +995,33 @@ const ACCOUNT_KIND = {
   applicant: ['wait', 'Awaiting approval'],
   declined: ['no', 'Not approved']
 };
-const SLA = { active_sla: 'Active service level agreement', none: 'None on record' };
+/* msp_engagement.status (migration 005), in plain words. */
+const PLAN_STATUS = {
+  intake: ['blue', 'Received', 'Your assessment has been received and your Plan is being drafted.'],
+  triage: ['wait', 'Details to confirm', 'A sales executive will contact you to confirm some details before your Plan is drafted.'],
+  classifying: ['blue', 'Being drafted', 'Your Plan is being drafted.'],
+  drafting: ['blue', 'Being drafted', 'Your Plan is being drafted.'],
+  validating: ['blue', 'Being checked', 'Your draft Plan is being checked before review.'],
+  omp_queue: ['blue', 'In review', 'Waiting for review and sign off by the Occupational Medical Practitioner.'],
+  approved: ['ok', 'Approved', 'Approved and waiting to be released.'],
+  released: ['ok', 'Released', 'Signed off by the Occupational Medical Practitioner and released.'],
+  rejected: ['no', 'Not approved', 'A sales executive can tell you what happens next.'],
+  archived: ['grey', 'Archived', 'No longer in use.']
+};
+/* msp_package (migration 031). */
+const PACKAGE = {
+  DRAFT_PLAN: 'Medical Surveillance Plan, working draft',
+  SIGNED_PLAN: 'Medical Surveillance Plan, reviewed and signed by an Occupational Medical Practitioner'
+};
+const PRICE_STATUS = { indicative: ['wait', 'Indicative'], firm: ['ok', 'Firm'] };
+/* hsf_signoff (migration 047): the three sign offs a release needs (SPEC B11.2). */
+const SIGNOFF_ORDER = ['safety_content', 'omp_medical', 'client_16_2_acceptance'];
+const SIGNOFF_LABEL = {
+  safety_content: 'Health and Safety Manager, safety content',
+  omp_medical: 'Occupational Medical Practitioner, medical section',
+  client_16_2_acceptance: 'Your section 16(2) appointee, acceptance'
+};
+const DECISION = { approved: ['ok', 'Approved'], amended: ['blue', 'Amended'], rejected: ['no', 'Not approved'] };
 const COUNT_LABEL = { linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
 const COUNT_CLASS = { linked_mco: 'mco', uploaded: 'ok', outstanding: 'wait', expired: 'no', not_applicable: 'grey' };
 
@@ -1003,6 +1038,15 @@ const dmy = (d) => {
 const words = (s) => String(s || '').replace(/_/g, ' ');
 const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
 const band = (p) => (p == null ? '' : (p >= 80 ? '' : (p >= 50 ? 'mid' : 'low')));
+/* Rand as R4 250,00: a space between thousands and a decimal comma. */
+const fmtZar = (v) => {
+  const n = Number(v);
+  if (v == null || v === '' || !isFinite(n) || n < 0) return null;
+  const parts = n.toFixed(2).split('.');
+  return 'R' + parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + parts[1];
+};
+const todayIso = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const dot = ' <span aria-hidden="true">&middot;</span> ';
 
 let liveTimer = null;
 function announce(msg) {
@@ -1052,76 +1096,124 @@ function applyConfig() {
 async function api(path) {
   return withTimeout(auth.apiFetch(path), 20000);
 }
+/* Industry names for the codes in the summary, from the anonymous public view
+   the other pages use. Optional: without it the code is shown. */
+const INDUSTRY_NAMES = {};
+let namesLoaded = false;
+async function loadIndustryNames() {
+  const base = httpsUrl(CFG.supabaseUrl), key = typeof CFG.publishableKey === 'string' ? CFG.publishableKey : '';
+  if (namesLoaded || !base || !key) return;
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), 5000);
+  try {
+    const r = await fetch(base.replace(/\/+$/, '') + '/rest/v1/msp_public_industry_profile?select=code,name', { headers: { apikey: key, Authorization: 'Bearer ' + key }, signal: ctl.signal, credentials: 'omit' });
+    if (!r.ok) return;
+    const list = await r.json();
+    if (Array.isArray(list)) list.forEach((x) => { if (x && x.code && x.name) INDUSTRY_NAMES[x.code] = String(x.name); });
+    namesLoaded = true;
+  } catch (_) { /* the codes stand in */ } finally { clearTimeout(t); }
+}
+const industryName = (code) => (code && INDUSTRY_NAMES[code]) || code || '';
 
 /* ============================================================ commercial: signed out */
 function renderSignedOut() {
   $('account-body').innerHTML = '<p class="muted">Sign in to see your company account and whether it is approved.</p>';
-  $('plans-body').innerHTML = '<p class="muted">Sign in to see your Medical Surveillance Plan assessment and where your Plan stands.</p>';
+  $('plans-body').innerHTML = '<p class="muted">Sign in to see your Medical Surveillance Plans and where each one stands.</p>';
   $('files-body').innerHTML = '<p class="muted">Sign in to see your Health and Safety Files, their compliance figures and where each one is in review and sign off.</p>';
+  $('quotes-body').innerHTML = '<p class="muted">Sign in to see the quotations prepared for you, with their reference, what they cover, the price and how long they are valid.</p>';
   $('files-empty').hidden = true;
   $('staff').hidden = true;
 }
 
-/* ============================================================ commercial: account and Plans */
-function relAssess(url) {
-  /* The endpoint returns an absolute link built from the request host; the
-     portal keeps only the token so the link stays relative (MCO hosting). */
-  try {
-    const u = new URL(url, location.href);
-    const t = u.searchParams.get('token');
-    if (/\/assess(\.html)?$/.test(u.pathname) && t && /^[A-Za-z0-9_.~-]{8,200}$/.test(t)) return 'assess.html?token=' + encodeURIComponent(t);
-  } catch (_) { /* not a usable link */ }
-  return null;
-}
-function planPendingNote() {
-  return '<p class="pending"><b>Plan status in the portal: pending.</b> The review and sign off status of each Plan will show here once the portal can read it. Until then, <a class="inline" href="account.html" data-cta="portal_open_account">your account page</a> opens your Plan assessment, and a sales executive can tell you where your Plan stands.</p>';
-}
-function renderAccount(r, email) {
-  const acc = $('account-body'), plans = $('plans-body');
-  if (!r || typeof r !== 'object') throw new Error('bad account reply');
-  if (!r.found) {
-    acc.innerHTML = '<p>You are signed in as <b>' + esc(email || 'your email') + '</b>, but this email is not linked to a company account with Care Net yet.</p>'
+/* ============================================================ commercial: account */
+function renderAccount(acc, email) {
+  const el = $('account-body');
+  if (!acc) {
+    el.innerHTML = '<p>You are signed in as <b>' + esc(email || 'your email') + '</b>, but this email is not linked to a company account with Care Net yet.</p>'
       + '<a class="btn sm inl" href="./" data-cta="portal_register_company">Register my company</a>';
-    plans.innerHTML = '<p>Register your company first, and your Medical Surveillance Plan assessment opens straight away.</p>' + planPendingNote();
     return;
   }
-  const kindKey = r.declined ? 'declined' : r.account_kind;
-  const kind = ACCOUNT_KIND[kindKey] || ['grey', 'Pending'];
-  acc.innerHTML = '<dl class="kv">'
-    + '<div><dt>Company</dt><dd>' + esc(r.company_name || 'Not on record') + '</dd></div>'
-    + '<div><dt>Account</dt><dd><span class="pill ' + kind[0] + '">' + esc(kind[1]) + '</span></dd></div>'
-    + '<div><dt>Service level agreement</dt><dd>' + esc(SLA[r.sla_status] || 'Pending') + '</dd></div>'
-    + '<div><dt>Signed in as</dt><dd>' + esc(email || r.email || '') + '</dd></div>'
+  const kind = ACCOUNT_KIND[acc.account_kind] || ['grey', 'Status pending'];
+  const since = acc.account_kind === 'approved_client' ? dmy(acc.approved_at) : '';
+  el.innerHTML = '<dl class="kv">'
+    + '<div><dt>Company</dt><dd>' + esc(acc.company_name || 'Not on record') + '</dd></div>'
+    + '<div><dt>Account</dt><dd><span class="pill ' + kind[0] + '">' + esc(kind[1]) + '</span>' + (since ? ' <span class="muted">since ' + esc(since) + '</span>' : '') + '</dd></div>'
+    + '<div><dt>Signed in as</dt><dd>' + esc(email || '') + '</dd></div>'
     + '</dl>'
-    + (kindKey === 'declined'
-      ? '<p class="errbox">Please contact Care Net about your account status before starting an assessment.</p><a class="btn ghost sm inl" href="' + esc(WA_URL) + '" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>'
-      : '<a class="btn plain sm inl" href="account.html" data-cta="portal_open_account">Open my account</a>');
+    + (acc.account_kind === 'declined'
+      ? '<p class="errbox">Please contact Care Net about your account status before starting an assessment or a File.</p><a class="btn ghost sm inl" href="' + esc(WA_URL) + '" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>'
+      : '');
+}
 
-  if (kindKey === 'declined') {
-    plans.innerHTML = '<p>Your Plan assessment opens once your account status is settled with a sales executive.</p>' + planPendingNote();
+/* ============================================================ commercial: Plans */
+function planRow(p) {
+  const st = PLAN_STATUS[p.status] || ['grey', words(p.status) || 'Status pending', ''];
+  const made = dmy(p.created_at);
+  return '<li class="frow">'
+    + '<div class="ftop"><b class="mono ref">' + esc(p.reference || 'Reference pending') + '</b><span class="pill ' + st[0] + '">' + esc(st[1]) + '</span></div>'
+    + '<div class="fmeta">' + [esc(industryName(p.industry_code)), p.revision != null ? 'Revision ' + esc(p.revision) : '', made ? 'Received ' + esc(made) : ''].filter(Boolean).join(dot) + '</div>'
+    + (st[2] ? '<p class="fsign">' + esc(st[2]) + '</p>' : '')
+    + '</li>';
+}
+function renderPlans(plans, acc) {
+  const el = $('plans-body');
+  if (!acc) {
+    el.innerHTML = '<p>Register your company first, and your Medical Surveillance Plan assessment opens straight away.</p>';
     return;
   }
-  const link = r.assessment_url ? relAssess(r.assessment_url) : null;
-  plans.innerHTML = (link
-      ? '<p>Your Medical Surveillance Plan assessment is open. Start it, or carry on from where you stopped.</p><a class="btn sm inl" href="' + esc(link) + '" data-cta="portal_open_assessment">Open my Plan assessment</a>'
-      : '<p>Your Plan assessment link is not available just now. <a class="inline" href="./" data-cta="portal_plan_journey">Start your journey</a> opens it.</p>')
-    + '<div style="margin-top:12px">' + planPendingNote() + '</div>';
-}
-async function loadAccount(email) {
-  busy($('account-body'), 'Checking your company account.');
-  busy($('plans-body'), 'Checking your Plan assessment.');
-  try {
-    const r = await api('/api/company-lookup');
-    renderAccount(r, email);
-  } catch (e) {
-    if (e && e.status === 401) throw e;
-    const msg = friendly(e, 'Your company account could not be loaded just now. Please try again shortly.');
-    $('account-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="account" data-cta="portal_retry_account">Try again</button>';
-    $('plans-body').innerHTML = '<p class="muted">Your Plan status appears once your account loads.</p>' + planPendingNote();
+  const lead = acc.account_kind === 'declined'
+    ? '<p>Your Plan assessment opens once your account status is settled with a sales executive.</p>'
+    : '';
+  if (!plans.length) {
+    el.innerHTML = lead + (acc.account_kind === 'declined' ? '' : '<p><b>No Medical Surveillance Plan yet.</b> Start your journey to open your Plan assessment, or build your Plan in the shop.</p>');
+    return;
   }
+  el.innerHTML = lead + '<p class="muted">' + plural(plans.length, 'Plan', 'Plans') + ' for your company, newest first.</p>'
+    + '<ul class="files">' + plans.map(planRow).join('') + '</ul>';
+}
+
+/* ============================================================ commercial: quotations */
+function quoteRow(q) {
+  const price = fmtZar(q.price_zar);
+  const ps = PRICE_STATUS[q.price_status] || ['grey', words(q.price_status) || 'Price status pending'];
+  const until = dmy(q.valid_until);
+  const lapsed = !!(q.valid_until && String(q.valid_until).slice(0, 10) < todayIso());
+  const made = dmy(q.created_at);
+  return '<li class="frow">'
+    + '<div class="ftop"><b class="mono ref">' + esc(q.quote_reference || 'Reference pending') + '</b><span class="pill ' + ps[0] + '">' + esc(ps[1]) + '</span></div>'
+    + '<div class="fmeta">' + esc(PACKAGE[q.package_code] || words(q.package_code) || 'Package not recorded') + '</div>'
+    + '<div class="fpct"><span>Quoted price</span><b class="' + (price ? 'zar' : 'none') + '">' + esc(price || 'Not recorded') + '</b></div>'
+    + '<p class="fsign">' + [until ? (lapsed ? 'Validity ended ' : 'Valid until ') + esc(until) : '', made ? 'Prepared ' + esc(made) : ''].filter(Boolean).join(dot) + '</p>'
+    + '</li>';
+}
+function renderQuotes(quotes, acc) {
+  const el = $('quotes-body');
+  if (!acc) {
+    el.innerHTML = '<p class="muted">Quotations appear here once your email is linked to a company account with Care Net.</p>';
+    return;
+  }
+  if (!quotes.length) {
+    el.innerHTML = '<p>No quotations on record for your company email yet. Work out your practitioner review in the shop, or ask a sales executive for a quotation.</p>';
+    return;
+  }
+  el.innerHTML = '<ul class="files">' + quotes.map(quoteRow).join('') + '</ul>'
+    + '<p class="muted" style="margin-top:12px">A sales executive confirms every figure before work starts.</p>';
 }
 
 /* ============================================================ commercial: Files */
+function signoffRows(f) {
+  const rows = Array.isArray(f.signoffs) ? f.signoffs.filter((r) => r && typeof r === 'object') : [];
+  return '<ul class="signs" aria-label="Sign off for revision ' + esc(f.revision != null ? f.revision : '') + ' of ' + esc(f.reference || 'this File') + '">'
+    + SIGNOFF_ORDER.map((k) => {
+      const mine = rows.filter((r) => r.kind === k);
+      const decided = mine.filter((r) => r.decision);
+      const r = decided.length ? decided[decided.length - 1] : mine[0];
+      const st = !r ? ['grey', 'Not started'] : (r.decision ? (DECISION[r.decision] || ['grey', words(r.decision)]) : ['wait', 'Awaiting decision']);
+      const when = r && r.decision ? dmy(r.decided_at) : '';
+      return '<li><span class="sk">' + esc(SIGNOFF_LABEL[k]) + '</span><span><span class="pill ' + st[0] + '">' + esc(st[1]) + '</span>' + (when ? ' <span class="muted">' + esc(when) + '</span>' : '') + '</span></li>';
+    }).join('')
+    + '</ul>';
+}
 function fileRow(f) {
   const st = f.demo
     ? ['grey', 'Demonstration', 'The sample carries no review or sign off record. In your portal this line shows where your File is in review and sign off.']
@@ -1130,10 +1222,11 @@ function fileRow(f) {
   const made = dmy(f.created_at);
   return '<li class="frow">'
     + '<div class="ftop"><b class="mono ref">' + esc(f.reference || 'Reference pending') + '</b><span class="pill ' + st[0] + '">' + esc(st[1]) + '</span></div>'
-    + '<div class="fmeta">' + [esc(f.industry_name || f.industry_code || ''), f.revision != null ? 'Revision ' + esc(f.revision) : '', made ? 'Started ' + esc(made) : ''].filter(Boolean).join(' <span aria-hidden="true">&middot;</span> ') + '</div>'
+    + '<div class="fmeta">' + [esc(f.industry_name || industryName(f.industry_code)), f.revision != null ? 'Revision ' + esc(f.revision) : '', made ? 'Started ' + esc(made) : ''].filter(Boolean).join(dot) + '</div>'
     + '<div class="fpct"><span>Compliance figure</span><b' + (pct ? '' : ' class="none"') + '>' + esc(pct || 'Not worked out yet') + '</b></div>'
     + '<div class="bar" aria-hidden="true"><i style="width:' + clampPct(f.compliance_pct) + '%"></i></div>'
     + '<p class="fsign"><b>Review and sign off:</b> ' + esc(st[2]) + '</p>'
+    + (f.demo ? '' : signoffRows(f))
     + '</li>';
 }
 function sectionBars(title, sections, open) {
@@ -1148,39 +1241,53 @@ function sectionBars(title, sections, open) {
 }
 function renderFiles(list) {
   const body = $('files-body');
-  if (!Array.isArray(list)) throw new Error('bad files reply');
   if (!list.length) {
     body.innerHTML = '';
     $('files-empty').hidden = false;
     return [];
   }
   $('files-empty').hidden = true;
-  const sorted = list.slice().sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
-  body.innerHTML = '<p class="muted">' + plural(sorted.length, 'File', 'Files') + ' for your company. The compliance figure counts every element that applies; an element set not applicable with a reason leaves the count.</p>'
-    + '<ul class="files">' + sorted.map(fileRow).join('') + '</ul><div id="files-detail"></div>';
-  return sorted;
+  body.innerHTML = '<p class="muted">' + plural(list.length, 'File', 'Files') + ' for your company, newest first. The compliance figure counts every element that applies; an element set not applicable with a reason leaves the count. Sign off is shown for the current revision of each File.</p>'
+    + '<ul class="files">' + list.map(fileRow).join('') + '</ul><div id="files-detail"></div>';
+  return list;
 }
-async function loadFiles() {
+
+/* ============================================================ commercial: one read */
+async function loadSummary(email) {
+  busy($('account-body'), 'Checking your company account.');
+  busy($('plans-body'), 'Loading your Medical Surveillance Plans.');
   busy($('files-body'), 'Loading your Health and Safety Files.');
+  busy($('quotes-body'), 'Loading your quotations.');
   $('files-empty').hidden = true;
-  let files;
+  let sum;
   try {
-    files = renderFiles(await api('/api/hsf-file'));
+    const out = await Promise.all([api('/api/portal-summary'), loadIndustryNames()]);
+    sum = out[0];
+    if (!sum || typeof sum !== 'object' || Array.isArray(sum)) throw new Error('bad summary reply');
   } catch (e) {
     if (e && e.status === 401) throw e;
-    const msg = friendly(e, 'Your Health and Safety Files could not be loaded just now. Please try again shortly.');
-    $('files-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="files" data-cta="portal_retry_files">Try again</button>';
-    return;
+    const msg = friendly(e, 'Your company records could not be loaded just now. Please try again shortly.');
+    $('account-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="summary" data-cta="portal_retry_summary">Try again</button>';
+    ['plans-body', 'files-body', 'quotes-body'].forEach((id) => { $(id).innerHTML = '<p class="muted">This appears once your company records load.</p>'; });
+    return false;
   }
+  const acc = sum.account && typeof sum.account === 'object' ? sum.account : null;
+  const list = (v) => (Array.isArray(v) ? v.filter((x) => x && typeof x === 'object') : []);
+  renderAccount(acc, email);
+  renderPlans(list(sum.plans), acc);
+  renderQuotes(list(sum.quotes), acc);
+  const files = renderFiles(list(sum.files));
   /* The section breakdown for the newest File. Optional: the list above
-     already stands on its own, so a failure here is quiet. */
-  const newest = files && files[0];
-  if (!newest || !newest.file_id) return;
-  try {
-    const d = await api('/api/hsf-file?file_id=' + encodeURIComponent(newest.file_id));
-    const host = $('files-detail');
-    if (host && d && Array.isArray(d.sections)) host.innerHTML = sectionBars(newest.reference || 'your newest File', d.sections);
-  } catch (_) { /* the list is enough */ }
+     already stands on its own, so a failure (or a 404) here is quiet. */
+  const newest = files[0];
+  if (newest && newest.file_id) {
+    try {
+      const d = await api('/api/hsf-file?file_id=' + encodeURIComponent(newest.file_id));
+      const host = $('files-detail');
+      if (host && d && Array.isArray(d.sections)) host.innerHTML = sectionBars(newest.reference || 'your newest File', d.sections);
+    } catch (_) { /* the list is enough */ }
+  }
+  return true;
 }
 
 /* ============================================================ staff */
@@ -1223,9 +1330,11 @@ function wireSignin() {
   document.addEventListener('click', (ev) => {
     const t = ev.target && ev.target.closest ? ev.target.closest('[data-reload]') : null;
     if (!t || DEMO) return;
-    const what = t.getAttribute('data-reload');
-    const run = what === 'account' ? loadAccount(S.email) : loadFiles();
-    run.catch((e) => { if (e && e.status === 401) toSignin(); });
+    loadSummary(S.email).then((ok) => {
+      if (ok) announce('Your company records are up to date.');
+      const f = $('c-account').querySelector('button, a[href], [tabindex]');
+      if (f) f.focus();
+    }).catch((e) => { if (e && e.status === 401) toSignin(); });
   });
 }
 
@@ -1254,11 +1363,15 @@ async function startLive() {
   $('acct-email').textContent = S.email || 'your Care Net account';
   show('st-account');
   renderStaff(user);
-  const results = await Promise.allSettled([loadAccount(S.email), loadFiles()]);
-  if (results.some((r) => r.status === 'rejected' && r.reason && r.reason.status === 401)) {
-    toSignin();
-    announce('Your sign in has expired. Please sign in again.');
-    return;
+  try {
+    await loadSummary(S.email);
+  } catch (e) {
+    if (e && e.status === 401) {
+      toSignin();
+      announce('Your sign in has expired. Please sign in again.');
+      return;
+    }
+    throw e;
   }
   announce('Your portal is ready.');
 }
@@ -1308,10 +1421,9 @@ function renderDemoCommercial(s) {
   $('account-body').innerHTML = '<dl class="kv">'
     + '<div><dt>Company</dt><dd>' + esc(s.company) + '</dd></div>'
     + '<div><dt>Account</dt><dd><span class="pill grey">Demonstration only</span></dd></div>'
-    + '<div><dt>Service level agreement</dt><dd>Not part of the sample</dd></div>'
     + '<div><dt>Headcount in scope</dt><dd>' + esc(s.headcount) + ' people, ' + plural(Number(s.sites) || 0, 'site', 'sites') + '</dd></div>'
-    + '</dl><p class="muted">In your portal this card shows your company, whether your account is approved and your service level agreement.</p>';
-  $('plans-body').innerHTML = '<p class="note">The sample holds no Medical Surveillance Plan. In your portal, your Plan assessment and your Plan&rsquo;s review and sign off status appear here.</p>';
+    + '</dl><p class="muted">In your portal this card shows your company and whether your account is approved.</p>';
+  $('plans-body').innerHTML = '<p class="note">The sample holds no Medical Surveillance Plan. In your portal, each of your Plans appears here with its reference and where it stands in drafting, review and sign off.</p>';
   const o = s.overall || {};
   const file = { demo: true, reference: s.reference, industry_name: s.industry, revision: s.revision, compliance_pct: o.pct, created_at: null };
   const counts = o.counts || {};
@@ -1320,7 +1432,7 @@ function renderDemoCommercial(s) {
     + '<ul class="files">' + fileRow(file) + '</ul>'
     + '<div class="counts">' + Object.keys(COUNT_LABEL).filter((k) => counts[k] != null).map((k) => '<span class="pill ' + COUNT_CLASS[k] + '">' + esc(COUNT_LABEL[k]) + ' ' + esc(counts[k]) + '</span>').join('') + '</div>'
     + sectionBars(s.reference, s.sections, true);
-  $('quotes-body').innerHTML = '<p class="note">The sample holds no quotations. In your portal, quotations are listed here with their reference, what they cover and how long they are valid (pending).</p>';
+  $('quotes-body').innerHTML = '<p class="note">The sample holds no quotations. In your portal, the quotations prepared for you are listed here with their reference, what they cover, the price and how long they are valid.</p>';
 }
 function renderDemoMedical(s) {
   const m = s.matrix || {};

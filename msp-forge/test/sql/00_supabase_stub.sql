@@ -10,7 +10,10 @@ end $$;
 create schema extensions;
 create extension pgcrypto with schema extensions;
 create schema auth;
-create table auth.users (id uuid primary key default gen_random_uuid(), email text);
+-- email_confirmed_at and raw_app_meta_data mirror the Supabase columns that
+-- hsf_link_account (confirmed email) and hsf_user_is_staff (msp_roles) read.
+create table auth.users (id uuid primary key default gen_random_uuid(), email text,
+  email_confirmed_at timestamptz, raw_app_meta_data jsonb);
 create function auth.jwt() returns jsonb language sql stable as $$
   select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb $$;
 create function auth.uid() returns uuid language sql stable as $$

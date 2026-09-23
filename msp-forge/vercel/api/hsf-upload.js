@@ -3,8 +3,11 @@
 // Safety File. The bytes never pass through this function: it registers the
 // upload, then asks Supabase Storage for a one off signed upload URL into the
 // private hsf-staging bucket, and the browser sends the file straight there.
-// The transfer worker later moves the file to MyClinicOnline and removes it
-// from staging; the row and its hashes stay for the audit trail.
+// The transfer worker (supabase/functions/hsf-mco-transfer) holds it in staging
+// while the MyClinicOnline interface contract is pending (HSF-3); once that is
+// connected it moves the file to MyClinicOnline and removes it from staging.
+// Bytes of a failed or rejected upload are removed from staging by the same
+// worker. The row and its hashes stay for the audit trail.
 //
 //   POST /api/hsf-upload { action: 'register', department_code, original_name,
 //                          mime_type, size_bytes, sha256,

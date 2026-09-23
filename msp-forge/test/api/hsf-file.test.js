@@ -13,6 +13,7 @@ const REAL_FETCH = globalThis.fetch;
 const USER_ID = '6f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f';
 const FILE_ID = '1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 const ITEM_ID = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
+const ACCOUNT_ID = '0b9a8c7d-6e5f-4a3b-9c2d-1e0f9a8b7c6d';
 const TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1bml0In0.c2lnbmF0dXJlLXVuaXQ';
 const AUTH = { authorization: `Bearer ${TOKEN}` };
 
@@ -51,6 +52,11 @@ function supabase(t, rpcs) {
     if (m) {
       assert.equal(c.headers.apikey, SERVICE_KEY);
       assert.equal(c.headers.Authorization, `Bearer ${SERVICE_KEY}`);
+      // Contract 9.1: lib/auth.js links the verified user once per request.
+      if (m[1] === 'hsf_link_account' && !rpcs.hsf_link_account) {
+        assert.deepEqual(JSON.parse(c.body), { p_auth_user: USER_ID });
+        return json(200, ACCOUNT_ID);
+      }
       const fn = rpcs[m[1]];
       if (!fn) throw new Error(`unexpected rpc ${m[1]}`);
       const out = fn(JSON.parse(c.body));
@@ -85,7 +91,9 @@ async function call({ method = 'GET', headers = {}, query = {}, body } = {}) {
   return res;
 }
 
-const rpcCalls = calls => calls.filter(c => c.url.includes('/rest/v1/rpc/'));
+// Database calls made by the handler itself (the account link in lib/auth.js is counted apart).
+const rpcCalls = calls => calls.filter(c => c.url.includes('/rest/v1/rpc/') && !c.url.endsWith('/rpc/hsf_link_account'));
+const linkCalls = calls => calls.filter(c => c.url.endsWith('/rpc/hsf_link_account'));
 
 function generateBody(over) {
   return Object.assign({
@@ -123,17 +131,15 @@ test('GET lists my Files; a null result is an empty list', async t => {
   assert.deepEqual((await call({ headers: AUTH })).body, []);
 });
 
-test('GET ?file_id= returns the detail; none is 404; a bad id is 400', async t => {
+test('GET ?file_id= returns the detail; a bad id is 400', async t => {
   const detail = { file: { file_id: FILE_ID }, sections: [], overall: { pct: 0, counts: {} } };
   let seen;
-  supabase(t, { hsf_file_detail: a => { seen = a; return a.p_file_id === FILE_ID ? detail : null; } });
+  const c1 = supabase(t, { hsf_file_detail: a => { seen = a; return detail; } });
   const r1 = await call({ headers: AUTH, query: { file_id: FILE_ID.toUpperCase() } });
   assert.equal(r1.statusCode, 200);
   assert.deepEqual(r1.body, detail);
   assert.deepEqual(seen, { p_auth_user: USER_ID, p_file_id: FILE_ID });
-
-  const r2 = await call({ headers: AUTH, query: { file_id: ITEM_ID } });
-  assert.equal(r2.statusCode, 404);
+  assert.equal(linkCalls(c1).length, 1, 'the account is linked once, before the read');
 
   const calls = supabase(t, {});
   for (const file_id of ['1', 'x'.repeat(36), [FILE_ID, ITEM_ID]]) {
@@ -142,7 +148,36 @@ test('GET ?file_id= returns the detail; none is 404; a bad id is 400', async t =
   assert.equal(rpcCalls(calls).length, 0);
 });
 
-test('GET for a File of another account: the database refusal is a 403 with a plain message', async t => {
+// Contract 9.2: hsf_file_detail returns SQL null (PostgREST answers 200 null) for a
+// File that does not exist or is not the caller's. Both answer the same 404.
+test('GET ?file_id= for a missing File, or one of another account, is the same 404 (null detail)', async t => {
+  supabase(t, { hsf_file_detail: () => null });
+  const missing = await call({ headers: AUTH, query: { file_id: ITEM_ID } });
+  const foreign = await call({ headers: AUTH, query: { file_id: FILE_ID } });
+  for (const res of [missing, foreign]) {
+    assert.equal(res.statusCode, 404);
+    assert.deepEqual(res.body, { error: 'That File was not found.', code: 'not_found' });
+  }
+});
+
+test('GET ?file_id= raising SQLSTATE P0002 is a 404, whatever HTTP status PostgREST used', async t => {
+  for (const status of [400, 404, 500]) {
+    supabase(t, { hsf_file_detail: () => json(status, { code: 'P0002', details: null, hint: null, message: 'That File was not found.' }) });
+    const res = await call({ headers: AUTH, query: { file_id: FILE_ID } });
+    assert.equal(res.statusCode, 404, `HTTP ${status}`);
+    assert.deepEqual(res.body, { error: 'That File was not found.', code: 'not_found' });
+  }
+});
+
+test('GET ?file_id= a non object detail is treated as not found', async t => {
+  for (const out of ['', 0, false]) {
+    supabase(t, { hsf_file_detail: () => out });
+    const res = await call({ headers: AUTH, query: { file_id: FILE_ID } });
+    assert.equal(res.statusCode, 404, JSON.stringify(out));
+  }
+});
+
+test('GET for a File of another account: a permission refusal (42501) is still a plain 403', async t => {
   supabase(t, { hsf_file_detail: () => json(403, { code: '42501', message: 'permission denied: file belongs to another account' }) });
   const res = await call({ headers: AUTH, query: { file_id: FILE_ID } });
   assert.equal(res.statusCode, 403);
@@ -241,6 +276,22 @@ test('set_status: not_applicable with a reason, and back to outstanding', async 
     { p_auth_user: USER_ID, p_item_id: ITEM_ID, p_status: 'not_applicable', p_reason: 'No lifting machinery on any site.' },
     { p_auth_user: USER_ID, p_item_id: ITEM_ID, p_status: 'outstanding', p_reason: null },
   ]);
+});
+
+test('set_status: a missing or foreign item (SQLSTATE P0002) is a 404, never 400 refused', async t => {
+  for (const status of [400, 404, 500]) {
+    supabase(t, { hsf_set_item_status: () => json(status, { code: 'P0002', message: 'That File item was not found.' }) });
+    const res = await call({ method: 'POST', headers: AUTH, body: { action: 'set_status', item_id: ITEM_ID, status: 'outstanding' } });
+    assert.equal(res.statusCode, 404, `HTTP ${status}`);
+    assert.deepEqual(res.body, { error: 'That File item was not found.', code: 'not_found' });
+  }
+});
+
+test('set_status: a deliberate refusal (P0001) stays a 400 with its message', async t => {
+  supabase(t, { hsf_set_item_status: () => json(400, { code: 'P0001', message: 'Evidence is already held for this item.' }) });
+  const res = await call({ method: 'POST', headers: AUTH, body: { action: 'set_status', item_id: ITEM_ID, status: 'not_applicable', reason: 'No lifting machinery on any site.' } });
+  assert.equal(res.statusCode, 400);
+  assert.deepEqual(res.body, { error: 'Evidence is already held for this item.', code: 'refused' });
 });
 
 test('set_status: a void result still answers with the item and status', async t => {

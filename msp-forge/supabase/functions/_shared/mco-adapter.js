@@ -5,7 +5,8 @@
 // global fetch and crypto.subtle, so the same file runs in the Supabase edge
 // function (Deno) and under node --test.
 //
-// Three modes, read by the worker from msp_env_parameter hsf.mco_transfer_mode:
+// Three modes, read by the worker through hsf_transfer_mode(), which returns
+// msp_env_parameter hsf.mco_transfer_mode:
 //
 //   hold     The default while the MCO interface contract (HSF-3, register
 //            CR-13.12) is pending. Nothing leaves Care Net and no network call
@@ -24,7 +25,8 @@
 // send() never throws for a network or MCO failure: it returns outcome 'error'
 // with a short reason. It never puts the token, the file bytes or the file name
 // into an error message. The adapter never deletes anything; deletion is the
-// worker's decision, taken only after the fingerprints agree.
+// worker's decision, taken only after the fingerprints agree or when the
+// database lists the upload in its cleanup queue (transfer-core.js).
 
 export const MODES = Object.freeze(['hold', 'fixture', 'live']);
 

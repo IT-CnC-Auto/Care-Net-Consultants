@@ -14,10 +14,15 @@
 // the named people decide and sign. Every call verifies the caller's Supabase
 // Auth token and passes only the verified user id to the service role functions,
 // which scope every read and write to that user's company account.
+//
+// Not found (contract 9.2): hsf_file_detail returns null for a File that does not
+// exist or is not the caller's, and hsf_set_item_status raises SQLSTATE P0002 for
+// a missing or foreign item. Both answer 404 not_found, and a foreign record is
+// answered exactly like a missing one, so nothing reveals that it exists.
 
 const { rpc } = require('../lib/db');
 const {
-  requireUser, sendError, readBody, queryValue, httpError, methodNotAllowed,
+  requireUser, sendError, readBody, queryValue, httpError, methodNotAllowed, classifyDbError,
   UUID_RE, CONTROL_RE, ID_NUMBER_RE,
 } = require('../lib/auth');
 
@@ -116,6 +121,17 @@ function parseSetStatus(b) {
   return { p_item_id: itemId, p_status: b.status, p_reason: reason };
 }
 
+// A database 'not found' (P0002) becomes a 404 with a message naming the record.
+async function orNotFound(promise, message) {
+  try {
+    return await promise;
+  } catch (err) {
+    const db = classifyDbError(err);
+    if (db && db.status === 404) throw httpError(404, message, 'not_found');
+    throw err;
+  }
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET' && req.method !== 'POST') {
@@ -132,8 +148,11 @@ module.exports = async (req, res) => {
         res.status(200).json(Array.isArray(files) ? files : []);
         return;
       }
-      const detail = await rpc('hsf_file_detail', { p_auth_user: user.id, p_file_id: parseUuid(fileId, 'The File') });
-      if (!detail) throw httpError(404, 'That File was not found.', 'not_found');
+      const detail = await orNotFound(
+        rpc('hsf_file_detail', { p_auth_user: user.id, p_file_id: parseUuid(fileId, 'The File') }),
+        'That File was not found.',
+      );
+      if (!detail || typeof detail !== 'object') throw httpError(404, 'That File was not found.', 'not_found');
       res.status(200).json(detail);
       return;
     }
@@ -146,7 +165,10 @@ module.exports = async (req, res) => {
     }
     if (b.action === 'set_status') {
       const args = parseSetStatus(b);
-      const out = await rpc('hsf_set_item_status', { p_auth_user: user.id, ...args });
+      const out = await orNotFound(
+        rpc('hsf_set_item_status', { p_auth_user: user.id, ...args }),
+        'That File item was not found.',
+      );
       res.status(200).json(out === null || out === undefined ? { item_id: args.p_item_id, status: args.p_status } : out);
       return;
     }

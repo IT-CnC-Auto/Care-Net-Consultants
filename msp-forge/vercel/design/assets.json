@@ -8,7 +8,7 @@
     "assets": 200,
     "needed": 83,
     "existing": 117,
-    "warnings": 84
+    "warnings": 81
   },
   "pages": [
     {
@@ -1144,22 +1144,23 @@
         {
           "n": 4,
           "id": "hsf-builder-pattern",
-          "block": "Pattern strip under the hero",
-          "purpose": "The shared Care Net Africa pattern strip.",
+          "block": "Africa pattern strip under the hero",
+          "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
           "type": "pattern",
           "formats": [
-            "png"
+            "png",
+            "webp"
           ],
-          "width": 1200,
-          "height": null,
-          "ratio": "repeat x",
-          "max_kb": 60,
-          "colour": "Brand pattern",
-          "alt": "Decorative pattern, no alternative text",
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+          "alt": "Decorative, no alternative text",
           "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
           "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
           "status": "existing",
-          "notes": "Loaded by /css/cnc-pattern.css. No change needed.",
+          "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line.",
           "slot_count": 1
         },
         {
@@ -1539,8 +1540,8 @@
           "file_name": "hsf-builder-dropzone-64.svg",
           "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-builder-dropzone-64.svg",
           "status": "needed",
-          "notes": "Shown at 44 by 44 in a white circle. Hidden below 520 px wide. Decorative on the page.",
-          "slot_count": 1
+          "notes": "Shown at 44 by 44 in a white circle. Hidden below 520 px wide. Decorative on the page. Visible on ?design=1&demo=1 or once a File is open; signed out, design mode lists one hidden placeholder slot.",
+          "slot_count": 2
         },
         {
           "n": 23,
@@ -3286,22 +3287,23 @@
         {
           "n": 4,
           "id": "portal-pattern",
-          "block": "Pattern strip under the hero",
-          "purpose": "The shared Care Net Africa pattern strip.",
+          "block": "Africa pattern strip under the hero",
+          "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
           "type": "pattern",
           "formats": [
-            "png"
+            "png",
+            "webp"
           ],
-          "width": 1200,
-          "height": null,
-          "ratio": null,
-          "max_kb": 60,
-          "colour": "Brand pattern",
-          "alt": "Decorative pattern, no alternative text",
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+          "alt": "Decorative, no alternative text",
           "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
           "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
           "status": "existing",
-          "notes": "Loaded by css/cnc-pattern.css, shown 48 px high and tiled across the page (repeat x). The source file is 1200 px wide; its pixel height is not confirmed here (pending). No change needed.",
+          "notes": "Set by css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line.",
           "slot_count": 1
         },
         {
@@ -3351,7 +3353,7 @@
           "n": 7,
           "id": "portal-account-icon",
           "block": "Company and Files: Company account card",
-          "purpose": "Icon at the head of the Company account card (company name, approval and service level agreement).",
+          "purpose": "Icon at the head of the Company account card (company name and whether the account is approved).",
           "type": "icon",
           "formats": [
             "svg"
@@ -4523,8 +4525,6 @@
     "health-and-safety-file.html: asset 37 \"hsf-icon-transport-and-logistics\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "health-and-safety-file.html: asset 38 \"hsf-icon-utilities-and-energy\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "health-and-safety-file.html: asset 39 \"hsf-icon-waste-management\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
-    "hsf-builder.html: asset 4 \"hsf-builder-pattern\" is a pattern with no width or height in pixels.",
-    "hsf-builder.html: asset 4 \"hsf-builder-pattern\" ratio \"repeat x\" should read like 16:9.",
     "hsf-builder.html: asset 7 \"hsf-builder-section-a-icon\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "hsf-builder.html: asset 8 \"hsf-builder-section-b-icon\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "hsf-builder.html: asset 9 \"hsf-builder-section-c-icon\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
@@ -4557,7 +4557,6 @@
     "hsf-sample.html: asset 20 \"hsf-sample-icon-transport-and-logistics\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "hsf-sample.html: asset 21 \"hsf-sample-icon-utilities-and-energy\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "hsf-sample.html: asset 22 \"hsf-sample-icon-waste-management\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
-    "portal.html: asset 4 \"portal-pattern\" is a pattern with no width or height in pixels.",
     "sample.html: asset 5 \"sample-icon-agriculture-and-forestry\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "sample.html: asset 6 \"sample-icon-cleaning-and-hygiene-services\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",
     "sample.html: asset 7 \"sample-icon-construction\" has no slot in the markup. The page builds some data-asset slots in script, so confirm this one with ?design=1.",

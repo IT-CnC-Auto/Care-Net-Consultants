@@ -41,6 +41,8 @@ comment on column msp_industry_instrument.scope is
 
 -- B4.8: the published register gains the scope column now that B5.1 has landed.
 -- Same definition as migration 046, with scope appended as the last column.
+-- Migration 050 redefines it once more with the currency hold predicate
+-- (contract 9.4), after msp_instrument_currency_hold exists.
 create or replace view msp_public_instrument_register as
 select li.short_name,
        li.full_citation,
@@ -185,14 +187,16 @@ declare
   v_n int;
 begin
   perform pg_advisory_xact_lock(hashtext('hsf_file_reference'));
-  select coalesce(max(substring(reference from '(\d{3})$')::int), 0) + 1 into v_n
+  -- Three digits or more: the thousandth File of a day is NNNN, never a
+  -- truncated repeat of an earlier number (contract 9.6).
+  select coalesce(max(substring(reference from '(\d{3,})$')::int), 0) + 1 into v_n
     from hsf_file
    where reference like v_prefix || '%';
-  return v_prefix || lpad(v_n::text, 3, '0');
+  return v_prefix || lpad(v_n::text, greatest(3, length(v_n::text)), '0');
 end;
 $$;
 revoke execute on function hsf_next_reference() from public, anon, authenticated;
-comment on function hsf_next_reference is 'CNC-HSF-YYYY-MMDD-NNN. NNN = highest existing number for the day + 1 (gap safe, the migration 041 pattern). Advisory lock serialises concurrent Files.';
+comment on function hsf_next_reference is 'CNC-HSF-YYYY-MMDD-NNN. NNN = highest existing number for the day + 1 (gap safe, the migration 041 pattern), at least three digits and never truncated (1000 follows 999). Advisory lock serialises concurrent Files.';
 
 -- 4. Engagement tables (HSF-ENG-01, B4.4) ----------------------------------------
 
@@ -363,7 +367,7 @@ create table hsf_release (
   released_at timestamptz default now(),
   unique (file_id, revision)
 );
-comment on table hsf_release is 'HSF-REV-01. A released File revision. The hsf_release_gate trigger refuses the insert unless all three sign offs are approved and nothing in the File cites an unverified instrument.';
+comment on table hsf_release is 'HSF-REV-01. A released File revision. The hsf_release_gate trigger refuses the insert unless all three sign offs are approved and every instrument the File''s elements name is citable for a File (hsf_element_citable, contract 9.3).';
 
 create or replace function hsf_release_gate()
 returns trigger
@@ -382,19 +386,24 @@ begin
       raise exception 'hsf_release_gate: % sign off is not approved for this File revision', v_kind;
     end if;
   end loop;
+  -- Contract 9.3: hsf_element_citable (migration 050) is the single definition of
+  -- an instrument a File element may cite: verified, not held, not superseded,
+  -- scope safety or both, and a provision pinned past 'awaiting verification'.
+  -- Every instrument an item's element names must pass it.
   select string_agg(distinct li.short_name, ', ' order by li.short_name) into v_unverified
     from hsf_file_item fi
     join hsf_element_instrument ei on ei.element_id = fi.element_id
     join msp_legal_instrument li on li.id = ei.instrument_id
-   where fi.file_id = new.file_id and li.status <> 'verified';
+   where fi.file_id = new.file_id
+     and not (hsf_element_citable(fi.element_id) ? li.short_name);
   if v_unverified is not null then
-    raise exception 'hsf_release_gate: the File cites instruments that are not verified: %', v_unverified;
+    raise exception 'hsf_release_gate: the File cites instruments that are not verified for a File: %', v_unverified;
   end if;
   return new;
 end;
 $$;
 revoke execute on function hsf_release_gate() from public, anon, authenticated;
-comment on function hsf_release_gate is 'SPEC B4.5 and B11.2. Enforced in the database; the parameter hsf.release_required is display only and does not relax it.';
+comment on function hsf_release_gate is 'SPEC B4.5 and B11.2, contract 9.3. Three approved sign offs, and every instrument the File''s elements name citable for a File by hsf_element_citable (defined in migration 050; resolved when the trigger runs). Enforced in the database; the parameter hsf.release_required is display only and does not relax it.';
 
 create trigger hsf_release_gate
   before insert on hsf_release

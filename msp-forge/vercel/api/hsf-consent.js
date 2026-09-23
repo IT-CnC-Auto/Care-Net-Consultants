@@ -2,18 +2,22 @@
 // The Health and Safety File builder asks for three separate consents before a
 // single document can be stored: document_storage (held in Care Net's private
 // Supabase Storage staging area), mco_transfer (moved to MyClinicOnline, then
-// removed from staging) and authority_to_share (the company may share the
-// documents it uploads). Nothing uploads until all three are given.
+// removed from staging, once the MyClinicOnline interface is connected; until
+// then documents are held in staging) and authority_to_share (the company may
+// share the documents it uploads). Nothing uploads until all three are given.
 //
 //   GET    /api/hsf-consent                           -> hsf_consent_status
 //   POST   /api/hsf-consent  { kinds: [...], wording_version }
 //                                                    -> hsf_record_consent
 //   DELETE /api/hsf-consent?kind=<kind>               -> hsf_withdraw_consent
 //
-// Every call verifies the caller's Supabase Auth token first (lib/auth.js) and
-// passes only the verified user id to the database; the functions are service
-// role only and find the company account from that id. Withdrawal stops new
-// uploads. The current wording version is enforced by the database.
+// Every call verifies the caller's Supabase Auth token first (lib/auth.js, which
+// also links the user to its company account, contract 9.1) and passes only the
+// verified user id to the database; the functions are service role only and find
+// the company account from that id. Withdrawal stops new uploads; withdrawing
+// mco_transfer or document_storage also blocks the transfer of documents not yet
+// transferred, and nothing is deleted automatically (contract 9.5). The current
+// wording version is enforced by the database.
 
 const { rpc } = require('../lib/db');
 const { requireUser, sendError, readBody, queryValue, httpError, methodNotAllowed, CONTROL_RE } = require('../lib/auth');

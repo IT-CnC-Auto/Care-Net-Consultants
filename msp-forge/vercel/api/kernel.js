@@ -16,11 +16,13 @@
 // msp_api_authorise (active, not revoked, scope kernel.read, under the hourly
 // limit); no request body, IP address or query text is logged by this handler.
 // 401 bad or missing key, 403 key without the kernel.read scope, 429 hourly
-// limit reached, 400 bad resource or parameter. Only instruments that are
-// verified three ways, in force and not held are ever returned (the database
-// functions read kernel_citable_instrument only); each response carries the
-// kernel release, the date and the notice that it is not legal advice and not
-// a clinical opinion.
+// limit reached, 400 bad resource or parameter, 404 nothing found (a null reply
+// or SQLSTATE P0002). Only instruments that are verified three ways, in force
+// and not under a currency hold are ever returned (instrument reads use
+// kernel_citable_instrument; element bases use hsf_element_citable, which also
+// needs a safety scope and a verified provision, contract 9.3 and 9.4); each
+// response carries the kernel release, the date and the notice that it is not
+// legal advice and not a clinical opinion.
 //
 // CORS is open (Access-Control-Allow-Origin: *) because keys are used server to
 // server with no cookies; a key must never be placed in a browser page.

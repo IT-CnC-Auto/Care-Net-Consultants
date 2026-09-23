@@ -4,11 +4,15 @@
 // the environment at call time and never leaves this process.
 //
 //   requireUser(req)  reads "Authorization: Bearer <access_token>", asks Supabase
-//                     Auth who the token belongs to (GET /auth/v1/user) and
+//                     Auth who the token belongs to (GET /auth/v1/user), then
+//                     calls hsf_link_account once (contract 9.1) so a signed in
+//                     contact whose confirmed email matches a registered company
+//                     account is linked to it before any HSF read or write, and
 //                     returns { id, email }. A missing, malformed, expired or
 //                     unknown token throws an error with .status = 401. An auth
-//                     service that cannot be reached throws .status = 503, so the
-//                     browser does not sign a person out because of an outage.
+//                     service or database that cannot be reached throws
+//                     .status = 503, so the browser does not sign a person out,
+//                     or show "no company account", because of an outage.
 //   sendError(res, e) maps e.status (or a deliberate refusal raised by one of our
 //                     security definer functions) to a JSON error. It never sends
 //                     a stack trace, a raw database error or any secret.
@@ -17,6 +21,8 @@
 //                     parsed here. Invalid JSON throws .status = 400.
 //
 // Environment (never in files): SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
+
+const db = require('./db');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SHA256_RE = /^[0-9a-f]{64}$/;
@@ -74,10 +80,27 @@ async function requireUser(req) {
   if (!user || typeof user.id !== 'string' || !UUID_RE.test(user.id)) {
     throw httpError(401, 'Please sign in to continue.', 'sign_in_required');
   }
+  const id = user.id.toLowerCase();
+  await linkAccount(id);
   return {
-    id: user.id.toLowerCase(),
+    id,
     email: typeof user.email === 'string' && user.email ? user.email : null,
   };
+}
+
+// Contract 9.1: hsf_link_account (service role only) returns the company account
+// already linked to this user or links the latest non declined account whose
+// contact email equals the user's confirmed email. The database decides; only the
+// verified user id is sent. It runs once per request, after the token check and
+// before the handler's own call, so every HSF function sees the link. A failure
+// is a 503: carrying on would show a registered client "no company account".
+async function linkAccount(userId) {
+  try {
+    await db.rpc('hsf_link_account', { p_auth_user: userId });
+  } catch (err) {
+    console.error('account link failure', err && err.message ? redact(err.message) : 'unknown');
+    throw httpError(503, 'Your company account could not be checked. Please try again.', 'unavailable');
+  }
 }
 
 function readBody(req) {
@@ -110,6 +133,9 @@ function queryValue(req, key) {
 // Database errors arrive from lib/db.js rpc() as "<fn> failed: <status> <PostgREST body>".
 // Only a deliberate refusal (raise exception in one of our functions, SQLSTATE P0001)
 // carries a message meant for the client; everything else becomes a plain status.
+// SQLSTATE P0002 ('no_data_found', raised for a missing or foreign record, contract
+// 9.2) is a 404 whatever HTTP status PostgREST gave it, with a generic message, so a
+// record of another account and one that does not exist answer the same way.
 function classifyDbError(err) {
   const m = /^[a-z0-9_]+ failed: (\d{3}) ([\s\S]*)$/.exec((err && err.message) || '');
   if (!m) return null;

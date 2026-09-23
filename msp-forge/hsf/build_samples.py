@@ -9,6 +9,11 @@ dates and statuses. The legal basis shown is the element library's own
 candidate basis; nothing in a sample is a verified citation, and the viewer
 says so. Deterministic: the same library always produces the same samples.
 
+The samples are shown on static pages, so every displayed name and basis is
+put into plain words (hsf/BUILD-CONTRACT.md section 7): no section, regulation,
+annexure or gazette numbers except section 16(2) and section 37(2) of the
+OHS Act. The build stops if a number the rules do not cover gets through.
+
 Run from msp-forge/:  python3 hsf/build_samples.py
 """
 import hashlib, json, re, datetime as dt
@@ -87,7 +92,7 @@ PROTOCOLS = {
     14: ('Heat stress tolerance assessment', 'Physical Agents Regulations, 2024', 'strong'),
     15: ('Heat tolerance screening for hot underground workings', 'MHSA heat instruments, to be fetched', 'catalogue'),
     16: ('Vibration and musculoskeletal screen', 'Physical Agents Regulations, 2024', 'strong'),
-    17: ('Musculoskeletal and ergonomic assessment', 'OHS Act employer duties; EEA section 7 for lawful testing', 'practice'),
+    17: ('Musculoskeletal and ergonomic assessment', 'OHS Act employer duties; EEA, medical testing provision', 'practice'),
     18: ('Night work medical examination', 'Physical Agents Regulations, 2024 with the BCEA night work interface', 'practice'),
     19: ('PrDP statutory medical and vision screen', 'National Road Traffic Act PrDP framework, to be fetched', 'catalogue'),
     20: ('Lifting machine operator certificate of fitness', 'Driven Machinery Regulations, edition to be confirmed', 'catalogue'),
@@ -102,7 +107,7 @@ PROTOCOLS = {
     29: ('Zoonosis surveillance per written medical protocol', 'HBA Regulations, 2022', 'practice'),
     30: ('Food handler fitness assessment', 'Municipal by laws, to be confirmed per metro; HBA where applicable', 'society'),
     31: ('General construction fitness', 'Construction Regulations, 2014 medical fitness duties', 'strong'),
-    32: ('General fitness for the inherent requirements of the job', 'EEA section 7 inherent requirements', 'practice'),
+    32: ('General fitness for the inherent requirements of the job', 'EEA, medical testing provision read with the inherent requirements of the job', 'practice'),
     33: ('Tetanus status within the OMP protocol', 'HBA Regulations, 2022, within the written medical protocol', 'practice'),
 }
 PACK_ORDER = ['AGRI', 'CLEAN', 'CONSTR', 'EDU', 'GOV', 'HEALTH', 'HOSP', 'MANU', 'MINING', 'OFFICE',
@@ -231,6 +236,59 @@ def clean_basis(basis):
     return re.sub(r'\s*\((H|C)[^)]*\)', '', basis).strip()
 
 
+# Plain words for the numbered provisions the SPEC B6 tables still carry
+# (hsf/BUILD-CONTRACT.md section 7). Only section 16(2) and section 37(2) of
+# the OHS Act may stay as numbers.
+OHS_SECTION_WORDS = {
+    '7': 'policy provision',
+    '9': 'duty to persons other than employees',
+    '13': 'duty to inform',
+    '16': 'chief executive officer provision',
+    '17 and 18': 'health and safety representatives provisions',
+    '18': 'functions of health and safety representatives',
+    '19 and 20': 'health and safety committees provisions',
+    '20': 'functions of health and safety committees',
+    '24': 'incident reporting provision',
+    '37': 'mandatary provision',
+}
+NAME_WORDS = [
+    ('Section 16(1) chief executive responsibility acknowledged', 'Chief executive responsibility acknowledged'),
+    ('Section 24 reporting and the Annexure 1 recording', 'Incident reporting to the inspector and incident recording'),
+    ('Construction Regulations Annexure 3 medical certificates of fitness', 'Construction Regulations medical certificates of fitness'),
+    ('Annexure 3 certificate for every person on site', 'Medical certificate of fitness for every person on site'),
+]
+BASIS_WORDS = [
+    ('Construction Regulations, 2014, Annexure 3', 'Construction Regulations, 2014, medical certificate of fitness provision'),
+    ('Food Premises Hygiene Regulations, R638 of 2018', 'Food Premises Hygiene Regulations, 2018'),
+    ('EEA section 7', 'EEA, medical testing provision'),
+]
+ALLOWED_NUMBERS = re.compile(r'\b[Ss]ection (?:16|37)\(2\)')
+NUMBERED = re.compile(r'\b(?:[Ss]ections? \d|[Rr]egulations? \d|[Aa]nnexure \d|GNR? ?\d|GN R|GG \d|R\.? ?\d{3})')
+
+
+def plain_name(name):
+    for old, new in NAME_WORDS:
+        name = name.replace(old, new)
+    return name
+
+
+def plain_basis(basis, name):
+    for old, new in BASIS_WORDS:
+        basis = basis.replace(old, new)
+
+    def ohs(m):
+        n = m.group(1)
+        if n in ('16', '37') and ('%s(2)' % n) in name:
+            return 'OHS Act section %s(2)' % n
+        return 'OHS Act, ' + OHS_SECTION_WORDS[n]
+    return re.sub(r'OHS Act sections? (\d+(?: and \d+)?)', ohs, basis)
+
+
+def assert_plain(text):
+    if NUMBERED.search(ALLOWED_NUMBERS.sub('', text)):
+        raise SystemExit('Provision number left in sample text (contract section 7): ' + text)
+
+
 def fmt(d):
     return d.strftime('%d/%m/%Y')
 
@@ -289,8 +347,10 @@ def item(code, section, name, basis, evidence, responsible, review, retention, k
         basis = basis.replace('; MHSA equivalent (H)', '')
     st = status_for(key, mco, section)
     frm, to = dates_for(key, st, review)
+    shown_name = plain_name(name)
+    shown_basis = plain_basis(clean_basis(basis), name)
     return {
-        'code': code, 'section': section, 'name': name, 'basis': clean_basis(basis), 'basis_state': state_of(basis),
+        'code': code, 'section': section, 'name': shown_name, 'basis': shown_basis, 'basis_state': state_of(basis),
         'evidence': evidence, 'responsible': APP_NAME.get(responsible, responsible), 'review': review.replace('_', ' '),
         'retention': retention, 'status': st, 'from': frm, 'to': to,
         'reason': NA_REASON if st == 'not_applicable' else '',
@@ -364,7 +424,7 @@ def build(code):
     # People matrix: fictitious names, kernel role titles, requirements per role.
     roles = ROLES[code]
     columns = [('induction', 'Site induction'), ('cof', 'Certificate of fitness')]
-    if 'T-CONSTR' in triggers: columns.append(('annex3', 'Annexure 3 medical'))
+    if 'T-CONSTR' in triggers: columns.append(('annex3', 'Construction medical'))
     if 'T-MINING' in triggers: columns.append(('minecof', 'Mine certificate of fitness'))
     columns += [('D04-02', 'First aid'), ('D04-03', 'Fire fighting')]
     for c, n, t in COURSES:
@@ -422,11 +482,23 @@ def build(code):
     }
 
 
+def check_plain(value):
+    if isinstance(value, str):
+        assert_plain(value)
+    elif isinstance(value, dict):
+        for v in value.values():
+            check_plain(v)
+    elif isinstance(value, list):
+        for v in value:
+            check_plain(v)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     index = []
     for code in PROFILES:
         d = build(code)
+        check_plain(d)
         (OUT / (d['slug'] + '.js')).write_text('window.__HSF_SAMPLE=' + json.dumps(d, ensure_ascii=False, separators=(',', ':')) + ';\n', encoding='utf-8')
         index.append((d['slug'], code, d['industry'], len(d['items']), d['overall']['pct']))
     for row in index:

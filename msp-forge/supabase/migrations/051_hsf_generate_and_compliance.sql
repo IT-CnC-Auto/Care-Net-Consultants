@@ -12,6 +12,11 @@
 --      item not marked not applicable, per section and overall; the overall is
 --      the ratio across all items, not a mean of sections. Cached on hsf_file.
 --   4. hsf_my_files, hsf_file_detail and hsf_set_item_status for the web tier.
+--   5. Contract 9.2, 9.6, 9.7 and 9.8 (Amendment 1): a File the caller may not
+--      see reads as null and a foreign item raises P0002 (both 404 at the API);
+--      at most hsf.files_per_account_per_day Files per account per day; the
+--      builder's anon views hsf_public_trigger and hsf_public_subindustry; and
+--      hsf_portal_summary for the portal (read only, mints no token).
 --
 -- All functions are security definer with a fixed search path and executable by
 -- the service role only. The web tier verifies the person's access token and
@@ -27,6 +32,9 @@
 insert into msp_env_parameter (key, value, value_type, min_value, max_value, category, description, updated_by) values
   ('hsf.compliance_scope', 'true', 'boolean', null, null, 'hsf',
    'SPEC B9.4. true: an item marked not applicable (with its written reason) leaves the denominator of the compliance figure. false: it counts against the File.',
+   'migration_051'),
+  ('hsf.files_per_account_per_day', '20', 'integer', 1, 1000, 'hsf',
+   'Contract 9.6. The most Health and Safety Files one company account may generate in a day. Keeps one account from filling the File tables.',
    'migration_051')
 on conflict (key) do nothing;
 
@@ -159,7 +167,7 @@ declare
 begin
   select f.compliance_pct into v_old from hsf_file f where f.id = p_file_id for update;
   if not found then
-    raise exception 'That File was not found.';
+    raise exception 'That File was not found.' using errcode = 'P0002';
   end if;
   v_fig := hsf_compliance_figures(p_file_id);
   v_pct := (v_fig -> 'overall' ->> 'pct')::numeric;
@@ -195,6 +203,7 @@ declare
   v_reference text;
   v_items int;
   v_headcount text;
+  v_daily int;
 begin
   if p is null or jsonb_typeof(p) <> 'object' then
     raise exception 'The File details are missing.';
@@ -262,6 +271,14 @@ begin
     'headcount', v_headcount::int,
     'triggers', to_jsonb(v_triggers)));
 
+  -- Contract 9.6: a daily ceiling per account. The account row lock makes two
+  -- parallel requests count one after the other.
+  perform 1 from msp_client_account where id = v_acc.id for update;
+  v_daily := greatest(1, coalesce(msp_env_get_int('hsf.files_per_account_per_day'), 20));
+  if (select count(*) from hsf_file f where f.client_account_id = v_acc.id and f.created_at >= current_date) >= v_daily then
+    raise exception 'This company has already built % Files today, which is the daily limit. Please try again tomorrow or WhatsApp a sales executive.', v_daily;
+  end if;
+
   insert into hsf_file (client_account_id, industry_id, subindustry_id, regime, scope, revision, status)
   values (v_acc.id, v_ind.id, v_sub.id, v_regime, v_scope, 1, 'draft')
   returning id, reference into v_file_id, v_reference;
@@ -295,7 +312,7 @@ begin
   return jsonb_build_object('file_id', v_file_id, 'reference', v_reference, 'regime', v_regime, 'items', v_items);
 end;
 $$;
-comment on function hsf_generate_file is 'Contract 051 and SPEC B9.3. Writes a draft File (revision 1) with one outstanding item per applicable element: universal elements whose trigger applies, the industry overlay, the regime filter (MHSA for MINING, else OHSA). No consent needed: the skeleton holds no documents. Audited.';
+comment on function hsf_generate_file is 'Contract 051, 9.6 and SPEC B9.3. Writes a draft File (revision 1) with one outstanding item per applicable element: universal elements whose trigger applies, the industry overlay, the regime filter (MHSA for MINING, else OHSA). No consent needed: the skeleton holds no documents. Refuses more than hsf.files_per_account_per_day Files per account per day. Audited.';
 
 -- 5. Read paths ---------------------------------------------------------------------------------
 
@@ -336,8 +353,10 @@ declare
   v_file jsonb;
   v_sections jsonb;
 begin
+  -- Contract 9.2: a File that does not exist and a File of another account read
+  -- the same, as null, which the web tier answers with 404.
   if not hsf_can_access_file(p_auth_user, p_file_id) then
-    raise exception 'That File was not found.';
+    return null;
   end if;
   v_fig := hsf_compliance_figures(p_file_id);
 
@@ -394,7 +413,7 @@ begin
   return jsonb_build_object('file', v_file, 'sections', v_sections, 'overall', v_fig -> 'overall');
 end;
 $$;
-comment on function hsf_file_detail is 'Contract 051. The File, its fifteen sections with their items (basis: citable short names and awaiting candidates; uploads) and the overall figure. The owning client account or staff only.';
+comment on function hsf_file_detail is 'Contract 051, 9.2 and 9.3. The File, its fifteen sections with their items (basis: the short names hsf_element_citable allows, through hsf_public_element_library, and the instruments still awaiting verification; uploads) and the overall figure. The owning client account or staff only; null for a File that does not exist or is not the caller''s.';
 
 create or replace function hsf_set_item_status(p_auth_user uuid, p_item_id uuid, p_status text, p_reason text)
 returns jsonb
@@ -409,7 +428,7 @@ declare
 begin
   select fi.* into v_item from hsf_file_item fi where fi.id = p_item_id for update;
   if v_item.id is null or not hsf_can_access_file(p_auth_user, v_item.file_id) then
-    raise exception 'That File item was not found.';
+    raise exception 'That File item was not found.' using errcode = 'P0002';  -- 404 at the API (contract 9.2)
   end if;
   if p_status is null or p_status not in ('not_applicable','outstanding') then
     raise exception 'The status must be not_applicable or outstanding.';
@@ -449,7 +468,102 @@ end;
 $$;
 comment on function hsf_set_item_status is 'Contract 051. Marks an item not applicable with a written reason of at least ten characters, or returns it to outstanding. Not for an item that already holds evidence. The owning client account or staff. Recomputes the compliance figure. Audited.';
 
--- 6. Execute rights: service role only -------------------------------------------------------------
+-- 6. Builder support views (contract 9.7) -----------------------------------------------------------
+-- Anon read, like the other msp_public_* views: the builder's setup form lists
+-- the activity triggers and the subindustries before anyone signs in. The
+-- compound trigger rows (A and B, A or B) are library expressions, not choices,
+-- and hsf_generate_file refuses them, so they are left out.
+
+create or replace view hsf_public_trigger as
+select t.code, t.description
+  from hsf_trigger t
+ where t.code !~ ' (and|or) '
+ order by t.code;
+comment on view hsf_public_trigger is 'Contract 9.7. The SPEC B9.2 activity triggers a client may raise when generating a File: code and description. Public read on purpose.';
+grant select on hsf_public_trigger to anon, authenticated;
+
+create or replace view hsf_public_subindustry as
+select s.code, s.name, i.code as industry_code, s.selectable
+  from msp_subindustry s
+  join msp_industry i on i.id = s.industry_id
+ order by i.code, s.name;
+comment on view hsf_public_subindustry is 'Contract 9.7. Subindustries with their industry code and whether a client may choose them. Public read on purpose; names only.';
+grant select on hsf_public_subindustry to anon, authenticated;
+
+-- 7. Portal summary (contract 9.8) ---------------------------------------------------------------------
+
+create or replace function hsf_portal_summary(p_auth_user uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+  v_acc msp_client_account;
+begin
+  -- Read only (stable): it never approves an account and never mints or returns
+  -- an assessment token, unlike msp_client_start_assessment.
+  v_acc := hsf_account_of(p_auth_user);
+  if v_acc.id is null then
+    return jsonb_build_object('account', null, 'plans', '[]'::jsonb, 'quotes', '[]'::jsonb, 'files', '[]'::jsonb);
+  end if;
+  return jsonb_build_object(
+    'account', jsonb_build_object(
+      'client_account_id', v_acc.id,
+      'company_name', v_acc.company_name,
+      'account_kind', v_acc.account_kind,
+      'approved_at', v_acc.approved_at),
+    -- Plans: engagements whose intake consumed an assessment token of the account.
+    'plans', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'engagement_id', e.id,
+               'reference', e.reference,
+               'status', e.status,
+               'industry_code', i.code,
+               'revision', e.revision,
+               'created_at', e.created_at)
+             order by e.created_at desc, e.reference desc)
+        from msp_engagement e
+        left join msp_industry i on i.id = e.industry_id
+       where e.id in (select it.engagement_id
+                        from msp_form_access fa
+                        join msp_intake it on it.id = fa.used_by_intake
+                       where fa.client_account_id = v_acc.id)), '[]'::jsonb),
+    -- Quotes: by the account's contact email.
+    'quotes', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'quote_reference', q.quote_reference,
+               'package_code', q.package_code,
+               'price_zar', q.price_zar,
+               'price_status', q.price_status,
+               'valid_until', q.valid_until,
+               'created_at', q.created_at)
+             order by q.created_at desc, q.quote_reference desc)
+        from msp_quote q
+       where lower(btrim(q.contact_email)) = lower(btrim(v_acc.contact_email))), '[]'::jsonb),
+    'files', coalesce((
+      select jsonb_agg(jsonb_build_object(
+               'file_id', f.id,
+               'reference', f.reference,
+               'industry_code', i.code,
+               'status', f.status,
+               'revision', f.revision,
+               'compliance_pct', (hsf_compliance_figures(f.id) -> 'overall' ->> 'pct')::numeric,
+               'signoffs', coalesce((
+                 select jsonb_agg(jsonb_build_object('kind', so.kind, 'decision', so.decision, 'decided_at', so.decided_at)
+                                  order by so.kind, so.decided_at nulls last)
+                   from hsf_signoff so
+                  where so.file_id = f.id and so.revision = f.revision), '[]'::jsonb))
+             order by f.created_at desc, f.reference desc)
+        from hsf_file f
+        join msp_industry i on i.id = f.industry_id
+       where f.client_account_id = v_acc.id), '[]'::jsonb));
+end;
+$$;
+comment on function hsf_portal_summary is 'Contract 9.8. The portal''s view of the signed in person''s company: the account, its Medical Surveillance Plans (engagements whose intake used an assessment token of the account), its quotations (by contact email) and its Health and Safety Files with compliance and the sign offs of the current revision. Read only; mints no token. Service role only; GET /api/portal-summary calls it after requireUser.';
+
+-- 8. Execute rights: service role only -------------------------------------------------------------
 
 do $$
 declare
@@ -460,7 +574,8 @@ begin
     'hsf_generate_file(uuid, jsonb)',
     'hsf_my_files(uuid)',
     'hsf_file_detail(uuid, uuid)',
-    'hsf_set_item_status(uuid, uuid, text, text)'] loop
+    'hsf_set_item_status(uuid, uuid, text, text)',
+    'hsf_portal_summary(uuid)'] loop
     execute format('revoke execute on function %s from public, anon, authenticated', f);
     execute format('grant execute on function %s to service_role', f);
   end loop;

@@ -1,8 +1,9 @@
 # CNC HSF FORGE: portal architecture, document lifecycle and POPIA analysis
 
-Document reference: CNC-HSF-PORTAL-ARCH-V1.0-2026 | Version 1.0 | Date of issue: 23/09/2026 | Classification: INTERNAL
+Document reference: CNC-HSF-PORTAL-ARCH-V1.0-2026 | Version 1.1 | Date of issue: 23/09/2026 | Classification: INTERNAL
 Owner: Care Net Consultants (Pty) Ltd, for the Director
-Binding sources: hsf/BUILD-CONTRACT.md (wins for what it names), SPEC.md Part B (wins for everything else), SPEC.md Part A section 8, the CNC OHS Industry Kernel of 23/09/2026 (kernel/cnc-ohs-industry-kernel/, SANDBOX)
+Binding sources: hsf/BUILD-CONTRACT.md including section 9, Amendment 1 (wins for what it names, and section 9 wins over its earlier sections), SPEC.md Part B (wins for everything else), SPEC.md Part A section 8, the CNC OHS Industry Kernel of 23/09/2026 (kernel/cnc-ohs-industry-kernel/, SANDBOX)
+Version 1.1 corrects version 1.0 against the repository after the review round: migrations 049 to 051 are in the repository, the transfer worker honours consent, and an upload needs an account that is not declined rather than an approved one (review finding POPIA-LC-4). It also describes Amendment 1 (contract 9.1 to 9.8).
 Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 
 ## 1. Purpose and status
@@ -12,9 +13,9 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 1.2 It describes the design. It is not a legal opinion and it does not claim that the platform meets POPIA or any other law. Where a question needs the Information Officer or an attorney, section 5.10 says so.
 
 1.3 Status on 23/09/2026:
-1.3.1 In the repository, with unit tests that pass locally under `node --test` (108 tests in `test/api` and `test/mco` on 23/09/2026): the web tier endpoints (`vercel/api/hsf-consent.js`, `hsf-upload.js`, `hsf-file.js`, `kernel.js`), the shared sign in check (`vercel/lib/auth.js`), the portable host (`server/serve.js`) and the transfer worker with its adapter (`supabase/functions/hsf-mco-transfer/`, `supabase/functions/_shared/`). Also in the repository: the builder and portal pages and migrations 047 and 048.
-1.3.2 Specified in the contract but not in the repository when this was written: migrations 049 (consent, uploads, transfer), 050 (kernel API) and 051 (generation and the compliance figure).
-1.3.3 Nothing has been applied to the live Supabase project and nothing has been deployed.
+1.3.1 In the repository, with unit tests that pass locally under `node --test test/api/*.test.js test/mco/*.test.mjs` (149 tests on 23/09/2026): the web tier endpoints (`vercel/api/hsf-consent.js`, `hsf-upload.js`, `hsf-file.js`, `portal-summary.js`, `kernel.js`), the shared sign in check with account linking (`vercel/lib/auth.js`), the portable host (`server/serve.js`) and the transfer worker with its adapter (`supabase/functions/hsf-mco-transfer/`, `supabase/functions/_shared/`). Also in the repository: the builder and portal pages.
+1.3.2 In the repository and replayed locally with `test/sql/replay.sh`, not applied to the live project: migrations 047 (core schema), 048 (library seed), 049 (consent, uploads, transfer), 050 (kernel API) and 051 (generation, the compliance figure and the portal summary). They were corrected in place for Amendment 1; there is no migration 052. On the local replay `test/sql/hsf_core_checks.sql` (81 checks) and `test/sql/hsf_flow_checks.sql` both pass.
+1.3.3 Nothing has been applied to the live Supabase project and nothing has been deployed. Applying 047 to 051 waits for the Director's approval (section 8, item 2).
 1.3.4 The MCO interface contract (HSF-3) is not in hand. No MCO endpoint, token format, single sign on method or data centre is known, and none is assumed here. The transfer worker runs in hold mode: nothing leaves Care Net.
 
 1.4 Terms. "Staging" means the private Supabase Storage bucket `hsf-staging`. "Supabase Secrets" in the Director's brief means the secure Supabase environment: documents go to Supabase Storage (private, encrypted at rest, service role access only), never to the Secrets store, which holds credentials only (contract section 1).
@@ -25,15 +26,17 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 
 2.2 Care Net holds no clinical detail. The File records that evidence exists, where it lives, who supplied it, its dates and its fingerprint. Certificates of fitness reach the File as outcome, restriction, dates and practitioner identity only (SPEC B10.4). Care Net screens fitness for work and does not diagnose.
 
-2.3 Bytes do not linger. A document passes through Care Net staging on its way to MCO and is deleted from staging once MCO has confirmed it holds an identical copy. The audit trail keeps the fingerprints and the MCO reference, never the bytes.
+2.3 Bytes do not linger. A document passes through Care Net staging on its way to MCO and is deleted from staging once MCO has confirmed it holds an identical copy; bytes that fail the fingerprint check, are refused or are never completed are removed too. The audit trail keeps the fingerprints and the MCO reference, never the bytes. The exceptions are documents held while live transfer waits for HSF-3 and documents blocked by a consent withdrawal, which wait for a decision (section 8, items 4 and 5).
 
-2.4 Consent before storage. Three separate, unticked consents (wording version `HSF-CONSENT-1.0`) come before the first document is accepted, and withdrawal stops new uploads at once.
+2.4 Consent before storage. Three separate, unticked consents (wording version `HSF-CONSENT-1.0`) come before the first document is accepted. Withdrawal stops new uploads at once, and withdrawing the storage or the transfer consent also stops the company's documents still in staging from moving (section 4.5).
 
 2.5 The kernel is the only legal reference. Pages and answers cite an instrument only if it is in `kernel_citable_instrument` (verified three ways, in force, not held). Everything else shows as awaiting verification (contract section 7).
+2.5.1 A hold (`msp_instrument_currency_hold`) removes an instrument from citation even while its kernel row still reads verified, and the public register, industry profile and framework statistics views leave it out too (contract 9.4). Holds are seeded for the NIHL Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 wherever the kernel still marks them verified (HSF-7), and for the Asbestos Abatement Regulations, 2020, whose amendment notice number conflicts (GN R.2092 against GN R.11435, register HSF-9).
+2.5.2 A File element cites more narrowly (contract 9.3). `hsf_element_citable` is the one definition, used by the public element library, the File detail, the kernel API and the release gate: the instrument must be citable as above, of scope safety or both, and linked to the element with a provision pinned past "awaiting verification". The library seed pins no provision, so until the Phase 2 re verification every File element shows its instruments as "Awaiting verification". That is the truthful state, not a fault.
 
 2.6 Portable by construction. Every page reads its settings from `js/cnc-config.js`, every internal address is relative, and every API handler runs unchanged on Vercel or under `server/serve.js`. Moving into MCO is a configuration change, not a rewrite.
 
-2.7 Nothing invented. Unknown values (the Google Tag Manager ID, the MCO portal address, MCO endpoints, the Grok model name) are null or pending, never guessed.
+2.7 Nothing invented. Unknown values (the Google Tag Manager ID, the MCO portal address, MCO endpoints, the Grok model name) are null or pending, never guessed. What is known of the xAI API comes from search engine extracts of its documentation, not from a direct read (KERNEL-API.md section 7).
 
 ## 3. Target architecture
 
@@ -66,29 +69,30 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 
 | Number | Component | Where | Role |
 | --- | --- | --- | --- |
-| 1 | Login portal | `vercel/portal.html` | One sign in; commercial panels from Care Net APIs; medical panels pending MCO; staff links by role |
+| 1 | Login portal | `vercel/portal.html` | One sign in; commercial panels from one read, `GET /api/portal-summary`; medical panels pending MCO; staff links by role |
 | 2 | Health and Safety File builder | `vercel/hsf-builder.html` | Sign in, consent, File setup, fifteen section cards with drop zones and department selector, upload queue, lifecycle, gap report |
 | 3 | Shared front end | `vercel/js/cnc-config.js`, `cnc-tracking.js`, `cnc-auth.js`, `cnc-design-assets.js` | Settings, cookie consent and call to action tracking, sign in abstraction, designer asset overlay |
-| 4 | Web tier API | `vercel/api/hsf-consent.js`, `hsf-upload.js`, `hsf-file.js`, `kernel.js`; `vercel/lib/auth.js`, `db.js` | Verifies the user's token, calls service role only database functions, signs upload URLs |
+| 4 | Web tier API | `vercel/api/hsf-consent.js`, `hsf-upload.js`, `hsf-file.js`, `portal-summary.js`, `kernel.js`; `vercel/lib/auth.js`, `db.js` | Verifies the user's token, links the person to their company account, calls service role only database functions, signs upload URLs |
 | 5 | Portable host | `server/serve.js` | Serves `vercel/` and mounts every `vercel/api/*.js` at `/api/<name>`; the path into MCO hosting |
-| 6 | Database | `supabase/migrations/047` to `051` | Library, engagement, consent, upload, transfer and kernel API tables and functions; RLS on every table |
+| 6 | Database | `supabase/migrations/047` to `051` (replayed locally, not applied) | Library, engagement, consent, upload, transfer, kernel API and portal summary tables and functions; RLS on every table |
 | 7 | Staging storage | Supabase Storage bucket `hsf-staging` | Private, 25 MB per file, allowed types only, service role access only |
-| 8 | Transfer worker | `supabase/functions/hsf-mco-transfer/index.ts` with `_shared/mco-adapter.js`, `_shared/transfer-core.js` | Hashes, sends to MCO, checks the receipt, deletes from staging |
+| 8 | Transfer worker | `supabase/functions/hsf-mco-transfer/index.ts` with `_shared/mco-adapter.js`, `_shared/transfer-core.js` | Claims work, hashes, sends to MCO, checks the receipt, sweeps stale registrations, removes staged bytes the database lists |
 | 9 | Kernel API | `vercel/api/kernel.js`, `vercel/kernel-api/openapi.yaml` | Read only framework data for approved servers, including the Grok bot |
 | 10 | Grok connection pack | `grok/` | Function tools, system prompt and bridge example (KERNEL-API.md) |
 
 3.3 The commercial spine (Care Net).
-3.3.1 Company account: `msp_client_account`, joined to the signed in person through `auth_user_id`.
-3.3.2 Medical Surveillance Plans: the existing MSP FORGE journey (assessment, OMP review, release). The portal links to it; a read only Plan status endpoint is pending.
-3.3.3 Health and Safety Files: `hsf_file` and `hsf_file_item`, the compliance figure (SPEC B9.4), the gap report (SPEC B9.5), and the review and release gate (SPEC B11), which needs the OMP for Section E, the safety content signatory (HSF-1) and the client's section 16(2) acceptance.
-3.3.4 Quotations: the existing quotation tables of Part A; a read endpoint for the portal is pending.
+3.3.1 Company account: `msp_client_account`, joined to the signed in person through `auth_user_id`. Accounts are created from a typed email without a sign in, so they start with no auth user. On every request, after the token check, `requireUser` calls `hsf_link_account` (contract 9.1, service role only): it returns the account already linked to the person, or else links the latest account that is not declined, has no auth user yet and whose contact email equals the person's confirmed Supabase email, and audits `client_auth_linked`. An unconfirmed email links nothing, and nobody else's account is ever taken over.
+3.3.2 Medical Surveillance Plans: the existing MSP FORGE journey (assessment, OMP review, release). The portal shows the account's Plans from `hsf_portal_summary` (contract 9.8): the engagements whose intake used an assessment access token of the account, with reference, status, industry, revision and date.
+3.3.3 Health and Safety Files: `hsf_file` and `hsf_file_item`, the compliance figure (SPEC B9.4), the gap report (SPEC B9.5), and the review and release gate (SPEC B11), which needs the OMP for Section E, the safety content signatory (HSF-1) and the client's section 16(2) acceptance. The builder's setup form reads the industries, `hsf_public_subindustry` and `hsf_public_trigger` (contract 9.7, public read). A File or File item of another company answers exactly as one that does not exist, with 404 (contract 9.2). An account may generate at most `hsf.files_per_account_per_day` Files a day (20), and File references never truncate (contract 9.6). The portal shows each File's reference, status, revision, compliance figure and the sign offs of the current revision from the same summary.
+3.3.4 Quotations: the existing quotation tables of Part A. The portal shows the quotations whose contact email is the account's (reference, package, price and its status, valid until, date), again from `hsf_portal_summary`.
+3.3.5 `GET /api/portal-summary` is read only: unlike `/api/company-lookup`, which the portal no longer calls, it never approves an account or mints an assessment token. The endpoint rebuilds the reply from the named fields only, so nothing else the database might add reaches the browser.
 
 3.4 The medical spine (MCO).
 3.4.1 Certificates of fitness, training records and bookings, read from MCO through the adapter interface of SPEC B10 once HSF-3 closes. People are matched on MCO's own person reference, never on name (SPEC B10.3).
 3.4.2 The documents companies drop into their File end up here, in MCO's secure environment for special personal information, after the transfer in section 4.
 3.4.3 Until HSF-3 closes the portal shows each medical panel as "Arrives when MyClinicOnline is connected" and invents nothing. A clearly labelled demonstration uses the sample fixture only when the address carries `?demo=1`.
 
-3.5 Staff. Forge roles in the token's `app_metadata.msp_roles` (forge_admin, forge_omp, forge_safety_reviewer and the others) show links to `review.html` and `settings.html`; each staff page checks the role again, and the database checks it a third time.
+3.5 Staff. Forge roles in the token's `app_metadata.msp_roles` (forge_admin, forge_omp, forge_safety_reviewer and the others) show links to `review.html` and `settings.html`; each staff page checks the role again, and the database checks it a third time. Staff can also read the view `hsf_staging_alerts` (section 4.2.9); no staff page shows it yet.
 
 3.6 Tracking and calls to action.
 3.6.1 `cnc-tracking.js` sets Google consent mode to denied by default, shares the consent choice under the storage key `cnc_consent_v1`, and loads Google Tag Manager only when an ID is configured and the visitor has accepted. The ID is not known and stays null (pending), so no tag loads today.
@@ -97,9 +101,9 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 ## 4. Document lifecycle
 
 4.1 Before the first upload.
-4.1.1 The company contact signs in and has an approved company account.
+4.1.1 The company contact signs in and has a company account that is not declined (contract section 3, 049), linked on the first signed in request by `hsf_link_account` (section 3.3.1). Care Net's approval of the account is not required before uploading: an applicant account can upload once the three consents are given. Whether uploads should wait for approval is a Director decision (section 8, item 17).
 4.1.2 The contact gives three consents, each ticked separately and shown in full with the wording version `HSF-CONSENT-1.0`: document storage (in Care Net's private Supabase staging area, for the single purpose of building the File), MCO transfer (then deletion of the staging copy, with name, size, department and fingerprint kept as the audit trail), and authority to share (the contact is authorised by the employer and understands that health information is special personal information). Each is a row in `hsf_consent` with the time and the wording version; `hsf_consent_status` reports `complete` only when all three latest rows are granted and not withdrawn.
-4.1.3 The File skeleton exists (`hsf_generate_file`). Generating it needs no consent, because it holds no documents.
+4.1.3 The File skeleton exists (`hsf_generate_file`). Generating it needs no consent, because it holds no documents. It is refused for a declined account and above `hsf.files_per_account_per_day` Files a day.
 
 4.2 The life of one document, step by step.
 4.2.1 Choose. The contact drops a file on a section card or an element row and chooses the department (Executive and legal, Human resources, Health and safety, Operations, Engineering and maintenance, Procurement and contractors, Occupational health and medical, Training and development, Facilities and security). The browser rejects a wrong type or a file over 25 MB with a plain message before anything is sent; the server checks again against `hsf.upload_allowed_mime` and `hsf.upload_max_bytes`.
@@ -107,44 +111,58 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 4.2.3 Register. `POST /api/hsf-upload {action: 'register', ...}` verifies the user's token, then `hsf_register_upload` refuses unless consent is complete, the account is not declined, the type and size pass, the department exists and the File (if named) belongs to the account. It builds a safe file name and the staging path `<client_account_id>/<upload_id>/<safe_file_name>`, records the client fingerprint, sets status `awaiting_upload` and audits.
 4.2.4 Signed upload address. The server asks Supabase Storage for a one off signed upload address for that path and returns it. The service role key never leaves the server; the address carries its own short lived token.
 4.2.5 Upload. The browser sends the bytes straight to Supabase Storage with `PUT`. The bytes never pass through the Vercel functions. Screen label: Uploading.
-4.2.6 Complete. `POST /api/hsf-upload {action: 'complete'}` checks that the object is in the bucket at the registered size, then `hsf_mark_uploaded` moves the upload to `uploaded`, creates the `hsf_evidence` row (next version, source `client_upload`, SHA 256 from the client) and marks the File item `uploaded`. Screen label: Uploaded.
-4.2.7 Fingerprint on the server. The transfer worker (the edge function `hsf-mco-transfer`, run on a schedule or by hand, service role only) reads the mode from `hsf.mco_transfer_mode`, takes up to ten uploads in status `uploaded` or `held`, oldest first, downloads each and works out the server SHA 256. If it differs from the client fingerprint, the worker records `hash_mismatch`, the upload goes to `failed` with a reason, and nothing is sent or deleted.
-4.2.8 Hold (today). In hold mode the adapter sends nothing. The worker records the outcome `held` and the upload stays in staging with status `held`. Screen label: Held for MyClinicOnline. The parameter `hsf.staging_alert_days` (14) is the age at which a held document should be flagged.
-4.2.9 Transfer (after HSF-3). In live mode the adapter sends the file, its fingerprint and its filing details to MCO, and MCO answers with its document reference and the fingerprint of what it received. `hsf_transfer_record` appends a row to `hsf_mco_transfer` (append only) and, when the outcome is `received` and the server, client and receipt fingerprints are all equal, moves the upload to `transferred` with the MCO reference and time, and writes the MCO reference to the matching evidence row. Screen label: Transferred to MyClinicOnline.
-4.2.10 Receipt check fails. A receipt fingerprint that differs moves the upload to `failed`; an error leaves it `uploaded` or `held` for the next run. Neither deletes anything.
-4.2.11 Staging deletion. Only for an upload in `transferred` with three equal fingerprints, the worker deletes the object through the Storage API and, after Storage confirms, calls `hsf_mark_staging_deleted`, which sets status `staging_deleted`, clears `storage_path` and records `staging_deleted_at`. Screen label: Removed from Care Net staging.
-4.2.12 What remains with Care Net. The `hsf_upload` row (original and safe name, type, size, department, section, both fingerprints, statuses and times, MCO reference), the `hsf_mco_transfer` rows, the `hsf_evidence` row (append only; storage path cleared, MCO reference set) and the `msp_audit` events. Never the bytes.
+4.2.6 Complete. `POST /api/hsf-upload {action: 'complete'}` checks that the object is in the bucket at the registered size, then `hsf_mark_uploaded` moves the upload to `uploaded`. For an element upload it locks the File item row first, so two uploads never take the same evidence version, creates the `hsf_evidence` row (next version, source `client_upload`, SHA 256 from the client), marks the File item `uploaded` and recomputes the File's compliance figure. If a consent was withdrawn between registration and completion, the upload is `rejected` instead. Screen label: Uploaded.
+4.2.7 Claim. The transfer worker (the edge function `hsf-mco-transfer`, run on a schedule or by hand, service role only) reads the mode with `hsf_transfer_mode()` (hold when unset) and claims up to ten uploads, oldest first, with `hsf_transfer_claim` (contract 9.5). In hold mode the claim returns only uploads in status `uploaded`, so a held document is not recorded again on every run. In fixture or live mode it returns `uploaded` and `held` uploads and any `transferring` upload claimed more than 30 minutes ago (a run that stopped part way), locks them so that two runs never take the same row, and marks them `transferring`. An upload blocked by a consent withdrawal, or of an account without current storage and transfer consent, is never claimed.
+4.2.8 Fingerprint on the server. The worker downloads each claimed object and works out the server SHA 256. If it differs from the client fingerprint, the worker records `hash_mismatch` and sends nothing: the upload goes to `failed` with a reason, the evidence row written at completion is revoked, the File item returns to `outstanding` when no other unrevoked evidence holds it, and the compliance figure is recomputed. Screen label: Not transferred: please upload it again.
+4.2.9 Hold (today). In hold mode the adapter sends nothing. The worker records the outcome `held` and the upload stays in staging with status `held`. Screen label: Held for MyClinicOnline (the builder shows `transferring` the same way). Uploads holding bytes in staging for longer than `hsf.staging_alert_days` (14) are listed in the staff view `hsf_staging_alerts` and by the service role function `hsf_staging_alerts_list()`; no page shows the list and no scheduled notice sends it yet (section 8, item 6).
+4.2.10 Transfer (after HSF-3). In live mode the adapter sends the file, its fingerprint and its filing details to MCO, and MCO answers with its document reference and the fingerprint of what it received. `hsf_transfer_record` (which accepts `uploaded`, `held` and `transferring` uploads) appends a row to `hsf_mco_transfer` (append only) and, when the outcome is `received` and the server, client and receipt fingerprints are all equal, moves the upload to `transferred` with the MCO reference and time, and writes the MCO reference to the matching evidence row. Screen label: Transferred to MyClinicOnline.
+4.2.11 Receipt check fails, or an error. A receipt fingerprint that differs is recorded as a mismatch, with the same effects as in 4.2.8. An error returns the upload to `uploaded`, to be claimed again on a later run. Neither deletes anything at that step.
+4.2.12 Staging deletion after transfer. Only for an upload the database has just recorded as `transferred`, with three equal fingerprints, the worker deletes the object through the Storage API and, after Storage confirms, calls `hsf_mark_staging_deleted`, which sets status `staging_deleted`, clears `storage_path` and records `staging_deleted_at`. Screen label: Removed from Care Net staging.
+4.2.13 Sweep and cleanup, on every run. `hsf_sweep_stale_uploads(24)` turns registrations still `awaiting_upload` after 24 hours into `failed` with the reason "The upload was not completed.". Then `hsf_transfer_cleanup_queue` lists up to 25 uploads that still hold bytes and are `transferred` (a deletion that did not finish), `failed` or `rejected`, leaving out any upload blocked by a consent withdrawal. For each, the worker checks the path belongs to the upload, deletes the object, and only then calls `hsf_mark_staging_deleted`: a transferred upload becomes `staging_deleted`; a failed or rejected upload keeps its status and its path is cleared. Bytes that failed the fingerprint check, were refused, or were never completed are not evidence, so they do not stay in staging.
+4.2.14 What remains with Care Net. The `hsf_upload` row (original and safe name, type, size, department, section, both fingerprints, statuses and times, MCO reference, any block reason), the `hsf_mco_transfer` rows, the `hsf_evidence` row (append only; storage path cleared, MCO reference set, or revoked after a mismatch) and the `msp_audit` events. Never the bytes.
 
 4.3 States and screen labels.
 
 | Number | `hsf_upload.status` | Meaning | Screen label |
 | --- | --- | --- | --- |
-| 1 | `awaiting_upload` | Registered; bytes not yet in staging | Uploading |
-| 2 | `uploaded` | Bytes in staging at the registered size | Uploaded |
-| 3 | `verified` | Reserved in the contract's status list; not set by any step above | Not shown |
+| 1 | `awaiting_upload` | Registered; bytes not yet confirmed in staging. After 24 hours the sweep makes it `failed` | Uploading |
+| 2 | `uploaded` | Bytes in staging at the registered size; waiting to be claimed | Uploaded |
+| 3 | `verified` | Reserved in the contract's status list; not set by any step above | Uploaded |
 | 4 | `held` | Worker ran in hold mode; bytes still in staging | Held for MyClinicOnline |
-| 5 | `transferring` | Reserved in the contract's status list; not set by any step above | Not shown |
+| 5 | `transferring` | Claimed by a run in fixture or live mode; claimed again if the run stops for more than 30 minutes | Held for MyClinicOnline |
 | 6 | `transferred` | MCO holds an identical copy; staging copy about to be deleted | Transferred to MyClinicOnline |
 | 7 | `staging_deleted` | Staging copy deleted; row and fingerprints kept | Removed from Care Net staging |
-| 8 | `rejected` | Refused (reason recorded) | Plain message |
-| 9 | `failed` | Fingerprint mismatch; nothing deleted; needs a person | Plain message and sales executive route |
+| 8 | `rejected` | Refused, for example because consent was withdrawn before completion (reason recorded); bytes removed by the cleanup pass | Not accepted |
+| 9 | `failed` | Fingerprint mismatch, or never completed; evidence revoked; bytes removed by the cleanup pass; needs a person | Not transferred: please upload it again |
+
+4.3.1 `transfer_blocked_reason` is not a status: it is set to `consent withdrawn` on an upload that was `uploaded`, `verified`, `held` or `transferring` when the account withdrew its storage or transfer consent (section 4.5). `hsf_my_uploads` returns it; the builder does not show it yet and still shows the upload's status label (section 8, item 18).
 
 4.4 Rules the lifecycle never breaks.
-4.4.1 Nothing is deleted on `held`, on an error or on a mismatch.
-4.4.2 The staging copy is deleted only after MCO has confirmed an identical copy and the database has recorded the transfer.
+4.4.1 The transfer step deletes nothing on `held`, on an error or on a mismatch. Staged bytes of a `failed` or `rejected` upload are removed later, only through the database's cleanup queue.
+4.4.2 The staging copy of a transferred document is deleted only after MCO has confirmed an identical copy and the database has recorded the transfer.
 4.4.3 `hsf_evidence` and `hsf_mco_transfer` are append only. The evidence trigger allows only the one way updates the contract names (revocation once; MCO reference and transfer time once; staging deletion once together with clearing the path). A replacement document is a new version.
 4.4.4 The audit keeps fingerprints and the MCO reference, never file contents.
 4.4.5 Fixture mode, which pretends MCO received a file, is for tests only and is refused unless the function environment explicitly allows it; it must never be allowed on the production project.
+4.4.6 Nothing of an account that has withdrawn its storage or transfer consent is moved or deleted automatically (section 4.5).
+4.4.7 The worker never deletes a path the database did not list for that upload, and marks a deletion only after Storage confirms the object is gone.
+
+4.5 Withdrawal of consent (contract 9.5).
+4.5.1 Any withdrawal stops new uploads at once: registration needs all three consents, and an upload not yet completed is `rejected` on completion.
+4.5.2 Withdrawing the document storage or the MCO transfer consent also sets `transfer_blocked_reason = 'consent withdrawn'` on every upload of the account that is `uploaded`, `verified`, `held` or `transferring`, and counts them in the audit event. A blocked upload is never claimed for transfer and is left out of the cleanup queue, so its bytes stay in staging, untouched, and appear in the staging alerts once they pass `hsf.staging_alert_days`.
+4.5.3 Nothing is deleted automatically. What then happens to the staged documents (deletion, return to the company, or transfer after fresh consent) is a Director and Information Officer decision, recorded as a register item (section 8, item 5).
+4.5.4 A later consent does not lift the block; a person must decide for each blocked upload.
+4.5.5 Withdrawing only the authority to share consent stops new uploads but does not block documents already in staging from moving. Whether it should is part of the same decision.
+4.5.6 Withdrawal does not reach documents already transferred to MCO; what happens to them is set under the MCO contract (HSF-3, section 5.8.3).
 
 ## 5. POPIA analysis in plain words
 
-5.1 Standing of this section. This is the build team's reading, written so the Information Officer and an attorney can check it quickly. It is not legal advice and it claims nothing about meeting POPIA. The Protection of Personal Information Act, 2013 (POPIA) is in verification batch HSF-VER-01 and has not yet passed the kernel's three checks, so this section describes its duties in words and cites no section numbers.
+5.1 Standing of this section. This is the build team's reading, written so the Information Officer and an attorney can check it quickly. It is not legal advice and it claims nothing about meeting POPIA. In the live kernel the Protection of Personal Information Act, 2013 (POPIA) has not passed the three checks. Migration 042, in the repository but not applied (HSF-7), records a documentary verification of it for the medical scope, subject to OMP ratification, and for the File it sits in verification batch HSF-VER-01. This section therefore describes its duties in words and cites no section numbers.
 
 5.2 What personal information the platform touches.
 
 | Number | Information | Whose | Where it lives | Notes |
 | --- | --- | --- | --- | --- |
-| 1 | Sign in email address and account details | Company contact | Supabase Auth and `msp_client_account` | Needed to sign in and to know which company the person acts for |
+| 1 | Sign in email address and account details | Company contact | Supabase Auth and `msp_client_account` | Needed to sign in and to know which company the person acts for. The confirmed sign in email is matched to the account's contact email once, to link the two (section 3.3.1) |
 | 2 | Consent records | Company contact | `hsf_consent` | Kind, granted or withdrawn, wording version, times |
 | 3 | Uploaded documents | Employees, contractors, appointees, the company | Staging, then MCO | May hold names, identity numbers, appointments, training records and health information. Care Net cannot tell what a document holds without opening it, so every upload is treated as possibly special personal information |
 | 4 | Upload metadata | As item 3 | `hsf_upload`, `hsf_evidence`, `msp_audit` | Original file name, size, department, fingerprints, MCO reference. A file name can itself carry a person's name (section 5.10, item 7) |
@@ -170,17 +188,17 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 | 1 | Supabase | Sign in, database rows, staging bytes, the transfer worker | Private bucket, service role access only, encrypted at rest; project region to be confirmed from the Supabase dashboard |
 | 2 | Vercel | The web tier: tokens, metadata and requests in transit | Upload bytes do not pass through Vercel functions; region to be confirmed |
 | 3 | MCO | Documents after transfer; certificates, training records and bookings | Its role (operator for Care Net or the employer, or responsible party in its own right), location and safeguards depend on HSF-3 |
-| 4 | xAI | Question text sent to the Grok bot and the public kernel data returned by tools | Only for public kernel data; never client data. xAI's security FAQ states a default 30 day retention of API requests for abuse monitoring and zero data retention for enterprise accounts (KERNEL-API.md section 7.2, finding 7) |
+| 4 | xAI | Question text sent to the Grok bot and the public kernel data returned by tools | Only for public kernel data; never client data. A search engine extract of xAI's security FAQ (not read directly) gives a default 30 day retention of API requests for abuse monitoring and zero data retention for enterprise accounts (KERNEL-API.md section 7.2, finding 7); to be confirmed from xAI's own pages |
 
 5.5.3 The Part A register of operators (DocuSeal, Vercel, Supabase, Anthropic) stays in force for MSP FORGE. Each operator needs a written agreement that binds it to confidentiality and security safeguards; the status of those agreements is register item CR-12.5, open, and now extends to MCO and xAI.
 
 5.6 Security safeguards in the design.
-5.6.1 Row level security on every table; anonymous and public access revoked; every write through security definer functions called only by the server after it has verified the user's token.
+5.6.1 Row level security on every table; anonymous and public access revoked; every write through security definer functions called only by the server after it has verified the user's token. A record of another company answers exactly as one that does not exist (404), so an identifier reveals nothing.
 5.6.2 Staging is private with no storage policy for anonymous or signed in users; only the service role reads or deletes. Uploads use one off signed addresses with a short lived token. Everything travels over HTTPS.
 5.6.3 Fingerprints taken in the browser, on the server and by MCO on receipt detect any change or corruption on the way. They show integrity, not confidentiality.
 5.6.4 Append only audit (`msp_audit`), evidence and transfer tables.
 5.6.5 No secret in any file or page; server secrets live only in the host's environment. The kernel API stores only the SHA 256 of each key.
-5.6.6 Not yet built: malware scanning of staged files, and an alert for documents held in staging longer than `hsf.staging_alert_days` (section 8).
+5.6.6 Built but not yet surfaced: the list of documents held in staging longer than `hsf.staging_alert_days` (`hsf_staging_alerts`), which no page shows and no notice sends yet. Not built: malware scanning of staged files (section 8).
 
 5.7 Transfers outside South Africa. POPIA limits sending personal information to a third party in another country unless conditions in the Act are met (for example laws or binding rules that give adequate protection, a contract, or the person's consent). The Part A privacy policy approach discloses cross border transfers (SPEC Part A 8.3). For this design:
 5.7.1 The Supabase project region and the Vercel function region must be confirmed and recorded.
@@ -189,7 +207,7 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 5.7.4 The privacy policy at https://www.carenetconsultants.co.za/privacy-policy must name each of these and the basis relied on, as the attorney advises.
 
 5.8 Retention.
-5.8.1 Staging: only until the transfer is confirmed, then deleted automatically. While the worker runs in hold mode (until HSF-3 closes) documents stay in staging with no end date. The Director must decide whether uploads open before live transfer, and if so the longest a document may stay in staging and what happens then (section 8, item 4).
+5.8.1 Staging: only until the transfer is confirmed, then deleted automatically. Bytes of failed, rejected and never completed uploads are removed by the cleanup pass. While the worker runs in hold mode (until HSF-3 closes) held documents stay in staging with no end date, and so do documents blocked by a consent withdrawal until someone decides (section 4.5). The Director must decide whether uploads open before live transfer, and if so the longest a document may stay in staging and what happens then (section 8, item 4).
 5.8.2 Metadata, fingerprints and audit: kept with the File as its evidence trail. Retention per record class is open (HSF-5, CR-12.4). Occupational health records carry long statutory retention and never default to short cycles (SPEC Part A 8.4); the house floor for medical surveillance records of hazardous exposure is 40 years where an instrument sets none (SPEC B5.3, RULE-RETAIN), and the kernel pack plans 40 years for files triggered by the noise and physical agents regulations (kernel pack 05, section 4).
 5.8.3 Documents in MCO: MCO's retention, set under the MCO contract.
 5.8.4 The kernel API call log and the Grok bot host's own logs: no retention period is set yet (section 8, item 12).
@@ -197,7 +215,7 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 5.9 Rights of the people the information is about.
 5.9.1 Access, correction, deletion and objection requests from employees go first to the employer as responsible party; Care Net and MCO help as the contracts provide. The Part A engagement export, correction and deletion workflows (SPEC Part A 8.4) extend to File data.
 5.9.2 Deletion meets retention: the staging copy is deleted automatically, but the audit trail and statutory records may have to be kept. How a deletion request is answered when a record must be kept needs a written rule (section 5.10, item 5).
-5.9.3 Withdrawal of consent stops new uploads at once. Whether a withdrawal of the MCO transfer consent should also stop documents already in staging from moving, and what happens to them, is not yet specified (section 8, item 5).
+5.9.3 Withdrawal of consent stops new uploads at once, and withdrawal of the storage or the transfer consent stops the company's staged documents from moving, without deleting them (section 4.5). What then happens to those documents is open (section 8, item 5).
 5.9.4 The Information Officer must be named in the privacy notice and in every pack's POPIA block (CR-12.6, open).
 
 5.10 What still needs the Information Officer and the attorney.
@@ -212,6 +230,7 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 | 6 | A personal information impact assessment for the File platform, and the security compromise notification procedure for staging and MCO | Information Officer |
 | 7 | Whether original file names (which can carry a person's name) should stay in the audit trail after transfer, and whether the safe file name should stay in the staging path and signed address | Information Officer, Director |
 | 8 | xAI's retention setting for the Grok bot account and whether zero data retention is required | Information Officer, Director |
+| 9 | What happens to staged documents blocked by a withdrawal of the storage or transfer consent, and whether a withdrawal of the authority to share consent should block them too (section 4.5, section 8, item 5) | Information Officer, Director |
 
 ## 6. Hosting options
 
@@ -240,7 +259,7 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 
 ## 7. Sign in abstraction
 
-7.1 Now: Supabase Auth. `js/cnc-auth.js` offers `init`, `signInWithEmail`, `session`, `accessToken`, `onChange` and `signOut`. With the provider `supabase` it signs people in with an email one time link, exactly as the landing page does, so one session serves every page. Each API call carries the access token; `vercel/lib/auth.js` asks Supabase Auth whose token it is and passes only the verified user id to the database, which finds the company through `msp_client_account.auth_user_id`.
+7.1 Now: Supabase Auth. `js/cnc-auth.js` offers `init`, `signInWithEmail`, `session`, `accessToken`, `onChange` and `signOut`. With the provider `supabase` it signs people in with an email one time link, exactly as the landing page does, so one session serves every page. Each API call carries the access token; `vercel/lib/auth.js` asks Supabase Auth whose token it is, calls `hsf_link_account` once (section 3.3.1) and passes only the verified user id to the database, which finds the company through `msp_client_account.auth_user_id`. If Supabase Auth or the database cannot be reached the API answers 503 rather than 401, so the pages can tell an outage from a lapsed sign in and do not show "no company account" because of an outage.
 
 7.2 Later: MCO single sign on (pending HSF-3). The provider `mco_sso` exists as a stub that refuses with "MCO single sign on is pending the MCO interface contract (HSF-3)". Nothing is guessed about how MCO signs people in. When the contract arrives, one of three shapes will be chosen:
 7.2.1 MCO as an identity provider federated into Supabase Auth, if MCO supports a standard protocol Supabase accepts. The database keeps its user ids and nothing below the sign in changes. Preferred where possible.
@@ -256,11 +275,11 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 | Number | Item | Owner | Status |
 | --- | --- | --- | --- |
 | 1 | MCO interface contract: transfer endpoint, receipt, person identifier, single sign on, hosting location, portal address (HSF-3, CR-13.12) | Director, MCO owner | Open; blocks live transfer, the medical spine and single sign on |
-| 2 | Migrations 049, 050 and 051 written, replayed with `test/sql/replay.sh` and reviewed; nothing applied to the live project until the Director approves | Build, Director | Pending |
-| 3 | HSF-7: live kernel on release 1.0.0 with repealed instruments still marked verified; apply 042 or a reviewed successor | Director, OMP | Open, blocking Phase 2 |
+| 2 | Migrations 047 to 051: written, in the repository, corrected in place for Amendment 1 and replayed with `test/sql/replay.sh` (core and flow checks pass); nothing applied to the live project until the Director approves | Build, Director | Written and replayed locally; not applied |
+| 3 | HSF-7: live kernel on release 1.0.0 with repealed instruments still marked verified; apply 042 or a reviewed successor. The currency holds in 050 keep the NIHL Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 out of every citation meanwhile | Director, OMP | Open, blocking Phase 2 |
 | 4 | Whether uploads open while the worker is in hold mode, the longest stay in staging, and what happens after it | Director, Information Officer | Open |
-| 5 | Worker behaviour when the MCO transfer consent is withdrawn for documents already in staging; the contract is silent and the worker does not check consent today | Director, Build | Open |
-| 6 | Alert for documents held longer than `hsf.staging_alert_days` (14): the parameter exists, nothing reads it yet | Build | Open |
+| 5 | Consent withdrawal: the worker already refuses to claim or clean up the uploads of an account whose storage or transfer consent is withdrawn, and marks them `consent withdrawn` (section 4.5). Open: what happens to those staged documents (deletion, return or transfer after fresh consent), who decides each case, and whether withdrawing the authority to share consent should block them too. Register item | Director, Information Officer | Behaviour built; decision open |
+| 6 | Staging alerts: `hsf_staging_alerts` (staff view) and `hsf_staging_alerts_list()` (service role) list uploads holding bytes longer than `hsf.staging_alert_days` (14). No staff page shows them and no scheduled notice sends them yet | Build | Partly built |
 | 7 | Malware scanning of staged files before transfer | Director, Build | Open |
 | 8 | POPIA questions in section 5.10 | Information Officer, attorney | Open |
 | 9 | Operator agreements for Supabase, Vercel, MCO and xAI (CR-12.5 extended) | Director | Open |
@@ -268,6 +287,10 @@ Companion: KERNEL-API.md (the kernel API and the Grok connection pack)
 | 11 | Supabase project region and Vercel function region confirmed and recorded for the cross border note | Build | Open |
 | 12 | Retention for the kernel API call log and the Grok bot host's logs | Information Officer | Open |
 | 13 | Google Tag Manager container ID (null until confirmed; tracking stays off) | Director | Pending |
-| 14 | Read only endpoints for Plan status and quotations in the portal, and a read only account endpoint in place of company-lookup | Build | Open |
+| 14 | Portal reads for the account, Plan status and quotations: built as `GET /api/portal-summary` (contract 9.8), which the portal uses in place of `/api/company-lookup`. The medical spine still waits for HSF-3 | Build | Built; not deployed |
 | 15 | Safety content signatory for File sign off (HSF-1) and the sign off templates TPL-SGN-02 and TPL-HSF-01 | Director | Partly resolved |
 | 16 | Production host for the Forge API and portal (Vercel address now, MCO domain later) | Director | Pending |
+| 17 | Whether an upload should wait for Care Net's approval of the company account. Today any account that is not declined may upload once the three consents are given (contract section 3, 049); requiring approval means tightening `hsf_register_upload` | Director | Open |
+| 18 | The builder shows an upload blocked by a consent withdrawal under its normal status label; `hsf_my_uploads` already returns `transfer_blocked_reason` for it to show | Build | Open |
+| 19 | Asbestos Abatement Regulations, 2020: amendment notice GN R.2092 or GN R.11435 (HSF-9). Held from citation until verified against the Gazette and corrected | Build, forge_verifier | Open |
+| 20 | Phase 2 re verification of the safety instruments and File provisions (SPEC B8). Until then every File element shows "Awaiting verification" (section 2.5.2) | Build, forge_verifier | Open; waits for HSF-7 (SPEC B8.2) |

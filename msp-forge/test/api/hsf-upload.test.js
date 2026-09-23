@@ -64,6 +64,11 @@ function supabase(t, o) {
     const m = /^https:\/\/unit-test\.supabase\.invalid\/rest\/v1\/rpc\/([a-z0-9_]+)$/.exec(c.url);
     if (m) {
       assertService(c);
+      // Contract 9.1: lib/auth.js links the verified user once per request.
+      if (m[1] === 'hsf_link_account') {
+        assert.deepEqual(JSON.parse(c.body), { p_auth_user: USER_ID });
+        return json(200, ACCOUNT_ID);
+      }
       const fn = opts.rpc && opts.rpc[m[1]];
       if (!fn) throw new Error(`unexpected rpc ${m[1]}`);
       const out = fn(JSON.parse(c.body));
@@ -129,7 +134,10 @@ function registerBody(over) {
 
 const registered = { upload_id: UPLOAD_ID, bucket: 'hsf-staging', path: PATH };
 const signOk = () => json(200, { url: `/object/upload/sign/hsf-staging/${PATH}?token=${SIGN_TOKEN}` });
-const byKind = (calls, part) => calls.filter(c => c.url.includes(part));
+// Calls whose URL contains `part`; the account link made by lib/auth.js on every
+// signed in request is left out, so "no database call" means none by the handler.
+const LINK = '/rest/v1/rpc/hsf_link_account';
+const byKind = (calls, part) => calls.filter(c => c.url.includes(part) && !c.url.endsWith(LINK));
 
 test('401 without a token for GET and POST, and no call at all', async t => {
   const calls = supabase(t, {});
@@ -172,9 +180,9 @@ test('register: validates, registers, then signs an upload URL in hsf-staging wi
   assert.equal(sign[0].headers['x-upsert'], undefined, 'an upload must never overwrite an object');
   assert.equal(sign[0].body, '{}');
 
-  // Order: auth, register, sign.
-  assert.deepEqual(calls.map(c => c.url.replace(SUPABASE_URL, '').split('?')[0].split('/').slice(0, 4).join('/')),
-    ['/auth/v1/user', '/rest/v1/rpc', '/storage/v1/object']);
+  // Order: auth, account link, register, sign.
+  assert.deepEqual(calls.map(c => c.url.replace(SUPABASE_URL, '').split('?')[0].split('/').slice(0, 5).join('/')),
+    ['/auth/v1/user', LINK, '/rest/v1/rpc/hsf_register_upload', '/storage/v1/object/upload']);
 
   assert.deepEqual(res.body, {
     upload_id: UPLOAD_ID,

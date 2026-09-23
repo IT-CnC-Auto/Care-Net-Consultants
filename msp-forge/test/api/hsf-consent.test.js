@@ -54,6 +54,11 @@ function supabase(t, rpcs) {
       assert.equal(c.method, 'POST');
       assert.equal(c.headers.apikey, SERVICE_KEY);
       assert.equal(c.headers.Authorization, `Bearer ${SERVICE_KEY}`);
+      // Contract 9.1: lib/auth.js links the verified user once per request.
+      if (m[1] === 'hsf_link_account' && !rpcs.hsf_link_account) {
+        assert.deepEqual(JSON.parse(c.body), { p_auth_user: USER_ID });
+        return json(200, ACCOUNT_ID);
+      }
       const fn = rpcs[m[1]];
       if (!fn) throw new Error(`unexpected rpc ${m[1]}`);
       const out = fn(JSON.parse(c.body));
@@ -95,7 +100,9 @@ function status(kinds) {
   return s;
 }
 
-const rpcCalls = calls => calls.filter(c => c.url.includes('/rest/v1/rpc/'));
+// Database calls made by the handler itself (the account link in lib/auth.js is counted apart).
+const rpcCalls = calls => calls.filter(c => c.url.includes('/rest/v1/rpc/') && !c.url.endsWith('/rpc/hsf_link_account'));
+const linkCalls = calls => calls.filter(c => c.url.endsWith('/rpc/hsf_link_account'));
 
 test('401 without a token on every method, and no database call', async t => {
   const calls = supabase(t, {});
@@ -107,15 +114,16 @@ test('401 without a token on every method, and no database call', async t => {
   assert.equal(calls.length, 0);
 });
 
-test('401 with a token Supabase Auth does not accept, and no rpc', async t => {
+test('401 with a token Supabase Auth does not accept, and no rpc (not even the account link)', async t => {
   const calls = supabase(t, {});
   const res = await call({ headers: { authorization: 'Bearer aaa.bbb.ccc' } });
   assert.equal(res.statusCode, 401);
   assert.equal(calls.length, 1);
   assert.equal(rpcCalls(calls).length, 0);
+  assert.equal(linkCalls(calls).length, 0);
 });
 
-test('GET returns hsf_consent_status for the verified user only', async t => {
+test('GET returns hsf_consent_status for the verified user only, after the account link', async t => {
   let seen;
   const calls = supabase(t, { hsf_consent_status: a => { seen = a; return status([]); } });
   const res = await call({ headers: AUTH, query: { user: 'someone-else' } });
@@ -123,7 +131,32 @@ test('GET returns hsf_consent_status for the verified user only', async t => {
   assert.deepEqual(seen, { p_auth_user: USER_ID });
   assert.equal(res.body.complete, false);
   assert.equal(res.body.wording_version, WORDING);
-  assert.equal(calls.length, 2);
+  assert.deepEqual(calls.map(c => c.url.replace(SUPABASE_URL, '')),
+    ['/auth/v1/user', '/rest/v1/rpc/hsf_link_account', '/rest/v1/rpc/hsf_consent_status']);
+});
+
+test('a signed in contact whose account links on this request sees it at once (contract 9.1)', async t => {
+  // The fake database links on the first call, as hsf_link_account does for a
+  // confirmed email that matches a registered company.
+  let linked = false;
+  supabase(t, {
+    hsf_link_account: a => { assert.deepEqual(a, { p_auth_user: USER_ID }); linked = true; return ACCOUNT_ID; },
+    hsf_consent_status: () => (linked ? status([]) : Object.assign(status([]), { client_account_id: null, company_name: null })),
+  });
+  const res = await call({ headers: AUTH });
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.client_account_id, ACCOUNT_ID);
+});
+
+test('a failed account link is a 503 and the consent status is not read', async t => {
+  const calls = supabase(t, {
+    hsf_link_account: () => json(500, { code: 'XX000', message: `down ${SERVICE_KEY}` }),
+    hsf_consent_status: () => { throw new Error('must not be called'); },
+  });
+  const res = await call({ headers: AUTH });
+  assert.equal(res.statusCode, 503);
+  assert.equal(res.body.code, 'unavailable');
+  assert.equal(rpcCalls(calls).length, 0);
 });
 
 test('POST records the three consents with the wording version', async t => {

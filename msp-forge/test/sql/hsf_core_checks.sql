@@ -3,15 +3,17 @@
 -- database. Never applied to Supabase. Everything runs in one transaction that
 -- is rolled back, so the test data it creates never persists.
 --
--- Usage (from msp-forge/):
---   test/sql/replay.sh 48
+-- Usage (from msp-forge/). The release gate of 047 calls hsf_element_citable,
+-- which migration 050 defines (contract 9.3), so replay every migration first:
+--   test/sql/replay.sh
 --   psql -h /tmp -p 55432 -U postgres -d cnc_test -v ON_ERROR_STOP=1 -f test/sql/hsf_core_checks.sql
 --
 -- Exact before and after comparison of the kernel instrument rows (optional):
 --   test/sql/replay.sh 47
 --   psql -h /tmp -p 55432 -U postgres -d cnc_test -c "create table hsf_check_instrument_before as
 --     select id, md5(to_jsonb(li)::text) as row_md5, status from msp_legal_instrument li"
---   psql -h /tmp -p 55432 -U postgres -d cnc_test -v ON_ERROR_STOP=1 -f supabase/migrations/048_hsf_library_seed.sql
+--   for n in 048 049 050 051; do psql -h /tmp -p 55432 -U postgres -d cnc_test -v ON_ERROR_STOP=1 \
+--     -f supabase/migrations/${n}_*.sql; done
 --   psql -h /tmp -p 55432 -U postgres -d cnc_test -v ON_ERROR_STOP=1 -f test/sql/hsf_core_checks.sql
 -- Without the snapshot table the check falls back to the status counts that
 -- migrations 001 to 046 leave behind.
@@ -282,7 +284,17 @@ select pg_temp.hsf_try('release: refused without the client section 16(2) accept
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
 insert into hsf_signoff (file_id, revision, kind, decision, signatory_name, decided_at) values
   ('00000000-0000-4000-8000-0000000000f1', 1, 'client_16_2_acceptance', 'approved', 'Test appointee', now());
-select pg_temp.hsf_try('release: accepted with three approvals and only verified instruments cited',
+-- Contract 9.3: HSF-A-01 names the OHS Act, verified but seeded with scope medical
+-- and provision 'awaiting verification', so it is not yet citable for a File.
+select pg_temp.hsf_try('release: refused while the element''s provision is awaiting verification (contract 9.3)',
+  $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
+update hsf_element_instrument set provision = 'Check provision (rolled back)'
+ where element_id = (select id from hsf_element where code = 'HSF-A-01')
+   and instrument_id in (select id from msp_legal_instrument where short_name = 'OHS Act');
+select pg_temp.hsf_try('release: refused while the instrument''s scope is medical only (contract 9.3)',
+  $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
+update msp_legal_instrument set scope = 'both' where short_name = 'OHS Act' and status = 'verified';
+select pg_temp.hsf_try('release: accepted with three approvals and every instrument citable for a File',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, true);
 insert into hsf_file_item (file_id, element_id)
 select '00000000-0000-4000-8000-0000000000f1', id from hsf_element where code = 'HSF-F-08';

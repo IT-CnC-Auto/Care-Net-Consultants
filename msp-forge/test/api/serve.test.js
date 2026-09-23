@@ -176,8 +176,8 @@ test('/api/kernel without a key is a 401 JSON answer with CORS and no-store', as
   assert.equal(pre.status, 204);
 });
 
-test('/api/hsf-* without a token are 401 JSON answers', async () => {
-  for (const p of ['/api/hsf-consent', '/api/hsf-upload', '/api/hsf-file']) {
+test('/api/hsf-* and /api/portal-summary without a token are 401 JSON answers', async () => {
+  for (const p of ['/api/hsf-consent', '/api/hsf-upload', '/api/hsf-file', '/api/portal-summary']) {
     const r = await get(p);
     assert.equal(r.status, 401, p);
     assert.equal(JSON.parse(r.body).code, 'sign_in_required');
@@ -186,6 +186,8 @@ test('/api/hsf-* without a token are 401 JSON answers', async () => {
     headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'register' }),
   });
   assert.equal(post.status, 401);
+  const summaryPost = await request(port, 'POST', '/api/portal-summary', { headers: { 'content-type': 'application/json' }, body: '{}' });
+  assert.equal(summaryPost.status, 405, 'the portal summary is read only');
 });
 
 test('invalid JSON reaching a handler that reads req.body directly is a 400, as on Vercel', async () => {

@@ -7,7 +7,7 @@
 <meta name="description" content="Build your Health and Safety File with Care Net Consultants: sign in, give consent, generate the File for your industry and drop in the documents you already hold, section by section and department by department.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Build your Health and Safety File | Care Net Consultants">
-<meta property="og:description" content="Generate the File for your industry and drop in the documents you already hold. Held securely, then kept with MyClinicOnline.">
+<meta property="og:description" content="Generate the File for your industry and drop in the documents you already hold. Held securely by Care Net, and kept with MyClinicOnline once it is connected.">
 <meta property="og:image" data-asset="hsf-builder-og" content="https://img.carenetcdn.com/health-and-safety-file/hsf-builder-og-1200x630.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <!--
@@ -29,16 +29,22 @@
                             /hsf/samples/construction.js. Nothing is sent.
 
  CALLS: only /api/hsf-consent, /api/hsf-upload and /api/hsf-file with the
- user's access token (auth.apiFetch), plus two public, anonymous Supabase
- REST views: msp_public_industry_profile and hsf_public_element_library.
- The signed upload URL returned by /api/hsf-upload receives the file bytes
- directly (PUT). No secret is held in this page.
+ user's access token (auth.apiFetch), plus four public, anonymous Supabase
+ REST views: msp_public_industry_profile (industries),
+ hsf_public_subindustry and hsf_public_trigger (contract 9.7: the areas of
+ work with their codes, and the activity triggers) and
+ hsf_public_element_library. The signed upload URL returned by
+ /api/hsf-upload receives the file bytes directly (PUT). No secret is
+ held in this page. A 404 from /api/hsf-file?file_id= reads "That File
+ is not available" (contract 9.2).
 
  UPLOAD LIMITS mirror the contract for a plain message before upload; the
  server (hsf_register_upload, from msp_env_parameter) is the authority.
 
- LEGISLATION: an instrument is named only when the API returns it as
- citable (kernel_citable_instrument). Everything else is shown as
+ LEGISLATION: an element's basis is shown exactly as the API returns it
+ under contract 9.3 (hsf_element_citable): the citable short names, and
+ every other candidate under "Awaiting verification". Until the Phase 2
+ re verification of the health and safety provisions, every element shows
  "Awaiting verification". No section or regulation numbers are typed here
  except section 16(2) and section 37(2) of the OHS Act.
 
@@ -285,7 +291,7 @@
     <div>
       <span class="eyebrow">Health and Safety File builder</span>
       <h1>Build your File. <span class="r">Drop in what you already hold.</span></h1>
-      <p class="lede">Generate the Health and Safety File for your industry and your sites, then drop your documents into the section and department they belong to. Every document is fingerprinted in your browser, held securely and then kept with MyClinicOnline, where special personal information is protected.</p>
+      <p class="lede">Generate the Health and Safety File for your industry and your sites, then drop your documents into the section and department they belong to. Every document is fingerprinted in your browser and held securely by Care Net. Once MyClinicOnline is connected, each one is kept there, where special personal information is protected.</p>
       <div class="chips">
         <a class="chip" href="#build" data-cta="hsf_builder_hero_start">Start building</a>
         <a class="chip" href="#journey" data-cta="hsf_builder_hero_journey">Where your documents go</a>
@@ -321,7 +327,7 @@
 
     <!-- Friendly error (servers unreachable) -->
     <div class="card" id="st-error" hidden>
-      <h2>The File builder cannot reach Care Net right now</h2>
+      <h2 id="st-error-title" tabindex="-1">The File builder cannot reach Care Net right now</h2>
       <div class="errbox" id="st-error-msg" role="alert">Please try again in a few minutes.</div>
       <p class="muted" style="margin-top:12px">Nothing you have uploaded is lost. If this carries on, a sales executive can help.</p>
       <div class="row" style="margin-top:12px">
@@ -334,7 +340,7 @@
     <!-- State 1: signed out -->
     <div class="card" id="st-signin" hidden>
       <div class="ill consent" data-asset="hsf-builder-signin-illustration" aria-hidden="true">Sign in illustration</div>
-      <h2>Sign in to build your File</h2>
+      <h2 tabindex="-1">Sign in to build your File</h2>
       <p>Enter your work email and we will send you a one time sign in link. There is no password to remember. Use the same email as your Medical Surveillance Plan and your File starts from what you told us then.</p>
       <form id="signin-form" novalidate>
         <label class="l" for="signin-email">Work email</label>
@@ -394,7 +400,7 @@
 
     <!-- State 4: no File yet -->
     <div class="card" id="st-setup" hidden>
-      <h2>Set up your File</h2>
+      <h2 id="su-title" tabindex="-1">Set up your File</h2>
       <p>Tell us your industry, your sites and the work you do. The File is generated from the Care Net element library: every element that applies, each marked outstanding until you evidence it. Generating the File stores no documents.</p>
       <form id="setup-form" novalidate>
         <div class="grid">
@@ -406,7 +412,7 @@
           <div>
             <label class="l" for="su-sub">Area of work</label>
             <select id="su-sub" disabled aria-describedby="su-sub-help"><option value="">Choose your industry first</option></select>
-            <p class="help" id="su-sub-help">For your reference while you choose activities. The File covers the elements for your whole industry.</p>
+            <p class="help" id="su-sub-help">Choosing your area of work adds the elements that apply to it. Leave it on the whole industry for the elements that apply across your industry.</p>
           </div>
         </div>
         <fieldset>
@@ -436,7 +442,7 @@
         <div class="fhead">
           <div>
             <span class="eyebrow" id="f-eyebrow">Health and Safety File</span>
-            <h2 id="f-title">Your File</h2>
+            <h2 id="f-title" tabindex="-1">Your File</h2>
             <div class="kv" id="f-kv"></div>
             <div class="row" style="margin-top:10px">
               <label class="vh" for="f-switch">Choose a File</label>
@@ -467,7 +473,9 @@
           <button type="button" role="tab" id="tab-uploads" aria-controls="panel-uploads" aria-selected="false" tabindex="-1">Uploads</button>
         </div>
         <div class="tabpanel" role="tabpanel" id="panel-sections" aria-labelledby="tab-sections">
+          <span class="dico" data-asset="hsf-builder-dropzone-icon" aria-hidden="true" hidden>&#8683;</span>
           <p class="muted" style="margin:0">Drop files onto a section, or onto one element inside it. Choose the department each document belongs to first. Accepted: PDF, Word, Excel, CSV, JPEG and PNG, up to 25 MB each.</p>
+          <p class="muted" style="margin:8px 0 0">File references show only once an instrument has been re verified for its health and safety provisions; until then it is listed under awaiting verification.</p>
         </div>
         <div class="tabpanel gap" role="tabpanel" id="panel-gaps" aria-labelledby="tab-gaps" hidden></div>
         <div class="tabpanel" role="tabpanel" id="panel-uploads" aria-labelledby="tab-uploads" hidden>
@@ -493,7 +501,7 @@
     <div class="sechead">
       <span class="eyebrow">Where your documents go</span>
       <h2 id="journey-title">Held securely, <span class="r">then kept with MyClinicOnline.</span></h2>
-      <p>Every document follows the same five steps. You can see each one against every file in the Uploads view of your File.</p>
+      <p>Every document follows the same five steps. You can see each one against every file in the Uploads view of your File. MyClinicOnline is not connected yet, so for now documents go no further than step 3 and stay held securely in Care Net&rsquo;s staging environment. Steps 4 and 5 follow once the connection goes live.</p>
     </div>
     <div class="card">
       <ol class="journey">
@@ -526,6 +534,7 @@
       <span class="eyebrow">The element library</span>
       <h2 id="library-title">Nothing is cited <span class="r">until it has been checked three times.</span></h2>
       <p>These are the elements every File carries. An instrument is named only once the Care Net Cognitive Kernel has verified it against its primary text, corroborated it independently and confirmed it is in force. Everything else shows as awaiting verification, and the duty is described in plain words.</p>
+      <p>File references show only once an instrument has been re verified for its health and safety provisions; until then it is listed under awaiting verification.</p>
     </div>
     <div class="card lib" id="lib-box">
       <p class="muted" id="lib-msg"><span class="spinner" aria-hidden="true"></span>Loading the element library.</p>
@@ -655,22 +664,23 @@
   },
   {
    "id": "hsf-builder-pattern",
-   "block": "Pattern strip under the hero",
-   "purpose": "The shared Care Net Africa pattern strip.",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
    "type": "pattern",
    "formats": [
-    "png"
+    "png",
+    "webp"
    ],
-   "width": 1200,
-   "height": null,
-   "ratio": "repeat x",
-   "max_kb": 60,
-   "colour": "Brand pattern",
-   "alt": "Decorative pattern, no alternative text",
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
    "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
    "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
    "status": "existing",
-   "notes": "Loaded by /css/cnc-pattern.css. No change needed."
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
   },
   {
    "id": "hsf-builder-signin-illustration",
@@ -1014,7 +1024,7 @@
    "file_name": "hsf-builder-dropzone-64.svg",
    "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-builder-dropzone-64.svg",
    "status": "needed",
-   "notes": "Shown at 44 by 44 in a white circle. Hidden below 520 px wide. Decorative on the page."
+   "notes": "Shown at 44 by 44 in a white circle. Hidden below 520 px wide. Decorative on the page. Visible on ?design=1&demo=1 or once a File is open; signed out, design mode lists one hidden placeholder slot."
   },
   {
    "id": "hsf-builder-empty-state",
@@ -1264,41 +1274,22 @@ const SECTIONS = [
 const SEC_NAME = Object.fromEntries(SECTIONS.map((s) => [s[0], s[1]]));
 const secSlug = (c) => 'hsf-builder-section-' + c.toLowerCase() + '-icon';
 
-/* Activity checklist: plain questions that raise the SPEC B9.2 trigger codes
-   (hsf_trigger, seeded in migration 048). The generator decides which
-   elements each code switches on. */
-const ACTIVITIES = [
-  ['Construction work', [
-    ['T-CONSTR', 'Construction work is carried on'],
-    ['T-CONSTR-NOTIFY', 'Construction work at or above the notification or permit thresholds (thresholds awaiting verification)'],
-    ['T-DEMOLITION', 'Demolition work'], ['T-EXCAVATION', 'Excavation work'],
-    ['T-TEMPWORKS', 'Temporary works'], ['T-SCAFFOLD', 'Scaffolding is erected or used'],
-    ['T-ROADWORKS', 'Work on or next to public roads']]],
-  ['Height and access', [['T-HEIGHT', 'Work at height'], ['T-LADDERS', 'Ladders are used'], ['T-STACKING', 'Goods are stacked and stored']]],
-  ['Plant, machinery and equipment', [
-    ['T-MOBILEPLANT', 'Construction vehicles, forklifts or other mobile plant'], ['T-LIFTING', 'Lifting machines and lifting tackle'],
-    ['T-MACHINERY', 'Machinery that needs guarding and supervision'], ['T-PRESSURE', 'Pressure equipment'],
-    ['T-ELEC', 'Electrical installations or electrical work'], ['T-EPT', 'Explosive powered tools are used'],
-    ['T-LPG', 'Liquefied petroleum gas installations']]],
-  ['Substances and exposures', [
-    ['T-HCA', 'Hazardous chemical agents are used, stored or produced'], ['T-HBA', 'Exposure to hazardous biological agents'],
-    ['T-ASBESTOS', 'Asbestos is present or may be disturbed'], ['T-LEAD', 'Work with lead'],
-    ['T-NOISE', 'Noise exposure identified by the risk assessment'], ['T-RADIATION', 'Ionising radiation sources'],
-    ['T-THERMAL', 'Heat or cold exposure'], ['T-EXPLOSIVES', 'Explosives are used'],
-    ['T-MHI', 'Large holdings of listed substances (major hazard installation thresholds awaiting verification)']]],
-  ['Higher risk tasks', [
-    ['T-CONFINED', 'Confined spaces are entered'], ['T-HOTWORK', 'Hot work such as welding, cutting or grinding'],
-    ['T-PTW', 'A permit to work system is needed'], ['T-TASKRA', 'Task based and daily pre task risk assessments are needed']]],
-  ['People and organisation', [
-    ['T-CONTRACTORS', 'Contractors or mandataries work for you'], ['T-HSR', 'Your workforce needs designated health and safety representatives'],
-    ['T-COMMITTEE', 'A health and safety committee is needed'], ['T-SHIFT', 'Shift or night work'],
-    ['T-VIOLENCE', 'Exposure to violence or aggression'], ['T-PUBLIC', 'Members of the public may be affected by the work'],
-    ['T-TRAFFIC', 'Vehicles and people share space'], ['T-PRDP', 'Drivers who need a professional driving permit']]],
-  ['Your sector', [
-    ['T-FOOD', 'Food is prepared, handled or served'], ['T-SECURITY', 'Private security services are provided'],
-    ['T-ARMED', 'Armed security or firearms are carried'], ['T-WASTE', 'Waste is generated, handled or disposed of'],
-    ['T-ENVIRO', 'Other environmental law applies']]]
+/* Activity checklist (contract 9.7). The trigger codes and their wording are
+   read live from the public view hsf_public_trigger, so the checklist always
+   matches the library the generator uses. This table only groups the codes on
+   screen; a code it does not list is shown under "Other activities". T-MINING
+   is not offered as a tick: the generator raises it from the industry, because
+   a mine is under the Mine Health and Safety Act. */
+const ACTIVITY_GROUPS = [
+  ['Construction work', ['T-CONSTR', 'T-CONSTR-NOTIFY', 'T-DEMOLITION', 'T-EXCAVATION', 'T-TEMPWORKS', 'T-SCAFFOLD', 'T-ROADWORKS']],
+  ['Height and access', ['T-HEIGHT', 'T-LADDERS', 'T-STACKING']],
+  ['Plant, machinery and equipment', ['T-MOBILEPLANT', 'T-LIFTING', 'T-MACHINERY', 'T-PRESSURE', 'T-ELEC', 'T-EPT', 'T-LPG']],
+  ['Substances and exposures', ['T-HCA', 'T-HBA', 'T-ASBESTOS', 'T-LEAD', 'T-NOISE', 'T-RADIATION', 'T-THERMAL', 'T-EXPLOSIVES', 'T-MHI']],
+  ['Higher risk tasks', ['T-CONFINED', 'T-HOTWORK', 'T-PTW', 'T-TASKRA']],
+  ['People and organisation', ['T-CONTRACTORS', 'T-HSR', 'T-COMMITTEE', 'T-SHIFT', 'T-VIOLENCE', 'T-PUBLIC', 'T-TRAFFIC', 'T-PRDP']],
+  ['Your sector', ['T-FOOD', 'T-SECURITY', 'T-ARMED', 'T-WASTE', 'T-ENVIRO']]
 ];
+const INDUSTRY_RAISED = ['T-MINING'];
 
 const ITEM_STATUS = {
   linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding',
@@ -1329,7 +1320,7 @@ const fmtSize = (b) => {
   const n = Number(b) || 0;
   if (n >= 1048576) return (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
   if (n >= 1024) return Math.max(1, Math.round(n / 1024)) + ' KB';
-  return n + ' bytes';
+  return n + (n === 1 ? ' byte' : ' bytes');
 };
 const dmy = (d) => {
   if (!d) return '';
@@ -1365,15 +1356,22 @@ const STATES = ['st-loading', 'st-error', 'st-signin', 'st-noaccount', 'st-conse
 function show(...ids) {
   STATES.forEach((s) => { const el = $(s); if (el) el.hidden = !ids.includes(s); });
 }
-function showError(msg) {
+const ERROR_TITLE = 'The File builder cannot reach Care Net right now';
+function showError(msg, title) {
+  $('st-error-title').textContent = title || ERROR_TITLE;
   $('st-error-msg').textContent = msg || 'Please try again in a few minutes.';
   show('st-error');
 }
+/* Contract 9.2: /api/hsf-file answers 404 for a File that does not exist or
+   is not the caller's, and for such a File item. */
+const FILE_GONE = 'That File is not available';
+const FILE_GONE_MSG = 'It may have been removed, or it is not linked to your company account. Choose Try again to open your Files.';
+const ITEM_GONE_MSG = 'That File item is not available. Refresh your File to see its current items.';
 
 /* ------------------------------------------------------------ state */
 const S = {
   user: null, consent: null, files: [], fileId: null, detail: null,
-  queue: [], serverUploads: [], running: false, industries: null
+  queue: [], serverUploads: [], running: false, industries: null, subindustries: null, triggers: null
 };
 const consentComplete = () => !!(S.consent && S.consent.complete);
 
@@ -1409,6 +1407,9 @@ function listOf(v) {
   if (typeof v === 'string' && v.trim()) { try { return listOf(JSON.parse(v)); } catch (_) { return [v]; } }
   return [];
 }
+/* Contract 9.3: `citable` is what hsf_element_citable allows a File element to
+   cite and `awaiting` is every other candidate. Both are shown exactly as the
+   API returns them; nothing is promoted or inferred here. */
 function basisHtml(citable, awaiting) {
   const c = listOf(citable), a = listOf(awaiting);
   let h = '';
@@ -1434,7 +1435,7 @@ async function loadLibrary() {
       html += '<details><summary>Section ' + s[0] + ': ' + esc(list[0].section_name || s[1]) + ' (' + list.length + ')</summary><ul>'
         + list.map((r) => '<li><b>' + esc(r.name) + '</b> <span class="mono">' + esc(r.code) + '</span>'
           + (r.duty ? '<small>' + esc(r.duty) + '</small>' : '')
-          + '<small>' + basisHtml(r.citable != null ? r.citable : (r.citable_instruments != null ? r.citable_instruments : r.instruments), r.awaiting) + '</small></li>').join('')
+          + '<small>' + basisHtml(r.citable, r.awaiting) + '</small></li>').join('')
         + '</ul></details>';
     });
     box.innerHTML = html;
@@ -1499,14 +1500,22 @@ function wireConsent() {
       } else {
         S.consent = await api('/api/hsf-consent', { method: 'POST', body: { kinds: CONSENT_KINDS.slice(), wording_version: WORDING_VERSION } });
       }
-      msg.innerHTML = '';
-      announce('Consent recorded. You can now upload documents.');
-      $('st-consent').hidden = true;
-      if (DEMO) { renderConsentPanel(); renderSectionCards(); $('st-file').hidden = false; }
-      else await loadFiles();
     } catch (e) {
       msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'Your consent could not be recorded just now. Nothing has been stored. Please try again shortly.')) + '</div>';
-    } finally { btn.disabled = false; }
+      btn.disabled = false;
+      if (!document.activeElement || document.activeElement === document.body) btn.focus();
+      return;
+    }
+    btn.disabled = false;
+    msg.innerHTML = '';
+    announce('Consent recorded. You can now upload documents.');
+    $('st-consent').hidden = true;
+    if (DEMO) { renderConsentPanel(); renderSectionCards(); $('st-file').hidden = false; }
+    else { try { await loadFiles(); } catch (_) { /* loadFiles has already shown a friendly state */ } }
+    /* The consent card (and the button that had focus) is now hidden: move
+       focus to the heading of whatever is shown instead. */
+    const h = document.querySelector('#st-file:not([hidden]) #f-title, #st-setup:not([hidden]) #su-title, #st-error:not([hidden]) #st-error-title, #st-signin:not([hidden]) h2');
+    if (h) h.focus();
   });
 }
 function renderConsentPanel() {
@@ -1536,10 +1545,15 @@ async function withdraw(btn) {
     renderSectionCards();
     renderConsentState();
     $('st-consent').hidden = false;
+    /* The panel was rebuilt, so the focused button is gone: take the keyboard
+       to the first consent of the form that has just reappeared. */
+    $('c-storage').focus();
   } catch (e) {
     btn.disabled = false;
     btn.textContent = 'Withdraw';
+    btn.removeAttribute('aria-label');
     delete btn.dataset.confirm;
+    btn.focus();
     announce(friendly(e, 'The withdrawal could not be recorded just now. Please try again.'));
   }
 }
@@ -1558,27 +1572,99 @@ function siteRow(n) {
 let siteCount = 0;
 function renderSetup() {
   if (!$('su-sites').children.length) { siteCount = 1; $('su-sites').appendChild(siteRow(1)); }
-  $('su-activities').innerHTML = ACTIVITIES.map((g, gi) =>
-    '<fieldset><legend>' + esc(g[0]) + '</legend><div class="checks">'
-    + g[1].map((a, ai) => '<label class="chk" for="act-' + gi + '-' + ai + '"><input type="checkbox" id="act-' + gi + '-' + ai + '" value="' + esc(a[0]) + '"><span>' + esc(a[1]) + '</span></label>').join('')
-    + '</div></fieldset>').join('')
-    + '<p class="help">Tick everything that happens at any site in scope. Each answer switches on the elements the law asks for that activity.</p>';
   loadIndustries();
+  loadSubindustries();
+  loadTriggers();
 }
 async function loadIndustries() {
   const sel = $('su-industry');
   if (S.industries) return;
   try {
-    const list = await restGet('/msp_public_industry_profile?select=code,name,regime,subindustries&order=name');
+    const list = await restGet('/msp_public_industry_profile?select=code,name,regime&order=name');
     if (!Array.isArray(list) || !list.length) throw new Error('empty');
-    S.industries = list;
-    sel.innerHTML = '<option value="">Choose your industry</option>' + list.map((r) => '<option value="' + esc(r.code) + '">' + esc(r.name) + '</option>').join('');
+    S.industries = list.filter((r) => r && r.code);
+    sel.innerHTML = '<option value="">Choose your industry</option>' + S.industries.map((r) => '<option value="' + esc(r.code) + '">' + esc(r.name) + '</option>').join('');
     $('su-industry-help').textContent = 'From the Care Net industry profiles.';
   } catch (e) {
     sel.innerHTML = '<option value="">The industry list could not be reached</option>';
     $('su-industry-help').innerHTML = 'The industry list could not be reached just now. <button type="button" class="linkbtn" id="su-retry">Try again</button>';
-    const b = $('su-retry'); if (b) b.addEventListener('click', () => { sel.innerHTML = '<option value="">Loading industries</option>'; loadIndustries(); });
+    const b = $('su-retry'); if (b) b.addEventListener('click', () => { sel.innerHTML = '<option value="">Loading industries</option>'; loadIndustries().then(() => { const s2 = $('su-industry'); if (s2) s2.focus(); }); });
   }
+}
+/* Contract 9.7: the areas of work, with the codes the generator takes, from
+   the public view hsf_public_subindustry. Only selectable rows are offered. */
+let subLoading = false;
+async function loadSubindustries() {
+  if (S.subindustries || subLoading) return;
+  subLoading = true;
+  fillSubindustries();
+  try {
+    const list = await restGet('/hsf_public_subindustry?select=code,name,industry_code,selectable&order=name');
+    if (!Array.isArray(list)) throw new Error('bad list');
+    S.subindustries = list.filter((r) => r && r.code && r.industry_code && r.selectable !== false);
+  } catch (e) {
+    S.subindustries = null;
+  } finally { subLoading = false; }
+  fillSubindustries();
+}
+function fillSubindustries() {
+  const code = $('su-industry').value, sub = $('su-sub'), help = $('su-sub-help');
+  const keep = sub.value;
+  if (!code) {
+    sub.innerHTML = '<option value="">Choose your industry first</option>';
+    sub.disabled = true;
+    return;
+  }
+  if (!S.subindustries && subLoading) {
+    sub.innerHTML = '<option value="">Loading the areas of work</option>';
+    sub.disabled = true;
+    return;
+  }
+  if (!S.subindustries) {
+    sub.innerHTML = '<option value="">The whole industry</option>';
+    sub.disabled = true;
+    help.innerHTML = 'The areas of work could not be reached just now, so the File would cover only the elements that apply across your industry. <button type="button" class="linkbtn" id="su-sub-retry">Try again</button>';
+    const b = $('su-sub-retry');
+    if (b) b.addEventListener('click', () => { help.textContent = 'Loading the areas of work.'; loadSubindustries().then(() => { const s2 = $('su-sub'); if (s2 && !s2.disabled) s2.focus(); }); });
+    return;
+  }
+  const subs = S.subindustries.filter((r) => r.industry_code === code);
+  sub.innerHTML = '<option value="">' + (subs.length ? 'The whole industry' : 'No areas of work listed') + '</option>'
+    + subs.map((r) => '<option value="' + esc(r.code) + '"' + (r.code === keep ? ' selected' : '') + '>' + esc(r.name) + '</option>').join('');
+  sub.disabled = !subs.length;
+  help.textContent = 'Choosing your area of work adds the elements that apply to it. Leave it on the whole industry for the elements that apply across your industry.';
+}
+/* Contract 9.7: the activity triggers, live from hsf_public_trigger. */
+async function loadTriggers() {
+  const box = $('su-activities');
+  if (S.triggers) { renderActivities(); return; }
+  box.innerHTML = '<p class="muted" role="status"><span class="spinner" aria-hidden="true"></span>Loading the activity list.</p>';
+  try {
+    const list = await restGet('/hsf_public_trigger?select=code,description&order=code');
+    if (!Array.isArray(list) || !list.length) throw new Error('empty');
+    S.triggers = list.filter((r) => r && /^T-[A-Z0-9-]+$/.test(String(r.code || '')) && !INDUSTRY_RAISED.includes(r.code));
+    if (!S.triggers.length) throw new Error('empty');
+    renderActivities();
+  } catch (e) {
+    S.triggers = null;
+    box.innerHTML = '<p class="pending">The activity list could not be reached just now. Your File needs it to switch on the elements for the work you do. <button type="button" class="linkbtn" id="su-act-retry">Try again</button></p>';
+    const b = $('su-act-retry');
+    if (b) b.addEventListener('click', async () => { await loadTriggers(); const f = $('su-activities').querySelector('input, button'); if (f) f.focus(); });
+  }
+}
+function renderActivities() {
+  const byCode = new Map(S.triggers.map((t) => [t.code, t]));
+  const used = new Set();
+  const groups = ACTIVITY_GROUPS.map((g) => [g[0], g[1].filter((c) => byCode.has(c)).map((c) => { used.add(c); return byCode.get(c); })]);
+  const rest = S.triggers.filter((t) => !used.has(t.code));
+  if (rest.length) groups.push(['Other activities', rest]);
+  const ticked = new Set(Array.from($('su-activities').querySelectorAll('input:checked')).map((i) => i.value));
+  let n = 0;
+  $('su-activities').innerHTML = groups.filter((g) => g[1].length).map((g) =>
+    '<fieldset><legend>' + esc(g[0]) + '</legend><div class="checks">'
+    + g[1].map((t) => { n += 1; return '<label class="chk" for="act-' + n + '"><input type="checkbox" id="act-' + n + '" value="' + esc(t.code) + '"' + (ticked.has(t.code) ? ' checked' : '') + '><span>' + esc(t.description || t.code) + '</span></label>'; }).join('')
+    + '</div></fieldset>').join('')
+    + '<p class="help">Tick everything that happens at any site in scope. Each answer switches on the elements that apply to that activity.</p>';
 }
 function wireSetup() {
   $('su-addsite').addEventListener('click', () => {
@@ -1587,17 +1673,12 @@ function wireSetup() {
     $('su-sites').appendChild(r);
     r.querySelector('input').focus();
   });
-  $('su-industry').addEventListener('change', () => {
-    const code = $('su-industry').value, sub = $('su-sub');
-    const prof = (S.industries || []).find((r) => r.code === code);
-    const subs = prof && Array.isArray(prof.subindustries) ? prof.subindustries : [];
-    sub.innerHTML = '<option value="">' + (subs.length ? 'The whole industry' : 'No areas of work listed') + '</option>' + subs.map((s) => '<option>' + esc(s.name) + '</option>').join('');
-    sub.disabled = !subs.length;
-  });
+  $('su-industry').addEventListener('change', () => { $('su-sub').value = ''; fillSubindustries(); });
   $('setup-form').addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const msg = $('setup-msg');
     const industry = $('su-industry').value;
+    const subCode = $('su-sub').disabled ? '' : $('su-sub').value;
     const sites = [];
     $('su-sites').querySelectorAll('.site').forEach((row) => {
       const ins = row.querySelectorAll('input');
@@ -1607,27 +1688,37 @@ function wireSetup() {
     const problems = [];
     if (!industry) problems.push('Choose your industry.');
     if (!sites.length) problems.push('Name at least one site.');
+    if (!S.triggers) problems.push('The activity list has not loaded yet. Choose Try again in the activity list, then generate your File.');
     const hc = $('su-headcount').value.trim();
     if (hc && !/^\d{1,7}$/.test(hc)) problems.push('The number of people must be a whole number.');
     const allText = sites.map((s) => s.name + ' ' + (s.address || '')).join(' ') + ' ' + $('su-project').value;
     if (/\d{13}/.test(allText)) problems.push('Please remove what looks like an identity number. The File never holds personal identifiers here.');
     if (problems.length) { msg.innerHTML = '<div class="errbox">' + problems.map(esc).join('<br>') + '</div>'; return; }
+    /* The generator raises T-MINING itself for a mine (the MHSA regime). */
     const triggers = Array.from($('su-activities').querySelectorAll('input:checked')).map((i) => i.value);
-    if (industry === 'MINING' && !triggers.includes('T-MINING')) triggers.push('T-MINING');
     const scope = { sites };
     const pr = $('su-project').value.trim(); if (pr) scope.project_reference = pr;
     if (hc) scope.headcount = Number(hc);
+    const body = { action: 'generate', industry_code: industry, triggers, scope };
+    if (subCode) body.subindustry_code = subCode;
     const btn = $('setup-btn'); btn.disabled = true;
     msg.innerHTML = '<span class="spinner" aria-hidden="true"></span>Generating your File. This can take a few seconds.';
+    let out;
     try {
-      const out = await api('/api/hsf-file', { method: 'POST', body: { action: 'generate', industry_code: industry, triggers, scope } });
-      msg.innerHTML = '';
-      announce('Your File ' + (out && out.reference ? out.reference + ' ' : '') + 'has been generated.');
-      S.fileId = out && out.file_id;
-      await loadFiles();
+      out = await api('/api/hsf-file', { method: 'POST', body });
     } catch (e) {
       msg.innerHTML = '<div class="errbox">' + esc(friendly(e, 'Your File could not be generated just now. Nothing has been lost; please try again shortly.')) + '</div>';
-    } finally { btn.disabled = false; }
+      btn.disabled = false;
+      if (!document.activeElement || document.activeElement === document.body) btn.focus();
+      return;
+    }
+    btn.disabled = false;
+    msg.innerHTML = '';
+    announce('Your File ' + (out && out.reference ? out.reference + ' ' : '') + 'has been generated.');
+    S.fileId = out && out.file_id;
+    try { await loadFiles(); } catch (_) { /* loadFiles has already shown a friendly state */ }
+    const h = document.querySelector('#st-file:not([hidden]) #f-title, #st-error:not([hidden]) #st-error-title, #st-signin:not([hidden]) h2');
+    if (h) h.focus();
   });
 }
 
@@ -1668,14 +1759,29 @@ async function loadDetail(quiet) {
       api('/api/hsf-upload?file_id=' + encodeURIComponent(S.fileId)).catch(() => null)
     ]);
     S.detail = normaliseDetail(detail);
-    if (Array.isArray(uploads)) S.serverUploads = uploads;
+    if (Array.isArray(uploads)) { S.serverUploads = uploads; syncQueue(); }
     renderFile();
   } catch (e) {
     if (e && e.status === 401) { show('st-signin'); return; }
+    if (e && e.status === 404) {
+      /* The File does not exist or is not this account's (contract 9.2). The
+         view on screen is stale either way, so it is replaced, quiet or not. */
+      fileGone();
+      if (quiet) return;
+      e.handled = true;
+      throw e;
+    }
     if (quiet) { announce(friendly(e, 'Your File could not be refreshed just now. Please try again shortly.')); return; }
     showError(friendly(e, 'Your File could not be loaded just now. Please try again in a few minutes.'));
+    e.handled = true;
     throw e;
   }
+}
+function fileGone() {
+  S.files = S.files.filter((f) => f.file_id !== S.fileId);
+  S.fileId = null; S.detail = null; S.serverUploads = [];
+  announce(FILE_GONE + '.');
+  showError(FILE_GONE_MSG, FILE_GONE);
 }
 function normaliseDetail(d) {
   d = d || {};
@@ -1756,7 +1862,7 @@ function renderSectionCards() {
       + '<span class="dico" data-asset="hsf-builder-dropzone-icon" aria-hidden="true">&#8683;</span>'
       + '<p id="drop-' + c + '-t"><b>Drop files for Section ' + c + ' here</b><br><span class="muted">or choose them with the button. PDF, Word, Excel, CSV, JPEG or PNG, up to 25 MB each.</span></p>'
       + '<div class="ctl"><div><label class="l" for="dept-' + c + '">Department for these documents</label><select id="dept-' + c + '" data-dept="' + c + '">' + deptOptions(dept) + '</select></div>'
-      + '<span class="filebtn"><input type="file" id="pick-' + c + '" multiple accept="' + ACCEPT + '" data-pick="section" data-section="' + c + '"' + (locked ? ' disabled' : '') + ' aria-describedby="drop-' + c + '-t"><span>Choose files</span></span></div>'
+      + '<span class="filebtn"><input type="file" id="pick-' + c + '" multiple accept="' + ACCEPT + '" data-pick="section" data-section="' + c + '"' + (locked ? ' disabled' : '') + ' aria-label="Choose files for Section ' + c + '" aria-describedby="drop-' + c + '-t"><span>Choose files</span></span></div>'
       + eNote + lockNote + '</div>'
       + (secUps.length ? '<ul class="ups" aria-label="Documents filed under Section ' + c + '">' + secUps.map((u) => '<li><span>' + esc(u.name) + '</span><span class="muted">' + esc((UPLOAD_STATUS[u.state] || {}).label || words(u.state)) + (u.dept ? ', ' + esc(DEPT_NAME[u.dept] || u.dept) : '') + '</span></li>').join('') + '</ul>' : '')
       + (s.items.length ? '<details class="els"><summary>Show the ' + s.items.length + ' element' + (s.items.length === 1 ? '' : 's') + ' in Section ' + c + '</summary>' + items + '</details>'
@@ -1769,7 +1875,7 @@ function renderSectionCards() {
 /* Documents dropped on the section itself (not on one element): this session's
    queue plus what the server already holds for this File. */
 function sectionUploads(c) {
-  const local = S.queue.filter((q) => q.section === c && !q.element && q.state !== 'rejected').map((q) => ({ id: q.uploadId, name: q.name, state: q.state, dept: q.dept }));
+  const local = S.queue.filter((q) => q.fileId === S.fileId && q.section === c && !q.element && q.state !== 'rejected').map((q) => ({ id: q.uploadId, name: q.name, state: q.state, dept: q.dept }));
   const seen = new Set(local.map((u) => u.id).filter(Boolean));
   const server = (S.serverUploads || []).filter((u) => u.section_code === c && !u.element_code && !seen.has(u.upload_id))
     .map((u) => ({ id: u.upload_id, name: u.original_name, state: u.status, dept: u.department_code }));
@@ -1777,7 +1883,11 @@ function sectionUploads(c) {
 }
 function elementRow(sec, it, idx, locked) {
   const id = String(it.item_id || (sec + '-' + idx)).replace(/[^A-Za-z0-9_-]/g, '_');
-  const ups = (it.uploads || []).concat(S.queue.filter((q) => q.itemKey === id && q.state !== 'rejected').map((q) => ({ original_name: q.name, status: q.state, department_code: q.dept })));
+  /* The server's list for this element, plus this session's documents that the
+     server does not list yet (one line per upload, never two). */
+  const have = new Set((it.uploads || []).map((u) => u.upload_id).filter(Boolean));
+  const ups = (it.uploads || []).concat(S.queue.filter((q) => q.fileId === S.fileId && q.itemKey === id && q.state !== 'rejected' && !(q.uploadId && have.has(q.uploadId)))
+    .map((q) => ({ original_name: q.name, status: q.state, department_code: q.dept })));
   const st = it.status || 'outstanding';
   return '<div class="erow" data-drop="element" data-section="' + sec + '" data-element="' + esc(it.code || '') + '" data-item="' + esc(id) + '" id="el-' + esc(id) + '">'
     + '<div class="top"><span class="ename">' + esc(it.name) + ' <code>' + esc(it.code || '') + '</code></span><span class="pill ' + esc(st) + '">' + esc(ITEM_STATUS[st] || words(st)) + '</span></div>'
@@ -1842,13 +1952,14 @@ async function setItemStatus(key, status, reason, out) {
     } else {
       await api('/api/hsf-file', { method: 'POST', body: { action: 'set_status', item_id: hit.it.item_id, status, reason } });
       await loadDetail(true);
+      if (!S.detail) return; /* the File is no longer available; that state is shown */
     }
     announce(status === 'not_applicable' ? 'Marked not applicable, with your reason.' : 'Marked as outstanding again.');
     renderOverall(); renderSectionCards(); renderGaps();
     const det = document.querySelector('#sec-' + openSec + ' details.els'); if (det) det.open = true;
     const row = document.getElementById('el-' + key); if (row) { const f = row.querySelector('button, input'); if (f) f.focus(); }
   } catch (e) {
-    const m = friendly(e, 'The change could not be saved just now. Please try again.');
+    const m = e && e.status === 404 ? ITEM_GONE_MSG : friendly(e, 'The change could not be saved just now. Please try again.');
     if (out) out.textContent = m; else announce(m);
   }
 }
@@ -1912,7 +2023,9 @@ function addFiles(files, target) {
   const dept = deptChoice[target.section] || (SECTIONS.find((s) => s[0] === target.section) || [])[3] || 'SHE';
   let added = 0, refused = 0;
   files.forEach((file) => {
-    const q = { id: 'q' + (++qSeq), file, name: file.name, size: file.size, mime: mimeOf(file), dept, section: target.section,
+    /* fileId: the File the document was dropped on, which stays its File even
+       if the person switches to another File before it is sent. */
+    const q = { id: 'q' + (++qSeq), fileId: S.fileId, file, name: file.name, size: file.size, mime: mimeOf(file), dept, section: target.section,
       element: target.element, itemKey: target.itemKey, sha: '', progress: 0, state: 'checking', message: '', uploadId: null };
     const chk = checkFile(file);
     if (!chk.ok) { q.state = 'rejected'; q.message = chk.msg; refused += 1; }
@@ -1920,7 +2033,11 @@ function addFiles(files, target) {
     S.queue.unshift(q);
   });
   renderQueue();
+  /* The section cards are about to be hidden: if the keyboard was in them (a
+     file chosen with the button), take it to the Uploads tab, not the page top. */
+  const hadFocus = $('sec-cards').contains(document.activeElement);
   selectTab('tab-uploads');
+  if (hadFocus) $('tab-uploads').focus();
   announce((added ? added + ' document' + (added === 1 ? '' : 's') + ' added to the upload queue. ' : '') + (refused ? refused + ' not accepted; see the Uploads view for why.' : ''));
   runQueue();
 }
@@ -1981,7 +2098,7 @@ async function processOne(q) {
       announce(q.name + ' uploaded (demonstration).');
       setTimeout(() => { q.state = 'held'; q.message = 'Demonstration: in a live File this document now waits in Care Net staging until MyClinicOnline takes it.'; update(); refreshElementUploads(); }, 1400);
     } else {
-      const body = { action: 'register', department_code: q.dept, original_name: q.name, mime_type: q.mime, size_bytes: q.size, sha256: q.sha, file_id: S.fileId, section_code: q.section };
+      const body = { action: 'register', department_code: q.dept, original_name: q.name, mime_type: q.mime, size_bytes: q.size, sha256: q.sha, file_id: q.fileId, section_code: q.section };
       if (q.element) body.element_code = q.element;
       const reg = await api('/api/hsf-upload', { method: 'POST', body });
       if (!reg || !reg.upload_url || !reg.upload_id) throw new Error('The upload could not be prepared. Please try again.');
@@ -2012,10 +2129,40 @@ function refreshAfterUpload() {
   }, 800);
 }
 function refreshElementUploads() {
-  /* Keep the element rows' document lists in step without closing open sections. */
-  const open = Array.from(document.querySelectorAll('#sec-cards details.els[open]')).map((d) => d.closest('article').id);
+  /* Keep the element rows' document lists in step without closing open
+     sections, and without dropping the keyboard focus of someone working in
+     the cards while an upload finishes. */
+  const root = $('sec-cards');
+  const open = Array.from(root.querySelectorAll('details.els[open]')).map((d) => d.closest('article').id);
+  const ae = document.activeElement;
+  let refocus = null;
+  if (ae && root.contains(ae)) {
+    if (ae.id) refocus = '#' + CSS.escape(ae.id);
+    else if (ae.dataset && ae.dataset.pick === 'element' && ae.dataset.item) refocus = 'input[data-pick="element"][data-item="' + CSS.escape(ae.dataset.item) + '"]';
+  }
   renderSectionCards();
   open.forEach((id) => { const d = document.querySelector('#' + id + ' details.els'); if (d) d.open = true; });
+  if (refocus) { const el = root.querySelector(refocus); if (el) el.focus(); }
+}
+/* Copy what the server now says about this session's uploads onto their queue
+   entries, so Refresh shows a hold, a transfer, a removal from staging or a
+   failure. Entries still on their way (or stopped in the browser) keep their
+   own state. The element lists held in the File detail are brought up to date
+   from the same reply. */
+function syncQueue() {
+  const byId = new Map((S.serverUploads || []).filter((u) => u && u.upload_id).map((u) => [u.upload_id, u]));
+  if (!byId.size) return;
+  S.queue.forEach((q) => {
+    const u = q.uploadId && byId.get(q.uploadId);
+    if (!u || !u.status || ['checking', 'queued', 'hashing', 'uploading', 'error', 'rejected'].includes(q.state)) return;
+    q.state = u.status;
+    q.message = u.staging_deleted_at ? 'Removed from staging on ' + dmy(u.staging_deleted_at) + '.'
+      : (u.transferred_at ? 'Transferred on ' + dmy(u.transferred_at) + '.' : q.message);
+  });
+  if (S.detail) S.detail.sections.forEach((sec) => sec.items.forEach((it) => (it.uploads || []).forEach((x) => {
+    const u = x.upload_id && byId.get(x.upload_id);
+    if (u && u.status) x.status = u.status;
+  })));
 }
 function queueItemHtml(q) {
   const st = UPLOAD_STATUS[q.state] || { label: words(q.state), step: -1, cls: 's-up', ico: '' };
@@ -2035,14 +2182,16 @@ function queueItemHtml(q) {
     + (q.message ? '<div class="qmsg' + (st.step < 0 ? ' err' : '') + '">' + esc(q.message) + '</div>' : '');
 }
 function updateQueueItem(q) {
+  if (q.fileId !== S.fileId) return; /* shown again when its File is open */
   const li = document.getElementById('qi-' + q.id);
   if (!li) { renderQueue(); return; }
   li.innerHTML = queueItemHtml(q);
 }
 function renderQueue() {
   const list = $('queue'); if (!list) return;
-  const local = S.queue.map((q) => '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>');
-  const seen = new Set(S.queue.map((q) => q.uploadId).filter(Boolean));
+  const mine = S.queue.filter((q) => q.fileId === S.fileId);
+  const local = mine.map((q) => '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>');
+  const seen = new Set(mine.map((q) => q.uploadId).filter(Boolean));
   const server = (S.serverUploads || []).filter((u) => !seen.has(u.upload_id)).map((u) => {
     const q = { id: 's' + String(u.upload_id).replace(/[^A-Za-z0-9]/g, ''), name: u.original_name, size: u.size_bytes, mime: '', dept: u.department_code,
       section: u.section_code, element: u.element_code, sha: u.sha256 || u.sha256_client || '', state: u.status, progress: 1,
@@ -2105,14 +2254,15 @@ function wireTabs() {
   });
   $('f-refresh').addEventListener('click', async () => {
     if (DEMO) { announce('The demonstration File is up to date.'); return; }
-    await loadDetail(true); announce('Your File has been refreshed.');
+    await loadDetail(true);
+    if (S.detail && !$('st-file').hidden) announce('Your File has been refreshed.');
   });
   $('q-refresh').addEventListener('click', async () => {
     if (DEMO) { announce('Demonstration statuses are simulated.'); return; }
     try {
       const ups = await api('/api/hsf-upload?file_id=' + encodeURIComponent(S.fileId));
-      if (Array.isArray(ups)) S.serverUploads = ups;
-      renderQueue(); announce('Upload statuses refreshed.');
+      if (Array.isArray(ups)) { S.serverUploads = ups; syncQueue(); }
+      renderQueue(); refreshElementUploads(); announce('Upload statuses refreshed.');
     } catch (e) { announce(friendly(e, 'The statuses could not be refreshed just now.')); }
   });
   $('f-switch').addEventListener('change', async () => {
@@ -2208,13 +2358,13 @@ async function startLive() {
 function boot() {
   renderSectionsOverview();
   wireSignin(); wireSignout(); wireConsent(); wireSetup(); wireTabs();
-  $('retry').addEventListener('click', () => { (DEMO ? startDemo() : startLive()).catch(() => showError()); });
+  $('retry').addEventListener('click', () => { (DEMO ? startDemo() : startLive()).catch((e) => { if (!(e && e.handled)) showError(); }); });
   loadLibrary().catch(() => {});
   const run = DEMO ? startDemo() : startLive();
-  run.catch((e) => showError(DEMO ? 'The demonstration File could not be loaded just now. Please try again shortly.' : friendly(e, 'The File builder could not start just now. Please try again in a few minutes.')));
+  run.catch((e) => { if (e && e.handled) return; showError(DEMO ? 'The demonstration File could not be loaded just now. Please try again shortly.' : friendly(e, 'The File builder could not start just now. Please try again in a few minutes.')); });
   if (!DEMO) {
     try {
-      auth.onChange((event) => { if (event === 'SIGNED_IN' && !$('st-signin').hidden) startLive().catch(() => showError()); });
+      auth.onChange((event) => { if (event === 'SIGNED_IN' && !$('st-signin').hidden) startLive().catch((e) => { if (!(e && e.handled)) showError(); }); });
     } catch (_) { /* provider pending: the start routine already shows a friendly state */ }
   }
 }
