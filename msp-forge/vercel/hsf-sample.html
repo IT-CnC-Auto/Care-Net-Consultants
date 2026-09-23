@@ -100,7 +100,7 @@
   td.code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
   td .basis { color: var(--ink-2); font-size: 12px; margin-top: 3px; }
   td .bs { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-left: 4px; }
-  td .bs.held { color: var(--ok); } td .bs.awaiting, td .bs.mixed { color: var(--warn); }
+  td .bs.held, td .bs.strong { color: var(--ok); } td .bs.practice { color: var(--mco); } td .bs.awaiting, td .bs.mixed, td .bs.society, td .bs.catalogue { color: var(--warn); }
   td.d { white-space: nowrap; font-variant-numeric: tabular-nums; }
   td .why { color: var(--ink-2); font-size: 12px; margin-top: 4px; }
   /* People matrix */
@@ -204,6 +204,7 @@
             <div><dt>Sites</dt><dd id="f-sites"></dd></div>
             <div><dt>People in scope</dt><dd id="f-heads"></dd></div>
           </dl>
+          <p class="note" id="f-kernel" style="margin-top:10px"></p>
         </div>
         <div class="score" aria-label="Overall compliance">
           <b id="f-pct"></b>
@@ -243,7 +244,7 @@
           <span class="pill p-uploaded">Uploaded</span><span>evidence supplied by the client</span>
           <span class="pill p-outstanding">Outstanding</span><span class="pill p-expired">Expired</span><span class="pill p-not_applicable">Not applicable</span>
         </div>
-        <p class="note"><strong>About the legal basis.</strong> Each element names the instrument it rests on. <b>In the framework</b> means the instrument is held in the Care Net Cognitive Kernel; <b>Being verified</b> means it is a candidate still passing the three checks. In a real File, only instruments that have passed all three checks are cited, and nothing is released until they have.</p>
+        <p class="note"><strong>About the legal basis.</strong> Each element names the instrument it rests on. <b>In the framework</b> means the instrument is held in the Care Net Cognitive Kernel; <b>Being verified</b> means it is a candidate still passing the three checks. In Section E, each surveillance protocol carries the strength of its basis from the Care Net OHS Industry Kernel: a strong local basis, practice and agent duty, society guidance and local by law, or catalogue while the instrument is still being fetched. Protocols the kernel lists only for confirmed exposure stay switched off until the risk assessment confirms it. In a real File, only instruments that have passed all three checks are cited, and nothing is released until they have.</p>
       </div>
 
       <div role="tabpanel" id="v-people" aria-labelledby="t-people" hidden>
@@ -312,7 +313,8 @@
   var ICONS = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
   var STATUS = { linked_mco: 'Linked from MCO', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
   var EVID = { document: 'Document', register: 'Register', certificate: 'Certificate', appointment: 'Appointment letter', plan: 'Plan', report: 'Report', permit: 'Permit', minutes: 'Minutes', training_record: 'Training record', medical_certificate: 'Certificate of fitness', licence: 'Licence', agreement: 'Agreement', log: 'Log' };
-  var BS = { held: 'In the framework', awaiting: 'Being verified', mixed: 'Partly being verified' };
+  var BS = { held: 'In the framework', awaiting: 'Being verified', mixed: 'Partly being verified',
+             strong: 'Strong local basis', practice: 'Practice and agent duty', society: 'Society guidance and local by law', catalogue: 'Catalogue, being fetched' };
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
   var pct = function (v) { return v == null ? 'n/a' : String(v).replace('.', ',') + '%'; };
@@ -358,6 +360,7 @@
     $('f-company').textContent = d.company;
     $('f-scope').textContent = d.scope;
     $('f-ref').textContent = d.reference; $('f-rev').textContent = d.revision; $('f-asat').textContent = d.as_at;
+    $('f-kernel').textContent = d.kernel ? 'Medical surveillance protocols from the ' + d.kernel + '.' : '';
     $('f-regime').textContent = d.regime; $('f-sites').textContent = d.sites; $('f-heads').textContent = d.headcount;
     $('f-pct').textContent = pct(d.overall.pct);
     $('f-pct-note').textContent = d.overall.compliant + ' of ' + d.overall.applicable + ' items evidenced';

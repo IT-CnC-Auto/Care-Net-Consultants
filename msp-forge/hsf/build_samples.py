@@ -63,6 +63,99 @@ EXAMS = [
     ('E06-08', 'Confined space', 'T-CONFINED'), ('E06-09', 'Night work', 'T-SHIFT'), ('E06-10', 'Food handling', 'T-FOOD'),
 ]
 
+
+# ---------------------------------------------------------------------------
+# Section E protocols come from the CNC OHS Industry Kernel (23/09/2026,
+# kernel/cnc-ohs-industry-kernel): 02-INDUSTRY-MATRIX gives each industry's
+# "Often" and "If HIRA confirms" lists, 03-PROTOCOL-LEGAL-BASIS gives the basis
+# and its strength. The kernel is SANDBOX until OMP and attorney review.
+KPACK = ROOT / 'kernel' / 'cnc-ohs-industry-kernel'
+PROTOCOLS = {
+    1: ('Audiometry', 'Noise Exposure Regulations, 2024 with the Code of Practice for Audiometry', 'strong'),
+    2: ('Spirometry', 'HCA and Asbestos Abatement medical surveillance, as the OMP directs', 'practice'),
+    3: ('Respiratory symptom questionnaire', 'HCA, Asbestos and physical agents medical screening, as the OMP specifies', 'practice'),
+    4: ('Chest X-ray per silica protocol', 'OMP directed imaging under HCA or Asbestos surveillance; mine instruments to be fetched', 'catalogue'),
+    5: ('Dust disease examination battery for mine workers', 'MHSA and mine medical Codes of Practice, to be fetched', 'catalogue'),
+    6: ('Blood lead biological monitoring', 'Lead Regulations, 2001', 'strong'),
+    7: ('Lead exposure clinical examination', 'Lead Regulations, 2001', 'strong'),
+    8: ('Biological monitoring for specific chemical agents', 'HCA Regulations medical surveillance and biological monitoring', 'strong'),
+    9: ('Occupational chemical exposure medical assessment', 'HCA Regulations medical surveillance', 'strong'),
+    10: ('Cholinesterase monitoring for pesticide exposure', 'HCA biological monitoring under a written OMP protocol', 'practice'),
+    11: ('Dermatological screen', 'HCA and HBA skin exposure duties; OHS Act wet work risk assessment', 'practice'),
+    12: ('Heights medical with vertigo and balance screen', 'Construction Regulations, 2014 medical fitness; OHS Act fall risk assessment', 'practice'),
+    13: ('Confined space medical', 'OHS Act risk assessment and confined space programme; Construction Regulations on site', 'practice'),
+    14: ('Heat stress tolerance assessment', 'Physical Agents Regulations, 2024', 'strong'),
+    15: ('Heat tolerance screening for hot underground workings', 'MHSA heat instruments, to be fetched', 'catalogue'),
+    16: ('Vibration and musculoskeletal screen', 'Physical Agents Regulations, 2024', 'strong'),
+    17: ('Musculoskeletal and ergonomic assessment', 'OHS Act employer duties; EEA section 7 for lawful testing', 'practice'),
+    18: ('Night work medical examination', 'Physical Agents Regulations, 2024 with the BCEA night work interface', 'practice'),
+    19: ('PrDP statutory medical and vision screen', 'National Road Traffic Act PrDP framework, to be fetched', 'catalogue'),
+    20: ('Lifting machine operator certificate of fitness', 'Driven Machinery Regulations, edition to be confirmed', 'catalogue'),
+    21: ('Mine certificate of fitness examination', 'MHSA medical certificate framework, to be fetched', 'catalogue'),
+    22: ('Railway safety critical fitness examination', 'Railway Safety Regulator standards, to be fetched', 'catalogue'),
+    23: ('General medical for electrical work', 'OHS Act risk assessment; electrical regulations to be fetched', 'practice'),
+    24: ('Vision screening with colour vision and UV skin surveillance', 'OHS Act and Physical Agents Regulations interfaces; inherent job requirements', 'practice'),
+    25: ('Radiation worker surveillance with dose monitoring', 'Hazardous Substances Act and licence conditions, to be fetched', 'catalogue'),
+    26: ('Occupational tuberculosis screening', 'HBA Regulations, 2022', 'strong'),
+    27: ('Hepatitis B immunity verification and vaccination pathway', 'HBA Regulations, 2022', 'strong'),
+    28: ('Biological agent surveillance per written medical protocol', 'HBA Regulations, 2022', 'strong'),
+    29: ('Zoonosis surveillance per written medical protocol', 'HBA Regulations, 2022', 'practice'),
+    30: ('Food handler fitness assessment', 'Municipal by laws, to be confirmed per metro; HBA where applicable', 'society'),
+    31: ('General construction fitness', 'Construction Regulations, 2014 medical fitness duties', 'strong'),
+    32: ('General fitness for the inherent requirements of the job', 'EEA section 7 inherent requirements', 'practice'),
+    33: ('Tetanus status within the OMP protocol', 'HBA Regulations, 2022, within the written medical protocol', 'practice'),
+}
+PACK_ORDER = ['AGRI', 'CLEAN', 'CONSTR', 'EDU', 'GOV', 'HEALTH', 'HOSP', 'MANU', 'MINING', 'OFFICE',
+              'PETRO', 'RETAIL', 'SEC', 'TEL', 'TRANS', 'UTIL', 'WASTE']
+
+
+def protocol_ids(entry):
+    e = entry.lower()
+    ids = []
+    rules = [
+        (lambda: 'underground' in e and 'heat' in e, 15), (lambda: 'dust disease' in e, 5),
+        (lambda: 'mine certificate' in e, 21), (lambda: 'general construction fitness' in e, 31),
+        (lambda: 'general fitness' in e, 32), (lambda: 'tetanus' in e, 33),
+        (lambda: 'audiometry' in e, 1), (lambda: 'spirometry' in e, 2), (lambda: 'respiratory' in e, 3),
+        (lambda: 'chest x' in e, 4), (lambda: 'blood lead' in e, 6), (lambda: 'lead clinical' in e, 7),
+        (lambda: 'biological monitoring' in e, 8), (lambda: 'chemical exposure' in e or 'chemical medical' in e, 9),
+        (lambda: 'cholinesterase' in e, 10), (lambda: 'dermatolog' in e, 11), (lambda: 'heights' in e, 12),
+        (lambda: 'confined space' in e, 13), (lambda: 'heat' in e and 'underground' not in e, 14),
+        (lambda: 'vibration' in e, 16), (lambda: 'musculoskeletal' in e and 'vibration' not in e, 17),
+        (lambda: 'night work' in e, 18), (lambda: 'prdp' in e, 19), (lambda: 'lifting machine' in e, 20),
+        (lambda: 'railway' in e, 22), (lambda: 'electrical' in e, 23), (lambda: 'vision' in e, 24),
+        (lambda: 'radiation' in e, 25), (lambda: 'tuberculosis' in e or 'tb screen' in e, 26),
+        (lambda: 'hepatitis b' in e or 'hep b' in e, 27), (lambda: 'biological agent' in e, 28),
+        (lambda: 'zoonosis' in e, 29), (lambda: 'food handler' in e, 30),
+    ]
+    for test, pid in rules:
+        if test() and pid not in ids:
+            ids.append(pid)
+    return ids
+
+
+def pack_protocols():
+    text = (KPACK / '02-INDUSTRY-MATRIX.md').read_text(encoding='utf-8')
+    blocks = re.split(r'^## \d+\. ', text, flags=re.M)[1:18]
+    out = {}
+    for code, block in zip(PACK_ORDER, blocks):
+        often, hira = [], []
+        for line in block.splitlines():
+            m = re.match(r'\s*- \*\*(Often[^*]*|If HIRA[^*]*):\*\*\s*(.*)$', line)
+            if not m:
+                continue
+            target = often if m.group(1).startswith('Often') else hira
+            for entry in m.group(2).split(';'):
+                for pid in protocol_ids(re.sub(r'\*\*', '', entry)):
+                    if pid not in often and pid not in hira and pid not in target:
+                        target.append(pid)
+        out[code] = (often, hira)
+    return out
+
+
+PACK = pack_protocols()
+HIRA_REASON = 'Only once the risk assessment confirms exposure; not confirmed at this site.'
+
 # Fictitious sample companies. Triggers are what a completed assessment for
 # this kind of operation would raise; they decide which elements switch on.
 PROFILES = {
@@ -233,9 +326,19 @@ def build(code):
                     items.append(item('HSF-' + c, sec, 'Licence: ' + n, e['basis'], 'licence', 'APP-00', 'on_expiry', 'HSF-5', key + c))
             continue
         if e['code'] == 'HSF-E-06':
-            for c, n, t in EXAMS:
-                if applies(t, triggers):
-                    items.append(item('HSF-' + c, sec, 'Statutory examination: ' + n, e['basis'], 'medical_certificate', 'OMP', 'statutory', 'MED40', key + c, mco=True))
+            often, hira = PACK[code]
+            for pid in often:
+                n, b, strength = PROTOCOLS[pid]
+                it = item('HSF-E06-P%02d' % pid, sec, 'Surveillance protocol: ' + n, b, 'medical_certificate', 'OMP',
+                          'statutory', 'MED40', key + 'P%d' % pid, mco=True)
+                it['basis_state'] = strength
+                items.append(it)
+            for pid in hira:
+                n, b, strength = PROTOCOLS[pid]
+                it = item('HSF-E06-P%02d' % pid, sec, 'Surveillance protocol: ' + n, b, 'medical_certificate', 'OMP',
+                          'statutory', 'MED40', key + 'P%d' % pid, mco=True)
+                it.update(basis_state=strength, status='not_applicable', reason=HIRA_REASON, source='', to='', **{'from': ''})
+                items.append(it)
             continue
         mco = sec == 'E' and e['evidence'] == 'medical_certificate'
         items.append(item(e['code'], sec, e['name'], e['basis'], e['evidence'], e['responsible'], e['review'], e['retention'], key, mco=mco))
@@ -311,6 +414,7 @@ def build(code):
         'slug': slug, 'code': code, 'industry': iname, 'company': company + ' (fictitious)', 'scope': scope,
         'sites': sites, 'headcount': headcount, 'regime': 'Mine Health and Safety Act' if regime == 'MHSA' else 'Occupational Health and Safety Act',
         'reference': ref, 'revision': 1, 'as_at': fmt(AS_AT), 'triggers': sorted(triggers),
+        'kernel': 'CNC OHS Industry Kernel, 23/09/2026 (sandbox until OMP and attorney review)',
         'overall': {'compliant': num, 'applicable': den, 'pct': round(100 * num / den, 1) if den else None,
                     'counts': {k: sum(1 for x in items if x['status'] == k) for k in ('linked_mco', 'uploaded', 'outstanding', 'expired', 'not_applicable')}},
         'sections': secs, 'items': items,
