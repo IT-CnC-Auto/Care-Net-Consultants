@@ -54,13 +54,14 @@
   .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red);
                 box-shadow: 0 3px 10px rgba(0,0,0,.10); transform: translateY(-2px); }
   .icongrid a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .icongrid svg { width: 72px; height: 72px; }
   .icongrid img { width: 72px; height: 72px; object-fit: contain; object-position: center;
                   display: block; pointer-events: none; }
   .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; align-self: start; }
   @media (max-width: 420px) {
     .icongrid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
     .icongrid a { grid-template-rows: 60px 1fr; padding: 12px 8px; }
-    .icongrid img { width: 56px; height: 56px; }
+    .icongrid img, .icongrid svg { width: 56px; height: 56px; }
   }
 
   /* ---- Viewing one sample ---- */
@@ -251,7 +252,7 @@
     var grid = document.getElementById('icongrid');
     grid.innerHTML = INDUSTRIES.map(function (i) {
       return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '" data-cta="sample_industry:' + i[0] + '">'
-           + '<img data-asset="' + iconSlot(i[0]) + '" src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
+           + '<img data-fit-icon data-asset="' + iconSlot(i[0]) + '" src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
            + '<span>' + i[2] + '</span></a></li>';
     }).join('');
     elChooser.hidden = false;
@@ -751,6 +752,7 @@
  ]
 }
 </script>
+<script src="/js/cnc-icon-fit.js" defer></script>
 <script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>
