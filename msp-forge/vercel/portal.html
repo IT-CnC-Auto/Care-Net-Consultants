@@ -984,8 +984,8 @@ const MCO_URL = httpsUrl(CFG.mcoPortalUrl);
 const FILE_STATUS = {
   draft: ['grey', 'Draft', 'Not yet sent for review. Keep evidencing it in the builder.'],
   generating: ['grey', 'Being generated', 'Not yet sent for review.'],
-  in_review: ['blue', 'In review', 'The Health and Safety Manager reviews the safety content and the Occupational Medical Practitioner the medical section.'],
-  approved: ['ok', 'Approved', 'Release needs the Health and Safety Manager, the Occupational Medical Practitioner and your section 16(2) appointee.'],
+  in_review: ['blue', 'In review', 'A registered health and safety practitioner reviews the safety content.'],
+  approved: ['ok', 'Approved', 'Release needs the registered health and safety practitioner and your section 16(2) appointee.'],
   released: ['ok', 'Released', 'Signed off and released with its revision number.'],
   live: ['ok', 'Live', 'Signed off, released and kept live: expiries and changes open a new revision.'],
   superseded: ['grey', 'Superseded', 'Replaced by a newer revision.'],
@@ -1015,13 +1015,17 @@ const PACKAGE = {
   SIGNED_PLAN: 'Medical Surveillance Plan, reviewed and signed by an Occupational Medical Practitioner'
 };
 const PRICE_STATUS = { indicative: ['wait', 'Indicative'], firm: ['ok', 'Firm'] };
-/* hsf_signoff (migration 047): the three sign offs a release needs (SPEC B11.2). */
-const SIGNOFF_ORDER = ['safety_content', 'omp_medical', 'client_16_2_acceptance'];
+/* hsf_signoff (migrations 047 and 053, contract 10.8): release needs the safety
+   content and the client acceptance; the chief executive acknowledgement is
+   recorded, not needed for release. The Occupational Medical Practitioner is not
+   a File signatory: an omp_medical row (history only) is never shown as one. */
+const SIGNOFF_ORDER = ['safety_content', 'client_16_2_acceptance', 'ceo_16_1_acknowledgement'];
 const SIGNOFF_LABEL = {
-  safety_content: 'Health and Safety Manager, safety content',
-  omp_medical: 'Occupational Medical Practitioner, medical section',
-  client_16_2_acceptance: 'Your section 16(2) appointee, acceptance'
+  safety_content: 'Registered health and safety practitioner, safety content',
+  client_16_2_acceptance: 'Your section 16(2) appointee, acceptance',
+  ceo_16_1_acknowledgement: 'Your chief executive, acknowledgement (recorded, not needed for release)'
 };
+const SECTION_E_NOTE = 'The medical surveillance plan signed by the Occupational Medical Practitioner is filed in Section E as evidence. It is not a sign off of the File.';
 const DECISION = { approved: ['ok', 'Approved'], amended: ['blue', 'Amended'], rejected: ['no', 'Not approved'] };
 const COUNT_LABEL = { linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
 const COUNT_CLASS = { linked_mco: 'mco', uploaded: 'ok', outstanding: 'wait', expired: 'no', not_applicable: 'grey' };
@@ -1213,7 +1217,8 @@ function signoffRows(f) {
       const when = r && r.decision ? dmy(r.decided_at) : '';
       return '<li><span class="sk">' + esc(SIGNOFF_LABEL[k]) + '</span><span><span class="pill ' + st[0] + '">' + esc(st[1]) + '</span>' + (when ? ' <span class="muted">' + esc(when) + '</span>' : '') + '</span></li>';
     }).join('')
-    + '</ul>';
+    + '</ul>'
+    + '<p class="muted">' + esc(SECTION_E_NOTE) + '</p>';
 }
 function fileRow(f) {
   const st = f.demo

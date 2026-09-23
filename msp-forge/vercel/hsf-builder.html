@@ -616,7 +616,7 @@
       <div class="card">
         <h2>What the File does, and what it does not</h2>
         <p>The File assembles, evidences, flags and reports. It does not decide that a workplace is safe, certify that a person is competent or determine anyone's fitness for work. Care Net screens fitness for work and does not diagnose; a certificate of fitness says fit, fit with a restriction or not fit, and no clinical detail reaches the File.</p>
-        <p class="muted">Your chief executive and section 16(2) appointee, the Health and Safety Manager and the Occupational Medical Practitioner decide and sign. Read the <a class="inline" href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="hsf_builder_privacy_policy">privacy policy</a>.</p>
+        <p class="muted">A registered health and safety practitioner signs the safety content, your section 16(2) appointee accepts the File and your chief executive acknowledges it. The medical surveillance plan signed by the Occupational Medical Practitioner is filed in Section E as evidence; it is not a sign off of the File. Read the <a class="inline" href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="hsf_builder_privacy_policy">privacy policy</a>.</p>
       </div>
     </div>
   </section>
@@ -2333,7 +2333,7 @@ function renderQueue() {
   const local = mine.map((q) => '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>');
   const seen = new Set(mine.map((q) => q.uploadId).filter(Boolean));
   const server = (S.serverUploads || []).filter((u) => !seen.has(u.upload_id)).map((u) => {
-    const q = { id: 's' + String(u.upload_id).replace(/[^A-Za-z0-9]/g, ''), name: u.original_name, size: u.size_bytes, mime: '', dept: u.department_code,
+    const q = { id: 's' + String(u.upload_id).replace(/[^A-Za-z0-9]/g, ''), name: u.original_name, size: u.size_bytes, mime: u.mime_type || '', dept: u.department_code,
       section: u.section_code, element: u.element_code, sha: u.sha256 || u.sha256_client || '', state: u.status, progress: 1,
       message: u.staging_deleted_at ? 'Removed from staging on ' + dmy(u.staging_deleted_at) + '.' : (u.transferred_at ? 'Transferred on ' + dmy(u.transferred_at) + '.' : ''), server: u };
     return '<li class="qi" id="qi-' + q.id + '">' + queueItemHtml(q) + '</li>';

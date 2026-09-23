@@ -4,7 +4,8 @@
 -- is rolled back, so the test data it creates never persists.
 --
 -- Usage (from msp-forge/). The release gate of 047 calls hsf_element_citable,
--- which migration 050 defines (contract 9.3), so replay every migration first:
+-- which migration 050 defines (contract 9.3), and migration 053 redefines the
+-- gate with the sign off rule (contract 10.8), so replay every migration first:
 --   test/sql/replay.sh
 --   psql -h /tmp -p 55432 -U postgres -d cnc_test -v ON_ERROR_STOP=1 -f test/sql/hsf_core_checks.sql
 --
@@ -165,8 +166,10 @@ select c.relname::text as t,
  where n.nspname = 'public' and c.relkind = 'r' and c.relname like 'hsf\_%'
    and c.relname not like 'hsf\_check%'
    -- The 047 tables only; 049 adds hsf_consent, hsf_upload and hsf_mco_transfer, checked in hsf_flow_checks.sql,
-   -- and 052 adds hsf_client_verification and hsf_deletion_request, checked in hsf_launch_checks.sql.
-   and c.relname not in ('hsf_consent', 'hsf_upload', 'hsf_mco_transfer', 'hsf_client_verification', 'hsf_deletion_request');
+   -- 052 adds hsf_client_verification and hsf_deletion_request, checked in hsf_launch_checks.sql,
+   -- and 053 adds hsf_signatory and hsf_signoff_rule, checked in hsf_signoff_checks.sql.
+   and c.relname not in ('hsf_consent', 'hsf_upload', 'hsf_mco_transfer', 'hsf_client_verification', 'hsf_deletion_request',
+                         'hsf_signatory', 'hsf_signoff_rule');
 
 insert into hsf_check (name, expected, actual, pass)
 select v.name, v.expected::text, v.actual::text, v.expected = v.actual
@@ -278,9 +281,20 @@ select pg_temp.hsf_try('evidence: changing the supplier is refused',
 
 select pg_temp.hsf_try('release: refused with no sign offs',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
-insert into hsf_signoff (file_id, revision, kind, decision, signatory_name, registration_number, decided_at) values
-  ('00000000-0000-4000-8000-0000000000f1', 1, 'omp_medical', 'approved', 'Test OMP', 'TEST-0001', now()),
-  ('00000000-0000-4000-8000-0000000000f1', 1, 'safety_content', 'approved', 'Test safety signatory', 'TEST-0002', now());
+-- Contract 10.8 (migration 053): the OMP is not a File signatory, and the
+-- safety content sign off carries a registered practitioner's credentials that
+-- fit the File (a construction File here). hsf_signoff_checks.sql proves each
+-- refusal of the sign off rule; this file keeps to the release gate's order.
+select pg_temp.hsf_try('release: a new omp_medical sign off is refused (contract 10.8)',
+  $q$insert into hsf_signoff (file_id, revision, kind, decision, signatory_name, registration_number, decided_at) values ('00000000-0000-4000-8000-0000000000f1', 1, 'omp_medical', 'approved', 'Test OMP', 'TEST-0001', now())$q$, false);
+insert into hsf_signatory (id, full_name, registration_body, category, registration_number, registration_expires_on,
+                           register_checked_on, register_proof_ref, appointment_letter_ref, appointment_letter_date,
+                           engagement_letter_ref, engagement_letter_date)
+values ('00000000-0000-4000-8000-0000000000d1', 'Test safety signatory', 'SACPCMP', 'CHSM', 'TEST-0002', current_date + 365,
+        current_date - 1, 'fixture/register-check.pdf', 'fixture/appointment.pdf', current_date - 30,
+        'fixture/engagement.pdf', current_date - 30);
+insert into hsf_signoff (file_id, revision, kind, decision, signatory_id, scope, decided_at) values
+  ('00000000-0000-4000-8000-0000000000f1', 1, 'safety_content', 'approved', '00000000-0000-4000-8000-0000000000d1', 'Sections A to O, revision 1', now());
 select pg_temp.hsf_try('release: refused without the client section 16(2) acceptance',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
 insert into hsf_signoff (file_id, revision, kind, decision, signatory_name, decided_at) values
@@ -295,14 +309,13 @@ update hsf_element_instrument set provision = 'Check provision (rolled back)'
 select pg_temp.hsf_try('release: refused while the instrument''s scope is medical only (contract 9.3)',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, false);
 update msp_legal_instrument set scope = 'both' where short_name = 'OHS Act' and status = 'verified';
-select pg_temp.hsf_try('release: accepted with three approvals and every instrument citable for a File',
+select pg_temp.hsf_try('release: accepted with the safety content and client approvals and every instrument citable for a File',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 1, 'x.pdf', 'x.csv')$q$, true);
 insert into hsf_file_item (file_id, element_id)
 select '00000000-0000-4000-8000-0000000000f1', id from hsf_element where code = 'HSF-F-08';
-insert into hsf_signoff (file_id, revision, kind, decision, signatory_name, registration_number, decided_at) values
-  ('00000000-0000-4000-8000-0000000000f1', 2, 'omp_medical', 'approved', 'Test OMP', 'TEST-0001', now()),
-  ('00000000-0000-4000-8000-0000000000f1', 2, 'safety_content', 'approved', 'Test safety signatory', 'TEST-0002', now()),
-  ('00000000-0000-4000-8000-0000000000f1', 2, 'client_16_2_acceptance', 'approved', 'Test appointee', null, now());
+insert into hsf_signoff (file_id, revision, kind, decision, signatory_id, scope, signatory_name, registration_number, decided_at) values
+  ('00000000-0000-4000-8000-0000000000f1', 2, 'safety_content', 'approved', '00000000-0000-4000-8000-0000000000d1', 'Sections A to O, revision 2', null, null, now()),
+  ('00000000-0000-4000-8000-0000000000f1', 2, 'client_16_2_acceptance', 'approved', null, null, 'Test appointee', null, now());
 select pg_temp.hsf_try('release: refused when an item cites a pending candidate instrument',
   $q$insert into hsf_release (file_id, revision, pdf_path, evidence_index_path) values ('00000000-0000-4000-8000-0000000000f1', 2, 'x.pdf', 'x.csv')$q$, false);
 

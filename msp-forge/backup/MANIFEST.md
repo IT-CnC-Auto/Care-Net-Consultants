@@ -53,16 +53,18 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 045_msp_review_fee_bands.sql (9024 bytes)
 - 046_msp_public_instrument_register.sql (1511 bytes)
 - 047_hsf_core_schema.sql (28593 bytes)
-- 048_hsf_library_seed.sql (140490 bytes)
+- 048_hsf_library_seed.sql (140614 bytes)
 - 049_hsf_consent_uploads_transfer.sql (52492 bytes)
 - 050_kernel_api.sql (31573 bytes)
 - 051_hsf_generate_and_compliance.sql (27990 bytes)
+- 052_hsf_launch_controls.sql (81071 bytes)
+- 053_hsf_signoff_rule.sql (29728 bytes)
 
 ## CNC HSF FORGE
 
-Rebuild script regenerated 23/09/2026 with migrations 047 to 051 (the Health and Safety File engine, company documents with consent, the MCO transfer, the kernel API and File generation). The concatenation reproduces the earlier script for 001 to 046 byte for byte, and was proved by replaying it into an empty database: 256 File elements, 41 appointment types, 49 triggers, 34 element classes, 37 verified instruments, 17 industries, 316 roles, and all 81 HSF core checks passed.
+Rebuild script regenerated 23/09/2026 with migrations 047 to 053 (052 adds the launch controls, 053 the File sign off rule) (the Health and Safety File engine, company documents with consent, the MCO transfer, the kernel API and File generation). The concatenation reproduces the earlier script for 001 to 046 byte for byte, and was proved by replaying it into an empty database: 256 File elements, 41 appointment types, 49 triggers, 34 element classes, 37 verified instruments, 17 industries, 316 roles, and all 82 HSF core checks and the launch and sign off checks passed.
 
-Migrations 047 to 051 are in the repository and are not applied to the live project. Migration 048 refuses to run until 042 is applied (HSF-7). Company documents are staging data, not kernel content, and are never part of this backup.
+Migrations 047 to 053 are in the repository and are not applied to the live project. Migration 048 refuses to run until 042 is applied (HSF-7). Company documents are staging data, not kernel content, and are never part of this backup.
 
 ## Not SQL, and therefore not in the rebuild script
 
@@ -83,4 +85,4 @@ Migrations 047 to 051 are in the repository and are not applied to the live proj
 5. Deploy the assistant connection: supabase/functions/msp-assistant/index.ts, and set ANTHROPIC_API_KEY in the project's function secrets. Without that key the connection answers that it is not configured and records the refusal.
 6. Confirm the schedule: msp_agent_schedule_status() should show job msp_monthly_audit on the day and hour held in the agent parameters.
 7. Follow SOP-KERNEL-AGENT.md for the monthly maintenance agent, the parameter store, the kernel API and version control.
-8. For HSF FORGE, confirm the private hsf-staging bucket exists (migration 049 creates it), deploy the hsf-mco-transfer function, and prove the rebuild with test/sql/hsf_core_checks.sql and test/sql/hsf_flow_checks.sql.
+8. For HSF FORGE, confirm the private hsf-staging bucket exists (migration 049 creates it), deploy the hsf-mco-transfer function, and prove the rebuild with test/sql/hsf_core_checks.sql, hsf_flow_checks.sql, hsf_launch_checks.sql and hsf_signoff_checks.sql.
