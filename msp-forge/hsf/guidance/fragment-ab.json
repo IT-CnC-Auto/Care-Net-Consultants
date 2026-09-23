@@ -1,0 +1,959 @@
+{
+ "meta": {
+  "version": "HSF-GUIDE-1.0",
+  "status": "draft",
+  "reviewed_by": null,
+  "note": "General guidance for a first Health and Safety File, written in plain words for a small business owner. It is being reviewed by Care Net's Health and Safety Manager and does not replace the advice of your health and safety practitioner or occupational health practitioner. Legal intervals, ratios and competence requirements are shown only where the File library holds them; everything else follows your risk assessment or your practitioner."
+ },
+ "first_file": {
+  "intro": "Building your first Health and Safety File is a project, not a form. Start with who you are and who is responsible, then work out what can hurt your people, and only then gather the training, medical, register and emergency records that prove you control those risks. Upload what you already have as you go: a signed page today is worth more than a perfect File next year.",
+  "order": [
+   {
+    "section": "A",
+    "reason": "Your company details, sites, COIDA letter of good standing and contractor agreements define what the File covers and who it belongs to. Everything else hangs off this."
+   },
+   {
+    "section": "B",
+    "reason": "The signed policy, the section 16(2) assignment and your appointments name the people who will build and keep the rest of the File. Without them nobody owns the work."
+   },
+   {
+    "section": "C",
+    "reason": "Your risk assessment tells you which training, medical surveillance, registers, permits and hygiene surveys you actually need, so do it before you collect those records."
+   },
+   {
+    "section": "D",
+    "reason": "Once you know the risks, match each person to the training and competence the risk assessment calls for, starting with inductions and the appointees from Section B."
+   },
+   {
+    "section": "E",
+    "reason": "The Medical Surveillance Plan follows from the exposures found in Section C. Only certificates of fitness (the outcome) go in the File; clinical records stay with the occupational health practitioner."
+   },
+   {
+    "section": "K",
+    "reason": "Contractors and visitors bring risk onto your site from day one, so get their Files, section 37(2) agreements and site rules in place early."
+   },
+   {
+    "section": "F",
+    "reason": "List the equipment, machinery and installations your risk assessment found and file their latest inspection records."
+   },
+   {
+    "section": "G",
+    "reason": "Set up permits for the high risk work your risk assessment identified (hot work, work at height, confined spaces, isolation) before that work next happens."
+   },
+   {
+    "section": "H",
+    "reason": "Write the emergency plan around your real sites and people, then run and record a drill so you know it works."
+   },
+   {
+    "section": "I",
+    "reason": "Start the incident register and reporting route now, so the next injury or near miss is recorded and handled properly, including COIDA."
+   },
+   {
+    "section": "L",
+    "reason": "Committee minutes, representative inspections and toolbox talks show the File is alive and that workers are consulted. They build up month by month, so start the rhythm early."
+   },
+   {
+    "section": "J",
+    "reason": "Occupational hygiene surveys take time to book and report. Commission them once Section C shows which exposures need measuring."
+   },
+   {
+    "section": "M",
+    "reason": "Welfare facilities, the workplace environment and waste are usually quick to evidence once the core risk work is done."
+   },
+   {
+    "section": "O",
+    "reason": "Decide how long you keep each record, where it is stored and who may see it, especially personal and medical information, before the File grows large."
+   },
+   {
+    "section": "N",
+    "reason": "Audit and review come last on a first File: once the other sections hold evidence, review them, set objectives and track the corrective actions."
+   }
+  ],
+  "before_you_start": [
+   "Decide who in your company will own the File day to day. This is usually the person you assign in writing under section 16(2) of the OHS Act.",
+   "Gather your company registration documents, your COIDA letter of good standing and a list of every site with its physical address.",
+   "Make a simple list of your people by job role and headcount per site; the File uses it to work out which appointments and training apply.",
+   "List the work you do that carries higher risk, for example work at height, machinery, chemicals, driving, construction or confined spaces.",
+   "Collect what you already have (old appointment letters, training certificates, inspection records, incident reports) and scan it as PDF; it saves time even if some of it needs updating.",
+   "Keep medical files out of the File: ask your occupational health practitioner for certificates of fitness only.",
+   "Check whether you have a registered, competent health and safety practitioner to guide and sign the File. No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+  ]
+ },
+ "sections": {
+  "A": {
+   "intro": "Section A proves who your company is, where it works, what the File covers and that the basic legal paperwork is in place. An inspector or a client usually asks for these documents first.",
+   "what_goes_here": [
+    "Company registration documents, VAT registration and the physical address of every site",
+    "A scope page naming the sites, activities, dates and any contract or project reference",
+    "Your current COIDA letter of good standing",
+    "Proof that a copy of the OHS Act and its regulations is available at the workplace",
+    "Construction notifications, client specifications and approved health and safety plans, if you do construction work",
+    "Signed section 37(2) agreements and a contractor register, if you use contractors",
+    "A dated legal register and your document control procedure"
+   ],
+   "who_usually_holds": [
+    "EXEC",
+    "SHE",
+    "PROC",
+    "HR"
+   ],
+   "first_file_tips": [
+    "Start with the scope page: once you have written down which sites and activities the File covers, the rest of the File knows what it must evidence.",
+    "Put the expiry date of your COIDA letter of good standing in your diary; clients often stop work when it lapses.",
+    "If you do no construction work and use no contractors, mark those items not applicable with a short reason rather than leaving them blank."
+   ]
+  },
+  "B": {
+   "intro": "Section B shows who is responsible for health and safety in your company and that every person with a legal role has been appointed in writing, has accepted, and is competent for it.",
+   "what_goes_here": [
+    "Your health and safety policy, signed and dated by the chief executive",
+    "The chief executive's written acknowledgement of responsibility",
+    "The section 16(2) assignment letter, accepted in writing",
+    "Designation letters for health and safety representatives, with their training records",
+    "The health and safety committee constitution, membership list and minutes",
+    "One signed and accepted appointment letter for every appointment that applies to you, with competence evidence",
+    "An organogram of the health and safety structure and a roles and responsibilities document"
+   ],
+   "who_usually_holds": [
+    "EXEC",
+    "SHE",
+    "HR"
+   ],
+   "first_file_tips": [
+    "An appointment is only complete when the letter is signed by the company, signed in acceptance by the appointee, and backed by proof of competence such as a certificate or registration.",
+    "Use one appointment letter per person per role, and update it when the person or the scope changes.",
+    "No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+   ]
+  }
+ },
+ "elements": {
+  "HSF-A-01": {
+   "what_to_submit": [
+    "Company registration certificate (CIPC documents)",
+    "VAT registration letter, if you are VAT registered",
+    "List of every site with its full physical address and a contact person"
+   ],
+   "why": "An inspector, client or insurer must be able to see exactly which legal entity is the employer and where it works. It also tells the File which sites the other records must cover. Update it whenever a detail changes.",
+   "example": "Example: Dube Engineering (Pty) Ltd files its CIPC registration, its VAT letter and a one page site list naming its workshop in Rosslyn and its store in Pretoria West.",
+   "common_gaps": [
+    "Using a trading name without the registered company name and number",
+    "Listing a postal address or head office only, not the physical address of each site",
+    "Forgetting to add a new site or remove a closed one"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-A-02": {
+   "what_to_submit": [
+    "Signed scope page naming the sites, activities and dates the File covers",
+    "Contract or project reference, where the File is for a client or project",
+    "Client or tender requirement that asked for the File, if any"
+   ],
+   "why": "The scope tells a reader what this File covers and what it does not, so nobody assumes it covers a site or activity it never looked at. It is kept up to date by your section 16(2) assignee whenever the work changes.",
+   "example": "Example: Khumalo Shopfitters' scope page says the File covers its Germiston workshop and the fit out of a retail store in Menlyn for the period of that contract.",
+   "common_gaps": [
+    "Writing a scope so broad it cannot be evidenced",
+    "Not updating the scope when a new site or project starts"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-A-03": {
+   "what_to_submit": [
+    "Current COIDA letter of good standing, showing the expiry date",
+    "Proof of registration with the Compensation Fund",
+    "Latest return of earnings acknowledgement, if you have it"
+   ],
+   "why": "The letter of good standing shows you are registered and paid up for COIDA, so injured workers can be compensated. Clients and principal contractors normally will not let you on site without a valid one. Replace it before it expires.",
+   "example": "Example: Nel Plumbing uploads its letter of good standing and sets a reminder two weeks before the expiry date printed on it.",
+   "common_gaps": [
+    "Filing an expired letter",
+    "Filing a letter issued to a different entity in the same group",
+    "Only renewing it when a client asks"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-A-04": {
+   "what_to_submit": [
+    "Photo or note showing where the OHS Act and its regulations are kept at each site (printed copy or an accessible electronic copy)",
+    "For mines, the equivalent under the MHSA regime",
+    "Date the copy was last checked as current"
+   ],
+   "why": "Workers are entitled to read the law that protects them, and an inspector may ask where it is. A current copy also helps your supervisors check what is required. Replace it when the law changes.",
+   "example": "Example: Mokoena Logistics keeps a printed OHS Act and regulations file in the canteen at its Isando depot and a link on the tablet at reception, and photographs both for the File.",
+   "common_gaps": [
+    "Keeping only an old copy that still contains regulations that have since been replaced",
+    "Keeping the only copy locked in a manager's office"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-A-05": {
+   "what_to_submit": [
+    "Construction work notification submitted to the Department of Employment and Labour",
+    "The Department's acknowledgement or reference, or a construction work permit where one applies",
+    "Copy displayed on site"
+   ],
+   "why": "The Department must know about construction work before it starts so it can plan inspections. The acknowledgement proves the notification was made. Do this per project, before work begins, as the Construction Regulations, 2014 require.",
+   "example": "Example: Zulu Developments, as client, notifies the Department of the construction of a small office block in Pinetown and files the acknowledgement it received before site establishment.",
+   "common_gaps": [
+    "Starting work before the notification is acknowledged",
+    "Using a notification from an earlier project",
+    "Not displaying the notification on site"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-A-06": {
+   "what_to_submit": [
+    "The client's health and safety specification for the project, signed and dated",
+    "Any revisions issued during the project",
+    "Proof that the specification was given to the principal contractor"
+   ],
+   "why": "The specification sets out the client's health and safety requirements for the project and is what every contractor's health and safety plan must answer. Without it, contractors are pricing and planning blind. It is kept per project.",
+   "example": "Example: Botha Property Trust issues a health and safety specification for re roofing its Bloemfontein warehouse and files the version sent with the tender documents.",
+   "common_gaps": [
+    "Using a generic specification that does not mention the project's actual hazards",
+    "Not issuing the specification with the tender, so contractors cannot price for it"
+   ],
+   "suggested_department": "PROC"
+  },
+  "HSF-A-07": {
+   "what_to_submit": [
+    "The contractor's health and safety plan for the project",
+    "The client's written approval of the plan",
+    "Records of revisions and re approval when the work changes"
+   ],
+   "why": "The plan shows how the contractor will control the project's risks, and the client's written approval shows it was checked before work started. Your construction manager is responsible for it, per project.",
+   "example": "Example: Mthembu Builders files its health and safety plan for a school classroom extension in Polokwane with the client agent's signed approval letter.",
+   "common_gaps": [
+    "Starting work on an unapproved plan",
+    "Not updating the plan when the method or scope changes",
+    "Copying a plan from a previous project without changing the hazards"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-A-08": {
+   "what_to_submit": [
+    "Signed section 37(2) agreement with each mandatary and contractor",
+    "List of contractors covered, with the agreement date for each",
+    "Contractor's scope of work attached to the agreement"
+   ],
+   "why": "A section 37(2) agreement records that the contractor accepts responsibility for health and safety in its own work on your premises. Without it, you may carry the contractor's failures as your own. Update it when a contractor or scope changes.",
+   "example": "Example: Pillay Foods has a signed section 37(2) agreement with the cleaning company and the refrigeration technicians who work at its Durban factory.",
+   "common_gaps": [
+    "Having only a purchase order, not a signed agreement",
+    "Letting the agreement lapse when a contract is renewed",
+    "Forgetting small or once off contractors"
+   ],
+   "suggested_department": "PROC"
+  },
+  "HSF-A-09": {
+   "what_to_submit": [
+    "Contractor register listing each contractor, its scope and dates on site",
+    "For each contractor: its Health and Safety File index, COIDA letter of good standing and appointments",
+    "Notes of your check that each File was reviewed before work started"
+   ],
+   "why": "The register lets you and an inspector see at a glance which contractors are on site and whether each one is in order. It is kept current by your section 16(2) assignee whenever a contractor starts, changes or leaves.",
+   "example": "Example: Venter Mining Services keeps a contractor register showing that the scaffold contractor's File was reviewed on induction day and its letter of good standing runs to the end of the project.",
+   "common_gaps": [
+    "Not checking that the contractor's letter of good standing is still valid",
+    "Allowing a contractor on site before its File was reviewed"
+   ],
+   "suggested_department": "PROC"
+  },
+  "HSF-A-10": {
+   "what_to_submit": [
+    "Dated legal register listing the laws that apply to your industry and activities",
+    "Record of the monthly check for changes",
+    "Notes of what you did about any change"
+   ],
+   "why": "The legal register shows you know which laws apply to you and keep track of changes. The File builder draws it from the Care Net kernel for your industry; your section 16(2) assignee checks it every month and records the check.",
+   "example": "Example: Ndlovu Agri checks its legal register each month and notes that a new chemical rule affects its crop spraying, with a task to update the spraying procedure.",
+   "common_gaps": [
+    "A register that has never been dated or reviewed",
+    "Listing laws with no link to what the company actually does about them"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-A-11": {
+   "what_to_submit": [
+    "Document control procedure (how documents are numbered, approved, issued and withdrawn)",
+    "The File's revision history page",
+    "Master list of controlled documents with current revision numbers"
+   ],
+   "why": "Document control makes sure people work from the current version of a procedure or form, and the revision history shows how the File has changed over time. Update it whenever a controlled document changes.",
+   "example": "Example: Smit Electrical numbers its procedures by type and year, and its revision history shows that the lockout procedure was revised after a near miss in June.",
+   "common_gaps": [
+    "Old versions still in use on site",
+    "No record of who approved a change and when"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-B-01": {
+   "what_to_submit": [
+    "Health and safety policy signed and dated by the chief executive",
+    "Photo of the policy displayed at each site",
+    "Record of the annual review, even when nothing changed"
+   ],
+   "why": "The policy is your company's public commitment to keeping people safe and healthy, and it sets the direction for the whole File. Clients and inspectors expect to see it signed, displayed and reviewed every year.",
+   "example": "Example: Molefe Transport's managing director signs the policy each February after the management review and the new copy is put up in the dispatch office and the workshop.",
+   "common_gaps": [
+    "An unsigned or undated policy",
+    "A policy copied from another company that does not fit your work",
+    "No evidence of the annual review"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-B-02": {
+   "what_to_submit": [
+    "Signed statement by the chief executive acknowledging personal responsibility for health and safety",
+    "The chief executive's name and date of appointment as chief executive",
+    "Updated statement when the chief executive changes"
+   ],
+   "why": "Under the OHS Act the chief executive carries responsibility for health and safety, and this cannot be delegated away by assigning duties to others. The signed acknowledgement shows the top of the company understands this.",
+   "example": "Example: When Lindiwe Sithole became chief executive of Sithole Security Solutions she signed a new acknowledgement and the old one was archived.",
+   "common_gaps": [
+    "Not updating the statement when the chief executive changes",
+    "Believing the section 16(2) assignment removes the chief executive's own responsibility"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-B-03": {
+   "what_to_submit": [
+    "Section 16(2) assignment letter signed by the chief executive",
+    "Written acceptance signed by the assignee",
+    "Scope of the assignment (sites, departments, duties) attached"
+   ],
+   "why": "The section 16(2) assignment names the person who carries the chief executive's health and safety duties day to day. It must be in writing, accepted, and clear about scope, or it does not hold. Update it when the person or scope changes.",
+   "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee for its Witbank yard and all its road projects, with her signed acceptance.",
+   "common_gaps": [
+    "No signed acceptance by the assignee",
+    "No scope, so nobody knows which sites the assignee covers",
+    "Assigning someone with no authority or budget to act"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-B-04": {
+   "what_to_submit": [
+    "Designation letters for each health and safety representative, signed and accepted",
+    "Record of the consultation with workers or their union before designation",
+    "Training certificates for each representative",
+    "Calculation showing enough representatives for your headcount"
+   ],
+   "why": "Representatives are workers' voice on health and safety and inspect the workplace for hazards. The number required depends on your headcount; the File works it out for you. Update when a representative leaves or headcount changes.",
+   "example": "Example: Naidoo Packaging consulted staff at a shift meeting, designated Sipho Mabaso and Anele Dlamini as representatives for its two shifts and filed their training certificates.",
+   "common_gaps": [
+    "Management choosing representatives without consulting workers",
+    "Representatives who were never trained",
+    "Not replacing a representative who has left"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-B-05": {
+   "what_to_submit": [
+    "Committee constitution or terms of reference",
+    "Current membership list, with representatives and employer members",
+    "Signed minutes of each meeting, with action lists"
+   ],
+   "why": "The committee brings representatives and management together to deal with health and safety issues and keeps a record of decisions. The File expects minutes every month; the minutes are the best proof that problems are raised and fixed.",
+   "example": "Example: Kruger Timber's committee meets on the first Tuesday of each month; the minutes record that the damaged forklift guard raised in May was repaired by June.",
+   "common_gaps": [
+    "Meetings that happen without minutes",
+    "Actions that roll over from month to month with no owner",
+    "Membership lists that still show people who have left"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-B-06": {
+   "what_to_submit": [
+    "One appointment letter per applicable appointment, signed by the company",
+    "The appointee's signed acceptance",
+    "Competence evidence for each appointee (certificate, registration or training record)",
+    "An appointments matrix listing every appointment and its status"
+   ],
+   "why": "Many kinds of work need a named, competent person appointed in writing. This item groups them: the File creates one entry per appointment that applies to you, and each must be signed, accepted and backed by competence evidence. Update when a person or role changes.",
+   "example": "Example: Mabena Steel keeps an appointments matrix showing its first aiders, ladder inspector and lifting machine operators, each with a signed letter and a current certificate.",
+   "common_gaps": [
+    "Letters signed by the company but never accepted by the appointee",
+    "Competence evidence that has expired",
+    "No appointment for someone who has been doing the role for years"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-B-07": {
+   "what_to_submit": [
+    "Organogram showing the chief executive, section 16(2) assignee, representatives, committee and every appointee",
+    "Date of the organogram",
+    "Updated version when someone joins or leaves a role"
+   ],
+   "why": "The organogram shows at a glance who is responsible for what and who reports to whom on health and safety. It helps new staff and inspectors find the right person, and it exposes gaps where a role is empty.",
+   "example": "Example: Moodley Retail's organogram shows the store manager as section 16(2) assignee for each branch with first aiders and evacuation wardens below, and is redated when staff change.",
+   "common_gaps": [
+    "Showing positions without names",
+    "Not updating after resignations, so the chart names people who have left"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-B-08": {
+   "what_to_submit": [
+    "Roles and responsibilities document for each appointment",
+    "Health and safety duties in each job description or kernel job role",
+    "Signed acknowledgement by each role holder"
+   ],
+   "why": "People can only carry out duties they know they have. This document spells out what each appointee and each job role must do for health and safety, so responsibilities do not fall through the cracks.",
+   "example": "Example: Hlongwane Farming adds a health and safety duties paragraph to each job description, and the tractor driver signs that he must do a pre use check each morning.",
+   "common_gaps": [
+    "Duties written so generally they mean nothing",
+    "Job descriptions that never mention health and safety"
+   ],
+   "suggested_department": "HR"
+  }
+ },
+ "appointments": {
+  "APP-00": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period under section 16(2)",
+    "Appointee's signed acceptance",
+    "Proof that the assignee has the authority and resources to act (job title, reporting line)",
+    "Health and safety training or qualification record"
+   ],
+   "why": "The section 16(2) assignee carries the chief executive's health and safety duties day to day and is the default owner of the File. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
+   "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee, with her dated acceptance and her health and safety management certificate.",
+   "common_gaps": [
+    "Assigning a junior person with no authority",
+    "Leaving out which sites the assignment covers",
+    "No acceptance signature"
+   ]
+  },
+  "APP-01": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the named project",
+    "Appointee's signed acceptance",
+    "CV and qualifications showing construction management experience",
+    "Registration certificate with the relevant professional body, if held"
+   ],
+   "why": "The construction manager is responsible for managing the construction work and its health and safety on the project. Clients and inspectors check this appointment early because many other appointments report to it.",
+   "example": "Example: Mthembu Builders appoints Johan van Wyk as construction manager for a clinic extension in Mbombela, with his signed acceptance and his building qualification on file.",
+   "common_gaps": [
+    "Using one letter for several unrelated projects",
+    "No evidence of construction management experience"
+   ]
+  },
+  "APP-02": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the construction manager it supports",
+    "Appointee's signed acceptance",
+    "Qualifications or experience record"
+   ],
+   "why": "On larger or multi site projects an assistant construction manager helps the construction manager control the work. The appointment makes clear which part of the work the assistant covers.",
+   "example": "Example: Mthembu Builders appoints Precious Maseko as assistant construction manager for the second phase of its Mbombela project, reporting to the construction manager.",
+   "common_gaps": [
+    "Not stating which work or site the assistant is responsible for"
+   ]
+  },
+  "APP-03": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the named project",
+    "Appointee's signed acceptance",
+    "Current registration certificate with the SACPCMP for the relevant category",
+    "CV showing construction health and safety experience"
+   ],
+   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, Care Net's Recruitment Portal can place and onboard a registered practitioner.",
+   "example": "Example: Zulu Developments' principal contractor files the appointment of Nomsa Khoza as construction health and safety officer with a copy of her current SACPCMP registration card.",
+   "common_gaps": [
+    "Registration that has expired during the project",
+    "One officer spread across too many sites to be effective"
+   ]
+  },
+  "APP-04": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the work or area supervised",
+    "Appointee's signed acceptance",
+    "Training or experience record for the type of work supervised",
+    "Certificate of fitness outcome, if the risk assessment requires one"
+   ],
+   "why": "Construction supervisors control the work at the face and make sure it is done safely. Naming them in writing shows who was in charge of a task if something goes wrong. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Radebe Construction appoints Sizwe Radebe as supervisor for the concrete works on a Soweto housing project.",
+   "common_gaps": [
+    "Supervisors appointed for work they have never done",
+    "No appointment for a foreman who is supervising in practice"
+   ]
+  },
+  "APP-05": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period stating which assessments the person may do",
+    "Appointee's signed acceptance",
+    "Risk assessment training certificate",
+    "Examples of risk assessments the person has completed"
+   ],
+   "why": "The risk assessor identifies hazards and works out controls, and almost every other section of the File depends on that work. Competence matters: a weak risk assessment leads to the wrong training, medicals and controls.",
+   "example": "Example: Fourie Manufacturing appoints its production supervisor, Karabo Letsoalo, as risk assessor after a risk assessment course, and files the baseline risk assessment she led.",
+   "common_gaps": [
+    "Appointing someone with no risk assessment training",
+    "Not involving workers in the assessments"
+   ]
+  },
+  "APP-06": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the site or project",
+    "Appointee's signed acceptance",
+    "Fall protection planning training certificate",
+    "The fall protection plan the person prepared"
+   ],
+   "why": "The fall protection planner writes the plan that prevents people falling when working at height. Falls are a leading cause of serious injury, so clients and inspectors check this appointment whenever height work is done.",
+   "example": "Example: Pretorius Roofing appoints Thabo Mokoena as fall protection planner and files the plan he wrote for a factory roof replacement in Vereeniging.",
+   "common_gaps": [
+    "A generic plan that does not match the actual roof or structure",
+    "Training certificate that has expired"
+   ]
+  },
+  "APP-07": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the site",
+    "Appointee's signed acceptance",
+    "Scaffold supervisor training certificate",
+    "Scaffold erection records the person has signed"
+   ],
+   "why": "The scaffold supervisor controls the erection, alteration and dismantling of scaffolds so they are built safely. A collapsing or badly built scaffold can injure people on it and below it.",
+   "example": "Example: Scaffco Gauteng appoints Lucky Mahlaba to supervise scaffold erection at a shopping centre refurbishment in Boksburg.",
+   "common_gaps": [
+    "Scaffolds erected without a supervisor present"
+   ]
+  },
+  "APP-08": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Scaffold inspector training certificate",
+    "Latest scaffold inspection register pages"
+   ],
+   "why": "The scaffold inspector checks scaffolds before use and at the intervals your risk assessment or the practitioner sets, and after bad weather or changes. The inspection register shows whether the scaffold was safe to use on a given day.",
+   "example": "Example: Scaffco Gauteng's inspector, Ayanda Cele, tags each scaffold after inspection and records it in the register kept in the site office.",
+   "common_gaps": [
+    "Inspections not recorded",
+    "Scaffold tags not updated after an alteration"
+   ]
+  },
+  "APP-09": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the site",
+    "Appointee's signed acceptance",
+    "Training or experience record in excavation work",
+    "Excavation inspection records the person signed"
+   ],
+   "why": "The excavation supervisor makes sure trenches and excavations are shored, inspected and kept safe. Collapse can bury workers in seconds.",
+   "example": "Example: Mkhize Pipelines appoints Bongani Mkhize as excavation supervisor for a sewer line in Pietermaritzburg and files his daily inspection sheets.",
+   "common_gaps": [
+    "No inspection record for the day of an incident",
+    "Supervisor also operating the excavator and not watching the trench"
+   ]
+  },
+  "APP-10": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the demolition project",
+    "Appointee's signed acceptance",
+    "Demolition training or experience record",
+    "Demolition method statement the person approved"
+   ],
+   "why": "The demolition supervisor controls demolition work so structures come down in a planned, safe order and nobody is caught by unexpected collapse or hidden hazards such as asbestos.",
+   "example": "Example: Coetzee Demolitions appoints Riaan Coetzee to supervise the demolition of an old warehouse in Port Elizabeth, with the approved method statement on file.",
+   "common_gaps": [
+    "No survey for hazardous materials before demolition starts"
+   ]
+  },
+  "APP-11": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the temporary works covered",
+    "Appointee's signed acceptance",
+    "Engineering qualification and professional registration evidence",
+    "Design drawings and calculations signed by the designer"
+   ],
+   "why": "Temporary works such as formwork and propping must be designed by a competent person so they carry the load safely until the permanent structure can. The appointment shows who is accountable for the design.",
+   "example": "Example: Mthembu Builders appoints an engineer from Maseko Consulting Engineers as temporary works designer for the slab formwork on its Mbombela project.",
+   "common_gaps": [
+    "Formwork built from a supplier catalogue with no project specific design"
+   ]
+  },
+  "APP-12": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Training or experience record in temporary works",
+    "Signed inspection before loading, such as before a concrete pour"
+   ],
+   "why": "The temporary works supervisor makes sure temporary works are built to the design and inspected before they are loaded. Many collapses happen during the pour.",
+   "example": "Example: Mthembu Builders' temporary works supervisor signs the formwork inspection before every slab pour.",
+   "common_gaps": [
+    "No signed inspection before the pour"
+   ]
+  },
+  "APP-13": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the machines the operator may use",
+    "Appointee's signed acceptance",
+    "Operator training certificate for each type of machine",
+    "Certificate of fitness outcome from the occupational health practitioner"
+   ],
+   "why": "Only trained, medically fit operators should drive construction vehicles and mobile plant, because a single mistake can crush someone. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Mkhize Pipelines appoints Themba Zwane to operate its tractor loader backhoe, with his operator certificate and a certificate of fitness on file.",
+   "common_gaps": [
+    "Operator trained on one machine but driving another",
+    "Certificate of fitness expired or never done"
+   ]
+  },
+  "APP-14": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Training or experience record in mobile plant",
+    "Daily or pre use check records the person reviews"
+   ],
+   "why": "The mobile plant supervisor controls where machines work, checks that pre use inspections are done and keeps people and machines apart on site.",
+   "example": "Example: Mkhize Pipelines appoints its plant foreman to supervise all earthmoving machines and review the operators' pre use check sheets each morning.",
+   "common_gaps": [
+    "No traffic plan separating pedestrians and machines"
+   ]
+  },
+  "APP-15": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the installation covered",
+    "Appointee's signed acceptance",
+    "Registration of the electrician or electrical tester with the Department of Employment and Labour, where required",
+    "Latest electrical Certificate of Compliance for the installation"
+   ],
+   "why": "The electrical installation supervisor is responsible for the safety of your electrical installation. Faulty electrical work causes shocks, burns and fires, so an insurer or inspector will ask who is responsible.",
+   "example": "Example: Govender Bakery appoints its maintenance manager to supervise the electrical installation and files the Certificate of Compliance issued by a registered electrician.",
+   "common_gaps": [
+    "An old Certificate of Compliance that predates later changes to the installation"
+   ]
+  },
+  "APP-16": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for the construction site",
+    "Appointee's signed acceptance",
+    "Electrical qualification and registration evidence",
+    "Inspection records of temporary site electrical supply"
+   ],
+   "why": "On construction sites the temporary electrical supply, distribution boards and extension leads are exposed to damage and weather. The construction electrical appointee makes sure they are inspected and safe.",
+   "example": "Example: Radebe Construction appoints a registered electrician to look after the site distribution boards and earth leakage units on its Soweto project.",
+   "common_gaps": [
+    "Damaged leads and missing earth leakage protection not picked up because nobody was appointed"
+   ]
+  },
+  "APP-17": {
+   "what_to_submit": [
+    "Appointment or engagement letter for the inspector or inspection company",
+    "Proof of the inspector's registration with the Engineering Council of South Africa (ECSA)",
+    "Latest load test and inspection certificates for each lifting machine and item of tackle"
+   ],
+   "why": "Lifting machines and tackle such as chain blocks, slings and cranes must be inspected by a competent person so they do not fail under load. The certificates show each item was safe when last checked, at the intervals the regulations or the practitioner set.",
+   "example": "Example: Mabena Steel engages a registered lifting machinery inspector who tests its overhead crane and slings and issues numbered certificates for the register.",
+   "common_gaps": [
+    "Slings in use with no identification tag",
+    "Inspection certificates missing for hired equipment"
+   ]
+  },
+  "APP-18": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the lifting machines",
+    "Appointee's signed acceptance",
+    "Operator training certificate for each type of lifting machine",
+    "Certificate of fitness outcome, where the risk assessment requires it"
+   ],
+   "why": "Only trained and appointed operators should use lifting machines such as forklifts and cranes. Many workplace deaths involve forklifts. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Naidoo Packaging appoints Sibusiso Ntuli as forklift operator, with his operator certificate and card kept in the File.",
+   "common_gaps": [
+    "Untrained staff using the forklift \"just for a minute\"",
+    "Operator card expired"
+   ]
+  },
+  "APP-19": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the machinery covered",
+    "Appointee's signed acceptance",
+    "Qualification or experience in the machinery supervised",
+    "Machinery inspection or maintenance records the person signs"
+   ],
+   "why": "The general machinery supervisor makes sure machinery is guarded, maintained and used safely. Unguarded moving parts cause amputations and crush injuries.",
+   "example": "Example: Fourie Manufacturing appoints its maintenance fitter, Andries Fourie, to supervise the machinery in its press shop and sign the weekly guard checks.",
+   "common_gaps": [
+    "Appointing someone with no technical background to supervise machinery"
+   ]
+  },
+  "APP-20": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the pressure equipment",
+    "Appointee's signed acceptance",
+    "Qualification or experience record",
+    "Latest inspection certificates for pressure vessels such as air receivers and boilers"
+   ],
+   "why": "Pressure equipment such as compressors, air receivers and boilers can explode if neglected. The supervisor keeps them inspected and maintained, often with an approved inspection authority.",
+   "example": "Example: Pillay Foods appoints its engineering manager as pressure equipment supervisor and files the inspection certificates for its boiler and two air receivers.",
+   "common_gaps": [
+    "Small air receivers left off the register"
+   ]
+  },
+  "APP-21": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Training record in hazardous chemical agents",
+    "Chemical inventory and safety data sheets the person maintains"
+   ],
+   "why": "Under the Hazardous Chemical Agents Regulations, chemical exposure must be assessed and controlled. The controller keeps the chemical inventory, safety data sheets and controls in order so workers are not harmed.",
+   "example": "Example: Ndlovu Agri appoints Zanele Ndlovu to control its crop spraying chemicals, with an up to date inventory and safety data sheets in the store.",
+   "common_gaps": [
+    "Safety data sheets older than the product on the shelf",
+    "Chemicals decanted into unlabelled containers"
+   ]
+  },
+  "APP-22": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Ladder inspection register with the latest entries",
+    "Brief training record on ladder inspection"
+   ],
+   "why": "Ladders look harmless but falls from them are common. The ladder inspector checks every ladder at the intervals your risk assessment or the practitioner sets and removes damaged ones from use.",
+   "example": "Example: Moodley Retail appoints a storeman at each branch to inspect ladders and number them in the register.",
+   "common_gaps": [
+    "Ladders not numbered, so the register cannot show which one was checked"
+   ]
+  },
+  "APP-23": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Training or experience record",
+    "Racking or stacking inspection records"
+   ],
+   "why": "Stacked goods and racking can collapse or fall on people. The stacking and storage supervisor makes sure stacks are stable and racking is undamaged and not overloaded.",
+   "example": "Example: Mokoena Logistics appoints its warehouse supervisor to inspect racking and mark safe load limits in its Isando warehouse.",
+   "common_gaps": [
+    "Damaged racking uprights left in use"
+   ]
+  },
+  "APP-24": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period for each first aider",
+    "Appointee's signed acceptance",
+    "Current first aid certificate from an approved training provider, with expiry date",
+    "List of first aiders per site and shift, compared with the number your headcount requires"
+   ],
+   "why": "First aiders give immediate help after an injury until medical help arrives. The number you need depends on your headcount; the File works it out for you. Clients check that every shift is covered and certificates are current.",
+   "example": "Example: Naidoo Packaging has three appointed first aiders across its two shifts, and the list on the first aid box names who is on duty.",
+   "common_gaps": [
+    "Certificates that have expired",
+    "No first aider on the night shift",
+    "First aid box not stocked"
+   ]
+  },
+  "APP-25": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period or service contract with the fire equipment company",
+    "Appointee's signed acceptance",
+    "Service records for fire extinguishers and hose reels",
+    "Registration of the service company, where your insurer or municipality requires it"
+   ],
+   "why": "Fire equipment must work the first time. The fire equipment inspector makes sure extinguishers and hose reels are checked and serviced at the intervals your risk assessment, insurer or the practitioner sets.",
+   "example": "Example: Kruger Timber has a service contract with a local fire equipment company and a named staff member who checks the tags between services.",
+   "common_gaps": [
+    "Service tags out of date",
+    "Extinguishers blocked by stock"
+   ]
+  },
+  "APP-26": {
+   "what_to_submit": [
+    "Appointment letters for each fire team member",
+    "Appointee's signed acceptance",
+    "Fire fighting training certificates",
+    "Records of drills the fire team took part in"
+   ],
+   "why": "The fire team responds to small fires before they spread and supports evacuation. Trained people with the right equipment can stop a small fire becoming a disaster.",
+   "example": "Example: Kruger Timber appoints four people to its fire team and records their training and the last drill.",
+   "common_gaps": [
+    "Fire team members who have never used an extinguisher"
+   ]
+  },
+  "APP-27": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Emergency response training record",
+    "The emergency plan naming the coordinator"
+   ],
+   "why": "The emergency coordinator takes charge during an emergency: raising the alarm, calling emergency services and accounting for everyone. Without one person in charge, emergencies become chaotic.",
+   "example": "Example: Moodley Retail names each branch manager as emergency coordinator, with the deputy named for when the manager is away.",
+   "common_gaps": [
+    "No deputy when the coordinator is on leave"
+   ]
+  },
+  "APP-28": {
+   "what_to_submit": [
+    "Appointment letters for each evacuation warden, with the area covered",
+    "Appointee's signed acceptance",
+    "Evacuation training record",
+    "Evacuation drill reports"
+   ],
+   "why": "Evacuation wardens clear their area, check nobody is left behind and report at the assembly point. Clients and insurers check that each floor or area has one.",
+   "example": "Example: Sithole Security Solutions appoints a warden for each floor of its Braamfontein office and records the drill times.",
+   "common_gaps": [
+    "Areas without a warden after staff changes"
+   ]
+  },
+  "APP-29": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Incident investigation training record",
+    "Sample investigation reports the person completed"
+   ],
+   "why": "The incident investigator finds out why an incident happened so it does not happen again. A good investigation looks for root causes, not just someone to blame.",
+   "example": "Example: Fourie Manufacturing appoints its health and safety officer as incident investigator and files his report on a hand injury at the guillotine.",
+   "common_gaps": [
+    "Investigations that stop at \"worker was careless\""
+   ]
+  },
+  "APP-30": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Confined space training certificate",
+    "Confined space entry permits the person has issued or supervised"
+   ],
+   "why": "Confined spaces such as tanks, pits and silos can have poisonous or oxygen poor air. The supervisor controls every entry through a permit, gas testing and a rescue plan.",
+   "example": "Example: Pillay Foods appoints its engineering foreman to supervise entries into its effluent pit, with signed entry permits and gas test readings on file.",
+   "common_gaps": [
+    "No rescue plan",
+    "Gas detector not calibrated"
+   ]
+  },
+  "APP-31": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the tools",
+    "Appointee's signed acceptance",
+    "Training certificate for the explosive powered tool type"
+   ],
+   "why": "Explosive powered tools such as cartridge nail guns can fire through material and injure people. Only trained, appointed operators should use them.",
+   "example": "Example: Khumalo Shopfitters appoints Mandla Khumalo as operator of its cartridge fixing tool, with the supplier's training certificate on file.",
+   "common_gaps": [
+    "Tool passed to untrained workers on site"
+   ]
+  },
+  "APP-32": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Cartridge and tool issue register",
+    "Training record"
+   ],
+   "why": "The issuer keeps the explosive powered tools and cartridges locked away and signs them out only to appointed operators, so they are not misused or lost.",
+   "example": "Example: Khumalo Shopfitters' storeman signs the tool and cartridges out to the appointed operator each morning and counts them back in the evening.",
+   "common_gaps": [
+    "Cartridges not counted back in"
+   ]
+  },
+  "APP-33": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Hot work training record",
+    "Hot work permits the person issued"
+   ],
+   "why": "Welding, cutting and grinding can start fires. The hot work supervisor makes sure every job has a permit, a fire watch and fire equipment at hand.",
+   "example": "Example: Mabena Steel appoints its workshop foreman as hot work supervisor, who issues permits for all welding outside the welding bay.",
+   "common_gaps": [
+    "No fire watch after the work stops"
+   ]
+  },
+  "APP-34": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Asbestos work training record",
+    "Proof that any asbestos removal contractor is registered for asbestos work with the Department of Employment and Labour"
+   ],
+   "why": "Asbestos fibres cause fatal lung disease years after exposure. Any work with asbestos must be supervised and controlled, and removal is left to a registered contractor.",
+   "example": "Example: Botha Property Trust appoints a supervisor for the removal of an old asbestos cement roof, done by a registered asbestos contractor.",
+   "common_gaps": [
+    "Drilling or breaking asbestos cement sheets without knowing what they are"
+   ]
+  },
+  "APP-35": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Lead work training record",
+    "Lead exposure risk assessment and air monitoring results"
+   ],
+   "why": "Under the Lead Regulations, lead exposure must be controlled. The lead work supervisor makes sure controls, hygiene facilities and medical surveillance are in place. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Venter Battery Recycling appoints a supervisor for its lead recovery area and files the latest exposure monitoring results.",
+   "common_gaps": [
+    "Workers eating or smoking in the lead area"
+   ]
+  },
+  "APP-36": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Noise training record",
+    "Noise zone map and latest noise survey"
+   ],
+   "why": "Loud noise causes permanent hearing loss. The noise zone controller makes sure noise zones are marked, hearing protection is worn and people exposed are on medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Kruger Timber appoints its sawmill supervisor to control the noise zones marked on the survey map.",
+   "common_gaps": [
+    "Noise zone signs missing",
+    "Hearing protection issued but not worn"
+   ]
+  },
+  "APP-37": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Radiation protection training record",
+    "The radiation licence for the equipment or source, issued by the national radiation control authority"
+   ],
+   "why": "Radiation from X ray equipment, gauges and sources harms people you cannot see it affecting. The radiation protection officer controls the licence, dose monitoring and safe use.",
+   "example": "Example: Coetzee Testing Services appoints a radiation protection officer for its industrial X ray equipment and files the licence and the dose records.",
+   "common_gaps": [
+    "Licence not transferred when equipment is moved to a new site"
+   ]
+  },
+  "APP-38": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period",
+    "Appointee's signed acceptance",
+    "Food safety or hygiene training certificate",
+    "Certificate issued for the food premises by the municipal environmental health office, where you hold one"
+   ],
+   "why": "Food handling mistakes can make customers and staff ill. The food safety and hygiene supervisor makes sure food is stored, prepared and served hygienically and that staff follow the rules.",
+   "example": "Example: Govender Bakery appoints its production manager as food safety supervisor and keeps the premises certificate on the wall and in the File.",
+   "common_gaps": [
+    "Training certificates for only one shift"
+   ]
+  },
+  "APP-39": {
+   "what_to_submit": [
+    "Signed appointment letter stating the scope, sites and period naming the vehicles",
+    "Appointee's signed acceptance",
+    "Copy of the driving licence and professional driving permit (PrDP), with expiry dates",
+    "Certificate of fitness outcome from the occupational health practitioner"
+   ],
+   "why": "Professional drivers carry goods or passengers on public roads, where a crash can harm many people. The appointment, valid licence and permit and medical fitness show the driver may drive. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in the File.",
+   "example": "Example: Molefe Transport keeps a copy of each driver's licence and PrDP with the expiry date on its driver register and sends drivers for fitness assessments before renewal.",
+   "common_gaps": [
+    "Expired PrDP not picked up",
+    "Drivers sharing vehicles they are not appointed for"
+   ]
+  },
+  "APP-40": {
+   "what_to_submit": [
+    "Appointment letters for the mine manager and each statutory appointee under the MHSA regime",
+    "Signed acceptances",
+    "Certificates of competency or qualifications for each appointee"
+   ],
+   "why": "Mines work under the MHSA regime, which has its own set of statutory appointments. This item holds them, alongside the rest of your File. Your mine's own appointment matrix is the starting point.",
+   "example": "Example: Venter Quarries files the mine manager's appointment and its matrix of other MHSA appointments, each with a signed acceptance.",
+   "common_gaps": [
+    "Using OHS Act appointments where the MHSA regime applies"
+   ]
+  }
+ }
+}
