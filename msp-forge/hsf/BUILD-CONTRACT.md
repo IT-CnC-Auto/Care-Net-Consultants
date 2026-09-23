@@ -111,3 +111,32 @@ A page may name an instrument as the basis for something only if it appears in `
 ## 8. What nobody builds
 
 No real MCO endpoint, no invented GTM ID, no invented model name for Grok (read it from an environment variable), no application to the live Supabase project, no Vercel deployment, no change to existing migrations 001 to 046.
+
+## 9. Amendment 1 (review round, 23/09/2026): binding on the fix round
+
+Migrations 047 to 051 are not applied anywhere, so they are corrected in place; no migration 052.
+
+9.1 **Account linking.** `hsf_link_account(p_auth_user uuid) returns uuid` (service role only): returns the account already linked to the user; otherwise links the latest non declined `msp_client_account` whose `lower(contact_email)` equals the user's confirmed email (`auth.users.email_confirmed_at is not null`) and whose `auth_user_id` is null, audits `client_auth_linked`, and returns it. `vercel/lib/auth.js requireUser` calls it once per request after verifying the token. The test stub gains `auth.users.email_confirmed_at timestamptz` and `raw_app_meta_data jsonb`.
+
+9.2 **Not found.** `hsf_file_detail` returns SQL null when the File does not exist or is not the caller's (no exception); `hsf_set_item_status` raises with SQLSTATE `P0002` ('no_data_found') for a missing or foreign item. The server maps null to 404 and P0002 to 404.
+
+9.3 **File citations.** An instrument is citable **for a File element** only when it is verified, not held, not superseded, its `scope` is 'safety' or 'both', and the element's `hsf_element_instrument.provision` is not 'awaiting verification'. One SQL function `hsf_element_citable(p_element_id uuid) returns jsonb` (array of short names) is the single source used by `hsf_public_element_library`, `hsf_file_detail`, `kernel_api_elements` and the release gate. Everything else shows under `awaiting`. `kernel_citable_instrument` (the register view) keeps its current meaning. Until Phase 2 re verification, File elements therefore show "Awaiting verification", which is the truthful state.
+
+9.4 **Currency holds everywhere.** `msp_public_instrument_register`, `msp_public_industry_profile`, `msp_public_framework_stats` and every kernel read exclude instruments in `msp_instrument_currency_hold`. Seed a hold for 'Asbestos Abatement Regulations, 2020' (reason: amendment notice number conflict GN R.2092 against GN R.11435, register HSF-9), alongside the NIHL 2003 and Environmental Regulations 1987 holds.
+
+9.5 **Transfer queue.** Replace the worker's use of `hsf_transfer_queue` with:
+- `hsf_transfer_mode() returns text` (reads `hsf.mco_transfer_mode`; service role only). The worker no longer calls msp_env_get.
+- `hsf_transfer_claim(p_limit int) returns setof hsf_upload`: in mode hold returns only status 'uploaded' rows (the worker then records held); in fixture or live returns 'uploaded' and 'held' rows plus 'transferring' rows claimed more than 30 minutes ago, locks them with `for update skip locked`, sets status 'transferring', oldest first. Uploads whose account has withdrawn mco_transfer or document_storage consent are never returned.
+- `hsf_transfer_record` accepts uploads in status 'transferring' as well as 'uploaded' and 'held'; outcome 'error' returns the upload to 'uploaded'.
+- `hsf_transfer_cleanup_queue(p_limit int) returns jsonb` → array of `{upload_id, storage_path, reason}` for rows whose `storage_path` is not null and whose status is 'transferred' (delete pending), 'failed' or 'rejected'. The worker deletes the object and then calls `hsf_mark_staging_deleted(p_upload_id)`, which now accepts 'transferred' (→ 'staging_deleted'), 'failed' and 'rejected' (status unchanged, storage_path null, staging_deleted_at set).
+- `hsf_sweep_stale_uploads(p_hours int default 24) returns int`: 'awaiting_upload' rows older than p_hours become 'failed' with reason 'The upload was not completed.'.
+- `hsf_staging_alerts` view (staff only through RLS or a service role function `hsf_staging_alerts_list()`): uploads still holding bytes in staging longer than `hsf.staging_alert_days`.
+- Hash mismatch revokes the evidence row created at completion, returns the File item to 'outstanding' when it has no other unrevoked evidence, sets the upload 'failed', and recomputes compliance.
+- `hsf_mark_uploaded` locks the File item row (`for update`) before choosing the next evidence version, and recomputes compliance.
+- Consent withdrawal of mco_transfer or document_storage: untransferred uploads of that account get `transfer_blocked_reason = 'consent withdrawn'` (new nullable column) and are excluded from claims; nothing is deleted automatically (Director and Information Officer decision, register item).
+
+9.6 **Rate limits.** `hsf_generate_file` refuses more than `hsf.files_per_account_per_day` (parameter, default 20) Files per account per day; `hsf_next_reference` never truncates (`\d{3,}` and `lpad(n, greatest(3, length(n)))`).
+
+9.7 **Builder support views** (anon select): `hsf_public_trigger (code, description)` and `hsf_public_subindustry (code, name, industry_code, selectable)`.
+
+9.8 **Portal summary.** `hsf_portal_summary(p_auth_user uuid) returns jsonb` (service role only, read only, no tokens minted): `{account: {client_account_id, company_name, account_kind, approved_at} | null, plans: [{engagement_id, reference, status, industry_code, revision, created_at}], quotes: [{quote_reference, package_code, price_zar, price_status, valid_until, created_at}], files: [{file_id, reference, industry_code, status, revision, compliance_pct, signoffs: [{kind, decision, decided_at}]}]}`. Plans come from engagements whose intake consumed an access token of the account (`msp_form_access.client_account_id` and `used_by_intake`); quotes by the account's contact email. Endpoint `GET /api/portal-summary` (vercel/api/portal-summary.js) with the same requireUser. portal.html uses it instead of /api/company-lookup.
