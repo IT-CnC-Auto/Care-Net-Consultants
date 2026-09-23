@@ -63,3 +63,22 @@ This document records the state of the engine at the completion of the phased bu
 ## Standing disciplines
 
 British English throughout; no dash punctuation in prose (statute names keep their official hyphens; enforced by the pipeline PROSE_RULE_HOLDS check); ZAR amounts in comma format; Arial; CNC palette #ED1B24 and #1A1A1A; OREP and WASP terminology; locked liability, POPIA, and sign off blocks rendered verbatim from templates.json and never paraphrased; deliverables never carry CONFIRM or ASSUMPTION tags (unresolved items route to the OMP queue); the WARDEN ring fence holds (the CRM is referenced as AutoHive CRM by name only).
+
+## CNC HSF FORGE (Health and Safety File engine) | 23/09/2026
+
+Commissioned by HSF-FORGE-BUILD-PROMPT.md (CNC-HSF-FORGE-V1.0-2026). Specification is Part B of SPEC.md.
+
+| Phase | Scope | Status |
+| --- | --- | --- |
+| 1 | Specification (SPEC.md Part B): manifest, data model, 137 universal elements, 41 appointment types, 119 overlay additions, verification batches, generation contract, MCO adapter interface, register HSF-1 to HSF-10 | Delivered, awaiting Director approval |
+| 2 | Element library load and instrument verification | Blocked on the Phase 1 gate and HSF-7 |
+| 3 to 7 | Rules, generation, MCO linking, review and release, site | Not started |
+
+Found on 23/09/2026 by a read only query of the live project, and recorded in SPEC.md B1.4 and B12:
+
+- HSF-7 (blocking, and affecting MSP FORGE today): the live kernel is on release 1.0.0. Migration 042 (release 1.1.0, the noise transition and the Physical Agents Regulations, 2024) is in this repository but not applied to the live project, so the NIHL Regulations, 2003 remain verified in live past their repeal on 06/09/2026 and the Environmental Regulations for Workplaces, 1987 remain verified although repealed. The "Kernel state" section above describes the repository, not the live project, on this point.
+- HSF-8: pending duplicate rows for the General Administrative, General Machinery and General Safety Regulations in live.
+- HSF-9: conflicting amendment notice numbers for the Asbestos Abatement Regulations, 2020 (GN R.2092 in migration 042; GN R.11435 in the live and published register).
+- HSF-10: the published register PDF has cross reference offsets that do not match its bytes.
+
+MCO integration for HSF FORGE is PENDING INTEGRATION (HSF-3, extends CR-13.12). No MCO endpoint is assumed.

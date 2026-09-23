@@ -53,6 +53,10 @@ Kernel counts at backup: 31 verified instruments (1 retired duplicate, 5 pending
 - 045_msp_review_fee_bands.sql (9024 bytes)
 - 046_msp_public_instrument_register.sql (1511 bytes)
 
+## CNC HSF FORGE
+
+Phase 1 (23/09/2026) is specification only (SPEC.md Part B) and adds no SQL, so the rebuild script is unchanged. HSF tables arrive from Phase 2 as migrations numbered from 047.
+
 ## Not SQL, and therefore not in the rebuild script
 
 - supabase/functions/msp-assistant/index.ts, the assistant connection. Deploy it separately.
