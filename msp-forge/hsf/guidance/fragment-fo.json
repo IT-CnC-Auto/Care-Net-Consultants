@@ -1,0 +1,1405 @@
+{
+ "sections": {
+  "F": {
+   "intro": "Section F is the proof that your equipment, installations and workplaces are checked before they hurt someone. Each register lists what you have, and the inspection records beside it show who checked it, when, what they found and what was fixed. Inspectors and clients usually open this section first on a site visit, because an empty register means nobody is looking.",
+   "what_goes_here": [
+    "A register per equipment type: ladders, scaffolds, lifting gear, portable electrical tools, fire equipment, pressure equipment, vehicles and mobile plant",
+    "The inspection checklists or pages that go with each register, signed and dated by the appointed inspector",
+    "The electrical certificate of compliance for each installation",
+    "The hazardous chemical register with current safety data sheets",
+    "The personal protective equipment issue register signed by each person",
+    "Walkabout, housekeeping, stacking and welfare facility inspection records"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "ENG",
+    "OPS",
+    "FAC"
+   ],
+   "first_file_tips": [
+    "Walk the site with a clipboard first and list every ladder, extinguisher, tool and machine you actually have; a register built from memory always misses items.",
+    "Give every item a number and mark it on the item itself, so the register and the equipment can be matched in seconds.",
+    "Only switch on the registers your activities need; a small office will not need a scaffold or excavation register.",
+    "Link each register to the person appointed to inspect it in Section B, so the signature on the page matches the appointment letter.",
+    "If nobody in your business is registered and competent to inspect this equipment, ask a sales executive about onboarding a registered Health and Safety practitioner through Care Net's Recruitment Portal."
+   ]
+  },
+  "G": {
+   "intro": "Section G shows how you control high risk work that cannot be made safe by ordinary rules alone: hot work, confined spaces, excavations, work at height, electrical isolation, lifting and demolition. A permit to work makes someone competent check the conditions, sign that controls are in place, and close the job off before people are exposed.",
+   "what_goes_here": [
+    "Your permit to work procedure and a register of permits issued",
+    "Completed permits for hot work, confined space entry, excavation, work at height, lifting and demolition",
+    "Electrical isolation, lockout and tagout records",
+    "Road closure or traffic accommodation approvals where you work on or near a road",
+    "Radiation work authorisations where radiation sources are used"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "OPS",
+    "ENG"
+   ],
+   "first_file_tips": [
+    "Start with the permit to work procedure and a numbered permit book; everything else in this section flows from it.",
+    "File the closed permit, not only the issued one; a permit that was never signed off is a gap an auditor will find.",
+    "Only activate the permit types your risk assessment in Section C calls for.",
+    "Make sure the person who signs each permit is the one appointed for that work in Section B."
+   ]
+  },
+  "H": {
+   "intro": "Section H proves that if something goes badly wrong, people know what to do, where to go and who to call. It holds the emergency plan for each site, the fire plan, the medical emergency arrangements and the records of drills that tested them. A plan that has never been practised is only paper.",
+   "what_goes_here": [
+    "An emergency plan per site with roles, assembly points, escape routes and emergency numbers",
+    "A site plan marking exits, assembly points, fire equipment and first aid boxes",
+    "Drill records with the date, time to evacuate, findings and actions taken",
+    "The fire risk assessment and fire plan",
+    "Medical emergency arrangements, including the nearest hospital and ambulance number",
+    "Spill response, security emergency and major hazard installation plans where they apply"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "FAC",
+    "OPS"
+   ],
+   "first_file_tips": [
+    "Write one short plan per site rather than one long plan for the company; people need to know their own exits and assembly point.",
+    "Name real people as emergency coordinator, wardens and first aiders, and cover every shift.",
+    "Hold a first drill early, time it, and file what went wrong; the findings are as valuable as the plan.",
+    "Check the emergency numbers in the plan actually work before you file it."
+   ]
+  },
+  "I": {
+   "intro": "Section I shows what happens when someone is hurt, made ill or nearly hurt at work: how it is reported, recorded, reported onward to the inspector and COIDA where required, investigated and fixed. A good incident section proves you learn from events so they do not happen again.",
+   "what_goes_here": [
+    "Your incident and near miss reporting procedure",
+    "The incident register, kept up to date",
+    "Records of incidents reported to the inspector",
+    "Investigation reports with root cause and corrective actions",
+    "COIDA claim records and employer's reports of accidents and diseases",
+    "Occupational disease notifications, showing outcomes only, and the corrective action register"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "HR",
+    "OH"
+   ],
+   "first_file_tips": [
+    "Set up the incident register on day one, even if it stays empty; an empty register that exists is better than none.",
+    "Encourage near miss reports; a File with injuries but no near misses suggests people are not reporting.",
+    "Keep COIDA claim numbers and correspondence together per incident so you can follow a claim to the end.",
+    "Never file medical reports or doctors' notes here; the clinical detail stays with the occupational health practitioner."
+   ]
+  },
+  "J": {
+   "intro": "Section J holds the measurements that prove what your people are actually exposed to: noise, chemicals, dust, lighting, heat, asbestos and lead. These surveys decide which controls, personal protective equipment and medical surveillance you need, so the rest of the File depends on them being current and done by someone competent.",
+   "what_goes_here": [
+    "An occupational hygiene survey programme listing which surveys are due and when",
+    "Noise surveys with the noise zone map, done by an approved inspection authority",
+    "Hazardous chemical agent exposure monitoring reports",
+    "Illumination, ventilation and thermal surveys",
+    "Asbestos and lead air monitoring where those hazards exist",
+    "Aggregate biological monitoring results only, never individual clinical results"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "OH",
+    "ENG"
+   ],
+   "first_file_tips": [
+    "Let your risk assessment in Section C decide which surveys you need; do not buy surveys for hazards you do not have.",
+    "Check that each survey report names the approved inspection authority or competent person who did it and the date of measurement.",
+    "Read the recommendations page of every report and log each one in your corrective action register.",
+    "If nobody in your business is registered and competent to do this, ask a sales executive about onboarding a registered Health and Safety practitioner through Care Net's Recruitment Portal."
+   ]
+  },
+  "K": {
+   "intro": "Section K shows how you keep contractors, visitors and members of the public safe while they are on or near your site. You remain responsible for people you bring in, so this section proves you chose competent contractors, agreed safety terms in writing, inducted everyone and protected the public.",
+   "what_goes_here": [
+    "Contractor selection criteria and completed evaluations",
+    "Section 37(2) agreements and each contractor's own File",
+    "Contractor induction records, permits and daily coordination notes",
+    "The visitor register and visitor induction",
+    "Public protection records such as hoarding, signage and public liability insurance"
+   ],
+   "who_usually_holds": [
+    "PROC",
+    "SHE",
+    "FAC"
+   ],
+   "first_file_tips": [
+    "Do not let a contractor start work until the signed section 37(2) agreement and its File are in your hands.",
+    "Use one short checklist to evaluate every contractor so decisions are consistent and easy to defend.",
+    "A visitor book at reception with a short safety briefing card is enough for most small businesses.",
+    "Cross reference Section A, where the contractor register and agreements also appear, rather than filing two different versions."
+   ]
+  },
+  "L": {
+   "intro": "Section L proves that you talk to your people about health and safety and listen to them. It holds committee minutes, the health and safety representatives' inspection reports, toolbox talks, the notices on your walls and records of the changes you told Care Net and your client about.",
+   "what_goes_here": [
+    "Health and safety committee minutes with an action list",
+    "Health and safety representative inspection reports and your responses",
+    "Toolbox talk registers with topics and signatures",
+    "A record of the notices displayed and when they were checked",
+    "Change notifications sent to Care Net and to your client"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "HR",
+    "OPS"
+   ],
+   "first_file_tips": [
+    "Keep the committee action list separate from the minutes and carry open items forward until they are closed.",
+    "Answer every representative's recommendation in writing, even if the answer is no, and give the reason.",
+    "Photograph your notice board once a year and file the photo; it is the simplest proof of what was displayed.",
+    "When you add a new process, chemical or site, tell Care Net so the Medical Surveillance Plan, a separate Care Net product, can be updated."
+   ]
+  },
+  "M": {
+   "intro": "Section M covers the everyday conditions people work in: toilets, drinking water, change rooms and eating areas, the physical environment, smoking controls and, where environmental law applies, how you manage and dispose of waste. These are the items workers notice first and complain about most.",
+   "what_goes_here": [
+    "An annual review of welfare facilities against the number of workers on site",
+    "A review of lighting, ventilation, temperature and housekeeping",
+    "Environmental management records where environmental law applies to you",
+    "Waste manifests and safe disposal certificates from licensed contractors",
+    "Your smoking policy and designated smoking area"
+   ],
+   "who_usually_holds": [
+    "FAC",
+    "SHE",
+    "OPS"
+   ],
+   "first_file_tips": [
+    "Count your workers by gender and shift before you count toilets and basins; the facilities must match the people who use them.",
+    "Keep every waste manifest and disposal certificate; they prove your waste went where it should.",
+    "Use the survey results in Section J as the evidence for the physical environment review rather than guessing.",
+    "Photographs of facilities with a date make the annual review quick and convincing."
+   ]
+  },
+  "N": {
+   "intro": "Section N proves that you check your own system, find what is not working and fix it. It holds internal and external audit reports, management review records, objectives and targets, the non conformance log and the record of legislation updates applied to the File. It is the section that turns a pile of documents into a system that improves.",
+   "what_goes_here": [
+    "An internal audit schedule and the completed audit reports",
+    "External audit reports from clients, principal contractors, certification bodies or the inspector",
+    "Minutes of management reviews led by the chief executive",
+    "Health and safety objectives and targets with the measurements against them",
+    "The non conformance and corrective action log with closure evidence",
+    "The log of legislation release notes applied to your File"
+   ],
+   "who_usually_holds": [
+    "SHE",
+    "EXEC"
+   ],
+   "first_file_tips": [
+    "Your File should be audited by someone whose registration and experience fit your industry. Use the Onboard a registered, competent auditor button to have Care Net's Recruitment Portal match and onboard one, or ask a sales executive until the portal link is live.",
+    "Set two or three measurable objectives for your first year; a short list you track beats a long list you ignore.",
+    "Close every audit finding with evidence such as a photo, a new form or a training record, not just a tick.",
+    "Hold the first management review after your first audit, so the review has real findings to discuss."
+   ]
+  },
+  "O": {
+   "intro": "Section O shows how long you keep each kind of record, where it is stored, who may see it, and the agreement that governs the records Care Net holds for you. Health and safety records often need to be produced years later, especially medical surveillance records for hazardous exposure, so losing them can leave you with no defence.",
+   "what_goes_here": [
+    "A retention schedule listing each record type and how long it is kept",
+    "A storage and access control list showing where each record type lives and who can open it",
+    "The signed POPIA operator agreement between your company and Care Net"
+   ],
+   "who_usually_holds": [
+    "EXEC",
+    "SHE",
+    "HR"
+   ],
+   "first_file_tips": [
+    "Build the retention schedule from the section list of your File so no record type is forgotten.",
+    "Keep medical records apart from everything else, with access only for the occupational health practitioner.",
+    "Decide who holds the keys and passwords to each store, and what happens when that person leaves.",
+    "Sign the operator agreement before any worker records are shared with Care Net."
+   ]
+  }
+ },
+ "elements": {
+  "HSF-F-01": {
+   "what_to_submit": [
+    "Scaffold register listing every scaffold by number, location and erection date",
+    "Signed inspection records by your appointed scaffold inspector",
+    "Handover or tag record showing each scaffold was declared safe before use"
+   ],
+   "why": "Scaffold collapses and falls from scaffolds cause serious injuries and deaths. The register proves each scaffold was inspected by your appointed scaffold inspector at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and again after bad weather or any change.",
+   "example": "Example: Ndlovu Builders in Polokwane numbers its three mobile scaffolds S1 to S3 and its inspector, Sipho Maluleke, signs a green tag and the register page before the plasterers start each Monday.",
+   "common_gaps": [
+    "Inspection pages signed by someone who is not the appointed scaffold inspector",
+    "Scaffolds hired in by a subcontractor missing from your register",
+    "No inspection recorded after strong wind or heavy rain"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-02": {
+   "what_to_submit": [
+    "Ladder register with a number, type and location for every ladder",
+    "Inspection checklist pages signed by your ladder inspector",
+    "A note of damaged ladders removed from use and how they were destroyed"
+   ],
+   "why": "Falls from ladders are one of the most common serious injuries in small businesses. The register shows every ladder is inspected at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and that damaged ones are taken out of service instead of being left for someone to use.",
+   "example": "Example: Pillay Shopfitters in Durban paints a number on each of its eight ladders; in March its ladder inspector, Kevin Naidoo, cuts up ladder L5 after finding a cracked stile and records it in the register.",
+   "common_gaps": [
+    "Ladders in the storeroom or vehicles never added to the register",
+    "Damaged ladders marked on the register but still in use",
+    "Homemade or painted over wooden ladders that hide defects"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-03": {
+   "what_to_submit": [
+    "Register of every lifting machine and item of lifting tackle, with a unique number and safe working load",
+    "Load test certificates for each machine",
+    "Signed inspection records by your lifting machine and lifting tackle inspector"
+   ],
+   "why": "A failed chain, sling or hoist can drop a load onto people. The register and certificates prove each item was load tested and inspected at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and inspectors and clients ask for the certificates before a crane or hoist is used on site.",
+   "example": "Example: Van Wyk Steel in Vanderbijlpark keeps a register of two overhead cranes and forty slings and shackles, each tagged with its safe working load, and files the load test certificate for crane C1 dated 12 May 2026.",
+   "common_gaps": [
+    "Slings and shackles not individually numbered, so nobody can prove which were inspected",
+    "Load test certificates expired or missing for hired equipment",
+    "Damaged tackle left in the rack instead of being quarantined"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-F-04": {
+   "what_to_submit": [
+    "Register of portable electrical tools and extension leads with an asset number for each",
+    "Inspection and test records signed by the appointed electrical installation supervisor",
+    "Record of faulty tools withdrawn and repaired or scrapped"
+   ],
+   "why": "Damaged cables and faulty tools cause shocks, burns and fires. The register proves every drill, grinder and extension lead is inspected at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and that faulty items are tagged out before someone is hurt.",
+   "example": "Example: Mthembu Joinery in Pietermaritzburg tags its 22 power tools with coloured labels after each inspection and records that grinder G4 was withdrawn on 8 July 2026 for a damaged plug.",
+   "common_gaps": [
+    "Workers' own tools brought from home never inspected",
+    "Extension leads and multi plugs left off the register",
+    "Tags on the tools but no matching register entry"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-F-05": {
+   "what_to_submit": [
+    "Electrical certificate of compliance for each site or installation",
+    "Installation inspection register signed by the electrical installation supervisor",
+    "A new certificate or record for every alteration or addition to the installation"
+   ],
+   "why": "An unsafe electrical installation can cause electrocution and fire. The certificate proves a registered electrician tested the installation, and the register shows it is inspected at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets. Landlords, insurers and inspectors routinely ask for it.",
+   "example": "Example: Botha Printing in Bloemfontein files the certificate of compliance issued when it moved into its unit, plus a second certificate for the new press circuit added in April 2026.",
+   "common_gaps": [
+    "Relying on the landlord's certificate without a copy on file",
+    "No new certificate after a circuit or distribution board was added",
+    "Inspection register started but not kept up"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-F-06": {
+   "what_to_submit": [
+    "Register of every fire extinguisher, hose reel and hydrant with its location",
+    "Service certificates or labels from the fire equipment service provider",
+    "Monthly visual check records signed by your fire equipment inspector"
+   ],
+   "why": "Fire equipment that is empty, blocked or out of service cannot save anyone. The register shows every item is checked and serviced at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and your insurer and the local fire authority may ask to see it.",
+   "example": "Example: Khumalo Motors in Soweto lists nine extinguishers and two hose reels on a site plan; its fire equipment inspector, Palesa Mokoena, initials each service label monthly and files the service provider's certificate dated February 2026.",
+   "common_gaps": [
+    "Extinguishers moved around the site so the register no longer matches",
+    "Service certificates filed but no record of the monthly checks between services",
+    "Equipment blocked by stock or pallets"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-F-07": {
+   "what_to_submit": [
+    "Emergency lighting test records per site",
+    "Exit and escape route signage checklist",
+    "Record of faulty lights or signs fixed, with dates"
+   ],
+   "why": "When the power fails during an emergency, people need lights and signs to find the way out. These records prove emergency lighting and signage are tested at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and repaired when they fail.",
+   "example": "Example: Molefe Cold Storage in Rustenburg switches off the mains in its warehouse once a month, times the emergency lights and records that the fitting above exit B failed on 4 August 2026 and was replaced two days later.",
+   "common_gaps": [
+    "Lights tested but the test not written down",
+    "Signs covered by racking or new partitions",
+    "Load shedding assumed to count as a test without any record"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-F-08": {
+   "what_to_submit": [
+    "Register of compressors, air receivers, boilers and other pressure equipment",
+    "Inspection and test certificates for each vessel",
+    "Records of safety valve checks signed by the pressure equipment supervisor"
+   ],
+   "why": "Pressure vessels can explode with enough force to kill. The register and certificates prove every vessel was inspected and tested at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and that safety devices work.",
+   "example": "Example: Dlamini Panelbeaters in Nelspruit registers one compressor and air receiver, files its inspection certificate from May 2026 and keeps a sticker on the receiver showing the next inspection date.",
+   "common_gaps": [
+    "Small compressors assumed to be exempt without checking",
+    "Certificates for the compressor but not for the air receiver",
+    "No record of who is appointed to supervise the equipment"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-F-09": {
+   "what_to_submit": [
+    "Register of vehicles, forklifts and mobile plant with a unique number for each",
+    "Daily pre use checklists signed by the operator",
+    "Service and maintenance records for each machine"
+   ],
+   "why": "Mobile plant and vehicles injure pedestrians and operators when brakes, lights, horns or reverse alarms fail. Daily checks catch faults before a shift starts, and the maintenance record shows faults are fixed, not just noted.",
+   "example": "Example: Sibiya Earthworks in Witbank keeps a daily checklist book in each of its four machines; its mobile plant supervisor, Themba Zulu, reviews the books every Friday and files them with the service invoices.",
+   "common_gaps": [
+    "Checklists ticked in advance or all signed at the end of the week",
+    "Defects noted on the checklist but no repair record",
+    "Hired machines never added to the register"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-10": {
+   "what_to_submit": [
+    "Excavation inspection register for each open excavation",
+    "Daily inspection entries signed by the excavation supervisor",
+    "Record of inspections after rain, blasting or any collapse"
+   ],
+   "why": "Trench collapses bury workers in seconds. Checking every excavation every day, and again after rain or other changes, is how you catch cracking, water and loose material before anyone is trapped.",
+   "example": "Example: Mahlangu Civils keeps a register for its sewer trench in Mamelodi; its excavation supervisor, Johannes Mathebula, records the shoring and edge protection each morning and adds an extra entry after the storm on 16 October 2026.",
+   "common_gaps": [
+    "Entries missed on days when the supervisor was off site",
+    "No extra inspection after heavy rain",
+    "Shallow excavations ignored even where people work in them"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-11": {
+   "what_to_submit": [
+    "Personal protective equipment issue register signed by each person on receipt",
+    "A list of what equipment each job role needs, taken from your risk assessment",
+    "Records of inspections and replacement of worn or damaged equipment"
+   ],
+   "why": "Personal protective equipment is the last line of defence, so it must match the hazard, fit the person and be in good condition. The signed register proves each person received the right equipment, and it helps when a worker disputes what they were given.",
+   "example": "Example: Nkosi Cleaning Services in Durban issues gloves, goggles and aprons to its 18 cleaners; each signs the issue register, and the supervisor, Ayanda Cele, replaces torn gloves weekly and records it.",
+   "common_gaps": [
+    "Equipment handed out with no signature",
+    "One size bought for everyone so it does not fit",
+    "The register not updated when the job or the chemicals change"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-F-12": {
+   "what_to_submit": [
+    "Register of every hazardous chemical, with where it is stored and roughly how much you hold",
+    "A current safety data sheet for each chemical",
+    "Storage inspection records signed by the hazardous chemical agent controller"
+   ],
+   "why": "You cannot control chemicals you have not listed. The register and safety data sheets tell workers, first aiders and emergency services what each substance does and how to handle a spill or exposure, and they underpin the chemical risk assessment and any medical surveillance under the Hazardous Chemical Agents Regulations. Update it whenever a chemical is added, removed or moved.",
+   "example": "Example: Govender Pool Supplies in Umhlanga lists 14 chemicals, keeps their safety data sheets in a red file at the store entrance, and its controller, Priya Govender, updates the register the day a new product arrives.",
+   "common_gaps": [
+    "Safety data sheets missing or years out of date",
+    "Cleaning products and workshop sprays left off the register",
+    "No quantities, so the risk of a large spill is unknown"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-F-13": {
+   "what_to_submit": [
+    "Asbestos inventory listing each location, type and condition of asbestos containing material",
+    "The survey or report the inventory is based on",
+    "Signed inspection records by the asbestos work supervisor"
+   ],
+   "why": "Asbestos fibres cause fatal lung diseases years after exposure, and they are released when the material is damaged or disturbed. The inventory tells maintenance staff and contractors where asbestos is so nobody drills, cuts or breaks it unprotected, and the inspections track its condition at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "example": "Example: Mofokeng Properties in Kimberley keeps an inventory showing asbestos cement roof sheets on two older buildings, marked on a site plan that every contractor must see before starting work.",
+   "common_gaps": [
+    "Assuming a building has no asbestos without a survey",
+    "Contractors not shown the inventory before drilling or roofing work",
+    "Condition not rechecked after storms or renovations"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-F-14": {
+   "what_to_submit": [
+    "Register of machines with moving parts that need guards",
+    "Guarding inspection checklists signed by the general machinery supervisor",
+    "Records of missing or damaged guards and when they were replaced"
+   ],
+   "why": "Unguarded belts, gears, blades and rollers cause amputations. The register proves guards are checked at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, and that a machine is stopped when a guard is missing.",
+   "example": "Example: Venter Packaging in Paarl lists 11 machines; its general machinery supervisor, Riaan Venter, finds a missing guard on the slitter in June 2026, locks the machine out and records the repair the next day.",
+   "common_gaps": [
+    "Guards removed for cleaning and not refitted",
+    "New or second hand machines not added to the register",
+    "Interlocks bypassed without anyone noticing"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-F-15": {
+   "what_to_submit": [
+    "Monthly walkabout or housekeeping checklist per area",
+    "Photographs of findings where useful",
+    "An action list showing who fixed each finding and when"
+   ],
+   "why": "Most slips, trips and many fires start with poor housekeeping. A supervisor walking the site every month and writing down what needs fixing shows you look for hazards before they cause harm.",
+   "example": "Example: Hlongwane Hardware in Mthatha has its floor supervisor, Nomsa Hlongwane, walk the yard and store monthly; in September 2026 she records blocked aisle 3 and an oil spill at the loading bay, both cleared the same day.",
+   "common_gaps": [
+    "Checklists ticked with no findings month after month",
+    "Findings written down but never closed",
+    "Outside areas and storerooms skipped"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-16": {
+   "what_to_submit": [
+    "Monthly stacking and storage inspection checklist",
+    "Racking load signs and any racking inspection report",
+    "Record of damaged racking or unstable stacks and the action taken"
+   ],
+   "why": "Collapsing racks and falling stock crush people. The monthly inspection by your stacking and storage supervisor shows stacks are stable, racking is undamaged and loads stay within the marked limits.",
+   "example": "Example: Mabaso Distribution in Pinetown has its stacking supervisor, Lindiwe Mabaso, inspect the warehouse monthly; she records a bent upright in bay 12 hit by a forklift and the bay is emptied until it is repaired.",
+   "common_gaps": [
+    "Racking damage from forklifts not reported",
+    "No load limits shown on the racking",
+    "Stacks built higher than the storage supervisor allows"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-17": {
+   "what_to_submit": [
+    "Register of harnesses, lanyards, lifelines and anchor points with a number for each",
+    "Pre use check records signed by the user or the fall protection planner",
+    "Records of equipment withdrawn after a fall or damage"
+   ],
+   "why": "A harness that fails in a fall is worse than none. Checking fall arrest equipment before each use, and taking it out of service after a fall or damage, is what keeps it reliable.",
+   "example": "Example: Maseko Roofing in East London numbers its six harnesses; each roofer checks and signs the card before going up, and harness H2 is destroyed after it arrested a fall on 21 July 2026.",
+   "common_gaps": [
+    "Pre use checks done but not recorded",
+    "Harnesses kept after arresting a fall",
+    "Anchor points never checked"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-18": {
+   "what_to_submit": [
+    "Confined space register listing every tank, pit, manhole, silo or vessel people may enter",
+    "Warning signs or photographs showing each space is marked",
+    "The hazards and entry controls noted for each space"
+   ],
+   "why": "People die in confined spaces from lack of oxygen, toxic gas or engulfment, and often the rescuers die too. The register makes sure every such space is known, marked and entered only under a permit.",
+   "example": "Example: Modise Water Services in Mahikeng lists four sumps and two reservoirs as confined spaces, each with a padlocked hatch and a warning sign, supervised by its confined space supervisor, Kagiso Modise.",
+   "common_gaps": [
+    "Only obvious tanks listed while pits and ducts are forgotten",
+    "Spaces not marked, so workers enter without a permit",
+    "Register not updated when new tanks or pits are built"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-19": {
+   "what_to_submit": [
+    "Register of explosive powered tools with a serial number for each",
+    "Issue and return log signed by the explosive powered tool issuer",
+    "Cartridge issue and return records"
+   ],
+   "why": "Explosive powered tools can fire nails through materials and people, and cartridges must never go missing. The issue log shows each tool and every cartridge went to an authorised operator and came back.",
+   "example": "Example: Zwane Ceilings in Emalahleni keeps its two nail guns in a locked box; the issuer, Mandla Zwane, records each issue with the operator's name and the cartridges given and returned.",
+   "common_gaps": [
+    "Tools lent to workers who are not authorised operators",
+    "Spent and unused cartridges not counted back in",
+    "Tools left on site overnight unsecured"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-F-20": {
+   "what_to_submit": [
+    "Monthly welfare facilities checklist covering toilets, basins, drinking water, change rooms and eating areas",
+    "Cleaning schedules signed by cleaning staff",
+    "Records of faults reported and fixed"
+   ],
+   "why": "Dirty or broken toilets, no clean water and nowhere hygienic to eat affect health and morale, and they are among the first things an inspector or worker complains about. The monthly check shows these facilities are kept working and clean.",
+   "example": "Example: Mokwena Farming in Tzaneen checks the toilets, water point and eating shelter at its packhouse monthly; in August 2026 it records a broken tap and the plumber's repair two days later.",
+   "common_gaps": [
+    "Only the office toilets checked, not those used by field or shift workers",
+    "Faults noted but no repair date",
+    "No soap or towels recorded as an issue month after month"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-F-21": {
+   "what_to_submit": [
+    "Lighting, ventilation and temperature measurement reports",
+    "The name and credentials of the person or body that took the measurements",
+    "A list of the actions you took on the recommendations"
+   ],
+   "why": "Poor lighting causes accidents and eye strain, and poor ventilation or heat makes people ill. Measured results, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, show where conditions need improving and prove you acted.",
+   "example": "Example: Radebe Call Centre in Midrand has its lighting and ventilation measured by an occupational hygienist; the report finds low light at two workstations and new lights are fitted in May 2026.",
+   "common_gaps": [
+    "Measurements never taken, only a walk through opinion",
+    "Reports filed without the recommendations being actioned",
+    "No new measurements after a move or a big layout change"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-F-22": {
+   "what_to_submit": [
+    "Waste register listing each waste type, quantity and date removed",
+    "Name of the licensed waste contractor for each waste stream",
+    "Monthly register sign off"
+   ],
+   "why": "Hazardous waste that is stored badly or dumped can harm workers, neighbours and the environment. The register tracks what waste you create and where it goes, and signing it off every month links it to the disposal certificates in Section M.",
+   "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg records used oil, oil filters and batteries monthly, each collected by a licensed recycler whose collection slip is filed in Section M.",
+   "common_gaps": [
+    "General and hazardous waste mixed in the same skip",
+    "Quantities guessed or left blank",
+    "No link between the register and the disposal certificates"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-G-01": {
+   "what_to_submit": [
+    "Your written permit to work procedure listing which jobs need a permit",
+    "A numbered permit register showing every permit issued, who issued it and when it was closed",
+    "Blank permit forms for each permit type"
+   ],
+   "why": "A permit to work system makes sure dangerous jobs are checked, authorised and closed off by competent people. The register proves the system runs and lets you find any permit quickly if something goes wrong. Review the procedure whenever new high risk work starts.",
+   "example": "Example: Moloi Engineering in Germiston uses a numbered permit book; permit number 214, issued on 3 September 2026 for welding in the paint shop, is recorded as closed at 16:30 the same day.",
+   "common_gaps": [
+    "Permits used but no register to track them",
+    "Procedure not reviewed when new high risk work starts",
+    "Permits issued by people who are not authorised to issue them"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-G-02": {
+   "what_to_submit": [
+    "Completed hot work permits for welding, cutting and grinding outside the workshop",
+    "The fire watch record for each permit",
+    "Sign off showing the area was checked after the work ended"
+   ],
+   "why": "Sparks from welding and grinding start fires that can smoulder for hours. A hot work permit makes someone remove combustibles, provide fire equipment and check the area afterwards.",
+   "example": "Example: Kruger Welding in Middelburg issues a hot work permit for repairs in a feed store; its hot work supervisor, Pieter Kruger, records the fire watch and signs the area clear an hour after the job ends.",
+   "common_gaps": [
+    "No fire watch after the work ends",
+    "Permit issued for the whole week instead of each job",
+    "Combustibles left nearby because the area was not inspected"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-03": {
+   "what_to_submit": [
+    "Completed confined space entry permits",
+    "Gas test readings taken before and during entry",
+    "Names of entrants, the standby person and the rescue arrangements"
+   ],
+   "why": "Most confined space deaths happen because the air was not tested or no one was standing by. The permit proves the atmosphere was tested, the space isolated, a standby person present and rescue ready before anyone went in.",
+   "example": "Example: Modise Water Services in Mahikeng issues an entry permit to clean sump 2; the supervisor records oxygen and gas readings at 08:00 and 10:00 and names the standby person at the hatch.",
+   "common_gaps": [
+    "Gas readings not recorded or the detector not calibrated",
+    "No standby person named",
+    "Permit not closed and the space not secured afterwards"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-04": {
+   "what_to_submit": [
+    "Excavation permits for each dig",
+    "Service clearance records showing buried cables and pipes were located",
+    "Drawings or scan records from the service owners"
+   ],
+   "why": "Hitting an underground cable or gas pipe can kill instantly, and unsupported excavations collapse. The permit proves services were located and the excavation method agreed before digging started.",
+   "example": "Example: Mahlangu Civils obtains service drawings from the municipality, scans the route in Mamelodi and issues excavation permit 41 on 2 October 2026 before the excavator starts.",
+   "common_gaps": [
+    "Digging started before service drawings arrived",
+    "Hand digging near services not required on the permit",
+    "Permit not updated when the dig was extended"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-05": {
+   "what_to_submit": [
+    "Working at height permits for each job",
+    "Reference to the fall protection plan for the task",
+    "Record of the equipment and anchor points used"
+   ],
+   "why": "Falls from height are a leading cause of death at work. The permit makes the supervisor confirm edge protection, fall arrest equipment and rescue arrangements are in place before anyone climbs.",
+   "example": "Example: Maseko Roofing in East London issues a working at height permit for a warehouse roof in Gonubie, listing the anchor points, the harnesses by number and the rescue plan.",
+   "common_gaps": [
+    "Short jobs done without a permit because they only take a few minutes",
+    "No rescue plan for a worker left hanging in a harness",
+    "Permit not linked to the fall protection plan"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-06": {
+   "what_to_submit": [
+    "Electrical isolation and lockout records for each job",
+    "Lock and tag register showing who holds which lock",
+    "Test records showing the equipment was proved dead before work"
+   ],
+   "why": "Equipment that is switched back on while someone works on it can electrocute or crush them. Lockout records prove the energy was isolated, locked, tagged and tested dead, and that only the person who fitted the lock removed it.",
+   "example": "Example: Botha Printing in Bloemfontein records that its electrician, Johan Botha, isolated press 2, fitted lock 7 and his personal tag, tested for zero voltage and removed the lock at 14:10.",
+   "common_gaps": [
+    "Tags used without locks",
+    "Shared locks, so nobody knows who is still working",
+    "No test for dead before starting work"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-G-07": {
+   "what_to_submit": [
+    "Lifting operation permits for non routine or heavy lifts",
+    "The lifting plan with load weight, crane and tackle to be used",
+    "Record of the operator and signaller for each lift"
+   ],
+   "why": "Dropped loads and overturned cranes kill people below. The lifting permit makes a competent person plan the lift, check the equipment and keep people out of the danger zone.",
+   "example": "Example: Van Wyk Steel in Vanderbijlpark issues a lifting permit to place a steel beam of about four tonnes, recording crane C1, two numbered slings, the operator and the signaller.",
+   "common_gaps": [
+    "Load weight guessed instead of confirmed",
+    "Tackle used that is not on the lifting register",
+    "No exclusion zone recorded"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-08": {
+   "what_to_submit": [
+    "Demolition permits for each stage of the work",
+    "The demolition method statement",
+    "Records of services disconnected and asbestos checks done before work"
+   ],
+   "why": "Uncontrolled demolition causes collapses and falling debris and can release asbestos. The permit proves the structure was assessed, services disconnected and the work sequence agreed before demolition began.",
+   "example": "Example: Mokoena Demolition in Welkom issues a permit to take down an old workshop wall only after its demolition supervisor, David Mokoena, confirms the power is disconnected and the asbestos survey is clear.",
+   "common_gaps": [
+    "Demolition started before services were confirmed off",
+    "No asbestos check on older buildings",
+    "Permit covering the whole job instead of each stage"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-09": {
+   "what_to_submit": [
+    "Written approval from the road authority for the closure or lane restriction",
+    "The traffic accommodation layout with signs, cones and flag people",
+    "Daily checks that the layout is in place"
+   ],
+   "why": "Workers on or next to a road are at risk from passing vehicles. The approval and layout show the road authority agreed how traffic is controlled and that your team set it out correctly each day.",
+   "example": "Example: Sibiya Earthworks obtains approval from the local roads department to close one lane of a street in Secunda for three days, and its flag person records the layout checks each morning.",
+   "common_gaps": [
+    "Work started before written approval arrived",
+    "Layout on site different from the approved drawing",
+    "Signs left out after the work ended"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-G-10": {
+   "what_to_submit": [
+    "Current licence or authorisation for each radiation source or device",
+    "Register of sources with their location",
+    "Appointment of your radiation protection officer and personal dose monitoring records"
+   ],
+   "why": "Radiation cannot be seen or felt and can cause serious harm. The authorisation proves the regulator has approved your use of the source, and the records show it is controlled by a competent radiation protection officer and renewed before it expires.",
+   "example": "Example: Tshabalala Pipe Inspection in Sasolburg files the authorisation for its industrial radiography source, with the expiry date marked in the File diary two months ahead.",
+   "common_gaps": [
+    "Authorisation expired while the source is still in use",
+    "Source moved to a new site without updating the authorisation",
+    "Dose monitoring badges not returned on time"
+   ],
+   "suggested_department": "ENG"
+  },
+  "HSF-H-01": {
+   "what_to_submit": [
+    "An emergency plan for each site naming the emergency coordinator and wardens",
+    "A site plan showing exits, escape routes, assembly points and fire equipment",
+    "Emergency contact numbers, checked and dated"
+   ],
+   "why": "In a fire, gas leak or other emergency, people panic unless they know what to do. The plan, reviewed once a year and whenever the site changes, tells everyone where to go and who is in charge, and it is one of the first documents an inspector or client asks for.",
+   "example": "Example: Maluleke Foods in Tzaneen has a two page plan for its packhouse naming Grace Maluleke as emergency coordinator, with a marked site plan at each exit and the assembly point at the main gate.",
+   "common_gaps": [
+    "One plan copied across different sites with the wrong exits",
+    "Wardens who have left the company still named",
+    "Night shift left without a named coordinator"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-H-02": {
+   "what_to_submit": [
+    "A schedule of planned emergency drills",
+    "A record for each drill with the date, scenario and time taken to evacuate",
+    "Findings from the drill and the corrective actions taken"
+   ],
+   "why": "A drill tests whether the plan works in real life: whether alarms are heard, exits are clear and everyone is accounted for. Holding drills at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets and fixing what they reveal is what makes the plan dependable.",
+   "example": "Example: Pillay Shopfitters in Durban runs an evacuation drill on 14 May 2026; the factory clears in four minutes, but the spray booth staff did not hear the alarm, so a flashing light is added.",
+   "common_gaps": [
+    "Drills held but not written up",
+    "The same findings repeated drill after drill without action",
+    "Only day shift ever drilled"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-H-03": {
+   "what_to_submit": [
+    "Fire risk assessment for each site",
+    "A fire plan covering prevention, detection, fire fighting and evacuation",
+    "Any approval or inspection report from the local fire authority"
+   ],
+   "why": "Fire can destroy a business and kill people in minutes. The fire risk assessment finds what could start a fire and what would help it spread, and the plan, reviewed once a year, sets out how you prevent, detect and respond to it.",
+   "example": "Example: Govender Pool Supplies in Umhlanga identifies its chlorine store and forklift charging bay as its main fire risks and moves the charging bay away from the stock racking.",
+   "common_gaps": [
+    "Fire risk assessment copied from another business",
+    "Changes in stored materials not reflected in the plan",
+    "No reference to the local fire authority's requirements"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-H-04": {
+   "what_to_submit": [
+    "Written medical emergency arrangements for each site and shift",
+    "Names of first aiders and where the first aid boxes are",
+    "Nearest hospital or clinic, ambulance number and directions"
+   ],
+   "why": "When someone is injured, minutes matter. The arrangements, reviewed once a year, make sure a trained first aider and a stocked box are always available and that everyone knows how to get help fast.",
+   "example": "Example: Mokwena Farming in Tzaneen posts a card at each packhouse door naming its first aiders per shift, the box locations, and the route to the nearest hospital.",
+   "common_gaps": [
+    "First aider lists not updated when staff leave or shifts change",
+    "Remote sites without a first aider on every shift",
+    "Directions to the hospital never checked"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-H-05": {
+   "what_to_submit": [
+    "Written spill response procedure for your chemicals",
+    "A list of spill kits, their contents and locations",
+    "Records of spill drills or actual spills and how they were cleaned up"
+   ],
+   "why": "A chemical spill can burn, poison or cause fire, and it can reach drains and rivers. The procedure, reviewed once a year, and the spill kits make sure people contain and clean it up safely using the safety data sheets.",
+   "example": "Example: Nkosi Cleaning Services in Durban keeps a spill kit at its chemical store; when a container of degreaser splits in March 2026, the team contains it and records what was used and how the waste was disposed of.",
+   "common_gaps": [
+    "Spill kits empty after the last use",
+    "Staff never shown how to use the kit",
+    "Procedure not matched to the chemicals you actually hold"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-H-06": {
+   "what_to_submit": [
+    "The on site emergency plan for the major hazard installation",
+    "Records of information given to the public and neighbours who could be affected",
+    "Records of liaison with the local emergency services and the municipality"
+   ],
+   "why": "A major hazard installation can harm people well beyond its fence. The plan and public information prove that you, your neighbours and the emergency services know what to do if a major incident happens, at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "example": "Example: Nel Gas Storage in Secunda shares an information leaflet with the nearby school and businesses and files the minutes of its meeting with the municipal disaster management officer.",
+   "common_gaps": [
+    "Neighbours never told about the hazard",
+    "The plan not shared with the local fire services",
+    "Contact details for the municipality out of date"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-H-07": {
+   "what_to_submit": [
+    "Security emergency procedures, such as for armed robbery, bomb threats or unrest",
+    "Contact details for your security provider and the police",
+    "Records of security staff briefings on these procedures"
+   ],
+   "why": "Security incidents put staff and guards at serious risk. Written procedures, reviewed once a year, tell people how to stay safe and who to call. Where guards are supplied, this ties in with the security provider working under the PSIRA regime.",
+   "example": "Example: Khumalo Motors in Soweto has a one page armed robbery procedure telling staff not to resist, to press the panic button and to gather in the service bay office, and the guards sign that they were briefed.",
+   "common_gaps": [
+    "Procedures kept by the security company but not on your File",
+    "New guards never briefed",
+    "Panic buttons not tested"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-H-08": {
+   "what_to_submit": [
+    "A document showing how your emergency plan links to the municipal disaster management plan",
+    "Contact details for the municipal disaster management centre",
+    "Records of any joint planning or exercises"
+   ],
+   "why": "A major incident at your site may need the municipality's disaster management services. Recording how your plan fits theirs, reviewed once a year, makes sure help arrives quickly and nobody works from different assumptions.",
+   "example": "Example: Nel Gas Storage in Secunda files a letter from the municipal disaster management centre confirming it holds a copy of the site emergency plan, dated 10 June 2026.",
+   "common_gaps": [
+    "No contact ever made with the municipality",
+    "Municipal contact numbers never checked",
+    "Plan updated but the municipality not sent the new version"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-I-01": {
+   "what_to_submit": [
+    "Your written incident and near miss reporting procedure",
+    "The reporting form employees use",
+    "Evidence that staff were told how to report, such as a toolbox talk register"
+   ],
+   "why": "People can only report what they know how to report. The procedure, reviewed once a year, tells everyone what to report, to whom and how fast, so injuries and near misses are recorded and serious incidents reach the inspector in time.",
+   "example": "Example: Mabaso Distribution in Pinetown uses a one page report form kept at each supervisor's desk and explains the procedure at every induction.",
+   "common_gaps": [
+    "Procedure written but staff do not know it exists",
+    "Near misses left out of the procedure",
+    "No named person to receive reports on night shift"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-I-02": {
+   "what_to_submit": [
+    "The incident register with each incident recorded",
+    "Supporting incident report forms",
+    "Signature of the person who keeps the register"
+   ],
+   "why": "The register is the official record of injuries and incidents at your workplace. Recording each event as it happens lets you spot trends, supports COIDA claims and is one of the first things an inspector asks to see.",
+   "example": "Example: Venter Packaging in Paarl records a hand laceration on the slitter on 11 June 2026, with the injured person, time, place and first aid given, and links it to investigation report number 7.",
+   "common_gaps": [
+    "Minor injuries not recorded because no time was lost",
+    "Register kept on loose sheets that go missing",
+    "Contractor injuries left out"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-I-03": {
+   "what_to_submit": [
+    "Copies of the reports made to the inspector for each reportable incident",
+    "Proof of the date and way each report was sent",
+    "The matching internal incident record"
+   ],
+   "why": "Certain serious incidents must be reported to the inspector without delay. Your File needs proof that each one was reported, because failing to report is itself an offence and it hides serious risks.",
+   "example": "Example: Sibiya Earthworks files the report sent to the Department of Employment and Labour after a worker was hospitalised in a machine incident in Witbank, with the email confirmation of receipt.",
+   "common_gaps": [
+    "Not knowing which incidents must be reported",
+    "No proof the report was received",
+    "Report made by phone with no written record"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-I-04": {
+   "what_to_submit": [
+    "Investigation report for each incident, with the facts, root cause and corrective actions",
+    "Witness statements, photographs and sketches",
+    "Sign off by the incident investigator and management"
+   ],
+   "why": "An investigation finds out why something happened so it does not happen again. Each report, done after every incident by your incident investigator, shows the real cause was found and fixed, not just that someone was blamed.",
+   "example": "Example: Venter Packaging in Paarl finds that the slitter injury happened because the guard was removed for cleaning and not refitted, and adds an interlock and a cleaning procedure.",
+   "common_gaps": [
+    "The cause recorded as worker carelessness with no deeper look",
+    "Corrective actions without owners or dates",
+    "Near misses never investigated"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-I-05": {
+   "what_to_submit": [
+    "Employer's reports of accidents and diseases submitted under COIDA",
+    "Claim numbers and correspondence for each claim",
+    "Proof that the medical reports for each claim were sent, with the reports themselves kept by the occupational health practitioner"
+   ],
+   "why": "COIDA lets injured or ill workers receive compensation without suing you, but only if claims are reported and followed through. Your records show each claim was lodged, followed up and closed, and protect you if a claim is disputed. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in the File.",
+   "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg files the employer's report for a mechanic's burned hand, the claim number from the Compensation Fund and the final payment letter.",
+   "common_gaps": [
+    "Claims lodged late or not at all",
+    "No follow up once a claim number is issued",
+    "Claim papers mixed with personnel files so nobody can find them"
+   ],
+   "suggested_department": "HR"
+  },
+  "HSF-I-06": {
+   "what_to_submit": [
+    "Confirmation from the occupational medical practitioner that a notification was made",
+    "The date and the body notified",
+    "The outcome of fitness only: fit, fit with restrictions or unfit"
+   ],
+   "why": "When a work related disease is found, it must be reported so the worker can be compensated and the cause controlled. The clinical records stay with the occupational health practitioner; your File holds only proof that the notification was made and the fitness outcome, never the clinical details.",
+   "example": "Example: Van Wyk Steel in Vanderbijlpark files a letter from its occupational medical practitioner confirming a noise related notification was made on 5 August 2026, with the worker's outcome recorded as fit with restrictions.",
+   "common_gaps": [
+    "Clinical reports or test results filed in the File",
+    "Notification left to the employee to arrange",
+    "No change made to controls after the disease was found"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-I-07": {
+   "what_to_submit": [
+    "Corrective and preventive action register listing each action, owner and due date",
+    "Closure evidence such as photos, invoices or training records",
+    "Monthly review sign off"
+   ],
+   "why": "Findings from incidents, inspections and audits only reduce risk if they are acted on. The register, reviewed every month, tracks each action to closure and shows an inspector that problems are fixed, not forgotten.",
+   "example": "Example: Mabaso Distribution in Pinetown tracks 12 actions in a spreadsheet; the October review closes the racking repair with a photo and moves the late signage action to a new date.",
+   "common_gaps": [
+    "Actions closed without evidence",
+    "Overdue actions not escalated",
+    "Separate lists for incidents, audits and inspections that never get combined"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-01": {
+   "what_to_submit": [
+    "Occupational hygiene survey programme listing each hazard, the survey needed and when it is due",
+    "Link to the risk assessment the programme is based on",
+    "Annual review sign off"
+   ],
+   "why": "The programme makes sure measurements are planned, not forgotten. Reviewed once a year, it links hazards from your risk assessment to the surveys that prove exposure is controlled and tells you what to budget for.",
+   "example": "Example: Sithole Precast in Brits plans noise, dust and illumination surveys in its programme, with the noise survey booked for March and the dust survey for July 2026.",
+   "common_gaps": [
+    "Surveys ordered one by one with no plan",
+    "Programme not updated when new processes start",
+    "Due dates not tracked so surveys lapse"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-02": {
+   "what_to_submit": [
+    "Noise survey report by an approved inspection authority",
+    "Noise zone map showing where hearing protection is required",
+    "Photographs of the noise zone signs in place"
+   ],
+   "why": "Loud noise causes permanent hearing loss that cannot be reversed. The survey, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, shows where noise is too high so you can mark noise zones, reduce noise at source and include the right people in medical surveillance.",
+   "example": "Example: Sithole Precast in Brits receives a noise survey from an approved inspection authority in March 2026; the batching plant and block press are marked as noise zones and signs are put up the same week.",
+   "common_gaps": [
+    "Survey done by someone who is not an approved inspection authority",
+    "Noise zones on the map but no signs on site",
+    "No new survey after new machines were installed"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-03": {
+   "what_to_submit": [
+    "Exposure monitoring report by an approved inspection authority",
+    "The list of chemicals and work areas measured",
+    "Your actions on the report's recommendations"
+   ],
+   "why": "Some chemicals cause cancer, lung disease or poisoning long after exposure. Monitoring, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, proves whether controls keep exposure low enough under the Hazardous Chemical Agents Regulations, and it decides who needs medical surveillance.",
+   "example": "Example: Govender Pool Supplies in Umhlanga has an approved inspection authority measure chlorine exposure in the mixing room in June 2026 and adds extraction after the report recommends it.",
+   "common_gaps": [
+    "Monitoring skipped because the smell seems fine",
+    "Report filed but recommendations not actioned",
+    "Only some shifts or areas measured"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-04": {
+   "what_to_submit": [
+    "Illumination survey report with measurements per work area",
+    "The name of the competent person who measured",
+    "Record of lighting improvements made"
+   ],
+   "why": "Poor lighting causes trips, mistakes with machines and eye strain. The survey, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, shows which areas are too dark so you can fix them.",
+   "example": "Example: Radebe Call Centre in Midrand has its illumination measured in April 2026, finds the stairwell and two workstations too dark, and replaces the fittings.",
+   "common_gaps": [
+    "Lighting judged by eye, not measured",
+    "Outdoor work areas and stairways left out",
+    "No new survey after a layout change"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-J-05": {
+   "what_to_submit": [
+    "Ventilation and thermal survey report",
+    "Measurements for hot, cold or poorly ventilated areas",
+    "Actions taken, such as fans, extraction, rest breaks or water points"
+   ],
+   "why": "Heat and poor air make people ill and cause heat exhaustion or worse. The survey, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, shows which areas are a risk and supports the controls you put in place.",
+   "example": "Example: Molefe Bakery in Rustenburg has its oven area surveyed in November 2026, finds high heat stress and introduces extra breaks, cool water and an extraction fan.",
+   "common_gaps": [
+    "Only measured in winter",
+    "Cold stores ignored",
+    "Actions not linked to the survey results"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-J-06": {
+   "what_to_submit": [
+    "Asbestos air monitoring reports during and after asbestos work",
+    "Clearance certificate before the area is reoccupied",
+    "The name of the approved body that did the monitoring"
+   ],
+   "why": "Asbestos fibres are invisible and deadly. Air monitoring, done at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, proves fibres stayed controlled during the work and that the area was safe before people returned.",
+   "example": "Example: Mofokeng Properties in Kimberley receives air monitoring results and a clearance certificate after its asbestos roof sheets are removed in July 2026, before tenants move back in.",
+   "common_gaps": [
+    "Area reoccupied before clearance",
+    "No monitoring during the work itself",
+    "Monitoring done by an unapproved body"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-07": {
+   "what_to_submit": [
+    "Lead in air monitoring reports",
+    "The list of areas and tasks measured",
+    "Actions taken on the results"
+   ],
+   "why": "Lead dust and fumes are absorbed into the body and damage the blood, nerves and kidneys. Monitoring, repeated at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets, shows whether controls under the Lead Regulations work and who needs medical surveillance.",
+   "example": "Example: Botha Battery Recycling in Brakpan has lead in air measured in its breaking area in May 2026 and improves local extraction after the report.",
+   "common_gaps": [
+    "Monitoring only in the main process area, not in cleaning or maintenance",
+    "Results not shared with the health and safety committee",
+    "Controls not changed after high readings"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-J-08": {
+   "what_to_submit": [
+    "Aggregate summary from the occupational medical practitioner showing trends, not names",
+    "The practitioner's recommendations for controls",
+    "Individual fitness outcomes only: fit, fit with restrictions or unfit"
+   ],
+   "why": "Biological monitoring, such as blood lead, shows whether controls are really protecting people. The clinical records stay with the occupational health practitioner; your File holds only the group summary and each person's fitness outcome, so you can improve controls without exposing anyone's medical information.",
+   "example": "Example: Botha Battery Recycling in Brakpan files a one page summary from its occupational medical practitioner showing blood lead trends for the breaking team rising, and the extraction upgrade it recommended.",
+   "common_gaps": [
+    "Individual test results filed in the File",
+    "Summary received but controls not reviewed",
+    "Results reported late, after people are already affected"
+   ],
+   "suggested_department": "OH"
+  },
+  "HSF-K-01": {
+   "what_to_submit": [
+    "Contractor selection criteria covering safety record, competence and insurance",
+    "Completed evaluation form for each contractor",
+    "Letters of good standing and safety documents received"
+   ],
+   "why": "You remain responsible for contractors you bring in, so choosing competent ones is your first control. The evaluation, done for each project, shows you checked their safety record and competence before awarding work.",
+   "example": "Example: Radebe Call Centre in Midrand evaluates three electrical contractors for its office fit out and chooses Mokoena Electrical because it provided a current letter of good standing and a safety file.",
+   "common_gaps": [
+    "Contractor chosen on price alone",
+    "Evaluation done after work already started",
+    "Letters of good standing expired"
+   ],
+   "suggested_department": "PROC"
+  },
+  "HSF-K-02": {
+   "what_to_submit": [
+    "Signed section 37(2) agreement with each contractor",
+    "The contractor's own health and safety File or its index",
+    "Cross reference to the contractor register in Section A"
+   ],
+   "why": "The section 37(2) agreement records that the contractor accepts responsibility for health and safety in its own work. Keeping it with the contractor's File, updated whenever the scope or contractor changes, proves both parties agreed their duties in writing.",
+   "example": "Example: Ndlovu Builders in Polokwane signs a section 37(2) agreement with its plumbing subcontractor on 1 February 2026 and files it with the subcontractor's File index.",
+   "common_gaps": [
+    "Agreement signed after work started",
+    "Different versions filed in Section A and Section K",
+    "Agreement not renewed when the scope changed"
+   ],
+   "suggested_department": "PROC"
+  },
+  "HSF-K-03": {
+   "what_to_submit": [
+    "Contractor induction records signed by each contractor worker",
+    "Permits issued to contractors",
+    "Daily coordination notes or meeting records"
+   ],
+   "why": "Contractors do not know your site's hazards unless you tell them. Inductions, permits and daily coordination prove every contractor worker was briefed and that work was coordinated so teams did not endanger each other.",
+   "example": "Example: Mahlangu Civils holds a ten minute coordination meeting every morning with its three subcontractors in Mamelodi and records the attendees and the day's high risk tasks.",
+   "common_gaps": [
+    "Only the contractor's supervisor inducted, not the workers",
+    "Contractor permits not in your permit register",
+    "Coordination meetings held but never recorded"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-K-04": {
+   "what_to_submit": [
+    "Visitor register with names, dates, times and who they visited",
+    "Visitor safety briefing card or induction record",
+    "Record of personal protective equipment issued to visitors"
+   ],
+   "why": "Visitors do not know your hazards or your emergency plan. The register tells you who is on site if you evacuate, and the briefing keeps them safe while they are there.",
+   "example": "Example: Mthembu Joinery in Pietermaritzburg has each visitor sign the book at reception, read a short safety card and wear safety glasses in the workshop.",
+   "common_gaps": [
+    "Visitors not signed out, so the evacuation count is wrong",
+    "Delivery drivers skipped",
+    "Briefing card outdated"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-K-05": {
+   "what_to_submit": [
+    "Photographs or plans of hoarding, barricades and public warning signs",
+    "Proof of public liability insurance",
+    "Inspection records of public protection measures"
+   ],
+   "why": "Members of the public can be injured by falling objects, open trenches or moving vehicles near your work. These records, kept for each project, prove you separated the public from the work and have insurance if something goes wrong.",
+   "example": "Example: Ndlovu Builders in Polokwane erects hoarding along the pavement for a shop renovation, photographs it weekly and files its public liability insurance certificate.",
+   "common_gaps": [
+    "Barricades removed and not replaced",
+    "Insurance expired during the project",
+    "No lighting on barricades at night"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-L-01": {
+   "what_to_submit": [
+    "Health and safety committee minutes, signed",
+    "Action list with owners and due dates",
+    "Attendance register for each meeting"
+   ],
+   "why": "The committee is where management and workers discuss health and safety together. Monthly minutes and the action list prove meetings happen and that concerns raised are acted on.",
+   "example": "Example: Venter Packaging in Paarl holds its committee meeting on the first Tuesday of each month; the October minutes close the slitter guard action and open one on forklift speed.",
+   "common_gaps": [
+    "Meetings held but no minutes kept",
+    "Actions carried forward month after month without progress",
+    "Representatives not invited or not attending"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-L-02": {
+   "what_to_submit": [
+    "Inspection reports by the health and safety representatives",
+    "Recommendations made to management",
+    "Management's written response to each recommendation"
+   ],
+   "why": "Health and safety representatives inspect the workplace and raise concerns on behalf of workers. Their monthly reports and your written responses show you take their recommendations seriously and act on them.",
+   "example": "Example: Mabaso Distribution in Pinetown files its representative's September report recommending a pedestrian walkway in the warehouse and management's reply approving it with a completion date.",
+   "common_gaps": [
+    "Recommendations never answered in writing",
+    "Representatives not given time to inspect",
+    "Reports filed without closing the items"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-L-03": {
+   "what_to_submit": [
+    "Toolbox talk register with topic, date and presenter",
+    "Signatures of attendees",
+    "A copy or summary of the talk content"
+   ],
+   "why": "Toolbox talks keep hazards front of mind and let workers ask questions. The register proves each talk happened, who attended and what was covered.",
+   "example": "Example: Maseko Roofing in East London gives a talk on harness checks every Monday; the register shows eight attendees and the supervisor's signature.",
+   "common_gaps": [
+    "Topics repeated without link to recent incidents",
+    "Attendees not signing",
+    "No record of what was actually said"
+   ],
+   "suggested_department": "OPS"
+  },
+  "HSF-L-04": {
+   "what_to_submit": [
+    "A checklist of notices displayed at each site, including the Act, appointments, emergency numbers and the health and safety policy",
+    "A dated photograph of the notice board",
+    "Annual review sign off"
+   ],
+   "why": "Workers have a right to see the law and know who is appointed and how to get help. The annual check, with a photograph, proves the right notices are displayed and current.",
+   "example": "Example: Khumalo Motors in Soweto photographs its notice board in January 2026 showing the OHS Act, the appointments list, emergency numbers and the signed policy.",
+   "common_gaps": [
+    "Notices faded or outdated",
+    "Appointment list showing people who have left",
+    "Notices at head office but not at other sites"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-L-05": {
+   "what_to_submit": [
+    "Log of changes notified to Care Net for medical surveillance",
+    "Log of changes notified to your client for construction work",
+    "Copies of the notifications sent"
+   ],
+   "why": "When your processes, chemicals, sites or workforce change, your medical surveillance and your client's safety planning must change too. The log shows each change was notified so the Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner, and the client's plans stay accurate.",
+   "example": "Example: Govender Pool Supplies in Umhlanga emails Care Net on 2 June 2026 that it has started handling a new chlorine compound and files the email in this log.",
+   "common_gaps": [
+    "Changes made without telling anyone",
+    "Notification made by phone with no written record",
+    "New sites opened without informing the client"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-M-01": {
+   "what_to_submit": [
+    "Annual review of toilets, basins, drinking water, change rooms and eating areas",
+    "A headcount by gender and shift used for the review",
+    "Photographs and a list of improvements made"
+   ],
+   "why": "The right number of clean facilities for your workforce is a basic legal duty and a matter of dignity. The annual review compares what you have with the number of people using it and shows what you fixed.",
+   "example": "Example: Mokwena Farming in Tzaneen counts 40 seasonal workers in its March 2026 review and adds two portable toilets and a handwash station at the orchard.",
+   "common_gaps": [
+    "Review not updated when seasonal staff arrive",
+    "Women's facilities not counted separately",
+    "No drinking water at remote work areas"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-M-02": {
+   "what_to_submit": [
+    "Annual review of lighting, ventilation, temperature and housekeeping",
+    "Reference to the survey results in Section J",
+    "Actions taken and their completion dates"
+   ],
+   "why": "The physical environment affects health, comfort and accidents every day. The annual review brings the survey results and housekeeping findings together and shows what you improved.",
+   "example": "Example: Radebe Call Centre in Midrand uses its illumination and ventilation surveys in its 2026 review and records new lights and a serviced air conditioner.",
+   "common_gaps": [
+    "Review done without looking at the survey results",
+    "Housekeeping findings not included",
+    "No actions recorded"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-M-03": {
+   "what_to_submit": [
+    "Environmental management plan or procedure",
+    "Any environmental licences or authorisations you hold",
+    "Annual review record"
+   ],
+   "why": "Where environmental law applies to your business, you need to show how you prevent pollution and manage your impact. The documents, reviewed once a year, prove you know your obligations and act on them.",
+   "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg keeps a short environmental procedure for oil, fuel and battery storage, reviewed annually.",
+   "common_gaps": [
+    "Assuming environmental law does not apply without checking",
+    "Licences not renewed",
+    "Procedure not matching what happens on site"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-M-04": {
+   "what_to_submit": [
+    "Waste manifests for each hazardous waste collection",
+    "Safe disposal certificates from the licensed contractor",
+    "A copy of the contractor's waste licence"
+   ],
+   "why": "You remain responsible for your hazardous waste until it is safely disposed of. Each manifest and certificate proves the waste went to a licensed site.",
+   "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg files the manifest for used oil collected on 15 August 2026 and the recycler's disposal certificate received a week later.",
+   "common_gaps": [
+    "Manifests filed without disposal certificates",
+    "Contractor's licence not checked",
+    "Waste collected by unlicensed people for cash"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-M-05": {
+   "what_to_submit": [
+    "Your smoking policy",
+    "A plan or photograph showing designated smoking areas",
+    "Annual review record"
+   ],
+   "why": "Smoking near flammable materials is a fire risk, and non smokers must be protected from smoke. The policy, reviewed once a year, shows where smoking is allowed and forbidden.",
+   "example": "Example: Govender Pool Supplies in Umhlanga designates a smoking area near the car park, well away from its chemical store, and records the policy review in February 2026.",
+   "common_gaps": [
+    "Smoking area next to a store of flammable materials",
+    "No signs marking no smoking zones",
+    "Policy not reviewed when the site layout changes"
+   ],
+   "suggested_department": "FAC"
+  },
+  "HSF-N-01": {
+   "what_to_submit": [
+    "Internal audit schedule covering every section of your File",
+    "Completed audit reports with findings",
+    "The name and credentials of the auditor"
+   ],
+   "why": "An internal audit checks that your File matches what really happens on site. Audits held at the interval the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets find gaps before an inspector or client does. Your File should be audited by someone whose registration and experience fit your industry; use the Onboard a registered, competent auditor call to action if you need one.",
+   "example": "Example: Ndlovu Builders in Polokwane schedules two internal audits for 2026; the June audit by a registered practitioner finds three expired certificates and two missing permits.",
+   "common_gaps": [
+    "Audits done by the person who wrote the documents",
+    "Findings not added to the corrective action log",
+    "Audit schedule not followed"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-N-02": {
+   "what_to_submit": [
+    "External audit reports from clients, principal contractors, certification bodies or the inspector",
+    "Your response to each finding",
+    "Closure evidence"
+   ],
+   "why": "External audits show how others see your system, and clients often make payment or further work depend on them. Keeping each report and your response proves you took findings seriously.",
+   "example": "Example: Mahlangu Civils files the principal contractor's audit of its Mamelodi site in September 2026 with its written response and photos showing each finding closed.",
+   "common_gaps": [
+    "Reports received but not filed",
+    "Findings not responded to in writing",
+    "Inspector's notices not linked to the corrective action log"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-N-03": {
+   "what_to_submit": [
+    "Signed minutes of the management review",
+    "Inputs reviewed, such as audits, incidents and objectives",
+    "Decisions and actions with owners"
+   ],
+   "why": "Management review is when leadership looks at the whole system once a year and decides what to change. The minutes prove the chief executive is involved and that decisions are made and followed through.",
+   "example": "Example: Venter Packaging in Paarl holds its review in November 2026; the chief executive, Anna Venter, approves a budget for machine guarding upgrades after reviewing the year's incidents.",
+   "common_gaps": [
+    "Review held without looking at audit or incident data",
+    "No decisions recorded",
+    "Chief executive not present"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-N-04": {
+   "what_to_submit": [
+    "Written health and safety objectives and targets for the year",
+    "Measurements against each target",
+    "Annual review of results"
+   ],
+   "why": "Objectives give your health and safety effort direction and measurable results. Reviewed once a year, they show whether things are getting better and where to focus next.",
+   "example": "Example: Mabaso Distribution in Pinetown sets targets to close every audit finding within a month and to hold 40 toolbox talks in 2026, and reports progress quarterly.",
+   "common_gaps": [
+    "Targets that cannot be measured",
+    "Only lagging targets like injury counts",
+    "Results never reviewed"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-N-05": {
+   "what_to_submit": [
+    "Non conformance and corrective action log",
+    "Closure evidence for each item",
+    "Monthly review sign off"
+   ],
+   "why": "This log is where every audit finding, inspection gap and complaint is tracked until fixed. Reviewing it every month keeps actions moving and proves nothing is ignored.",
+   "example": "Example: Ndlovu Builders in Polokwane reviews its log monthly; in July 2026 it closes the expired certificate items with copies of the renewed certificates.",
+   "common_gaps": [
+    "Log not reviewed regularly",
+    "Items closed without evidence",
+    "Duplicate logs for different sources"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-N-06": {
+   "what_to_submit": [
+    "Log of legislation release notes received from Care Net",
+    "The date each release was applied to your File",
+    "A short note of what changed in your File"
+   ],
+   "why": "Health and safety law changes over time, and your File must keep up. This log shows each legislation update was received, understood and applied, so your File stays current.",
+   "example": "Example: Radebe Call Centre in Midrand logs a release note received on 1 September 2026 and records that its legal register and noise section were updated the following week.",
+   "common_gaps": [
+    "Release notes received but not applied",
+    "No record of what changed",
+    "Only one person knows about updates"
+   ],
+   "suggested_department": "SHE"
+  },
+  "HSF-O-01": {
+   "what_to_submit": [
+    "Retention schedule listing each record type and how long it is kept",
+    "The source of each retention period",
+    "Annual review record"
+   ],
+   "why": "Some records must be kept for many years, including medical surveillance records of hazardous exposure, which Care Net plans to keep for 40 years as its house standard. The schedule, reviewed once a year, makes sure nothing is destroyed too early or kept longer than needed.",
+   "example": "Example: Botha Battery Recycling in Brakpan lists incident records, lead monitoring and medical surveillance records in its schedule, each with its retention period and source.",
+   "common_gaps": [
+    "Records destroyed during an office move",
+    "No retention period for electronic records",
+    "Medical records mixed with general files"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-O-02": {
+   "what_to_submit": [
+    "List of where each record type is stored, paper or electronic",
+    "Who has access to each record type",
+    "Backup arrangements for electronic records"
+   ],
+   "why": "Records are only useful if you can find them and if private information is protected. This list, reviewed once a year, proves records are safe, backed up and only seen by people who need them.",
+   "example": "Example: Mthembu Joinery in Pietermaritzburg stores its File in a locked cabinet and on a shared drive with daily backup; only the safety officer and the owner have access.",
+   "common_gaps": [
+    "No backup of electronic records",
+    "Everyone with access to medical records",
+    "Access not removed when staff leave"
+   ],
+   "suggested_department": "EXEC"
+  },
+  "HSF-O-03": {
+   "what_to_submit": [
+    "Signed POPIA operator agreement between your company and Care Net",
+    "The date of signature and any amendments",
+    "A list of records Care Net holds for you"
+   ],
+   "why": "When Care Net holds records about your workers, the operator agreement sets out how the information is protected and used. Having it signed, and updated whenever the service changes, shows you took responsibility for your workers' personal information.",
+   "example": "Example: Govender Pool Supplies in Umhlanga signs the operator agreement with Care Net on 15 January 2026 before any medical surveillance records are shared.",
+   "common_gaps": [
+    "Records shared before the agreement was signed",
+    "Agreement not updated when services changed",
+    "Agreement signed but not filed"
+   ],
+   "suggested_department": "EXEC"
+  }
+ }
+}
