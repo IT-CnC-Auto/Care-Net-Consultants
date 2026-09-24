@@ -15,13 +15,14 @@
 // Needs Playwright with Chromium (chromium.launch() with no options) and Python
 // Pillow for the WebP conversion. Writes <out>/<slug>.js with
 // window.__HSF_SAMPLE_PAGES = {slug, industry, pages: [data URIs]} and, for
-// review, PNG pages in <out>/<slug>/.
+// review, PNG pages in the system temporary folder under hsf-sample-file/<slug>/.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import vm from 'node:vm';
+import os from 'node:os';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
@@ -83,6 +84,14 @@ const pagebreak = () => B.push({ k: 'break' });
 
 const ov = d.overall;
 const company = d.company;
+// Sign off by industry (hsf/SIGNOFF-CRITERIA.md section 5; migration 053 rule table).
+const MINING = d.code === 'MINING' || /Mine Health and Safety/i.test(d.regime);
+const RULE = d.code === 'CONSTR'
+  ? { who: 'A Health and Safety practitioner registered with SACPCMP as a construction health and safety agent, manager or officer (candidate categories cannot sign alone)', cover: 'Registered Health and Safety practitioner (SACPCMP): xxxx | Registration number xxxxx', status: 'Unsigned sample. A released File is signed by a SACPCMP registered construction Health and Safety practitioner and accepted by the company\'s section 16(2) appointee.' }
+  : MINING
+    ? { who: 'A registered Health and Safety practitioner (SACPCMP, or SAIOSH CMSAIOSH, GradSAIOSH or TechSAIOSH) as a practitioner review. Under the Mine Health and Safety Act the employer and the managers it appoints carry the duties, so this File is never presented as a sign off under that Act', cover: 'Practitioner review: registered Health and Safety practitioner xxxx | Registration number xxxxx', status: 'Unsigned sample. A released File carries a practitioner review and is accepted by the mine\'s appointed manager; it is not a sign off under the Mine Health and Safety Act.' }
+    : { who: 'A registered Health and Safety practitioner: SACPCMP registered as a construction health and safety agent or manager, or SAIOSH designated as CMSAIOSH, GradSAIOSH or TechSAIOSH (training certificates alone are not enough)', cover: 'Registered Health and Safety practitioner (SACPCMP or SAIOSH): xxxx | Registration number xxxxx', status: 'Unsigned sample. A released File is signed by a registered Health and Safety practitioner and accepted by the company\'s section 16(2) appointee.' };
+const ACCEPT = MINING ? ['Employer acceptance', 'The manager the employer appointed for the mine, in writing'] : ['Client acceptance', 'The company\'s section 16(2) appointee, in writing'];
 h1('Health and Safety File');
 B.push({ k: 'sub', html: esc(d.industry) });
 p('This is a demonstration document. It shows the structure, depth and legal referencing of the Health and Safety File a Care Net client builds. <b>' + esc(company) + '</b> is a fictitious company; every name, date, figure and document in this sample is made up. It carries no authority, is deliberately unsigned and is watermarked throughout.');
@@ -95,13 +104,14 @@ table(['', ''], [30, 70], [
   ['Regime', esc(d.regime)],
   ['Reference and revision', esc(d.reference) + ', revision ' + d.revision + ', as at ' + esc(d.as_at)],
   ['Prepared with', 'Care Net Consultants (Pty) Ltd, from the Care Net Cognitive Kernel element library'],
-  ['Sign off status', 'Unsigned sample. A released File is signed by a registered Health and Safety practitioner and accepted by the company\'s section 16(2) appointee.'],
-  ['Compensation route', 'COIDA'],
+  ['Sign off status', esc(RULE.status)],
+  ['Compensation route', MINING ? 'COIDA for injuries and diseases generally; ODMWA for the occupational lung diseases of mine workers' : 'COIDA'],
   ['Review cycle', 'The File is a living record: items are reviewed at the interval each one sets, and the File is revised whenever work, sites or people change.'],
 ], { cls: 'kv' });
 
 h2('1. Introduction and purpose of this File');
 p('This Health and Safety File has been compiled for <b>' + esc(company) + '</b>. It brings together, in one place, the documents that show how the company meets its health and safety duties: its legal registration, its policy and appointments, its risk assessments, training, registers and inspections, permits, emergency arrangements, incident records and its audit and review cycle.');
+if (MINING) p('This company is a mine, so the Mine Health and Safety Act is the governing regime: the employer and the managers it appoints carry the duties, and the mine\'s own codes of practice apply. This File organises the evidence of those duties in the same fifteen sections, as a practitioner review.');
 p('A Health and Safety File is not a Medical Surveillance Plan. The Medical Surveillance Plan is a separate Care Net document, recommended on and signed by an Occupational Medical Practitioner; this File holds only its evidence (the signed Plan and the fitness outcomes), never clinical records.');
 
 h2('2. Company and scope');
@@ -201,14 +211,14 @@ pagebreak();
 h2('10. Sign off');
 p('A released File carries these sign offs. This sample is deliberately unsigned.');
 table(['Sign off', 'Who', 'Required for release'], [30, 50, 20], [
-  ['Safety content', 'A registered Health and Safety practitioner whose registration fits the industry (for construction, SACPCMP registered as a construction health and safety agent, manager or officer), with a current register check and an appointment letter and engagement letter on record', 'Yes'],
-  ['Client acceptance', 'The company\'s section 16(2) appointee, in writing', 'Yes'],
+  [MINING ? 'Practitioner review' : 'Safety content', esc(RULE.who) + ', with a register check no older than 30 days before signing and an appointment letter and engagement letter on record', 'Yes'],
+  [ACCEPT[0], esc(ACCEPT[1]), 'Yes'],
   ['Chief executive acknowledgement', 'The company\'s chief executive', 'Recorded'],
   ['Medical surveillance', 'Not a File sign off. The Occupational Medical Practitioner signs the separate Medical Surveillance Plan, which is filed in Section E as evidence', 'No'],
 ]);
 B.push({ k: 'sign', html: [
   ['Registered Health and Safety practitioner', 'Name, body, category and registration number'],
-  ['Section 16(2) appointee, ' + esc(company), 'Name and designation'],
+  [(MINING ? 'Appointed manager, ' : 'Section 16(2) appointee, ') + esc(company), 'Name and designation'],
   ['Chief executive, ' + esc(company), 'Name'],
 ].map(([a, b]) => '<div class="sig"><div class="line"></div><b>' + a + '</b><span>' + b + '</span><span>Date</span></div>').join('') });
 note('Not legal advice. The File records how the company manages its duties; the company, its chief executive and its appointees remain responsible for them.');
@@ -261,17 +271,18 @@ function pageShell(inner, n) {
 
 const coverHtml = '<div class="page cover" data-n="0"><div class="t1">' + esc(d.industry) + '</div><div class="t2">Sample Health and Safety File</div><div class="t3">Health and Safety File</div>'
   + '<div class="t4">' + esc(company) + '<br>' + esc(d.scope) + '</div>'
-  + '<div class="t5">Compiled by Care Net Consultants (Pty) Ltd<br>Registered Health and Safety practitioner: xxxx | Registration number xxxxx</div></div>';
+  + '<div class="t5">Compiled by Care Net Consultants (Pty) Ltd<br>' + esc(RULE.cover) + '</div></div>';
 
 const html = '<!doctype html><html><head><meta charset="utf-8"><style>' + CSS + '</style></head><body>' + coverHtml + '<div id="flow"></div>'
   + '<script>window.BLOCKS=' + JSON.stringify(B).replace(/</g, '\\u003c') + ';window.SHELL=' + JSON.stringify(pageShell('', 'N')).replace(/</g, '\\u003c') + ';</script></body></html>';
 
-const tmp = path.join(OUT, slug);
+// Working files (the HTML and the PNG pages for review) stay outside the site.
+const tmp = path.join(os.tmpdir(), 'hsf-sample-file', slug);
 fs.mkdirSync(tmp, { recursive: true });
 fs.writeFileSync(path.join(tmp, 'doc.html'), html);
 
 const browser = await chromium.launch();
-const pg = await browser.newPage({ viewport: { width: 794, height: 1123 }, deviceScaleFactor: 1.25 });
+const pg = await browser.newPage({ viewport: { width: 794, height: 1123 }, deviceScaleFactor: 1.2 });
 await pg.goto('file://' + path.join(tmp, 'doc.html'));
 await pg.evaluate(() => document.fonts.ready);
 const total = await pg.evaluate(() => {
@@ -335,7 +346,7 @@ for (let i = 0; i < total; i++) {
 await browser.close();
 
 // PNG to WebP (quality 82), then the page data file the viewer loads.
-const py = 'import sys,base64,io\nfrom PIL import Image\nout=[]\nfor f in sys.argv[1:]:\n  b=io.BytesIO(); Image.open(f).convert("RGB").save(b,"WEBP",quality=66,method=6); out.append("data:image/webp;base64,"+base64.b64encode(b.getvalue()).decode())\nprint("\\n".join(out))';
+const py = 'import sys,base64,io\nfrom PIL import Image\nout=[]\nfor f in sys.argv[1:]:\n  b=io.BytesIO(); Image.open(f).convert("RGB").save(b,"WEBP",quality=62,method=6); out.append("data:image/webp;base64,"+base64.b64encode(b.getvalue()).decode())\nprint("\\n".join(out))';
 const uris = execFileSync('python3', ['-c', py, ...files], { maxBuffer: 1 << 30 }).toString().trim().split('\n');
 fs.writeFileSync(path.join(OUT, slug + '.js'), 'window.__HSF_SAMPLE_PAGES=' + JSON.stringify({ slug: d.slug, code: d.code, industry: d.industry, company, pages: uris }) + ';\n');
 console.log(slug + ': ' + total + ' pages, ' + Math.round(fs.statSync(path.join(OUT, slug + '.js')).size / 1024) + ' KB');

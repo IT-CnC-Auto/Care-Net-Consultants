@@ -45,6 +45,15 @@
   h2.h { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; text-transform: uppercase; font-size: clamp(24px, 3.2vw, 32px); line-height: 1; margin: 0 0 6px; }
   .sub { font-size: 14px; color: var(--ink-2); margin: 0 0 16px; max-width: 70ch; line-height: 1.55; }
   /* Chooser */
+  .viewtabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+  .viewtabs button { font: 700 14px Montserrat, Arial, sans-serif; border: 2px solid var(--red); background: #fff; color: var(--red); border-radius: 5px; padding: 9px 16px; cursor: pointer; }
+  .viewtabs button[aria-pressed="true"] { background: var(--red); color: #fff; }
+  .viewtabs button:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .pages { margin-top: 18px; }
+  .page { position: relative; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.14); margin: 0 auto 16px; max-width: 794px; }
+  .page img { display: block; width: 100%; height: auto; pointer-events: none; -webkit-user-drag: none; user-select: none; }
+  .page .shield { position: absolute; inset: 0; }
+  .page .n { position: absolute; right: 10px; bottom: 8px; font-size: 11px; color: #777; background: rgba(255,255,255,.85); padding: 2px 7px; border-radius: 4px; }
   .icongrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .icongrid a { display: grid; grid-template-rows: 76px 1fr; justify-items: center; align-items: center; gap: 8px; text-decoration: none; color: var(--charcoal); text-align: center; border: 1px solid var(--line); border-radius: 8px; padding: 14px 10px; background: #fff; height: 100%; transition: border-color .15s, transform .15s; }
   .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red); transform: translateY(-2px); }
@@ -208,6 +217,13 @@
   </div>
 
   <div id="status" class="status" hidden>Loading the sample File.</div>
+
+  <div class="viewtabs" id="viewtabs" role="group" aria-label="How to view the sample" hidden>
+    <button type="button" id="tab-doc" aria-pressed="true" data-cta="hsf_sample_view_document">The File document</button>
+    <button type="button" id="tab-live" aria-pressed="false" data-cta="hsf_sample_view_interactive">Explore it interactively</button>
+  </div>
+  <div id="docstatus" class="status" hidden>Loading the File document.</div>
+  <div id="docpages" class="pages" hidden></div>
 
   <div id="file" hidden>
     <section class="card wm" aria-labelledby="f-company" data-asset="hsf-sample-watermark">
@@ -403,15 +419,54 @@
   $('chosen-icon').src = iconFor(cur[0]);
   $('chosen-name').textContent = cur[2];
   $('chosen').hidden = false;
-  $('status').hidden = false;
+
+  /* Two views of the same sample: the File document, page by page, in the same
+     viewer the sample Plans use, and the interactive File below it. */
+  var view = 'doc', liveReady = false, docLoaded = false;
+  function show(v) {
+    view = v;
+    $('tab-doc').setAttribute('aria-pressed', v === 'doc' ? 'true' : 'false');
+    $('tab-live').setAttribute('aria-pressed', v === 'live' ? 'true' : 'false');
+    $('docpages').hidden = v !== 'doc' || !docLoaded;
+    $('docstatus').hidden = v !== 'doc' || docLoaded;
+    $('file').hidden = v !== 'live' || !liveReady;
+    if (!liveReady) $('status').hidden = v !== 'live';
+  }
+  $('tab-doc').addEventListener('click', function () { show('doc'); });
+  $('tab-live').addEventListener('click', function () { show('live'); });
+  var ps = document.createElement('script');
+  ps.src = '/hsf/samples/pages/' + cur[0] + '.js?v=1';
+  ps.onload = function () {
+    var dp = window.__HSF_SAMPLE_PAGES; window.__HSF_SAMPLE_PAGES = null;
+    if (!dp || !dp.pages || !dp.pages.length) { docFail(); return; }
+    $('docpages').innerHTML = dp.pages.map(function (src, i) {
+      return '<div class="page"><img alt="Sample Health and Safety File page ' + (i + 1) + ' of ' + dp.pages.length + '" src="' + src + '" draggable="false">'
+        + '<div class="shield"></div><span class="n">Page ' + (i + 1) + ' of ' + dp.pages.length + '</span></div>';
+    }).join('');
+    docLoaded = true;
+    $('viewtabs').hidden = false;
+    show(view);
+  };
+  ps.onerror = docFail;
+  function docFail() {
+    $('docstatus').className = 'status err';
+    $('docstatus').textContent = 'The File document could not be loaded just now. You can still explore the File interactively.';
+    if (view === 'doc') $('docstatus').hidden = false;
+  }
+  $('viewtabs').hidden = false;
+  $('docstatus').hidden = false;
+  document.body.appendChild(ps);
 
   var sc = document.createElement('script');
-  sc.src = '/hsf/samples/' + cur[0] + '.js?v=1';
+  sc.src = '/hsf/samples/' + cur[0] + '.js?v=2';
   sc.onload = function () {
     var d = window.__HSF_SAMPLE; window.__HSF_SAMPLE = null;
     if (!d || !d.items) { fail(); return; }
     render(d);
-    $('status').hidden = true; $('file').hidden = false;
+    $('status').hidden = true;
+    liveReady = true;
+    $('viewtabs').hidden = false;
+    show(view);
   };
   sc.onerror = fail;
   document.body.appendChild(sc);
