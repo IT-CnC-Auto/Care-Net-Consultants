@@ -19,6 +19,18 @@
 (function () {
   'use strict';
   var cache = {};
+  /* Measured fallback (24/09/2026, from the live grid): these ten icons draw a
+     42 px circle where the other seven draw 62 to 64 px in the same box. They
+     are scaled up by 64/42 at once, so the grid matches even when the icon host
+     does not allow the page to read the SVG for the exact crop below. When the
+     crop succeeds the inline SVG replaces the image and needs no scaling. */
+  var SMALL = /cnc-medical-surveillance-(agriculture-and-forestry|cleaning-and-hygiene-services|construction|hospitality-and-food-service|manufacturing|mining-and-quarrying|security-services|telecommunications-and-tower-work|transport-and-logistics|waste-management)-icon\.svg/;
+  var SCALE = 64 / 42;
+  function prescale(img) {
+    var url = img.getAttribute('src') || '';
+    img.style.transform = SMALL.test(url) ? 'scale(' + SCALE.toFixed(3) + ')' : '';
+    img.style.transformOrigin = 'center';
+  }
   var ALLOWED = /^(svg|g|path|circle|ellipse|rect|line|polyline|polygon|defs|lineargradient|radialgradient|stop|clippath|mask|use|symbol|title|desc|style)$/i;
 
   function clean(node) {
@@ -71,7 +83,9 @@
   }
 
   function fit(img) {
-    if (!img || img.dataset.fitDone) return;
+    if (!img) return;
+    prescale(img);
+    if (img.dataset.fitIcon === 'scale' || img.dataset.fitDone) return;
     img.dataset.fitDone = '1';
     var url = img.currentSrc || img.src;
     if (!url || !/\.svg(\?|$)/i.test(url)) return;
