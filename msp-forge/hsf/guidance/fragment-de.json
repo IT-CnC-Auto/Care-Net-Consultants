@@ -24,9 +24,9 @@
       ]
     },
     "E": {
-      "intro": "Section E shows that people are fit for the work and exposures your risk assessment found, and that their health information is handled confidentially. Its key document is your Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner (OMP), and this section is signed off by the OMP only. Care Net screens fitness for work and does not diagnose. Clinical records stay with the occupational health practitioner; your File holds only the outcome for each person: fit, fit with restrictions or unfit.",
+      "intro": "Section E shows that people are fit for the work and exposures your risk assessment found, and that their health information is handled confidentially. Its key document is the signed Medical Surveillance Plan, a separate Care Net product filed here as evidence. The occupational medical practitioner (OMP) signs that Plan; the OMP does not sign your File. Care Net screens fitness for work and does not diagnose. Clinical records stay with the occupational health practitioner; your File holds only the outcome for each person: fit, fit with restrictions or unfit.",
       "what_goes_here": [
-        "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
+        "The Medical Surveillance Plan, a separate Care Net product signed by the OMP",
         "Certificates of fitness per employee: baseline, periodic and exit",
         "Construction, driving permit and mine fitness certificates where that work applies",
         "Outcomes of the specific examinations your exposures call for, such as lead, noise or hazardous chemical agents",
@@ -39,7 +39,7 @@
         "SHE"
       ],
       "first_file_tips": [
-        "Finish your risk assessment in Section C first; the Medical Surveillance Plan, a separate Care Net product signed by the OMP, is built from the exposures it finds, not from job titles.",
+        "Finish your risk assessment in Section C first; it shows which exposures call for medical surveillance and which specific examinations your people need.",
         "Never upload clinical notes, test results or doctors' letters to your File. Upload only the certificate of fitness showing the outcome.",
         "Put each person's certificate expiry date in your training and medical diary so nobody works past it.",
         "If a certificate says fit with restrictions, record what you changed in the person's job; that record matters as much as the certificate."
@@ -154,12 +154,12 @@
     },
     "HSF-E-01": {
       "what_to_submit": [
-        "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
+        "The Medical Surveillance Plan, a separate Care Net product signed by the OMP",
         "The list of exposure groups and jobs the Plan covers",
         "Record of the yearly review and any changes"
       ],
-      "why": "The Plan is Section E's key evidence: it sets out which people need which examinations, based on the exposures your risk assessment found. It is a separate Care Net product signed by the occupational medical practitioner, and it is reviewed once a year and whenever your exposures change.",
-      "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan, a separate Care Net product signed by its OMP,, covering welders for noise and fumes and stores staff for manual handling only.",
+      "why": "The Plan is Section E's key evidence: it sets out which people need which examinations and how often. It is a separate Care Net product signed by the occupational medical practitioner, and it is reviewed once a year and whenever your exposures change.",
+      "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan, a separate Care Net product signed by its OMP, covering welders for noise and fumes and stores staff for manual handling only.",
       "common_gaps": [
         "A Plan copied from another company that does not match your exposures",
         "An unsigned draft filed as the final Plan",

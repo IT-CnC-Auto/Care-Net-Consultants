@@ -4,12 +4,19 @@ Merges the guidance fragments in hsf/guidance/fragment-*.json into one
 document and writes, from that one document:
 
   hsf/guidance/guidance.json            the merged source of truth (12.1)
-  supabase/migrations/055_hsf_guidance.sql
-                                        the guidance tables, their rows, row
-                                        level security and hsf_public_guidance
-                                        (12.3); never edited by hand
   vercel/hsf/guidance.js                window.CNC_HSF_GUIDANCE for the builder
                                         and the sample File (12.4)
+
+The database side. supabase/migrations/055_hsf_guidance.sql (the guidance
+tables, their rows, row level security and hsf_public_guidance, 12.3) was
+written by this generator and is applied to the live project, so it is frozen:
+the generator never writes it again. It checks instead that 055 is still the
+file applied to live (its SHA-256 below) and that it is still exactly what
+sql() renders from the rows it holds (read back from 055 itself). Every
+guidance text that differs from what 055 loaded must be carried by an update
+in a migration numbered after 055 (the first is 056_hsf_file_naming.sql);
+--delta prints those updates, one idempotent statement per changed row, to
+paste into the next new migration, and --check fails while any is missing.
 
 The worklist hsf/guidance/worklist.json is the list of every code the library
 holds (sections 15, elements 256, appointments 41, classes 34). The build
@@ -24,27 +31,41 @@ refuses, and writes nothing, when:
     section 37(2) of the OHS Act (contract 7 and 12.2);
   - any text breaks a house rule the build can check mechanically
     ("compliant", "guarantee", dash punctuation, the NIHL Regulations, 2003
-    or the Environmental Regulations for Workplaces, 1987).
+    or the Environmental Regulations for Workplaces, 1987, an internal
+    platform name such as MSP FORGE, HSF FORGE, SharePoint or Cursor, a
+    doubled comma, or a sign off of the File or a section by the OMP, who signs
+    only the separate Medical Surveillance Plan).
 
 Deterministic: the same fragments always give byte identical outputs (keys in
 worklist order, no timestamps).
 
 Run from msp-forge/:   python3 hsf/build_guidance.py
+                       (writes guidance.json and guidance.js; exit 1 when a
+                       change is not yet carried by a migration after 055)
 Check only:            python3 hsf/build_guidance.py --check
-                       (exit 1 when an output is missing or out of date)
+                       (exit 1 when an output is missing or out of date, when
+                       055 is not the file applied to live, or when a change
+                       since 055 is not carried by a later migration)
+Database updates:      python3 hsf/build_guidance.py --delta
+                       (prints the update statements for every guidance row
+                       that differs from what 055 loaded; writes nothing)
 Validate other input:  python3 hsf/build_guidance.py --validate --dir <folder>
                        (reads fragment-*.json and worklist.json from <folder>,
                        writes nothing; exit 2 on a refusal; used by the tests)
 """
-import json, re, sys
+import hashlib, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 GUIDE = ROOT / 'hsf' / 'guidance'
 WORKLIST = GUIDE / 'worklist.json'
 OUT_JSON = GUIDE / 'guidance.json'
-OUT_SQL = ROOT / 'supabase' / 'migrations' / '055_hsf_guidance.sql'
 OUT_JS = ROOT / 'vercel' / 'hsf' / 'guidance.js'
+MIGRATIONS = ROOT / 'supabase' / 'migrations'
+# Frozen: applied to the live project on 24/09/2026. Never written again.
+APPLIED_SQL = MIGRATIONS / '055_hsf_guidance.sql'
+APPLIED_SQL_NUMBER = 55
+APPLIED_SQL_SHA256 = '77f1035eb3e2195b80a2ec5c6fe9d549d33cbfeaab0a34420131094eb13ea61e'
 
 DEPARTMENTS = ['EXEC', 'HR', 'SHE', 'OPS', 'ENG', 'PROC', 'OH', 'TRAIN', 'FAC']  # contract section 2
 KINDS = ('elements', 'appointments', 'classes')
@@ -69,6 +90,14 @@ HOUSE_RULES = [
     (re.compile(r'\s-\s|\w-\w'), 'hyphen punctuation'),
     (re.compile(r'NIHL Regulations|Noise Induced Hearing Loss Regulations', re.I), 'the NIHL Regulations, 2003'),
     (re.compile(r'Environmental Regulations for Workplaces', re.I), 'the Environmental Regulations for Workplaces, 1987'),
+    # Contract 15 and the IP rules of 12.7: no internal platform name reaches a visitor.
+    (re.compile(r'\bFORGE\b|(?i:sharepoint)|\bCursor\b'), 'an internal platform name'),
+    (re.compile(r',\s*,'), 'a doubled comma'),
+    # Contract 15: the OMP signs the separate Medical Surveillance Plan, never the
+    # File or one of its sections (hsf/SIGNOFF-CRITERIA.md 2.4).
+    (re.compile(r'\bsigned off by (?:the |its |your )?(?:OMP|occupational medical practitioner)\b'
+                r'|\b(?:OMP|occupational medical practitioner)(?: only)? signs? off\b', re.I),
+     'a File sign off by the OMP (the OMP signs only the separate Medical Surveillance Plan)'),
 ]
 
 
@@ -397,11 +426,188 @@ def outputs(g):
     js_doc = json.dumps(g, ensure_ascii=False, separators=(',', ':'))
     return {
         OUT_JSON: json.dumps(g, ensure_ascii=False, indent=1) + '\n',
-        OUT_SQL: sql(g),
         OUT_JS: ('/* GENERATED by hsf/build_guidance.py from hsf/guidance/guidance.json. Do not edit by hand.\n'
                  '   Guidance for a first Health and Safety File (build contract 12.4): %s, %s. */\n'
                  'window.CNC_HSF_GUIDANCE=%s;\n') % (g['meta']['version'], g['meta']['status'], js_doc),
     }
+
+
+# ------------------------------------------------------------------ 055 as applied, and what changed since
+# Where each guidance field lives in the database. The meta row (id 1) holds
+# meta and first_file; every other table has one row per code.
+META_COLUMNS = (('version', 'meta', 'version'), ('status', 'meta', 'status'),
+                ('reviewed_by', 'meta', 'reviewed_by'), ('note', 'meta', 'note'),
+                ('first_file_intro', 'first_file', 'intro'), ('first_file_order', 'first_file', 'order'),
+                ('before_you_start', 'first_file', 'before_you_start'))
+ROW_TABLES = (('sections', 'hsf_section_guidance', 'section_code', SECTION_KEYS),
+              ('elements', 'hsf_element_guidance', 'element_code', ITEM_KEYS + ('suggested_department',)),
+              ('appointments', 'hsf_appointment_guidance', 'appointment_code', ITEM_KEYS),
+              ('classes', 'hsf_class_guidance', 'class_code', ITEM_KEYS))
+DIGITS = re.compile(r'\d+')
+JSONB_COLUMNS = {'what_goes_here', 'first_file_tips', 'what_to_submit', 'common_gaps', 'first_file_order', 'before_you_start'}
+ARRAY_COLUMNS = {'who_usually_holds'}
+
+
+class Frozen(Exception):
+    pass
+
+
+def _values(text, pos, where):
+    """Reads the tuples of an insert ... values list written by sql(), up to its ';'."""
+    n = len(text)
+
+    def ws(i):
+        while i < n and text[i] in ' \n':
+            i += 1
+        return i
+
+    def literal(i):
+        if text[i] != "'":
+            raise Frozen('%s: expected a quoted value at offset %d' % (where, i))
+        out, i = [], i + 1
+        while True:
+            j = text.index("'", i)
+            out.append(text[i:j])
+            if text.startswith("''", j):
+                out.append("'")
+                i = j + 2
+                continue
+            return ''.join(out), j + 1
+
+    def value(i):
+        if text.startswith('null', i):
+            return None, i + 4
+        if text.startswith('array[', i):
+            items, i = [], i + 6
+            while text[i] != ']':
+                s, i = literal(i)
+                items.append(s)
+                if text.startswith(', ', i):
+                    i += 2
+            if not text.startswith(']::text[]', i):
+                raise Frozen('%s: array without ::text[] at offset %d' % (where, i))
+            return items, i + 9
+        m = DIGITS.match(text, i)
+        if m:
+            return int(m.group(0)), m.end()
+        s, i = literal(i)
+        if text.startswith('::jsonb', i):
+            return json.loads(s), i + 7
+        return s, i
+
+    rows = []
+    while True:
+        pos = ws(pos)
+        if text[pos] != '(':
+            raise Frozen('%s: expected "(" at offset %d' % (where, pos))
+        row, pos = [], pos + 1
+        while True:
+            v, pos = value(ws(pos))
+            row.append(v)
+            pos = ws(pos)
+            if text[pos] == ',':
+                pos += 1
+                continue
+            if text[pos] == ')':
+                pos += 1
+                break
+            raise Frozen('%s: unexpected %r at offset %d' % (where, text[pos], pos))
+        rows.append(row)
+        pos = ws(pos)
+        if text[pos] == ',':
+            pos += 1
+            continue
+        if text[pos] == ';':
+            return rows
+        raise Frozen('%s: unexpected %r after a row at offset %d' % (where, text[pos], pos))
+
+
+def _insert(text, table, columns):
+    head = 'insert into %s (%s) values\n' % (table, ', '.join(columns))
+    at = text.find(head)
+    if at < 0 or text.find(head, at + 1) >= 0:
+        raise Frozen('%s: expected exactly one "%s"' % (APPLIED_SQL.name, head.strip()))
+    rows = _values(text, at + len(head), table)
+    for r in rows:
+        if len(r) != len(columns):
+            raise Frozen('%s: a row with %d values for %d columns' % (table, len(r), len(columns)))
+    return rows
+
+
+def applied():
+    """The guidance 055 loaded, read back from 055 itself. Refuses unless 055 is
+    the file applied to live and sql() renders it again byte for byte."""
+    if not APPLIED_SQL.exists():
+        raise Frozen('supabase/migrations/%s is missing' % APPLIED_SQL.name)
+    raw = APPLIED_SQL.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != APPLIED_SQL_SHA256:
+        raise Frozen('supabase/migrations/%s is not the file applied to the live project (SHA-256 differs). It is frozen: '
+                     'restore it with  git checkout -- supabase/migrations/%s  and carry any change in a new migration'
+                     % (APPLIED_SQL.name, APPLIED_SQL.name))
+    text = raw.decode('utf-8')
+    cols = [c for c, _, _ in META_COLUMNS]
+    meta_rows = _insert(text, 'hsf_guidance_meta', ['id'] + cols)
+    if len(meta_rows) != 1 or meta_rows[0][0] != 1:
+        raise Frozen('hsf_guidance_meta: expected the one row with id 1')
+    g = {'meta': {}, 'first_file': {}, 'sections': {}, 'elements': {}, 'appointments': {}, 'classes': {}}
+    for (col, group, key), v in zip(META_COLUMNS, meta_rows[0][1:]):
+        g[group][key] = v
+    for kind, table, key_col, keys in ROW_TABLES:
+        for r in _insert(text, table, [key_col] + list(keys)):
+            g[kind][r[0]] = dict(zip(keys, r[1:]))
+    if sql(g) != text:
+        raise Frozen('supabase/migrations/%s does not render again from its own rows; it was edited by hand' % APPLIED_SQL.name)
+    return g
+
+
+def _sql_value(col, v):
+    if col in JSONB_COLUMNS:
+        return qj(v)
+    if col in ARRAY_COLUMNS:
+        return 'array[%s]::text[]' % ', '.join(q(d) for d in v)
+    return q(v)
+
+
+def _update(table, key_col, key_sql, changed):
+    sets = ',\n       '.join('%s = %s' % (c, v) for c, v in changed)
+    if len(changed) == 1:
+        guard = '%s is distinct from %s' % changed[0]
+    else:
+        guard = '(%s) is distinct from (\n       %s)' % (', '.join(c for c, _ in changed), ',\n       '.join(v for _, v in changed))
+    return 'update %s\n   set %s\n where %s = %s\n   and %s;' % (table, sets, key_col, key_sql, guard)
+
+
+def delta(g, was):
+    """One idempotent update per guidance row that differs from what 055 loaded,
+    naming only the changed columns: [(label, statement)]."""
+    out = []
+    changed = [(col, _sql_value(col, g[group][key])) for col, group, key in META_COLUMNS
+               if g[group][key] != was[group][key]]
+    if changed:
+        out.append(('meta', _update('hsf_guidance_meta', 'id', '1', changed)))
+    for kind, table, key_col, keys in ROW_TABLES:
+        if list(g[kind]) != list(was[kind]):
+            added = [c for c in g[kind] if c not in was[kind]]
+            gone = [c for c in was[kind] if c not in g[kind]]
+            raise Frozen('%s codes differ from 055 (added %s, removed %s): a new code needs its library row and an '
+                         'insert in a new migration, which this generator does not write'
+                         % (SINGULAR[kind], ', '.join(added) or 'none', ', '.join(gone) or 'none'))
+        for code, row in g[kind].items():
+            changed = [(k, _sql_value(k, row[k])) for k in keys if row[k] != was[kind][code][k]]
+            if changed:
+                out.append(('%s %s' % (SINGULAR[kind], code), _update(table, key_col, q(code), changed)))
+    return out
+
+
+def later_migrations():
+    return [p for p in sorted(MIGRATIONS.glob('[0-9][0-9][0-9]_*.sql')) if int(p.name[:3]) > APPLIED_SQL_NUMBER]
+
+
+def not_carried(stmts):
+    """The statements that no migration after 055 carries (whitespace aside)."""
+    flat = lambda s: re.sub(r'\s+', ' ', s).strip()
+    later = ' '.join(flat(p.read_text(encoding='utf-8')) for p in later_migrations())
+    return [(label, s) for label, s in stmts if flat(s) not in later]
 
 
 def main(argv):
@@ -421,18 +627,39 @@ def main(argv):
     if '--dir' in argv:
         sys.stderr.write('--dir is for --validate only; the outputs are built from hsf/guidance.\n')
         return 2
+    try:
+        stmts = delta(g, applied())
+    except Frozen as e:
+        sys.stderr.write('FROZEN: %s\n' % e)
+        return 1
+    if '--delta' in argv:
+        print('-- %d guidance row(s) differ from what %s loaded. Generated by hsf/build_guidance.py --delta.'
+              % (len(stmts), APPLIED_SQL.name))
+        for label, s in stmts:
+            print('\n-- %s\n%s' % (label, s))
+        return 0
+    missing = not_carried(stmts)
     outs = outputs(g)
     if '--check' in argv:
         stale = [p for p, text in outs.items() if not p.exists() or p.read_text(encoding='utf-8') != text]
         for p in stale:
             sys.stderr.write('out of date: %s\n' % p.relative_to(ROOT))
-        return 1 if stale else 0
+        for label, _ in missing:
+            sys.stderr.write('not in any migration after %s: the update for %s (see --delta)\n' % (APPLIED_SQL.name, label))
+        return 1 if stale or missing else 0
     for p, text in outs.items():
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(text, encoding='utf-8')
         print('wrote %-44s %8d bytes' % (p.relative_to(ROOT), len(text.encode('utf-8'))))
     print('guidance: sections %d, elements %d, appointments %d, classes %d, first File steps %d'
           % (len(g['sections']), len(g['elements']), len(g['appointments']), len(g['classes']), len(g['first_file']['order'])))
+    print('database: %s unchanged (frozen); %d guidance row(s) changed since, %d carried by a later migration'
+          % (APPLIED_SQL.name, len(stmts), len(stmts) - len(missing)))
+    if missing:
+        for label, _ in missing:
+            sys.stderr.write('not in any migration after %s: the update for %s\n' % (APPLIED_SQL.name, label))
+        sys.stderr.write('Run  python3 hsf/build_guidance.py --delta  and add the updates to a new migration.\n')
+        return 1
     return 0
 
 

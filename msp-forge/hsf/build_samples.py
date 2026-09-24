@@ -12,7 +12,11 @@ says so. Deterministic: the same library always produces the same samples.
 The samples are shown on static pages, so every displayed name and basis is
 put into plain words (hsf/BUILD-CONTRACT.md section 7): no section, regulation,
 annexure or gazette numbers except section 16(2) and section 37(2) of the
-OHS Act. The build stops if a number the rules do not cover gets through.
+OHS Act. The build stops if a number the rules do not cover gets through, and
+if any sample text carries an internal platform or database name (MSP FORGE,
+HSF FORGE, SharePoint, Cursor, a table name) or a doubled comma (contract 15).
+The Medical Surveillance Plan appears only as the Section E evidence item
+HSF-E-01, named as a separate Care Net product signed by the OMP.
 
 Every item carries the first File guidance of build contract 12.4 ("What to
 submit, why, and an example"), read from hsf/guidance/guidance.json (built by
@@ -270,9 +274,25 @@ BASIS_WORDS = [
     ('Construction Regulations, 2014, Annexure 3', 'Construction Regulations, 2014, medical certificate of fitness provision'),
     ('Food Premises Hygiene Regulations, R638 of 2018', 'Food Premises Hygiene Regulations, 2018'),
     ('EEA section 7', 'EEA, medical testing provision'),
+    # The library's basis for HSF-N-06 names the database table; a visitor sees plain words.
+    ('Kernel release (msp_kernel_version)', 'Kernel legislation release notes'),
 ]
+# Basis segments that name no instrument a visitor can read (build contract 15):
+# HSF-E-01's "Kernel instruments per the Plan" (the signed Medical Surveillance
+# Plan is filed as evidence; it is not the element's legal basis, and the live
+# element library shows no basis for it) and the kernel's internal rule codes
+# (RULE-RETAIN-*, RULE-HSF-RATIO-FA and the like). They are dropped; an item
+# left with no basis shows none, with no framework tag (basis_state 'none').
+NO_INSTRUMENT = {'Kernel instruments per the Plan'}
+RULE_CODE = re.compile(r'^RULE-')
 ALLOWED_NUMBERS = re.compile(r'\b[Ss]ection (?:16|37)\(2\)')
 NUMBERED = re.compile(r'\b(?:[Ss]ections? \d|[Rr]egulations? \d|[Aa]nnexure \d|GNR? ?\d|GN R|GG \d|R\.? ?\d{3})')
+# Build contract 15 and the IP rules of 12.7: no internal platform or database
+# name, kernel rule code or internal status word ("sandbox") reaches a visitor,
+# and no doubled comma slips through from a source.
+INTERNAL = re.compile(r'\bFORGE\b|(?i:sharepoint)|\bCursor\b|\b(?:msp|hsf)_[a-z_]+|\bRULE-[A-Z]|(?i:\bsandbox\b)|,\s*,')
+# The Plan is never shown as an element's legal basis (contract 15).
+PLAN_BASIS = re.compile(r'\bper the Plan\b|Medical Surveillance Plan', re.I)
 
 
 def plain_name(name):
@@ -293,9 +313,19 @@ def plain_basis(basis, name):
     return re.sub(r'OHS Act sections? (\d+(?: and \d+)?)', ohs, basis)
 
 
+def drop_non_instruments(basis):
+    """The basis without the segments that name no instrument (NO_INSTRUMENT, RULE- codes)."""
+    segs = [s.strip() for s in basis.split(';')]
+    kept = [s for s in segs if s and s not in NO_INSTRUMENT and not RULE_CODE.match(s)]
+    return basis if len(kept) == len(segs) else '; '.join(kept)
+
+
 def assert_plain(text):
     if NUMBERED.search(ALLOWED_NUMBERS.sub('', text)):
         raise SystemExit('Provision number left in sample text (contract section 7): ' + text)
+    m = INTERNAL.search(text)
+    if m:
+        raise SystemExit('Internal name or doubled comma "%s" in sample text (contract 15): %s' % (m.group(0), text))
 
 
 def fmt(d):
@@ -357,9 +387,12 @@ def item(code, section, name, basis, evidence, responsible, review, retention, k
     st = status_for(key, mco, section)
     frm, to = dates_for(key, st, review)
     shown_name = plain_name(name)
-    shown_basis = plain_basis(clean_basis(basis), name)
+    shown_basis = drop_non_instruments(plain_basis(clean_basis(basis), name))
+    if PLAN_BASIS.search(shown_basis):
+        raise SystemExit('The Medical Surveillance Plan is shown as the legal basis of %s (contract 15): %s' % (code, shown_basis))
     return {
-        'code': code, 'section': section, 'name': shown_name, 'basis': shown_basis, 'basis_state': state_of(basis),
+        'code': code, 'section': section, 'name': shown_name, 'basis': shown_basis,
+        'basis_state': state_of(basis) if shown_basis else 'none',
         'evidence': evidence, 'responsible': APP_NAME.get(responsible, responsible), 'review': review.replace('_', ' '),
         'retention': retention, 'status': st, 'from': frm, 'to': to,
         'reason': NA_REASON if st == 'not_applicable' else '',
@@ -483,7 +516,8 @@ def build(code):
         'slug': slug, 'code': code, 'industry': iname, 'company': company + ' (fictitious)', 'scope': scope,
         'sites': sites, 'headcount': headcount, 'regime': 'Mine Health and Safety Act' if regime == 'MHSA' else 'Occupational Health and Safety Act',
         'reference': ref, 'revision': 1, 'as_at': fmt(AS_AT), 'triggers': sorted(triggers),
-        'kernel': 'CNC OHS Industry Kernel, 23/09/2026 (sandbox until OMP and attorney review)',
+        # Shown as "Medical surveillance protocols from the <kernel>." (hsf-sample.html).
+        'kernel': 'Care Net OHS Industry Kernel as at 23/09/2026, still under review by an occupational medical practitioner and an attorney',
         'overall': {'compliant': num, 'applicable': den, 'pct': round(100 * num / den, 1) if den else None,
                     'counts': {k: sum(1 for x in items if x['status'] == k) for k in ('linked_mco', 'uploaded', 'outstanding', 'expired', 'not_applicable')}},
         'sections': secs, 'items': items,

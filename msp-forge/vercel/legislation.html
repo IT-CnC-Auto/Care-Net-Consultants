@@ -16,7 +16,7 @@
  hsf/build_legislation.py; never type an instrument into this page.
 
  STATUS: read live from msp_public_instrument_register with the public
- key (the same read shop.html makes). A currency hold is not readable
+ key (a read that view allows). A currency hold is not readable
  with the public key, so a hold recorded in the repository always wins
  (a hold only ever tightens). When the register cannot be reached, the
  status recorded at build time is shown and the page says so. Wording:
@@ -115,7 +115,7 @@
   <div class="band"></div>
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
-      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+      <a class="logo-link" href="/health-and-safety-file" aria-label="Care Net Consultants, Health and Safety File home">
         <img class="logo-img" data-asset="leg-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
@@ -158,7 +158,7 @@
     <div class="card">
       <ul class="key">
         <li><span class="st st-verified">Verified through the kernel's three checks</span><br>Checked against its primary text, corroborated and current, for the health and safety provisions a File relies on.</li>
-        <li><span class="st st-medical">Verified for medical surveillance; awaiting verification for health and safety provisions</span><br>Verified for the medical surveillance duties behind a Medical Surveillance Plan. Its health and safety provisions are still being checked for the File.</li>
+        <li><span class="st st-medical">Verified for medical surveillance; awaiting verification for health and safety provisions</span><br>Verified for the medical surveillance duties behind the Medical Surveillance Plan, a separate Care Net product. Its health and safety provisions are still being checked for the File.</li>
         <li><span class="st st-candidate">Candidate, awaiting verification</span><br>Named as a likely basis for File elements. It is not cited until it passes the three checks.</li>
         <li><span class="st st-held">Held from citation while a Gazette detail is confirmed</span><br>Care Net holds it back, even where an earlier check passed, until a detail of its publication or amendment is confirmed.</li>
       </ul>
@@ -256,8 +256,9 @@
     var bg = art.querySelector('[data-bg]');
     LINKS.link(bg);
     Array.prototype.forEach.call(bg.querySelectorAll('a.cnc-leg'), function (a) {
-      if (a.getAttribute('href') === '/legislation.html#' + art.id) a.replaceWith(document.createTextNode(a.textContent));
-      else a.setAttribute('href', '#' + a.getAttribute('href').split('#')[1]);
+      var slug = a.getAttribute('href').split('#')[1] || '';
+      if (slug === art.id) a.replaceWith(document.createTextNode(a.textContent));
+      else a.setAttribute('href', '#' + slug);
     });
   });
 
@@ -280,7 +281,7 @@
   }
   paint();
 
-  /* ---- Live status from the public register (the read shop.html makes). */
+  /* ---- Live status from the public register (a read the public key allows). */
   var CFG = window.CNC_CONFIG || {};
   function liveFailed() { $('live-note').textContent = 'The live register could not be reached, so each status is the one recorded when this page was built.'; }
   if (CFG.supabaseUrl && CFG.publishableKey && window.fetch) {

@@ -1,4 +1,19 @@
-"""CNC HSF FORGE | HSF-SEED-01 | writes supabase/migrations/048_hsf_library_seed.sql.
+"""CNC HSF FORGE | HSF-SEED-01 | the element library seed, 048_hsf_library_seed.sql.
+
+FROZEN (24/09/2026). This generator wrote supabase/migrations/048_hsf_library_seed.sql,
+which is applied to the live project. It never writes 048 again. What it does now:
+  1. checks that 048 is still the file applied to live (its SHA-256 below);
+  2. renders the seed from SPEC.md Part B as it stands, exactly as it rendered 048,
+     and checks that everything outside the element rows (sections, departments,
+     triggers, candidate instruments, appointment types, classes, links and
+     industry rows) is still byte for byte what 048 loaded;
+  3. turns every element row that differs from 048 (a renamed element, a new
+     description from a SPEC note such as B6.6.1, a changed review interval) into
+     one idempotent update, and checks that a migration numbered after 048 carries
+     each one (whitespace aside). The first is 056_hsf_file_naming.sql (HSF-E-01).
+A SPEC change the generator cannot turn into an update (a new or removed element,
+or any change outside the element rows) is refused: it needs a migration written
+for it, and this generator taught to check it, before the build passes again.
 
 Reads the element library from SPEC.md Part B (B6 universal elements, B6.3.1
 appointment types, B6.5.1 courses, B6.5.2 licence classes, the HSF-E-06
@@ -28,10 +43,18 @@ Rules the output follows:
      annexure number other than section 16(2) and section 37(2). The build
      stops if one survives (contract 10.9(c)).
 
-Run from msp-forge/:  python3 hsf/build_seed.py          (writes 048)
+Run from msp-forge/:  python3 hsf/build_seed.py          (checks; writes nothing; exit 1 when 048
+                                                     is not the file applied to live or a
+                                                     change is not carried by a later
+                                                     migration, exit 2 when a change is
+                                                     refused)
+                      python3 hsf/build_seed.py --check  (the same)
+                      python3 hsf/build_seed.py --delta  (prints the updates for every element
+                                                     row that differs from 048; writes nothing)
                       python3 hsf/build_seed.py --report (also prints the basis map)
+For the tests only:   --migrations <folder>  reads the migrations from a copy.
 """
-import csv, re, sys
+import csv, difflib, hashlib, re, sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -41,9 +64,18 @@ sys.dont_write_bytecode = True  # leave no __pycache__ in hsf/
 import build_samples as bs  # noqa: E402  (reuses the SPEC and kernel pack parsers)
 
 MIG = ROOT / 'supabase' / 'migrations'
-OUT = MIG / '048_hsf_library_seed.sql'
+if '--migrations' in sys.argv[1:]:  # the tests point at a copy
+    MIG = Path(sys.argv[sys.argv.index('--migrations') + 1]).resolve()
+# Frozen: applied to the live project. Never written again (see the docstring).
+APPLIED_SQL = MIG / '048_hsf_library_seed.sql'
+APPLIED_SQL_NUMBER = 48
+APPLIED_SQL_SHA256 = '8d55a3db006c38a68236bf3a1672f6a7eef3d6a66f0b7d65d53059375003458b'
 CSV = HERE / 'sources' / 'CNC-Legislation-Register-v1.0.0.csv'  # register release 1.0.0, no longer published (contract 10.9)
 PART_B = bs.PART_B
+# An element's description (hsf_element.duty) is its name, unless a SPEC note
+# gives it one, as B6.6.1 does for HSF-E-01 (carried by 056_hsf_file_naming.sql).
+DUTY = dict(re.findall(r'^B6\.\d+\.\d+ (HSF-[A-Z]-\d\d) renamed.*?Its description \(hsf_element\.duty\): "([^"]+)"',
+                       PART_B, re.M))
 
 # ---------------------------------------------------------------------------
 # 1. Held instruments: every short_name migrations 001 to 046 insert or rename
@@ -438,7 +470,8 @@ def build():
         if code == 'HSF-D-04':
             mco = 'mco_training'
         name = plain(e['name'])
-        elements.append((code, sec, name, name, e['evidence'], appt, role, e['review'], retention,
+        duty = DUTY.get(code, name)
+        elements.append((code, sec, name, duty, e['evidence'], appt, role, e['review'], retention,
                          'BOTH', True, trigger_expr(e['applies']), mco))
         names = resolve(e['basis'])
         if code == 'HSF-B-06':
@@ -529,6 +562,7 @@ def build():
     # Every displayed name must now be in plain words, or the build stops.
     for r in elements:
         assert_plain('element', r[0], r[2])
+        assert_plain('element description', r[0], r[3])
     for r in appts:
         assert_plain('appointment type', r[0], r[1])
     for r in classes:
@@ -662,18 +696,151 @@ def sql():
     return '\n'.join(L), (elements, links, appts, classes, candidates, held_used, compounds, ei_rows)
 
 
-def main():
-    text, parts = sql()
-    OUT.write_text(text, encoding='utf-8')
-    elements, links, appts, classes, candidates, held_used, compounds, ei_rows = parts
-    print('wrote %s' % OUT.relative_to(ROOT))
-    print('elements %d, links %d, appointment types %d, classes %d, industry rows %d' % (
-        len(elements), len(links), len(appts), len(classes), len(ei_rows)))
-    print('held instruments cited: %d' % len(held_used))
-    print('candidate instruments (pending): %d' % len(candidates))
-    for c in candidates:
-        print('  candidate: %s [%s]' % (c, instrument_type(c)))
-    if '--report' in sys.argv:
+# ---------------------------------------------------------------------------
+# 048 as applied, and what changed since
+
+ELEMENT_COLUMNS = ('code', 'section_code', 'name', 'duty', 'evidence_type', 'responsible_appointment',
+                   'responsible_role', 'review_interval', 'retention_rule', 'regime', 'universal',
+                   'trigger_code', 'mco_source')
+ELEMENTS_HEAD = 'insert into hsf_element (code, section_code, name, duty, evidence_type, responsible_appointment, responsible_role,'
+ELEMENTS_TAIL = '       ) as v(code, section_code, name, duty, evidence_type, responsible_appointment, responsible_role,'
+
+
+class Frozen(Exception):
+    pass
+
+
+class Refused(Exception):
+    pass
+
+
+def split_elements(text, where):
+    """(lines before the element rows, the element row lines, lines after)."""
+    lines = text.split('\n')
+    try:
+        head = lines.index(ELEMENTS_HEAD)
+        start = lines.index('  from (values', head) + 1
+        end = lines.index(ELEMENTS_TAIL, start)
+    except ValueError:
+        raise Frozen('%s: the element rows (section 6) could not be found' % where)
+    return lines[:start], lines[start:end], lines[end:]
+
+
+ROW_TOKEN = re.compile(r"\s*(?:'((?:[^']|'')*)'|(null)|(true)|(false)|(-?\d+))\s*([,)])")
+
+
+def parse_row(line, where):
+    """One element row as values() wrote it, read back exactly."""
+    s = line.strip()
+    if s.endswith(','):
+        s = s[:-1]
+    if not s.startswith('('):
+        raise Frozen('%s: not an element row: %s' % (where, line[:80]))
+    out, i = [], 1
+    while True:
+        m = ROW_TOKEN.match(s, i)
+        if not m:
+            raise Frozen('%s: an element row could not be read: %s' % (where, line[:80]))
+        if m.group(1) is not None:
+            out.append(m.group(1).replace("''", "'"))
+        elif m.group(2):
+            out.append(None)
+        elif m.group(3):
+            out.append(True)
+        elif m.group(4):
+            out.append(False)
+        else:
+            out.append(int(m.group(5)))
+        i = m.end()
+        if m.group(6) == ')':
+            break
+    if i != len(s) or '(' + ', '.join(q(v) for v in out) + ')' != s or len(out) != len(ELEMENT_COLUMNS):
+        raise Frozen('%s: an element row does not read back exactly: %s' % (where, line[:80]))
+    return tuple(out)
+
+
+def applied_text():
+    if not APPLIED_SQL.exists():
+        raise Frozen('supabase/migrations/%s is missing' % APPLIED_SQL.name)
+    raw = APPLIED_SQL.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != APPLIED_SQL_SHA256:
+        raise Frozen('supabase/migrations/%s is not the file applied to the live project (SHA-256 differs). It is frozen: '
+                     'restore it with  git checkout -- supabase/migrations/%s  and carry any change in a new migration'
+                     % (APPLIED_SQL.name, APPLIED_SQL.name))
+    return raw.decode('utf-8')
+
+
+def update_statement(code, changed):
+    """One idempotent update naming only the changed columns (the form 056 uses)."""
+    sets = ',\n       '.join('%s = %s' % (c, q(v)) for c, v in changed)
+    if len(changed) == 1:
+        guard = '%s is distinct from %s' % (changed[0][0], q(changed[0][1]))
+    else:
+        guard = '(%s) is distinct from (\n       %s)' % (', '.join(c for c, _ in changed), ',\n       '.join(q(v) for _, v in changed))
+    return 'update hsf_element\n   set %s\n where code = %s\n   and %s;' % (sets, q(code), guard)
+
+
+def delta():
+    """[(code, statement)] for every element row that differs from what 048 loaded.
+    Refuses any other difference between the SPEC and 048."""
+    was_text = applied_text()
+    now_text, _ = sql()
+    w_pre, w_rows, w_post = split_elements(was_text, APPLIED_SQL.name)
+    n_pre, n_rows, n_post = split_elements(now_text, 'the SPEC rendering')
+    if w_pre != n_pre or w_post != n_post:
+        diff = list(difflib.unified_diff(w_pre + ['...'] + w_post, n_pre + ['...'] + n_post,
+                                         APPLIED_SQL.name, 'SPEC.md Part B now', n=0, lineterm=''))
+        raise Refused('SPEC.md Part B or the kernel packs changed outside the element rows, which this generator '
+                      'cannot carry as an update (%d changed lines):\n%s\nWrite a new migration for the change and teach '
+                      'hsf/build_seed.py to check it; 048 stays as applied.' % (len(diff), '\n'.join(diff[:40])))
+    was = [parse_row(l, APPLIED_SQL.name) for l in w_rows]
+    now = [parse_row(l, 'the SPEC rendering') for l in n_rows]
+    if [r[0] for r in was] != [r[0] for r in now]:
+        added = [r[0] for r in now if r[0] not in {x[0] for x in was}]
+        gone = [r[0] for r in was if r[0] not in {x[0] for x in now}]
+        raise Refused('element codes differ from %s (added %s, removed %s, or reordered): a new element needs its row '
+                      'inserted by a new migration, which this generator does not write'
+                      % (APPLIED_SQL.name, ', '.join(added) or 'none', ', '.join(gone) or 'none'))
+    out = []
+    for a, b in zip(was, now):
+        changed = [(c, y) for c, x, y in zip(ELEMENT_COLUMNS, a, b) if x != y]
+        if any(c == 'code' for c, _ in changed):
+            raise Refused('element %s: its code changed' % a[0])
+        if changed:
+            out.append((a[0], update_statement(a[0], changed)))
+    return out
+
+
+def later_migrations():
+    return [p for p in sorted(MIG.glob('[0-9][0-9][0-9]_*.sql')) if int(p.name[:3]) > APPLIED_SQL_NUMBER]
+
+
+def not_carried(stmts):
+    """The statements that no migration after 048 carries (whitespace aside)."""
+    flat = lambda t: re.sub(r'\s+', ' ', t).strip()
+    later = ' '.join(flat(p.read_text(encoding='utf-8')) for p in later_migrations())
+    return [(code, st) for code, st in stmts if flat(st) not in later]
+
+
+def main(argv):
+    try:
+        stmts = delta()
+    except Frozen as e:
+        sys.stderr.write('FROZEN: %s\n' % e)
+        return 1
+    except Refused as e:
+        sys.stderr.write('REFUSED: %s\n' % e)
+        return 2
+    if '--delta' in argv:
+        print('-- %d element row(s) differ from what %s loaded. Generated by hsf/build_seed.py --delta.'
+              % (len(stmts), APPLIED_SQL.name))
+        for code, st in stmts:
+            print('\n-- element %s\n%s' % (code, st))
+        return 0
+    missing = not_carried(stmts)
+    print('database: %s unchanged (frozen, applied to live); %d element row(s) changed since, %d carried by a later migration'
+          % (APPLIED_SQL.name, len(stmts), len(stmts) - len(missing)))
+    if '--report' in argv:
         seen = {}
         for e in ELEMENTS + [dict(code=a['code'], basis=a['basis']) for a in APPOINTMENTS] + \
                 [dict(code=o['code'], basis=o['basis']) for o in OVERLAYS]:
@@ -681,7 +848,13 @@ def main():
                 seen.setdefault(seg, resolve(seg))
         for seg in sorted(seen):
             print('  %-90s -> %s' % (seg[:90], seen[seg]))
+    if missing:
+        for code, _ in missing:
+            sys.stderr.write('not in any migration after %s: the update for element %s (see --delta)\n' % (APPLIED_SQL.name, code))
+        sys.stderr.write('Run  python3 hsf/build_seed.py --delta  and add the updates to a new migration.\n')
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main(sys.argv[1:]))

@@ -1374,7 +1374,7 @@ B6.6 Section E: Medical surveillance and fitness (signed by the OMP only)
 
 | Code | Element | Basis | Evidence | Responsible | Review | Retention | Applies |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| HSF-E-01 | The released Medical Surveillance Plan from MSP FORGE | Kernel instruments per the Plan (H) | document | OMP | annual | MED40 | U |
+| HSF-E-01 | The signed Medical Surveillance Plan, a separate Care Net product signed by the OMP, filed as evidence | Kernel instruments per the Plan (H) | document | OMP | annual | MED40 | U |
 | HSF-E-02 | Certificates of fitness per employee per protocol: baseline, periodic, exit (MCO) | HCA, HBA, Noise Exposure, Lead, Ergonomics Regulations per protocol (H) | medical_certificate | OMP | on_expiry | MED40 | U |
 | HSF-E-03 | Construction Regulations Annexure 3 medical certificates of fitness (MCO) | Construction Regulations, 2014, Annexure 3 (H) | medical_certificate | APP-01 | on_expiry | MED40 | T-CONSTR |
 | HSF-E-04 | Professional driving permit medicals (MCO) | NRTA PrDP medical (H) | medical_certificate | OMP | on_expiry | MED40 | T-PRDP |
@@ -1384,6 +1384,8 @@ B6.6 Section E: Medical surveillance and fitness (signed by the OMP only)
 | HSF-E-08 | Occupational disease reporting and referral records | COIDA (H); ODMWA (H) for mines | report | OMP | per_event | MED40 | U |
 | HSF-E-09 | First aid: box contents and inspection, first aider list, treatment register | General Safety Regulations, 1986, first aid provision (H) | register | APP-24 | monthly | HSF-5 | U |
 | HSF-E-10 | Confidentiality and POPIA handling of every medical record: what the employer holds, what Care Net holds, and the lawful basis for each | POPIA in full (C in live kernel; see HSF-7); HPCSA Booklet 1 (H) | document | OMP | annual | LIFE | U |
+
+B6.6.1 HSF-E-01 renamed 24/09/2026 (hsf/BUILD-CONTRACT.md section 15): the element was "The released Medical Surveillance Plan from MSP FORGE", which named an internal system and blurred the two products. The Medical Surveillance Plan is a separate Care Net product signed by the OMP; the File only holds the signed Plan in Section E as evidence. Its description (hsf_element.duty): "The Medical Surveillance Plan is a separate Care Net product, signed by the Occupational Medical Practitioner (OMP). The signed Plan is filed in Section E as evidence; clinical records stay with the occupational health practitioner." Migration 048 (applied to live) keeps the original seed; migration 056_hsf_file_naming.sql carries the new name and description, so never regenerate 048 from this table.
 
 B6.7 Section F: Registers and inspections
 

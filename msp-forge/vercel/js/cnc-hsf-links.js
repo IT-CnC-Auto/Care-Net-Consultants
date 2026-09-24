@@ -1,7 +1,9 @@
 /* =====================================================================
    cnc-hsf-links.js :: links from the File pages to the letterhead
    examples and the legislation backgrounds (contract 12.7)
-   Version: 1.0 | 24/09/2026 | CNC HSF FORGE
+   Version: 1.1 | 24/09/2026 | CNC HSF FORGE
+   1.1: instrument links use the clean address /legislation#<slug>, and
+        every link stays on the File pages (contract 15.1).
 
    Needs, loaded before it:
      /hsf/examples.js            window.CNC_HSF_EXAMPLES (hsf/build_examples.mjs)
@@ -13,7 +15,7 @@
        generated example, so nothing shows until the files exist.
    window.CNCHsfLinks.link(root)
        Links every instrument name in the text under root to
-       /legislation.html#<slug>. Whole names only, never inside a word, never
+       /legislation#<slug>. Whole names only, never inside a word, never
        inside a link, button, summary, form control, code or heading.
    window.CNCHsfLinks.watch(root)
        link(root) now and again whenever the content under root changes (the
@@ -95,7 +97,7 @@
         var slug = bySlug[m[0]];
         var a = d.createElement('a');
         a.className = 'cnc-leg';
-        a.href = '/legislation.html#' + slug;
+        a.href = '/legislation#' + slug;
         a.setAttribute('data-cta', 'legislation_background:' + slug);
         a.title = 'What ' + m[0] + ' covers, in plain words';
         a.textContent = m[0];

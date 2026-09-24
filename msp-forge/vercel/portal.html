@@ -342,7 +342,7 @@
         <div id="signin-msg" role="status" aria-live="polite" style="margin-top:10px"></div>
         <button type="submit" class="btn" id="signin-btn" data-cta="portal_send_link">Send my sign in link</button>
       </form>
-      <p class="muted" style="clear:both;margin-top:14px">New to Care Net? <a class="inline" href="./" data-cta="portal_start_journey">Start your journey</a> to register your company first. Want to look around? <a class="inline" href="portal.html?demo=1" data-cta="portal_demo_from_signin">See a demonstration</a>.</p>
+      <p class="muted" style="clear:both;margin-top:14px">New to Care Net? <a class="inline" href="hsf-builder.html#build" data-cta="portal_register_file">Register your company in the Health and Safety File builder</a>, or <a class="inline" href="./" data-cta="portal_start_journey">start a Medical Surveillance Plan</a>, a separate Care Net product. Want to look around? <a class="inline" href="portal.html?demo=1" data-cta="portal_demo_from_signin">See a demonstration</a>.</p>
     </div>
 
     <div class="card acctbar" id="st-account" hidden>
@@ -372,13 +372,13 @@
           <h2 id="commercial-title">Your company, <span class="r">Plans and Files.</span></h2>
         </div>
       </div>
-      <p>Your account with Care Net and whether it is approved, your Medical Surveillance Plans, your Health and Safety Files with their compliance figures and where each one is in review and sign off, and your quotations.</p>
+      <p>Your account with Care Net, your Medical Surveillance Plans, your Health and Safety Files with their compliance figures and where each one is in review and sign off, and your quotations.</p>
     </div>
 
     <div class="grid">
       <div class="card" id="c-account">
         <div class="chead"><span class="ico" data-asset="portal-account-icon" aria-hidden="true">AC</span><h3 class="ct">Company account</h3></div>
-        <div id="account-body"><p class="muted">Sign in to see your company account and whether it is approved.</p></div>
+        <div id="account-body"><p class="muted">Sign in to see your company account.</p></div>
       </div>
       <div class="card" id="c-plans">
         <div class="chead"><span class="ico" data-asset="portal-plans-icon" aria-hidden="true">PL</span><h3 class="ct">Medical Surveillance Plans</h3></div>
@@ -991,9 +991,14 @@ const FILE_STATUS = {
   superseded: ['grey', 'Superseded', 'Replaced by a newer revision.'],
   archived: ['grey', 'Archived', 'No longer in use.']
 };
+/* msp_client_account.account_kind. Approval applies only to the Medical
+   Surveillance Plan (msp_client_start_assessment approves when the Plan
+   starts); a company registered for its Health and Safety File alone stays an
+   applicant and needs no approval, so that state reads as registered, never
+   as waiting (build contract 15.3). */
 const ACCOUNT_KIND = {
   approved_client: ['ok', 'Approved'],
-  applicant: ['wait', 'Awaiting approval'],
+  applicant: ['blue', 'Registered'],
   declined: ['no', 'Not approved']
 };
 /* msp_engagement.status (migration 005), in plain words. */
@@ -1122,7 +1127,7 @@ const industryName = (code) => (code && INDUSTRY_NAMES[code]) || code || '';
 
 /* ============================================================ commercial: signed out */
 function renderSignedOut() {
-  $('account-body').innerHTML = '<p class="muted">Sign in to see your company account and whether it is approved.</p>';
+  $('account-body').innerHTML = '<p class="muted">Sign in to see your company account.</p>';
   $('plans-body').innerHTML = '<p class="muted">Sign in to see your Medical Surveillance Plans and where each one stands.</p>';
   $('files-body').innerHTML = '<p class="muted">Sign in to see your Health and Safety Files, their compliance figures and where each one is in review and sign off.</p>';
   $('quotes-body').innerHTML = '<p class="muted">Sign in to see the quotations prepared for you, with their reference, what they cover, the price and how long they are valid.</p>';
@@ -1134,8 +1139,13 @@ function renderSignedOut() {
 function renderAccount(acc, email) {
   const el = $('account-body');
   if (!acc) {
+    /* Registering here goes to the File builder, which registers the company
+       in place without starting a Plan (build contract 15.3). The Plan is
+       offered beside it as a separate choice, never as the registration. */
     el.innerHTML = '<p>You are signed in as <b>' + esc(email || 'your email') + '</b>, but this email is not linked to a company account with Care Net yet.</p>'
-      + '<a class="btn sm inl" href="./" data-cta="portal_register_company">Register my company</a>';
+      + '<p class="muted">Registering for a Health and Safety File does not start a Medical Surveillance Plan, a separate Care Net product you can start on its own.</p>'
+      + '<a class="btn sm inl" href="hsf-builder.html#build" data-cta="portal_register_company">Register my company for a File</a>'
+      + '<a class="btn ghost sm inl" href="./" data-cta="portal_plan_journey">Start a Medical Surveillance Plan</a>';
     return;
   }
   const kind = ACCOUNT_KIND[acc.account_kind] || ['grey', 'Status pending'];
@@ -1163,7 +1173,7 @@ function planRow(p) {
 function renderPlans(plans, acc) {
   const el = $('plans-body');
   if (!acc) {
-    el.innerHTML = '<p>Register your company first, and your Medical Surveillance Plan assessment opens straight away.</p>';
+    el.innerHTML = '<p>No Medical Surveillance Plan is linked to this email. The Plan is a separate Care Net product; registering your company for a Health and Safety File does not start one.</p>';
     return;
   }
   const lead = acc.account_kind === 'declined'
@@ -1428,7 +1438,7 @@ function renderDemoCommercial(s) {
     + '<div><dt>Company</dt><dd>' + esc(s.company) + '</dd></div>'
     + '<div><dt>Account</dt><dd><span class="pill grey">Demonstration only</span></dd></div>'
     + '<div><dt>Headcount in scope</dt><dd>' + esc(s.headcount) + ' people, ' + plural(Number(s.sites) || 0, 'site', 'sites') + '</dd></div>'
-    + '</dl><p class="muted">In your portal this card shows your company and whether your account is approved.</p>';
+    + '</dl><p class="muted">In your portal this card shows your company and the state of its account.</p>';
   $('plans-body').innerHTML = '<p class="note">The sample holds no Medical Surveillance Plan. In your portal, each of your Plans appears here with its reference and where it stands in drafting, review and sign off.</p>';
   const o = s.overall || {};
   const file = { demo: true, reference: s.reference, industry_name: s.industry, revision: s.revision, compliance_pct: o.pct, created_at: null };

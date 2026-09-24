@@ -112,7 +112,7 @@ table(['', ''], [30, 70], [
 h2('1. Introduction and purpose of this File');
 p('This Health and Safety File has been compiled for <b>' + esc(company) + '</b>. It brings together, in one place, the documents that show how the company meets its health and safety duties: its legal registration, its policy and appointments, its risk assessments, training, registers and inspections, permits, emergency arrangements, incident records and its audit and review cycle.');
 if (MINING) p('This company is a mine, so the Mine Health and Safety Act is the governing regime: the employer and the managers it appoints carry the duties, and the mine\'s own codes of practice apply. This File organises the evidence of those duties in the same fifteen sections, as a practitioner review.');
-p('A Health and Safety File is not a Medical Surveillance Plan. The Medical Surveillance Plan is a separate Care Net document, recommended on and signed by an Occupational Medical Practitioner; this File holds only its evidence (the signed Plan and the fitness outcomes), never clinical records.');
+p('A Health and Safety File is not a Medical Surveillance Plan. The Medical Surveillance Plan is a separate Care Net product, recommended on and signed by an Occupational Medical Practitioner; this File holds only its evidence (the signed Plan and the fitness outcomes), never clinical records.');
 
 h2('2. Company and scope');
 p('<b>' + esc(company) + '</b> works in ' + esc(d.industry.toLowerCase()) + '. The File covers: ' + esc(d.scope) + '. It applies to ' + d.headcount + ' employees across ' + d.sites + (d.sites === 1 ? ' site' : ' sites') + ', and to every contractor working under the company\'s control.');
@@ -170,7 +170,7 @@ table(['Person and role'].concat(cols.map((c) => c.name)), [22].concat(cols.map(
   }))), { cls: 'matrix' });
 
 h2('7. Medical surveillance evidence');
-p('Section E of the File holds the evidence of the company\'s medical surveillance: the Medical Surveillance Plan signed by the Occupational Medical Practitioner, and each employee\'s certificate of fitness outcome. The Plan itself is a separate Care Net document. Clinical records stay with the occupational health practitioner and are never filed here. Care Net screens fitness and does not diagnose; the employer pays for occupational health services.');
+p('Section E of the File holds the evidence of the company\'s medical surveillance: the Medical Surveillance Plan signed by the Occupational Medical Practitioner, and each employee\'s certificate of fitness outcome. The Plan itself is a separate Care Net product, filed here only as evidence. Clinical records stay with the occupational health practitioner and are never filed here. Care Net screens fitness and does not diagnose; the employer pays for occupational health services.');
 
 pagebreak();
 h2('8. Gap report and action plan');

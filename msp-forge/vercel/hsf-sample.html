@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Sample Health and Safety File | Care Net Consultants</title>
-<meta name="description" content="View a sample Health and Safety File for your industry: the compliance matrix, the training and medical matrix and the gap report, built by the Care Net Method from fictitious company data.">
+<meta name="description" content="View a sample Health and Safety File for your industry: the compliance matrix, the training and medical matrix and the gap report, built from the same element library as your own File, using fictitious company data.">
 <meta property="og:image" content="https://img.carenetcdn.com/health-and-safety-file/hsf-sample-og-1200x630.jpg" data-asset="hsf-sample-og">
 <!--
 =====================================================================
@@ -179,7 +179,7 @@
   <div class="band"></div>
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
-      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+      <a class="logo-link" href="/health-and-safety-file" aria-label="Care Net Consultants, Health and Safety File home">
         <img class="logo-img" data-asset="hsf-sample-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
@@ -432,8 +432,8 @@
   $('chosen-name').textContent = cur[2];
   $('chosen').hidden = false;
 
-  /* Two views of the same sample: the File document, page by page, in the same
-     viewer the sample Plans use, and the interactive File below it. */
+  /* Two views of the same sample: the File document, page by page, and the
+     interactive File below it. */
   var view = 'doc', liveReady = false, docLoaded = false;
   function show(v) {
     view = v;
@@ -545,7 +545,8 @@
           last = x.section;
         }
         html += '<tr><td class="code">' + esc(x.code) + '</td>'
-          + '<td><b>' + esc(x.name) + '</b><div class="basis">' + esc(x.basis) + '<span class="bs ' + x.basis_state + '">' + BS[x.basis_state] + '</span></div>'
+          /* An item with no instrument of its own (HSF-E-01, basis_state 'none') shows no basis and no tag. */
+          + '<td><b>' + esc(x.name) + '</b>' + (x.basis && BS[x.basis_state] ? '<div class="basis">' + esc(x.basis) + '<span class="bs ' + x.basis_state + '">' + BS[x.basis_state] + '</span></div>' : '')
           + (x.reason ? '<div class="why">Reason: ' + esc(x.reason) + '</div>' : '') + guideHtml(x) + '</td>'
           + '<td>' + esc(x.responsible) + '</td><td>' + esc(EVID[x.evidence] || x.evidence) + '</td><td>' + esc(x.review) + '</td>'
           + '<td><span class="pill p-' + x.status + '">' + STATUS[x.status] + '</span></td>'
@@ -684,7 +685,7 @@
    "file_name": "record-submission.webp",
    "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
    "status": "existing",
-   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on shop.html (Build your Plan) and health-and-safety-file.html, so the Plan and File pages look alike. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information."
+   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on health-and-safety-file.html, and today also on the Medical Surveillance Plan pages, a separate Care Net product; the File should get its own photograph so the two products are not confused. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information."
   },
   {
    "id": "hsf-sample-pattern",

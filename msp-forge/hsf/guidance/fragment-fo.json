@@ -150,7 +150,7 @@
     "Keep the committee action list separate from the minutes and carry open items forward until they are closed.",
     "Answer every representative's recommendation in writing, even if the answer is no, and give the reason.",
     "Photograph your notice board once a year and file the photo; it is the simplest proof of what was displayed.",
-    "When you add a new process, chemical or site, tell Care Net so the Medical Surveillance Plan, a separate Care Net product, can be updated."
+    "When you add a new process, chemical or site, update your risk assessment; if you also hold a Medical Surveillance Plan, a separate Care Net product, tell Care Net so that Plan can be updated."
    ]
   },
   "M": {
@@ -1182,7 +1182,7 @@
     "Log of changes notified to your client for construction work",
     "Copies of the notifications sent"
    ],
-   "why": "When your processes, chemicals, sites or workforce change, your medical surveillance and your client's safety planning must change too. The log shows each change was notified so the Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner, and the client's plans stay accurate.",
+   "why": "When your processes, chemicals, sites or workforce change, your medical surveillance and your client's safety planning must change too. The log shows each change was notified to whoever runs your medical surveillance and to your client, so their plans stay accurate.",
    "example": "Example: Govender Pool Supplies in Umhlanga emails Care Net on 2 June 2026 that it has started handling a new chlorine compound and files the email in this log.",
    "common_gaps": [
     "Changes made without telling anyone",

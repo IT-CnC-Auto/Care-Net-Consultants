@@ -1,11 +1,20 @@
 /* CNC HSF FORGE | sign off pricing for health-and-safety-file.html.
-   Market figures generated 23/09/2026 from hsf/PRICING-RESEARCH.md.
-   Care Net client price (Director's instruction 24/09/2026, contract 15.2): a flat
-   cnc_client_price per signed off File, excluding VAT, whatever the industry average.
-   Free when the company does more than free_medicals_threshold medicals a year with
-   Care Net; above site_and_subcontractors_threshold the whole site and each of its
-   subcontractors on that site get their File free. A sales executive verifies the
-   declared volume before a free tier is confirmed. */
+   Market figures (low, high and avg per industry, the method and the sources)
+   generated 23/09/2026 from hsf/PRICING-RESEARCH.md; they stay as researched.
+   No generator writes this file any more: it is kept by hand, and every rand
+   amount in it, the source names included, is written in the house style
+   R4 000,00 (checked by test/api/file-separation.test.js).
+   Care Net client price (Director's instruction 24/09/2026, contract 15.2; it
+   replaces the earlier percentage off the market average): a flat cnc_client_price
+   per signed off File, excluding VAT, one File for one site, whatever the
+   industry average. The signed off File is free when the company does more than
+   free_medicals_threshold occupational medicals a year with Care Net; a big site
+   with more than site_and_subcontractors_threshold a year gets a free signed off
+   File for the whole site and for each of its subcontractors working on that
+   site. A sales executive verifies the declared volume before a free tier is
+   confirmed, and multi site and above threshold construction work is still
+   quoted by a sales executive. The page reads every figure and threshold from
+   here and types none of them. */
 window.HSF_PRICING={
  "as_at": "23/09/2026",
  "cnc_client_price": 4000,
@@ -13,46 +22,45 @@ window.HSF_PRICING={
  "free_medicals_threshold": 100,
  "site_and_subcontractors_threshold": 500,
  "cnc_pricing_as_at": "24/09/2026",
- "cnc_discount": 0.25,
  "method": "Published prices for a Health and Safety File compiled by a safety practitioner, gathered from South African provider websites on 23/09/2026. Automated app files and do it yourself templates are excluded because they are different products. The average is the plain mean of the published prices. Most providers do not state whether VAT is included. No provider publishes a separate price for sign off by a registered Health and Safety Manager, so the compiled File price is the market comparison.",
  "sources": [
   {
-   "name": "Rapid Safety Files, construction safety file, R2 000",
+   "name": "Rapid Safety Files, construction safety file, R2 000,00",
    "date": "retrieved 23/09/2026",
    "url": "https://www.rapidsafetyfiles.co.za/safety-file/construction"
   },
   {
-   "name": "Safety File South Africa, site specific safety file, R3 000",
+   "name": "Safety File South Africa, site specific safety file, R3 000,00",
    "date": "retrieved 23/09/2026",
    "url": "https://safetyfile.co.za/product/safety-file/"
   },
   {
-   "name": "Q-Safe, software and setup of one safety file, R4 200",
+   "name": "Q-Safe, software and setup of one safety file, R4 200,00",
    "date": "retrieved 23/09/2026",
    "url": "https://safety-file.co.za/qsafe-with-safety-file-setup/"
   },
   {
-   "name": "No Risk Solutions, construction safety file, from R4 850",
+   "name": "No Risk Solutions, construction safety file, from R4 850,00",
    "date": "retrieved 23/09/2026",
    "url": "https://norisk.co.za/product/construction-safety-file/"
   },
   {
-   "name": "Key Safety Sector, site specific health and safety file, R6 480",
+   "name": "Key Safety Sector, site specific health and safety file, R6 480,00",
    "date": "retrieved 23/09/2026",
    "url": "https://keysafetyfile.co.za/products/site-specific-health-and-safety-file"
   },
   {
-   "name": "Company Partners, full health and safety file, R2 990 plus R6 900",
+   "name": "Company Partners, full health and safety file, R2 990,00 plus R6 900,00",
    "date": "retrieved 23/09/2026",
    "url": "https://companypartners.co.za/health-safety-file/"
   },
   {
-   "name": "SafetySupplier, SHE File option A, R6 000 excluding VAT",
+   "name": "SafetySupplier, SHE File option A, R6 000,00 excluding VAT",
    "date": "retrieved 23/09/2026",
    "url": "https://safetysupplier.co.za/product/safety-file-completed-she-file-excl-vat/"
   },
   {
-   "name": "SafetySupplier, completed SHE File, R10 000",
+   "name": "SafetySupplier, completed SHE File, R10 000,00",
    "date": "retrieved 23/09/2026",
    "url": "https://safetysupplier.co.za/product-category/safety-file-completed-she-file/"
   }

@@ -193,7 +193,7 @@
   <div class="band"></div>
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
-      <a class="logo-link" href="/" aria-label="Care Net Consultants home">
+      <a class="logo-link" href="/health-and-safety-file" aria-label="Care Net Consultants, Health and Safety File home">
         <img class="logo-img" data-asset="hsf-staff-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
@@ -337,7 +337,7 @@
           <li>An approved safety content sign off that meets every rule above.</li>
           <li>The client&rsquo;s acceptance by its section 16(2) appointee, with the reference of the signed document.</li>
           <li>Every instrument the File names verified for a File. The chief executive&rsquo;s acknowledgement is recorded, but it does not hold a release back.</li>
-          <li>The Occupational Medical Practitioner does not sign a File. The signed medical surveillance plan is filed in Section E as evidence.</li>
+          <li>The Occupational Medical Practitioner does not sign a File. The signed Medical Surveillance Plan, a separate Care Net product, is filed in Section E as evidence.</li>
         </ol>
       </div>
     </div>
@@ -802,7 +802,8 @@ function renderClients() {
     const pill = r.status === 'verified' ? '<span class="pill ok">Verified</span>' : (r.status === 'revoked' ? '<span class="pill no">Revoked</span>' : '<span class="pill wait">Waiting for verification</span>');
     const o = S.open.clients && S.open.clients.id === id ? S.open.clients : null;
     const meta = ['<b>' + esc(r.contact_email || 'No contact email') + '</b>', 'Asked on ' + esc(when(r.requested_at))];
-    if (r.account_kind && r.account_kind !== 'approved_client') meta.push('Account: ' + esc(words(r.account_kind)));
+    /* A company registered for its File alone stays an applicant (approval comes only with the Plan), so only a declined account is flagged. */
+    if (r.account_kind === 'declined') meta.push('Account: ' + esc(words(r.account_kind)));
     let detail = '';
     if (r.method) detail += '<div class="meta">Evidence (' + esc(METHOD_NAME[r.method] || words(r.method)) + '): <b>' + esc(r.evidence_ref || '') + '</b>' + (r.verified_at ? ', verified on ' + esc(when(r.verified_at)) : '') + (r.verified_by ? ' by ' + esc(r.verified_by) : '') + '</div>';
     if (r.status === 'revoked') detail += '<div class="meta">Revoked on ' + esc(when(r.revoked_at)) + (r.revoked_by ? ' by ' + esc(r.revoked_by) : '') + ': ' + esc(r.revoke_reason || '') + '</div>';
