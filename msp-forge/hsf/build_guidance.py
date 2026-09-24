@@ -87,8 +87,11 @@ def check_text(text, where):
     m = NUMBERED.search(plain) or GAZETTE_R.search(plain)
     if m:
         refuse('%s: number pattern "%s" is not allowed (only section 16(2) and section 37(2)): %s' % (where, m.group(0), text))
+    # Official names keep their own hyphens (contract 12.2): the recruitment
+    # portal's product name is Bee-Matched (contract 14.3).
+    named = text.replace('Bee-Matched', 'BeeMatched')
     for rx, what in HOUSE_RULES:
-        if rx.search(text):
+        if rx.search(named):
             refuse('%s: %s is not allowed: %s' % (where, what, text))
 
 

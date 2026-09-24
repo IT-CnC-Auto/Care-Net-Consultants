@@ -19,7 +19,7 @@
      2. mcoPortalUrl  MyClinicOnline portal and single sign on address.
                       Pending the MCO interface contract (HSF-3).
      3. recruitmentPortalUrl
-                      Care Net Recruitment Portal address (contract 12.5).
+                      Care Net's Bee-Matched recruitment portal address (contract 12.5).
                       Not known. While it is null, the "Onboard a registered
                       Health and Safety practitioner" call to action asks a
                       sales executive on WhatsApp instead.
@@ -54,7 +54,7 @@
     /* PENDING (HSF-3): MyClinicOnline portal and single sign on address. */
     mcoPortalUrl: null,
 
-    /* PENDING (contract 12.5): the Care Net Recruitment Portal address is
+    /* PENDING (contract 12.5): the Care Net's Bee-Matched recruitment portal address is
        not known. Keep null; never type a guessed address here. Once set,
        the recruitment call to action opens it with
        ?source=hsf&need=<signatory|appointment>&industry=<code>. */

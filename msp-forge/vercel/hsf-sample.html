@@ -307,7 +307,7 @@
       <a class="btn" href="/hsf-builder.html" data-cta="build_my_file">Build my File</a>
       <a class="btn ghost" href="/health-and-safety-file.html#pricing" data-cta="see_sign_off_costs">See sign off costs</a>
       <div class="recruit" data-recruit="signatory">
-        <p>Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net&rsquo;s Recruitment Portal places and onboards them, with the appointment and engagement letters your File needs.</p>
+        <p>Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net&rsquo;s Bee-Matched recruitment portal places and onboards them, with the appointment and engagement letters your File needs.</p>
         <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner">Ask a sales executive about onboarding a registered Health and Safety practitioner</a>
       </div>
     </section>
@@ -378,7 +378,7 @@
 
   /* Contract 12.5 and 12.6: while CNC_CONFIG.recruitmentPortalUrl is null
      (pending) the calls to action ask a sales executive on WhatsApp; once set
-     to an https address, they open the Recruitment Portal with source, need
+     to an https address, they open the Bee-Matched recruitment portal with source, need
      and this sample's industry code. Any other address keeps the fallback. */
   var RECRUIT = {
     signatory: { cta: 'recruitment_onboard_hs_practitioner', portal: 'Onboard a registered Health and Safety practitioner' },
@@ -401,7 +401,7 @@
     if (a && href) { a.href = href; a.textContent = (RECRUIT[need] || RECRUIT.signatory).portal; }
   });
   /* Contract 12.6: the auditor credentials Care Net's standard looks for, per
-     regime; described, never invented, and confirmed by the Recruitment Portal. */
+     regime; described, never invented, and confirmed by the Bee-Matched recruitment portal. */
   var AUDITOR_CREDENTIALS = {
     CONSTR: 'SACPCMP registration in a construction health and safety category.',
     MINING: 'Experience under the Mine Health and Safety Act regime.',
@@ -409,8 +409,8 @@
   };
   function auditorHtml() {
     var href = portalHref('auditor');
-    return '<div class="recruit" data-recruit="auditor"><p>Your File should be audited by someone whose registration and experience fit your industry. Care Net&rsquo;s Recruitment Portal matches an auditor to your industry and onboards them, with the appointment and engagement letters on record.</p>'
-      + '<p class="cred"><b>What to look for in this industry:</b> ' + esc(AUDITOR_CREDENTIALS[cur[1]] || AUDITOR_CREDENTIALS.other) + ' Care Net&rsquo;s standard, confirmed by the Recruitment Portal for each auditor.</p>'
+    return '<div class="recruit" data-recruit="auditor"><p>Your File should be audited by someone whose registration and experience fit your industry. Care Net&rsquo;s Bee-Matched recruitment portal matches an auditor to your industry and onboards them, with the appointment and engagement letters on record.</p>'
+      + '<p class="cred"><b>What to look for in this industry:</b> ' + esc(AUDITOR_CREDENTIALS[cur[1]] || AUDITOR_CREDENTIALS.other) + ' Care Net&rsquo;s standard, confirmed by the Bee-Matched recruitment portal for each auditor.</p>'
       + '<a class="btn ghost" href="' + esc(href || 'https://wa.me/27600702723') + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_auditor">' + esc(href ? RECRUIT.auditor.portal : RECRUIT.auditor.fallback) + '</a></div>';
   }
 

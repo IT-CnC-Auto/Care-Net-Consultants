@@ -295,7 +295,7 @@ test('other pages: the recruitment call to action with the WhatsApp fallback', (
     assert.ok(h.includes('recruitmentPortalUrl'), p);
   }
   const staff = read('vercel/hsf-staff.html');
-  assert.ok(staff.includes('Find a practitioner in the Recruitment Portal'));
+  assert.ok(staff.includes('Find a practitioner in the Bee-Matched recruitment portal'));
   assert.ok(staff.includes('data-cta="recruitment_onboard_hs_practitioner"'));
   const sample = read('vercel/hsf-sample.html');
   assert.ok(sample.includes('What to submit, why, and an example'));

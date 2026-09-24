@@ -186,3 +186,7 @@ Care Net code this describes: `supabase/functions/_shared/mco-adapter.js` (the o
 | 10 | Retention per record class | 12 |
 | 11 | Throughput for the backlog, and a test environment | 13 |
 | 12 | Related, outside the transfer: the read interface of SPEC B10.2, single sign on, and the portal address | 6.3, 6.4 |
+
+## Director's rule on deletion (24/09/2026)
+
+A document on its way to MyClinicOnline, or held there, is never deleted on request. MCO holds each document for the retention period the applicable legislation sets and deletes it only when that period expires, keeping an audit record of the deletion (fingerprint, date, legal basis, never the content). Care Net's client deletion journey applies only while a document is still in Care Net staging and not in transit.

@@ -260,3 +260,13 @@ Many companies will be building their first Health and Safety File. Every sectio
 13.5 **Payments held in trust.** Money for each engagement is held for the parties in a trust or escrow arrangement and released against milestones. Because holding other people's money is regulated, the structure (attorney's trust account, registered escrow provider, or other) and its compliance duties are decided by the Director with the attorney before anything is built. The build records the design only (`hsf/appointments/TRUST-ACCOUNT-DESIGN.md`): parties, milestones, release rules, dispute path, reconciliation, audit and POPIA; no payment code, no bank integration, no stored account numbers.
 
 13.6 **Placement law.** Before Be-Matched places people, the Director confirms with the attorney whether Care Net must register as a private employment agency and how the rules on temporary employment services apply to placed workers; recorded as a register item.
+
+## 14. Amendment 6 (Director's answers, 24/09/2026)
+
+14.1 **Deletion in transit and at MyClinicOnline.** Confirmed: a document on its way to MyClinicOnline, or held there, is never deleted on request. It is deleted only when its retention period under the applicable legislation expires (for medical records, the retention the kernel's retention rules set). The client deletion journey (10.5) applies only while a document is still in Care Net staging and not in transit. MCO's transfer protocol (hsf/MCO-TRANSFER-REQUIREMENTS.md) must hold each document for its legislated retention and delete it on expiry, with an audit record.
+
+14.2 **Letterhead.** The Director supplied CNC_Letterhead_-_External.pdf. Its two images are the standard's cropped header (2000 x 304) and footer (2000 x 427) at the standard's positions; they are held in hsf/examples/letterhead/ and used by hsf/build_examples.mjs (12.7).
+
+14.3 **Recruitment portal name and address.** The portal is **Bee-Matched** (Care Net Consultants). The future address given, "www.carenetconsultants/recruitment_Bee_Matched.co.za", is not a valid web address as written; recruitmentPortalUrl stays null (WhatsApp fallback) until the exact address is confirmed and live. Visible text says "Care Net's Bee-Matched recruitment portal".
+
+14.4 **Legal decisions** on Bee-Matched placements and the trust account are with the Director and the attorney (hsf/appointments/LEGAL-STRUCTURE-RESEARCH.md); nothing that places people or holds money is built until they decide.

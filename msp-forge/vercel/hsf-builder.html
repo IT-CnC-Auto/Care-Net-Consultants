@@ -1566,14 +1566,14 @@ function renderFirstFile() {
    they ask a sales executive on WhatsApp; once set to an https address, they
    open the portal with source, need and industry. Any other address (http,
    javascript and the like) is ignored and the WhatsApp fallback is used. */
-const RECRUIT_LINE = 'Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net’s Recruitment Portal places and onboards them, with the appointment and engagement letters your File needs.';
-const AUDITOR_LINE = 'Your File should be audited by someone whose registration and experience fit your industry. Care Net’s Recruitment Portal matches an auditor to your industry and onboards them, with the appointment and engagement letters on record.';
+const RECRUIT_LINE = 'Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net’s Bee-Matched recruitment portal places and onboards them, with the appointment and engagement letters your File needs.';
+const AUDITOR_LINE = 'Your File should be audited by someone whose registration and experience fit your industry. Care Net’s Bee-Matched recruitment portal matches an auditor to your industry and onboards them, with the appointment and engagement letters on record.';
 const RECRUIT = {
   practitioner: { cta: 'recruitment_onboard_hs_practitioner', portal: 'Onboard a registered Health and Safety practitioner', fallback: 'Ask a sales executive about onboarding a registered Health and Safety practitioner' },
   auditor: { cta: 'recruitment_onboard_auditor', portal: 'Onboard a registered, competent auditor', fallback: 'Ask a sales executive about onboarding a registered, competent auditor' }
 };
 /* Contract 12.6: the auditor credentials Care Net's standard looks for, per
-   regime. Described, never invented; the Recruitment Portal confirms them. */
+   regime. Described, never invented; the Bee-Matched recruitment portal confirms them. */
 const AUDITOR_CREDENTIALS = {
   CONSTR: 'SACPCMP registration in a construction health and safety category.',
   MINING: 'Experience under the Mine Health and Safety Act regime.',
@@ -1617,7 +1617,7 @@ function recruitHtml(need, forItem) {
   if (forItem) return '<p class="recruit-sm">' + link('rlink', '<span class="vh"> for ' + esc(forItem) + '</span>') + '</p>';
   if (need === 'auditor') {
     return '<div class="recruit" data-recruit="auditor"><p>' + esc(AUDITOR_LINE) + '</p>'
-      + '<p class="cred"><b>What to look for in your industry:</b> ' + esc(auditorCredentials()) + ' <span class="muted">Care Net’s standard, confirmed by the Recruitment Portal for each auditor.</span></p>'
+      + '<p class="cred"><b>What to look for in your industry:</b> ' + esc(auditorCredentials()) + ' <span class="muted">Care Net’s standard, confirmed by the Bee-Matched recruitment portal for each auditor.</span></p>'
       + link('btn ghost sm inl', '') + '</div>';
   }
   return '<div class="recruit"><p>' + esc(RECRUIT_LINE) + '</p>' + link('btn ghost sm inl', '') + '</div>';
