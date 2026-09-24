@@ -129,7 +129,7 @@
   @media (max-width: 520px) { .indgrid { grid-template-columns: 1fr; } }
   .indgrid a { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--charcoal); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: #fafafa; font-size: 14px; font-weight: 600; }
   .indgrid a:hover, .indgrid a:focus-visible { border-color: var(--red); background: #fff; }
-  .indgrid img { width: 32px; height: 32px; flex: none; }
+  .indgrid img, .indgrid svg { width: 32px; height: 32px; flex: none; }
   .straight { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; }
   .straight b { display: block; margin-bottom: 4px; }
   footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
@@ -151,11 +151,10 @@
         <img class="logo-img" data-asset="hsf-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
-        <li><a href="/">Start your journey</a></li>
-        <li><a href="/pilot.html">How it works</a></li>
-        <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Build your Plan</a></li>
-        <li><a href="/sample.html">Sample Plan</a></li>
+        <li><a href="/health-and-safety-file.html">Health and Safety File</a></li>
+        <li><a href="/hsf-builder.html">Build my File</a></li>
+        <li><a href="/hsf-sample.html">Sample File</a></li>
+        <li><a href="/portal.html">Sign in</a></li>
       </ul>
     </div>
   </nav>
@@ -382,7 +381,7 @@
     ['B', 'Policy, organisation and appointments', 'Policy, section 16(2) assignment, representatives, committee, every statutory appointment'],
     ['C', 'Risk management', 'Baseline and issue based risk assessments, method statements, fall protection and other plans'],
     ['D', 'Training and competence', 'Training needs, the training matrix, inductions, licences, toolbox talks'],
-    ['E', 'Medical surveillance and fitness', 'Your Medical Surveillance Plan, certificates of fitness, statutory examinations'],
+    ['E', 'Medical surveillance and fitness', 'Your OMP signed Medical Surveillance Plan (a separate document), certificates of fitness, statutory examinations'],
     ['F', 'Registers and inspections', 'Scaffolds, ladders, lifting equipment, electrical, fire equipment, PPE, chemicals'],
     ['G', 'Permits and controls', 'Permit to work, hot work, confined space, excavation, height, isolation'],
     ['H', 'Emergency preparedness', 'Emergency plan, drills, fire plan, medical emergencies, spill response'],
@@ -410,7 +409,7 @@
   ];
   $('indgrid').innerHTML = INDUSTRIES.map(function (i) {
     return '<a href="/hsf-sample.html?industry=' + i[0] + '" data-cta="hsf_sample_industry:' + i[0] + '">'
-      + '<img data-asset="' + iconSlot(i[0]) + '" src="' + ICONS + 'cnc-medical-surveillance-' + i[0] + '-icon.svg" alt="" width="32" height="32" loading="lazy" decoding="async">' + esc(i[2]) + '</a>';
+      + '<img data-fit-icon data-asset="' + iconSlot(i[0]) + '" src="' + ICONS + 'cnc-medical-surveillance-' + i[0] + '-icon.svg" alt="" width="32" height="32" loading="lazy" decoding="async">' + esc(i[2]) + '</a>';
   }).join('');
 
   /* ---- Pricing: every figure comes from /hsf/pricing.js. */
@@ -1259,6 +1258,7 @@
  ]
 }
 </script>
+<script src="/js/cnc-icon-fit.js" defer></script>
 <script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

@@ -49,7 +49,7 @@
   .icongrid a { display: grid; grid-template-rows: 76px 1fr; justify-items: center; align-items: center; gap: 8px; text-decoration: none; color: var(--charcoal); text-align: center; border: 1px solid var(--line); border-radius: 8px; padding: 14px 10px; background: #fff; height: 100%; transition: border-color .15s, transform .15s; }
   .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red); transform: translateY(-2px); }
   .icongrid a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
-  .icongrid img { width: 68px; height: 68px; object-fit: contain; }
+  .icongrid img, .icongrid svg { width: 68px; height: 68px; object-fit: contain; }
   .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; align-self: start; }
   /* Watermark across every sample card */
   .wm::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .07;
@@ -167,11 +167,10 @@
         <img class="logo-img" data-asset="hsf-sample-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
-        <li><a href="/">Start your journey</a></li>
-        <li><a href="/pilot.html">How it works</a></li>
-        <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Build your Plan</a></li>
-        <li><a href="/sample.html">Sample Plan</a></li>
+        <li><a href="/health-and-safety-file.html">Health and Safety File</a></li>
+        <li><a href="/hsf-builder.html">Build my File</a></li>
+        <li><a href="/hsf-sample.html">Sample File</a></li>
+        <li><a href="/portal.html">Sign in</a></li>
       </ul>
     </div>
   </nav>
@@ -186,7 +185,6 @@
       <div class="chips">
         <a class="chip" href="/health-and-safety-file.html" data-cta="chip_build_your_file">Build your File</a>
         <a class="chip" href="/health-and-safety-file.html#pricing" data-cta="chip_sign_off_costs">Sign off costs</a>
-        <a class="chip" href="/sample.html" data-cta="chip_sample_plan">Sample Medical Surveillance Plan</a>
       </div>
     </div>
     <div class="heroimg">
@@ -356,7 +354,7 @@
   if (!cur) {
     $('icongrid').innerHTML = INDUSTRIES.map(function (i) {
       return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '" data-cta="hsf_sample_industry:' + i[0] + '">'
-        + '<img data-asset="' + iconSlot(i[0]) + '" src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async"><span>' + esc(i[2]) + '</span></a></li>';
+        + '<img data-fit-icon data-asset="' + iconSlot(i[0]) + '" src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async"><span>' + esc(i[2]) + '</span></a></li>';
     }).join('');
     $('chooser').hidden = false;
     return;
@@ -1019,6 +1017,7 @@
  ]
 }
 </script>
+<script src="/js/cnc-icon-fit.js" defer></script>
 <script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>
