@@ -46,6 +46,7 @@
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
+<link rel="stylesheet" href="/css/cnc-ad.css?v=20260924a">
 <script type="application/ld+json">
 {
  "@context":"https://schema.org",
@@ -162,6 +163,8 @@
      section 6). Consent mode defaults to denied and no tag loads before consent. -->
 <script src="/js/cnc-config.js"></script>
 <script src="/js/cnc-tracking.js"></script>
+<!-- Feature flags (contract 16.3): in <head> so banner room is decided before first paint. -->
+<script src="/js/flags.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -244,6 +247,11 @@
       </div>
     </div>
   </section>
+
+  <!-- Bee-Inspect add on banner AD-06 (contract 16.3, P1). Below the fold, outside
+       the pricing table. Takes room only while CNC_FLAGS.bee_inspect_ads is on;
+       copy and links from /hsf/ads.js, drawn by /js/cnc-ad.js. -->
+  <div class="cnc-ad-slot cnc-ad-slot--full" data-cnc-ad-slot="AD-06"></div>
 
   <!-- 2 :: WHAT IS IN THE FILE -->
   <section id="inside" aria-labelledby="inside-title">
@@ -1348,6 +1356,8 @@
  ]
 }
 </script>
+<script src="/hsf/ads.js" defer></script>
+<script src="/js/cnc-ad.js" defer></script>
 <script src="/js/cnc-icon-fit.js" defer></script>
 <script src="/js/cnc-design-assets.js" defer></script>
 </body>

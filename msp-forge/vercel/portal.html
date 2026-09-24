@@ -79,6 +79,7 @@
 <link rel="stylesheet" href="css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="css/cnc-hero.css?v=20260915a">
 <link rel="stylesheet" href="css/cnc-secnav.css?v=20260915b">
+<link rel="stylesheet" href="css/cnc-ad.css?v=20260924a">
 <style>
   :root { --red: #ED1B24; --red-ink: #C5141B; --charcoal: #1A1A1A; --ink-2: #4d4d4d; --line: #e5e2e2; --soft: #f7f5f5; --green: #2A7D4E; --green-ink: #1B6E45; --amber-bg: #fdf3dc; --amber-line: #ecd49a; --amber-ink: #6b4600; --blue-bg: #eef3fb; --blue-ink: #2B4C8C; --blue-line: #4a6fb5; --grey-bg: #f0efef; --teal-bg: #e9f4f7; --teal-ink: #1d5d6f; --teal-line: #9cc9d6; }
   * { box-sizing: border-box; }
@@ -259,6 +260,8 @@
 </style>
 <script src="js/cnc-config.js"></script>
 <script src="js/cnc-tracking.js"></script>
+<!-- Feature flags (contract 16.3): in <head> so banner room is decided before first paint. -->
+<script src="js/flags.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
@@ -949,6 +952,11 @@
 })();
 </script>
 
+<!-- Bee-Inspect add on banner AD-08 (contract 16.3, P1): copy in ads.js, the banner in
+     cnc-ad.js. Deferred, so they run before the module below; nothing shows unless
+     CNC_FLAGS.bee_inspect_ads is on. -->
+<script src="hsf/ads.js" defer></script>
+<script src="js/cnc-ad.js" defer></script>
 <script type="module">
 import { auth } from './js/cnc-auth.js';
 window.__cncPortalStarted = true;
@@ -1125,6 +1133,21 @@ async function loadIndustryNames() {
 }
 const industryName = (code) => (code && INDUSTRY_NAMES[code]) || code || '';
 
+/* ============================================================ Bee-Inspect AD-08 (contract 16.3, P1)
+   On the Files side once the company has a File (and in the demonstration,
+   which shows one). Told the industry code only. js/cnc-ad.js does nothing
+   unless CNC_FLAGS.bee_inspect_ads is on; any fault here is swallowed. */
+function placeBeeInspect(files, industry) {
+  try {
+    const had = document.querySelector('#c-files [data-cnc-ad]');
+    if (had) had.remove();
+    const A = window.CNCAds;
+    if (!A || typeof A.enabled !== 'function' || !A.enabled() || !files || !files.length) return;
+    const ind = String(industry || '').toUpperCase() || null;
+    A.place($('files-actions'), 'beforebegin', 'AD-08', { n: 0, industry: ind, fBand: 'na' });
+  } catch (_) { /* a banner never stops the portal */ }
+}
+
 /* ============================================================ commercial: signed out */
 function renderSignedOut() {
   $('account-body').innerHTML = '<p class="muted">Sign in to see your company account.</p>';
@@ -1133,6 +1156,7 @@ function renderSignedOut() {
   $('quotes-body').innerHTML = '<p class="muted">Sign in to see the quotations prepared for you, with their reference, what they cover, the price and how long they are valid.</p>';
   $('files-empty').hidden = true;
   $('staff').hidden = true;
+  placeBeeInspect([]);
 }
 
 /* ============================================================ commercial: account */
@@ -1285,6 +1309,7 @@ async function loadSummary(email) {
     const msg = friendly(e, 'Your company records could not be loaded just now. Please try again shortly.');
     $('account-body').innerHTML = '<p class="errbox">' + esc(msg) + '</p><button type="button" class="btn plain sm" data-reload="summary" data-cta="portal_retry_summary">Try again</button>';
     ['plans-body', 'files-body', 'quotes-body'].forEach((id) => { $(id).innerHTML = '<p class="muted">This appears once your company records load.</p>'; });
+    placeBeeInspect([]);
     return false;
   }
   const acc = sum.account && typeof sum.account === 'object' ? sum.account : null;
@@ -1293,6 +1318,7 @@ async function loadSummary(email) {
   renderPlans(list(sum.plans), acc);
   renderQuotes(list(sum.quotes), acc);
   const files = renderFiles(list(sum.files));
+  placeBeeInspect(files, files[0] && files[0].industry_code);
   /* The section breakdown for the newest File. Optional: the list above
      already stands on its own, so a failure (or a 404) here is quiet. */
   const newest = files[0];
@@ -1448,6 +1474,7 @@ function renderDemoCommercial(s) {
     + '<ul class="files">' + fileRow(file) + '</ul>'
     + '<div class="counts">' + Object.keys(COUNT_LABEL).filter((k) => counts[k] != null).map((k) => '<span class="pill ' + COUNT_CLASS[k] + '">' + esc(COUNT_LABEL[k]) + ' ' + esc(counts[k]) + '</span>').join('') + '</div>'
     + sectionBars(s.reference, s.sections, true);
+  placeBeeInspect([file], s.code);
   $('quotes-body').innerHTML = '<p class="note">The sample holds no quotations. In your portal, the quotations prepared for you are listed here with their reference, what they cover, the price and how long they are valid.</p>';
 }
 function renderDemoMedical(s) {

@@ -168,11 +168,12 @@ select c.relname::text as t,
    -- The 047 tables only; 049 adds hsf_consent, hsf_upload and hsf_mco_transfer, checked in hsf_flow_checks.sql,
    -- 052 adds hsf_client_verification and hsf_deletion_request, checked in hsf_launch_checks.sql,
    -- 053 adds hsf_signatory and hsf_signoff_rule, checked in hsf_signoff_checks.sql,
-   -- and 055 adds the five guidance tables (anon may read them on purpose), checked in hsf_guidance_checks.sql.
+   -- 055 adds the five guidance tables (anon may read them on purpose), checked in hsf_guidance_checks.sql,
+   -- and 057 adds hsf_ad_event (service role only, not even authenticated reads it), checked in hsf_ads_checks.sql.
    and c.relname not in ('hsf_consent', 'hsf_upload', 'hsf_mco_transfer', 'hsf_client_verification', 'hsf_deletion_request',
                          'hsf_signatory', 'hsf_signoff_rule',
                          'hsf_guidance_meta', 'hsf_section_guidance', 'hsf_element_guidance', 'hsf_appointment_guidance',
-                         'hsf_class_guidance');
+                         'hsf_class_guidance', 'hsf_ad_event');
 
 insert into hsf_check (name, expected, actual, pass)
 select v.name, v.expected::text, v.actual::text, v.expected = v.actual
