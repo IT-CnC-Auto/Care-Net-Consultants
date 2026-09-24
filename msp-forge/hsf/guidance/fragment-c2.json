@@ -88,7 +88,7 @@
     "Rescue plan and training record for entrants, attendants and rescuers"
    ],
    "why": "Mixing vessels and tanks can hold toxic vapours or too little oxygen, and many deaths are rescuers who went in after a collapsed worker. A signed permit with gas readings proves the space was tested and made safe before entry. Review the register and procedure at least once a year.",
-   "example": "Example: Khumalo Chemicals in Sasolburg keeps a register of nine vessels, and every entry into reactor R3 has a permit signed by the supervisor with the gas reading taken before entry and a named standby attendant.",
+   "example": "Example: Khumalo Chemicals in Sasolburg keeps a register of nine vessels, and every entry into its main reactor has a permit signed by the supervisor with the gas reading taken before entry and a named standby attendant.",
    "common_gaps": [
     "Permits issued without a gas test",
     "No trained standby person outside",
@@ -419,7 +419,7 @@
   "HSF-OV-PETRO-01": {
    "what_to_submit": [
     "Written assessment of whether your site holds hazardous substances above the major hazard threshold, signed by your practitioner",
-    "Where it is a major hazard installation: the risk assessment by an approved inspection authority and the notifications made",
+    "Where it is a major hazard installation: the risk assessment by the approved inspection authority or competent person the governing regulations require, and the notifications made",
     "On site emergency plan and proof it was shared with the local emergency services",
     "Record of information given to neighbours and the public, where required"
    ],
@@ -515,7 +515,7 @@
   "HSF-OV-RETAIL-01": {
    "what_to_submit": [
     "Racking layout plan showing bays and safe load signs",
-    "Racking inspection reports by a competent person, and weekly checks by your own staff",
+    "Racking inspection reports by a competent person, and routine checks by your own staff",
     "Damage register showing damage found and repairs done",
     "Supplier's load ratings for the racking"
    ],
@@ -680,7 +680,7 @@
     "Rescue drill reports"
    ],
    "why": "If a climber is injured or collapses on a tower, suspension in a harness can become fatal quickly, and emergency services may take too long to arrive. The plan and drill records prove the team on site can bring a person down. Review at least once a year and follow the Construction Regulations, 2014 where towers are built.",
-   "example": "Example: Nkosi Tower Services in Nelspruit keeps a rescue plan for monopoles and lattice towers, the monthly rescue kit inspection and a drill report from April 2026 where the team lowered a dummy in under ten minutes.",
+   "example": "Example: Nkosi Tower Services in Mbombela keeps a rescue plan for monopoles and lattice towers, the monthly rescue kit inspection and a drill report from April 2026 where the team lowered a dummy in under ten minutes.",
    "common_gaps": [
     "Relying on the fire brigade for rescue",
     "Rescue kit not on site",
@@ -839,7 +839,7 @@
     "Inspection, test and maintenance records for substations and lines",
     "Certificates of compliance for installations"
    ],
-   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you do not yet have a competent person, Care Net's Recruitment Portal can place and onboard a registered practitioner with the appointment letter your File needs. Review at least once a year.",
+   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you have no competent person for this appointment, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live. Review at least once a year.",
    "example": "Example: Mashaba Solar Farm near Tzaneen keeps its installation register, the appointment letter of its responsible engineer and the annual inspection report for its main substation.",
    "common_gaps": [
     "Contractor work not tested before energising",

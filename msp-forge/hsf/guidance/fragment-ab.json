@@ -192,7 +192,7 @@
     "Copy displayed on site"
    ],
    "why": "The Department must know about construction work before it starts so it can plan inspections. The acknowledgement proves the notification was made. Do this per project, before work begins, as the Construction Regulations, 2014 require.",
-   "example": "Example: Zulu Developments, as client, notifies the Department of the construction of a small office block in Pinetown and files the acknowledgement it received before site establishment.",
+   "example": "Example: Sibiya Builders, principal contractor for a small office block in Pinetown, notifies the Department before work starts and files the acknowledgement it received before site establishment.",
    "common_gaps": [
     "Starting work before the notification is acknowledged",
     "Using a notification from an earlier project",
@@ -264,7 +264,7 @@
     "Record of the monthly check for changes",
     "Notes of what you did about any change"
    ],
-   "why": "The legal register shows you know which laws apply to you and keep track of changes. The File builder draws it from the Care Net kernel for your industry; your section 16(2) assignee checks it every month and records the check.",
+   "why": "The legal register shows you know which laws apply to you and keep track of changes. The File builder draws it from Care Net's legal library for your industry; your section 16(2) assignee checks it every month and records the check.",
    "example": "Example: Ndlovu Agri checks its legal register each month and notes that a new chemical rule affects its crop spraying, with a task to update the spraying procedure.",
    "common_gaps": [
     "A register that has never been dated or reviewed",
@@ -322,7 +322,7 @@
     "Scope of the assignment (sites, departments, duties) attached"
    ],
    "why": "The section 16(2) assignment names the person who carries the chief executive's health and safety duties day to day. It must be in writing, accepted, and clear about scope, or it does not hold. Update it when the person or scope changes.",
-   "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee for its Witbank yard and all its road projects, with her signed acceptance.",
+   "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee for its Emalahleni yard and all its road projects, with her signed acceptance.",
    "common_gaps": [
     "No signed acceptance by the assignee",
     "No scope, so nobody knows which sites the assignee covers",
@@ -394,7 +394,7 @@
   "HSF-B-08": {
    "what_to_submit": [
     "Roles and responsibilities document for each appointment",
-    "Health and safety duties in each job description or kernel job role",
+    "Health and safety duties in each job description",
     "Signed acknowledgement by each role holder"
    ],
    "why": "People can only carry out duties they know they have. This document spells out what each appointee and each job role must do for health and safety, so responsibilities do not fall through the cracks.",
@@ -415,7 +415,7 @@
     "Health and safety training or qualification record"
    ],
    "why": "The section 16(2) assignee carries the chief executive's health and safety duties day to day and is the default owner of the File. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
-   "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee, with her dated acceptance and her health and safety management certificate.",
+   "example": "Example: Ntuli Plant Hire's managing director assigns workshop manager Zodwa Ntuli under section 16(2) for both of its depots, and the File holds her dated acceptance and her health and safety management certificate.",
    "common_gaps": [
     "Assigning a junior person with no authority",
     "Leaving out which sites the assignment covers",
@@ -438,7 +438,7 @@
   },
   "APP-02": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the construction manager it supports",
+    "Signed appointment letter stating the scope, sites and period, and naming the construction manager it supports",
     "Appointee's signed acceptance",
     "Qualifications or experience record"
    ],
@@ -452,10 +452,10 @@
    "what_to_submit": [
     "Signed appointment letter stating the scope, sites and period for the named project",
     "Appointee's signed acceptance",
-    "Current registration certificate with the SACPCMP for the relevant category",
+    "Current SACPCMP registration in the construction health and safety officer category, where the Construction Regulations, 2014 or your client require it",
     "CV showing construction health and safety experience"
    ],
-   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, Care Net's Recruitment Portal can place and onboard a registered practitioner.",
+   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live.",
    "example": "Example: Zulu Developments' principal contractor files the appointment of Nomsa Khoza as construction health and safety officer with a copy of her current SACPCMP registration card.",
    "common_gaps": [
     "Registration that has expired during the project",
@@ -464,7 +464,7 @@
   },
   "APP-04": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the work or area supervised",
+    "Signed appointment letter stating the scope, sites and period, and naming the work or area supervised",
     "Appointee's signed acceptance",
     "Training or experience record for the type of work supervised",
     "Certificate of fitness outcome, if the risk assessment requires one"
@@ -478,7 +478,7 @@
   },
   "APP-05": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period stating which assessments the person may do",
+    "Signed appointment letter stating the scope, sites and period, including which assessments the person may do",
     "Appointee's signed acceptance",
     "Risk assessment training certificate",
     "Examples of risk assessments the person has completed"
@@ -512,7 +512,7 @@
     "Scaffold erection records the person has signed"
    ],
    "why": "The scaffold supervisor controls the erection, alteration and dismantling of scaffolds so they are built safely. A collapsing or badly built scaffold can injure people on it and below it.",
-   "example": "Example: Scaffco Gauteng appoints Lucky Mahlaba to supervise scaffold erection at a shopping centre refurbishment in Boksburg.",
+   "example": "Example: Mahlaba Scaffolding appoints Lucky Mahlaba to supervise scaffold erection at a shopping centre refurbishment in Boksburg.",
    "common_gaps": [
     "Scaffolds erected without a supervisor present"
    ]
@@ -525,7 +525,7 @@
     "Latest scaffold inspection register pages"
    ],
    "why": "The scaffold inspector checks scaffolds before use and at the intervals your risk assessment or the practitioner sets, and after bad weather or changes. The inspection register shows whether the scaffold was safe to use on a given day.",
-   "example": "Example: Scaffco Gauteng's inspector, Ayanda Cele, tags each scaffold after inspection and records it in the register kept in the site office.",
+   "example": "Example: Mahlaba Scaffolding's inspector, Ayanda Cele, tags each scaffold after inspection and records it in the register kept in the site office.",
    "common_gaps": [
     "Inspections not recorded",
     "Scaffold tags not updated after an alteration"
@@ -553,14 +553,14 @@
     "Demolition method statement the person approved"
    ],
    "why": "The demolition supervisor controls demolition work so structures come down in a planned, safe order and nobody is caught by unexpected collapse or hidden hazards such as asbestos.",
-   "example": "Example: Coetzee Demolitions appoints Riaan Coetzee to supervise the demolition of an old warehouse in Port Elizabeth, with the approved method statement on file.",
+   "example": "Example: Coetzee Demolitions appoints Riaan Coetzee to supervise the demolition of an old warehouse in Gqeberha, with the approved method statement on file.",
    "common_gaps": [
     "No survey for hazardous materials before demolition starts"
    ]
   },
   "APP-11": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the temporary works covered",
+    "Signed appointment letter stating the scope, sites and period, and naming the temporary works covered",
     "Appointee's signed acceptance",
     "Engineering qualification and professional registration evidence",
     "Design drawings and calculations signed by the designer"
@@ -586,7 +586,7 @@
   },
   "APP-13": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the machines the operator may use",
+    "Signed appointment letter stating the scope, sites and period, and naming the machines the operator may use",
     "Appointee's signed acceptance",
     "Operator training certificate for each type of machine",
     "Certificate of fitness outcome from the occupational health practitioner"
@@ -613,7 +613,7 @@
   },
   "APP-15": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the installation covered",
+    "Signed appointment letter stating the scope, sites and period, and naming the installation covered",
     "Appointee's signed acceptance",
     "Registration of the electrician or electrical tester with the Department of Employment and Labour, where required",
     "Latest electrical Certificate of Compliance for the installation"
@@ -640,7 +640,7 @@
   "APP-17": {
    "what_to_submit": [
     "Appointment or engagement letter for the inspector or inspection company",
-    "Proof of the inspector's registration with the Engineering Council of South Africa (ECSA)",
+    "Proof of the inspector's registration as a lifting machinery inspector with the Engineering Council of South Africa, and of the inspection company's registration where the regulations require it",
     "Latest load test and inspection certificates for each lifting machine and item of tackle"
    ],
    "why": "Lifting machines and tackle such as chain blocks, slings and cranes must be inspected by a competent person so they do not fail under load. The certificates show each item was safe when last checked, at the intervals the regulations or the practitioner set.",
@@ -652,7 +652,7 @@
   },
   "APP-18": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the lifting machines",
+    "Signed appointment letter stating the scope, sites and period, and naming the lifting machines",
     "Appointee's signed acceptance",
     "Operator training certificate for each type of lifting machine",
     "Certificate of fitness outcome, where the risk assessment requires it"
@@ -666,7 +666,7 @@
   },
   "APP-19": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the machinery covered",
+    "Signed appointment letter stating the scope, sites and period, and naming the machinery covered",
     "Appointee's signed acceptance",
     "Qualification or experience in the machinery supervised",
     "Machinery inspection or maintenance records the person signs"
@@ -679,7 +679,7 @@
   },
   "APP-20": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the pressure equipment",
+    "Signed appointment letter stating the scope, sites and period, and naming the pressure equipment",
     "Appointee's signed acceptance",
     "Qualification or experience record",
     "Latest inspection certificates for pressure vessels such as air receivers and boilers"
@@ -827,7 +827,7 @@
   },
   "APP-31": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the tools",
+    "Signed appointment letter stating the scope, sites and period, and naming the tools",
     "Appointee's signed acceptance",
     "Training certificate for the explosive powered tool type"
    ],
@@ -868,7 +868,7 @@
     "Signed appointment letter stating the scope, sites and period",
     "Appointee's signed acceptance",
     "Asbestos work training record",
-    "Proof that any asbestos removal contractor is registered for asbestos work with the Department of Employment and Labour"
+    "Proof that any asbestos removal contractor is registered for asbestos work, as the governing regulations require"
    ],
    "why": "Asbestos fibres cause fatal lung disease years after exposure. Any work with asbestos must be supervised and controlled, and removal is left to a registered contractor.",
    "example": "Example: Botha Property Trust appoints a supervisor for the removal of an old asbestos cement roof, done by a registered asbestos contractor.",
@@ -908,10 +908,10 @@
     "Signed appointment letter stating the scope, sites and period",
     "Appointee's signed acceptance",
     "Radiation protection training record",
-    "The radiation licence for the equipment or source, issued by the national radiation control authority"
+    "The radiation licence or authorisation for the equipment or source"
    ],
    "why": "Radiation from X ray equipment, gauges and sources harms people you cannot see it affecting. The radiation protection officer controls the licence, dose monitoring and safe use.",
-   "example": "Example: Coetzee Testing Services appoints a radiation protection officer for its industrial X ray equipment and files the licence and the dose records.",
+   "example": "Example: Coetzee Testing Services appoints a radiation protection officer for its industrial X ray equipment and files the licence and the dose monitoring summaries.",
    "common_gaps": [
     "Licence not transferred when equipment is moved to a new site"
    ]
@@ -931,7 +931,7 @@
   },
   "APP-39": {
    "what_to_submit": [
-    "Signed appointment letter stating the scope, sites and period naming the vehicles",
+    "Signed appointment letter stating the scope, sites and period, and naming the vehicles",
     "Appointee's signed acceptance",
     "Copy of the driving licence and professional driving permit (PrDP), with expiry dates",
     "Certificate of fitness outcome from the occupational health practitioner"

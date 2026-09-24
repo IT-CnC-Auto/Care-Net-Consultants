@@ -20,7 +20,7 @@
         "Do the training needs analysis first, from your risk assessment in Section C; it stops you paying for courses nobody needs and missing the ones the work demands.",
         "Build the matrix in one spreadsheet before chasing certificates, then fill the gaps oldest expiry first.",
         "Keep a clear copy of every certificate and licence, front and back, and write the expiry date on the matrix, not only on the card.",
-        "If nobody in your business is competent to assess risk, train or sign competency assessments, ask a sales executive about onboarding a registered Health and Safety practitioner through Care Net's Recruitment Portal."
+        "No registered, competent person in house to assess risk, train people or sign competency assessments? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
       ]
     },
     "E": {
@@ -232,7 +232,7 @@
         "The exposure group list showing who needs each examination"
       ],
       "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner.",
-      "example": "Example: Govender Battery Recyclers in Pietermaritzburg files the lead examination outcome for each of its twelve smelter workers, while the blood results stay with the occupational health practitioner.",
+      "example": "Example: Hendricks Furniture in Atlantis files noise examination outcomes for its machine shop and solvent examination outcomes for its spray team, each linked to a protocol in its Plan, while the test results stay with the occupational health practitioner.",
       "common_gaps": [
         "Examining everyone for everything instead of by exposure",
         "Missing the examination for workers moved into an exposed job",
@@ -276,7 +276,7 @@
         "First aid treatment register"
       ],
       "why": "Someone trained must be able to help an injured person quickly, with a stocked box, on every shift. Your appointed first aider checks the boxes every month, and the treatment register often reveals injuries nobody reported.",
-      "example": "Example: Mahlaba Hardware in Nelspruit has two first aiders per shift; its store manager, Zanele Mthethwa, ticks the box checklist on the last Friday of every month and replaces used plasters and gloves.",
+      "example": "Example: Mahlaba Hardware in Mbombela has two first aiders per shift; its store manager, Zanele Mthethwa, ticks the box checklist on the last Friday of every month and replaces used plasters and gloves.",
       "common_gaps": [
         "First aiders whose certificates have lapsed",
         "Boxes checked but items never replaced",
@@ -555,7 +555,7 @@
         "Link to the confined space permit procedure in Section G"
       ],
       "why": "Confined spaces can hold toxic gas or too little oxygen, and many deaths are would be rescuers, so everyone involved must be trained, including the person standing by outside. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
-      "example": "Example: Hlongwane Water Services in Witbank trains a three person team in confined space entry and rescue before cleaning a municipal reservoir, and files the certificates and drill record.",
+      "example": "Example: Hlongwane Water Services in Emalahleni trains a three person team in confined space entry and rescue before cleaning a municipal reservoir, and files the certificates and drill record.",
       "common_gaps": [
         "Training the entrant but not the standby person",
         "Gas detector training left out"
@@ -689,7 +689,7 @@
         "Content covering hand washing, illness reporting and cross contamination"
       ],
       "why": "Food handlers who do not follow hygiene rules can make customers seriously ill, and your municipal environmental health practitioner will ask for proof of training. Renew it before the certificate expires; where no expiry is printed, refresh it as your risk assessment or the practitioner sets.",
-      "example": "Example: Mabuza Catering in Nelspruit trains its kitchen staff in food hygiene and files the certificates next to their food handling fitness outcomes in Section E.",
+      "example": "Example: Mabuza Catering in Mbombela trains its kitchen staff in food hygiene and files the certificates next to their food handling fitness outcomes in Section E.",
       "common_gaps": [
         "Training kitchen staff but not the people who serve or deliver food"
       ]
@@ -755,7 +755,7 @@
       "why": "Explosives are tightly controlled because misuse can kill many people at once, so only licensed or certificated people may handle, store or use them. Check each licence before any work and keep copies current.",
       "example": "Example: Themba Quarrying near Kuruman files the blasting certificate of its blaster, Andile Mokoena, and the licence for its explosives magazine.",
       "common_gaps": [
-        "Assistants handling explosives with no licence of their own",
+        "Assistants handling explosives without the certificate or direct supervision the rules require",
         "Storage licence not renewed when the magazine moved"
       ]
     },
@@ -801,12 +801,12 @@
       "what_to_submit": [
         "Asbestos examination outcome per person exposed to asbestos",
         "Link to the asbestos work plan or abatement contract",
-        "Exit examination outcome when the person leaves the work"
+        "Exit examination outcome when the person leaves asbestos work, where the Plan sets one"
       ],
-      "why": "Asbestos diseases appear many years after exposure, so people who work with it are examined before, during and at the end of the work. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "why": "Asbestos diseases appear many years after exposure, so people who work with it are examined as the Plan and the OMP set, often including when they leave the work. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
       "example": "Example: Petersen Demolition in Kraaifontein files asbestos fitness outcomes for its removal team before stripping roof sheets from an old factory.",
       "common_gaps": [
-        "No exit examination when the job ends",
+        "No exit examination when the Plan calls for one",
         "Contractors' teams working without outcomes on file"
       ]
     },
@@ -828,7 +828,7 @@
         "The Plan protocol linked to your biological risk assessment"
       ],
       "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Sithebe Waste Management in Hammarsdale files fitness outcomes for its collection crews and a record that each was offered hepatitis B vaccination.",
+      "example": "Example: Nxumalo Veterinary Clinic in Vryheid files fitness outcomes for its animal handlers and a record that each was offered the vaccinations its practitioner recommends.",
       "common_gaps": [
         "Keeping vaccination cards with clinical details in the File"
       ]
@@ -863,8 +863,8 @@
         "Fitness for work at height outcome per person on the fall protection plan",
         "Link to the working at height training record in Section D"
       ],
-      "why": "A dizzy spell, fear of heights or uncontrolled condition can cause a fatal fall, and the Construction Regulations, 2014 expect people working at height to be fit for it. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Zwane Roofing in Kempton Park files a fit outcome for work at height for each roofer before the warehouse reroof starts.",
+      "why": "A dizzy spell or an uncontrolled medical condition can turn a slip at height into a fatal fall, so the Construction Regulations, 2014 expect people who work at height to be certified fit for it. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Zwane Roofing in Kempton Park sends its two new roofers for a work at height fitness assessment before their first day on the roof, and files both fit outcomes.",
       "common_gaps": [
         "Assuming a general certificate covers work at height when it does not say so"
       ]
@@ -875,7 +875,7 @@
         "Link to the confined space training in Section D"
       ],
       "why": "Confined spaces are hot, cramped and may need breathing apparatus, so entrants and rescuers must be fit enough to work and get out safely. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Hlongwane Water Services in Witbank files confined space fitness outcomes for its reservoir team, including the standby rescuer.",
+      "example": "Example: Hlongwane Water Services in Emalahleni files confined space fitness outcomes for its reservoir team, including the standby rescuer.",
       "common_gaps": [
         "Standby rescuers never assessed"
       ]
@@ -897,7 +897,7 @@
         "Illness reporting and exclusion record, as outcome only"
       ],
       "why": "Food handlers who are ill can spread infection to customers, so they must be fit to handle food and report illness before a shift. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Mabuza Catering in Nelspruit files a fit to handle food outcome for each cook and keeps a sign off sheet where staff report stomach illness before shift.",
+      "example": "Example: Mabuza Catering in Mbombela files a fit to handle food outcome for each cook and keeps a sign off sheet where staff report stomach illness before shift.",
       "common_gaps": [
         "Filing medical notes for sick leave instead of the outcome"
       ]
