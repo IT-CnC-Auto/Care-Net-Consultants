@@ -270,3 +270,5 @@ Many companies will be building their first Health and Safety File. Every sectio
 14.3 **Recruitment portal name and address.** The portal is **Bee-Matched** (Care Net Consultants). The future address given, "www.carenetconsultants/recruitment_Bee_Matched.co.za", is not a valid web address as written; recruitmentPortalUrl stays null (WhatsApp fallback) until the exact address is confirmed and live. Visible text says "Care Net's Bee-Matched recruitment portal".
 
 14.4 **Legal decisions** on Bee-Matched placements and the trust account are with the Director and the attorney (hsf/appointments/LEGAL-STRUCTURE-RESEARCH.md); nothing that places people or holds money is built until they decide.
+
+14.5 **Bee-Matched address confirmed** (24/09/2026): `https://www.carenetconsultants.co.za/bee-matched`. Held in vercel/js/cnc-config.js as recruitmentPortalFutureUrl; recruitmentPortalUrl stays null (WhatsApp fallback) until the Director says the page is live, then it takes that value.

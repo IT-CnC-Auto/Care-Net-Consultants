@@ -54,11 +54,15 @@
     /* PENDING (HSF-3): MyClinicOnline portal and single sign on address. */
     mcoPortalUrl: null,
 
-    /* PENDING (contract 12.5): the Care Net's Bee-Matched recruitment portal address is
-       not known. Keep null; never type a guessed address here. Once set,
-       the recruitment call to action opens it with
-       ?source=hsf&need=<signatory|appointment>&industry=<code>. */
+    /* Care Net's Bee-Matched recruitment portal (contract 12.5 and 14.3).
+       The Director confirmed the address on 24/09/2026:
+         https://www.carenetconsultants.co.za/bee-matched
+       It is a future page, so the buttons keep the WhatsApp fallback until it
+       is live. TO GO LIVE: set recruitmentPortalUrl to the address below
+       (copy recruitmentPortalFutureUrl). The call to action then opens it with
+       ?source=hsf&need=<signatory|appointment|auditor>&industry=<code>. */
     recruitmentPortalUrl: null,
+    recruitmentPortalFutureUrl: 'https://www.carenetconsultants.co.za/bee-matched',
 
     /* Prefix for /api/... calls. Empty means the same origin as the page,
        which is what keeps the pages portable into MCO hosting. */
