@@ -74,6 +74,14 @@
     {
       "source": "/build-your-plan",
       "destination": "/shop.html"
+    },
+    {
+      "source": "/icon-src/ms/:file",
+      "destination": "https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/:file"
+    },
+    {
+      "source": "/icon-src/wp/:year/:month/:file",
+      "destination": "https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/:year/:month/:file"
     }
   ]
 }

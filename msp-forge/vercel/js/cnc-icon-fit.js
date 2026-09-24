@@ -1,4 +1,4 @@
-/* cnc-icon-fit.js :: Version 1.0 :: 23 September 2026
+/* cnc-icon-fit.js :: Version 1.1 :: 24 September 2026
    Makes every industry icon fill its box at the same size.
 
    The industry icon SVGs were exported with different amounts of empty space
@@ -12,6 +12,12 @@
    event handler attributes and external references are removed before it
    touches the page. If the fetch fails (for example no CORS on the image host)
    the original <img> stays, so nothing breaks.
+
+   Version 1.1 (24/09/2026): the icon host sends no CORS headers, so the page
+   now reads each icon through its own address (/icon-src/..., a rewrite in
+   vercel.json to the same file), which lets the crop run everywhere. Raster
+   icons (the Plan page industry grid) are cropped the same way on a canvas:
+   the drawn pixels are measured, cut to a square and shown at the full box.
 
    The lasting fix is at the source: the icon set should be re-exported with the
    viewBox tight to the circle (see the asset spec notes). Then this script only
@@ -30,6 +36,18 @@
     var url = img.getAttribute('src') || '';
     img.style.transform = SMALL.test(url) ? 'scale(' + SCALE.toFixed(3) + ')' : '';
     img.style.transformOrigin = 'center';
+  }
+  /* Same origin address for an icon on the development host (see vercel.json
+     rewrites). Anything else is read at its own address. */
+  var HOST = /^https:\/\/pub-05e130c201dd463a8accbcd12eb02d77\.r2\.dev\/(?:medical-surveillance\/Icons\/([^\/?#]+)|wp-content\/uploads\/(\d{4}\/\d{2}\/[^\/?#]+))$/;
+  function local(url) {
+    var m = HOST.exec(url || '');
+    if (!m) return null;
+    return m[1] ? '/icon-src/ms/' + m[1] : '/icon-src/wp/' + m[2];
+  }
+  function fetchText(url) {
+    return fetch(url, { mode: 'cors', credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('icon ' + r.status); return r.text(); });
   }
   var ALLOWED = /^(svg|g|path|circle|ellipse|rect|line|polyline|polygon|defs|lineargradient|radialgradient|stop|clippath|mask|use|symbol|title|desc|style)$/i;
 
@@ -51,8 +69,8 @@
 
   function load(url) {
     if (!cache[url]) {
-      cache[url] = fetch(url, { mode: 'cors', credentials: 'omit' })
-        .then(function (r) { if (!r.ok) throw new Error('icon ' + r.status); return r.text(); })
+      var near = local(url);
+      cache[url] = (near ? fetchText(near).catch(function () { return fetchText(url); }) : fetchText(url))
         .then(function (text) {
           var doc = new DOMParser().parseFromString(text, 'image/svg+xml');
           var svg = doc.documentElement;
@@ -82,13 +100,61 @@
     return cache[url];
   }
 
+  /* Raster icons: read the pixels, find the drawn artwork (anything not
+     transparent and not near white), cut a square around it and show that. */
+  var rasterCache = {};
+  function pixels(src) {
+    return new Promise(function (resolve, reject) {
+      var im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.decoding = 'async';
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { reject(new Error('icon load')); };
+      im.src = src;
+    });
+  }
+  function cropRaster(url) {
+    if (!rasterCache[url]) {
+      var near = local(url);
+      rasterCache[url] = (near ? pixels(near).catch(function () { return pixels(url); }) : pixels(url)).then(function (im) {
+        var w = im.naturalWidth, h = im.naturalHeight;
+        if (!w || !h) throw new Error('no size');
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var cx = c.getContext('2d'); cx.drawImage(im, 0, 0);
+        var d = cx.getImageData(0, 0, w, h).data; // throws when the host blocks reading
+        var x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+          var i = (y * w + x) * 4;
+          if (d[i + 3] < 24) continue;
+          if (d[i] > 244 && d[i + 1] > 244 && d[i + 2] > 244) continue;
+          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+        if (x1 < 0) throw new Error('empty');
+        var bw = x1 - x0 + 1, bh = y1 - y0 + 1, side = Math.max(bw, bh);
+        var out = document.createElement('canvas'); out.width = side; out.height = side;
+        out.getContext('2d').drawImage(c, x0, y0, bw, bh, (side - bw) / 2, (side - bh) / 2, bw, bh);
+        return out.toDataURL('image/png');
+      });
+    }
+    return rasterCache[url];
+  }
+
   function fit(img) {
     if (!img) return;
     prescale(img);
     if (img.dataset.fitIcon === 'scale' || img.dataset.fitDone) return;
     img.dataset.fitDone = '1';
     var url = img.currentSrc || img.src;
-    if (!url || !/\.svg(\?|$)/i.test(url)) return;
+    if (!url || /^data:/i.test(url)) return;
+    if (/\.(webp|png)(\?|$)/i.test(url)) {
+      cropRaster(url).then(function (data) {
+        if ((img.currentSrc || img.src) !== url) return; // changed meanwhile
+        img.dataset.fitSrc = url;
+        img.src = data;
+      }).catch(function () { /* keep the original image */ });
+      return;
+    }
+    if (!/\.svg(\?|$)/i.test(url)) return;
     load(url).then(function (markup) {
       var wrap = document.createElement('span');
       wrap.innerHTML = markup;
@@ -118,7 +184,7 @@
         if (n.matches && n.matches('img[data-fit-icon]')) fit(n);
         else if (n.querySelectorAll) run(n);
       });
-      if (m.type === 'attributes' && m.target.matches && m.target.matches('img[data-fit-icon]')) {
+      if (m.type === 'attributes' && m.target.matches && m.target.matches('img[data-fit-icon]') && !/^data:/i.test(m.target.getAttribute('src') || '')) {
         delete m.target.dataset.fitDone; fit(m.target);
       }
     });

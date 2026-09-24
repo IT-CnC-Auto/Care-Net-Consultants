@@ -41,6 +41,10 @@
           [
             "Work team",
             "Sipho Dlamini (welder), Thabo Nkosi (assistant)"
+          ],
+          [
+            "Fire watch after work stops",
+            "For the period the permit procedure and the risk assessment set; the issuer wrote 14:40 to 15:40 on this permit"
           ]
         ],
         "widths": [
@@ -53,12 +57,7 @@
       "h2": "2. Hazards identified"
     },
     {
-      "bullets": [
-        "Fire or explosion from diesel vapour or residue near the tank",
-        "Sparks and hot slag reaching combustible material",
-        "Arc flash, fumes and hot surfaces",
-        "Electrical shock from the welding set"
-      ]
+      "p": "Fire or explosion from diesel vapour or residue near the tank; sparks and hot slag reaching combustible material; arc flash, fumes and hot surfaces; electrical shock from the welding set."
     },
     {
       "h2": "3. Isolation and preparation"
@@ -149,7 +148,7 @@
       "h2": "5. Fire watch"
     },
     {
-      "p": "**Fire watch:** Mpho Molefe, trained in the use of the extinguishers, stayed at the work area for the whole job with no other duties, and remained after the work stopped for the period the issuer wrote on the permit. Fire watch started 08:00 and ended 15:40 after a final check found no smouldering or hot spots."
+      "p": "**Fire watch:** Mpho Molefe, trained in the use of the extinguishers, stayed at the work area for the whole job with no other duties, and remained after the work stopped for the period the issuer wrote in part 1. Fire watch started 08:00 and ended 15:40 after a final check found no smouldering or hot spots."
     },
     {
       "h2": "6. Personal protective equipment"
@@ -161,26 +160,49 @@
       "h2": "7. Sign on"
     },
     {
-      "p": "I have explained the hazards and controls to the work team; they have signed the permit's team briefing section. The controls in parts 3 to 6 of this permit are in place."
+      "p": "The issuer and receiver confirm that the controls in parts 3 to 6 are in place and that the work team was briefed on the hazards and controls."
     },
     {
-      "sign": [
-        {
-          "role": "Permit issuer",
-          "name": "Johan van Wyk",
-          "date": "12/05/2026 at 07:55"
-        },
-        {
-          "role": "Permit receiver",
-          "name": "Sipho Dlamini",
-          "date": "12/05/2026 at 07:55"
-        },
-        {
-          "role": "Fire watch",
-          "name": "Mpho Molefe",
-          "date": "12/05/2026 at 07:55"
-        }
-      ]
+      "table": {
+        "cols": [
+          "Name",
+          "Role on this permit",
+          "Date and time",
+          "Signature"
+        ],
+        "rows": [
+          [
+            "Johan van Wyk",
+            "Permit issuer",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Sipho Dlamini",
+            "Permit receiver",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Mpho Molefe",
+            "Fire watch",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Thabo Nkosi",
+            "Work team member (briefed)",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ]
+        ],
+        "widths": [
+          24,
+          32,
+          24,
+          20
+        ]
+      }
     },
     {
       "h2": "8. Sign off and hand back"
@@ -219,14 +241,14 @@
     {
       "sign": [
         {
-          "role": "Permit receiver (work complete)",
+          "role": "Permit receiver (work complete; team and tools withdrawn)",
           "name": "Sipho Dlamini",
-          "date": "12/05/2026"
+          "date": "12/05/2026 at 14:40"
         },
         {
           "role": "Permit issuer (permit closed)",
           "name": "Johan van Wyk",
-          "date": "12/05/2026"
+          "date": "12/05/2026 at 15:50"
         }
       ]
     }

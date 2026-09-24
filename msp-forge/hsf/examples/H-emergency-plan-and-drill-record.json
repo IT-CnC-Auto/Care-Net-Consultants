@@ -5,25 +5,13 @@
   "company": "Mossel Bay Cold Storage (Pty) Ltd (fictitious)",
   "blocks": [
     {
-      "h2": "1. Scope"
+      "h2": "1. Scope and emergencies planned for"
     },
     {
-      "p": "This summary covers the Voorbaai depot (fictitious address: 8 Kaap Street, Voorbaai, Mossel Bay): two cold rooms, the blast freezer, the ammonia plant room, the loading dock and the office block. Usually 46 people are on site on day shift and 12 on night shift. The full plan, the site plan and the fire risk assessment are filed with this summary."
+      "p": "This summary covers the Voorbaai depot (fictitious address: 8 Kaap Street, Voorbaai, Mossel Bay): two cold rooms, the blast freezer, the ammonia plant room, the loading dock and the office block, with usually 46 people on day shift and 12 on night shift. It plans for fire, an ammonia release, a person trapped in a cold room or the blast freezer, a serious injury or medical emergency, and a security emergency at the dock. The full plan, the site plan and the fire risk assessment are filed with this summary."
     },
     {
-      "h2": "2. Emergencies planned for"
-    },
-    {
-      "bullets": [
-        "Fire in the office block, loading dock or plant room",
-        "Ammonia release from the refrigeration plant",
-        "Person trapped in a cold room or the blast freezer",
-        "Serious injury or medical emergency",
-        "Security emergency, including armed robbery at the dock"
-      ]
-    },
-    {
-      "h2": "3. Roles"
+      "h2": "2. Roles"
     },
     {
       "table": {
@@ -74,7 +62,7 @@
       }
     },
     {
-      "h2": "4. Assembly points"
+      "h2": "3. Assembly points"
     },
     {
       "table": {
@@ -103,7 +91,7 @@
       }
     },
     {
-      "h2": "5. Emergency contacts"
+      "h2": "4. Emergency contacts"
     },
     {
       "table": {
@@ -144,7 +132,7 @@
       }
     },
     {
-      "h2": "6. Drill record"
+      "h2": "5. Drill record"
     },
     {
       "table": {
@@ -175,7 +163,11 @@
           ],
           [
             "Observers",
-            "Anele Jacobs and Refilwe Mahlangu, registered Health and Safety practitioner (fictitious)"
+            "Refilwe Mahlangu, Health and Safety practitioner registered with SAIOSH (fictitious), with Anele Jacobs, chief emergency controller"
+          ],
+          [
+            "Next drill",
+            "At the interval the emergency plan and the risk assessment set, on night shift so that the night team practises too"
           ]
         ],
         "widths": [
@@ -185,7 +177,7 @@
       }
     },
     {
-      "h2": "6.1 Findings and actions"
+      "h2": "5.1 Findings and actions"
     },
     {
       "table": {
@@ -204,7 +196,7 @@
             "Fit a flashing beacon and sounder inside cold room 2",
             "Mark Arendse",
             "31/05/2026",
-            "Closed 19/05/2026"
+            "Open"
           ],
           [
             "2",
@@ -212,7 +204,7 @@
             "Add AP 2 signs at both exits; marshals carry a loud hailer",
             "Kobus Smit",
             "15/05/2026",
-            "Closed 12/05/2026"
+            "Open"
           ],
           [
             "3",
@@ -220,7 +212,7 @@
             "Security checks every visitor signs in at the gate before entry",
             "Anele Jacobs",
             "30/04/2026",
-            "Closed 28/04/2026"
+            "Open"
           ]
         ],
         "widths": [
@@ -234,9 +226,6 @@
       }
     },
     {
-      "p": "Next drill: at the interval the emergency plan and the risk assessment set, on night shift so that the night team practises too."
-    },
-    {
       "sign": [
         {
           "role": "Chief emergency controller",
@@ -244,9 +233,55 @@
           "date": "24/04/2026"
         },
         {
-          "role": "Health and Safety practitioner (drill observer)",
+          "role": "Health and Safety practitioner registered with SAIOSH (drill observer)",
           "name": "Refilwe Mahlangu",
           "date": "24/04/2026"
+        }
+      ]
+    },
+    {
+      "h2": "5.2 Close out of actions"
+    },
+    {
+      "p": "Recorded after the drill record was signed. Each action was checked on site before it was closed."
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Closed on",
+          "Checked by"
+        ],
+        "rows": [
+          [
+            "3",
+            "28/04/2026",
+            "Anele Jacobs"
+          ],
+          [
+            "2",
+            "12/05/2026",
+            "Anele Jacobs"
+          ],
+          [
+            "1",
+            "19/05/2026",
+            "Anele Jacobs"
+          ]
+        ],
+        "widths": [
+          10,
+          45,
+          45
+        ]
+      }
+    },
+    {
+      "sign": [
+        {
+          "role": "Chief emergency controller (all actions closed)",
+          "name": "Anele Jacobs",
+          "date": "19/05/2026"
         }
       ]
     }

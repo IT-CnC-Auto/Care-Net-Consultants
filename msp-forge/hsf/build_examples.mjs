@@ -28,7 +28,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, Header, Footer, Table, TableRow, TableCell,
-  WidthType, AlignmentType, BorderStyle, ShadingType, HeadingLevel, LevelFormat,
+  WidthType, AlignmentType, BorderStyle, ShadingType, HeadingLevel, LevelFormat, LineRuleType,
 } = require('docx');
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
@@ -44,8 +44,12 @@ const DEEP_RED = '8B0000', CNC_RED = 'C1272D', CHARCOAL = '1E1E1E', LIGHT = 'F2F
 const PAGE = { size: { width: 11906, height: 16838 } };
 const CONTENT_W = 9026;
 
+// The first page header is one paragraph of exact height, so on page 1 the
+// body starts at 425 + 2095 = 2520 DXA from the top; later pages have an empty
+// header and start at the section's 1440 DXA top margin.
+const FIRST_HEADER_LINE = 2520 - 425;
 function makeHeaderWithImage() {
-  return new Header({ children: [new Paragraph({ children: [new ImageRun({
+  return new Header({ children: [new Paragraph({ spacing: { before: 0, after: 0, line: FIRST_HEADER_LINE, lineRule: LineRuleType.EXACT }, children: [new ImageRun({
     type: 'png', data: headerImg, transformation: { width: 768, height: 117 },
     floating: { horizontalPosition: { relative: 'column', offset: -819150 }, verticalPosition: { relative: 'page', offset: 114300 }, behindDocument: true, wrap: { type: 'none' } },
     altText: { title: 'Care Net Consultants Header', description: 'Care Net Consultants letterhead header banner', name: 'header' },
@@ -95,6 +99,7 @@ function table(cols, rows, widthsPct) {
 const spacer = () => new Paragraph({ children: [], spacing: { after: 120 } });
 
 function blockToDocx(b) {
+  if (b.page === true) return [new Paragraph({ pageBreakBefore: true, spacing: { before: 0, after: 0, line: 20, lineRule: LineRuleType.EXACT }, children: [] })];
   if (b.h1) return [h1(b.h1)];
   if (b.h2) return [h2(b.h2)];
   if (b.p) return [body(b.p)];
@@ -120,23 +125,18 @@ const EXAMPLE_LINE = (ex) => new Paragraph({ children: [new TextRun({ text: 'EXA
 
 function build(ex) {
   const blocks = ex.blocks || [];
-  const cut = blocks.findIndex((b) => b.page === true);
-  const first = cut >= 0 ? blocks.slice(0, cut) : blocks;
-  const rest = cut >= 0 ? blocks.slice(cut + 1) : [];
   const title = [EXAMPLE_LINE(ex), h1(ex.title)];
   if (ex.subtitle) title.push(new Paragraph({ children: runs(ex.subtitle, { size: 24, bold: true, color: CHARCOAL }), spacing: { after: 200 } }));
   const closing = { note: 'This example shows the form and content Care Net recommends for this document in a Health and Safety File. Adapt it to your company, your sites and your appointments; your registered Health and Safety practitioner confirms it before your File is released. Not legal advice.' };
+  // One section: header image on the first page only (titlePage), footer on
+  // every page, top 2520 on page 1 (through the first page header) and 1440
+  // after. A {page:true} block starts a new page.
   const sections = [{
-    properties: { titlePage: rest.length === 0, page: { ...PAGE, margin: { top: 2520, right: 1440, bottom: 2700, left: 1440, header: 425, footer: 708 } } },
-    headers: rest.length === 0 ? { first: makeHeaderWithImage(), default: makeEmptyHeader() } : { default: makeHeaderWithImage() },
-    footers: rest.length === 0 ? { first: makeFooter(), default: makeFooter() } : { default: makeFooter() },
-    children: title.concat(first.flatMap(blockToDocx)).concat(rest.length === 0 ? blockToDocx(closing) : []),
+    properties: { titlePage: true, page: { ...PAGE, margin: { top: 1440, right: 1440, bottom: 2700, left: 1440, header: 425, footer: 708 } } },
+    headers: { first: makeHeaderWithImage(), default: makeEmptyHeader() },
+    footers: { first: makeFooter(), default: makeFooter() },
+    children: title.concat(blocks.flatMap(blockToDocx)).concat(blockToDocx(closing)),
   }];
-  if (rest.length) sections.push({
-    properties: { page: { ...PAGE, margin: { top: 1440, right: 1440, bottom: 2700, left: 1440, header: 425, footer: 708 } } },
-    headers: { default: makeEmptyHeader() }, footers: { default: makeFooter() },
-    children: rest.flatMap(blockToDocx).concat(blockToDocx(closing)),
-  });
   return new Document({ creator: 'Care Net Consultants (Pty) Ltd', title: ex.title, description: 'Example document for a Health and Safety File',
     styles: { default: { document: { run: { font: 'Arial', size: 24, color: CHARCOAL } } } }, numbering: NUMBERING, sections });
 }
