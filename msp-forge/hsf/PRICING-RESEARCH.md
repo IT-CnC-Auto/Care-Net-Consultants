@@ -193,3 +193,15 @@ The nearest evidenced proxy is a consultancy practitioner rate of **R750 per hou
 
    The rest are current web prices with no publication date.
 9. **Suggested next step before publishing:** open the SACPCMP 2019 tariff and the 2022 rebase gazette by hand to get the official Pr CHSA percentages and CHSM/CHSO hourly rates. That is the only authoritative basis for item 3.
+
+---
+
+## (e) Care Net client price (Director's instruction, 24/09/2026)
+
+This section records a pricing decision, not research. The market figures above are unchanged.
+
+- A Care Net client's signed off File costs a flat **R4 000,00 excluding VAT** (one File for one site), whatever the industry market average.
+- A company doing **more than 100 occupational medicals a year** with Care Net gets its signed off File free.
+- A site doing **more than 500 medicals a year** with Care Net gets a free signed off File for the whole site and for each of its subcontractors working on that site.
+- A sales executive verifies the declared medicals volume before a free tier is confirmed. Multi site and above threshold construction work is still quoted by a sales executive.
+- The figures live in vercel/hsf/pricing.js (cnc_client_price, free_medicals_threshold, site_and_subcontractors_threshold) and the rule in hsf/BUILD-CONTRACT.md 15.2. It replaces the earlier "market average less 25%" rule of 23/09/2026.

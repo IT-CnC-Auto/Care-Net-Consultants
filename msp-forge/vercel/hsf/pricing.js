@@ -1,7 +1,18 @@
 /* CNC HSF FORGE | sign off pricing for health-and-safety-file.html.
-   Generated 23/09/2026 from hsf/PRICING-RESEARCH.md. Care Net client price = average x (1 - cnc_discount). */
+   Market figures generated 23/09/2026 from hsf/PRICING-RESEARCH.md.
+   Care Net client price (Director's instruction 24/09/2026, contract 15.2): a flat
+   cnc_client_price per signed off File, excluding VAT, whatever the industry average.
+   Free when the company does more than free_medicals_threshold medicals a year with
+   Care Net; above site_and_subcontractors_threshold the whole site and each of its
+   subcontractors on that site get their File free. A sales executive verifies the
+   declared volume before a free tier is confirmed. */
 window.HSF_PRICING={
  "as_at": "23/09/2026",
+ "cnc_client_price": 4000,
+ "cnc_client_price_basis": "excluding VAT, one File for one site",
+ "free_medicals_threshold": 100,
+ "site_and_subcontractors_threshold": 500,
+ "cnc_pricing_as_at": "24/09/2026",
  "cnc_discount": 0.25,
  "method": "Published prices for a Health and Safety File compiled by a safety practitioner, gathered from South African provider websites on 23/09/2026. Automated app files and do it yourself templates are excluded because they are different products. The average is the plain mean of the published prices. Most providers do not state whether VAT is included. No provider publishes a separate price for sign off by a registered Health and Safety Manager, so the compiled File price is the market comparison.",
  "sources": [
