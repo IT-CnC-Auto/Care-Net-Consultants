@@ -146,6 +146,10 @@
   .recruit { flex: 1 1 100%; border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 8px; justify-items: start; }
   .recruit p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
   .recruit .btn { white-space: normal; }
+  .recruit .cred { font-size: 12.5px; }
+  tr.recruitrow td { background: #fff8f8; }
+  tr.recruitrow .recruit { border-top: 0; padding-top: 0; max-width: 70ch; }
+  .vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 </style>
 <!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
      section 6). Consent mode defaults to denied and no tag loads before consent. -->
@@ -358,22 +362,43 @@
     return;
   }
 
-  /* Contract 12.5: while CNC_CONFIG.recruitmentPortalUrl is null (pending) the
-     call to action asks a sales executive on WhatsApp; once set, it opens the
-     Recruitment Portal with source, need and this sample's industry code. */
-  (function () {
+  /* Contract 12.5 and 12.6: while CNC_CONFIG.recruitmentPortalUrl is null
+     (pending) the calls to action ask a sales executive on WhatsApp; once set
+     to an https address, they open the Recruitment Portal with source, need
+     and this sample's industry code. Any other address keeps the fallback. */
+  var RECRUIT = {
+    signatory: { cta: 'recruitment_onboard_hs_practitioner', portal: 'Onboard a registered Health and Safety practitioner' },
+    auditor: { cta: 'recruitment_onboard_auditor', portal: 'Onboard a registered, competent auditor', fallback: 'Ask a sales executive about onboarding a registered, competent auditor' }
+  };
+  function portalHref(need) {
     var base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
-    if (!base) return;
-    Array.prototype.forEach.call(document.querySelectorAll('[data-recruit]'), function (box) {
-      var a = box.querySelector('a[data-cta="recruitment_onboard_hs_practitioner"]');
-      if (!a) return;
-      try {
-        var u = new URL(base, location.href);
-        u.searchParams.set('source', 'hsf'); u.searchParams.set('need', box.getAttribute('data-recruit')); u.searchParams.set('industry', cur[1]);
-        a.href = u.toString(); a.textContent = 'Onboard a registered Health and Safety practitioner';
-      } catch (e) { /* an unusable address keeps the WhatsApp fallback */ }
-    });
-  })();
+    if (!base) return null;
+    try {
+      var u = new URL(base, location.href);
+      if (u.protocol !== 'https:') return null;
+      u.searchParams.set('source', 'hsf'); u.searchParams.set('need', need); u.searchParams.set('industry', cur[1]);
+      return u.toString();
+    } catch (e) { return null; }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-recruit]'), function (box) {
+    var need = box.getAttribute('data-recruit');
+    var a = box.querySelector('a[data-cta="' + (RECRUIT[need] || RECRUIT.signatory).cta + '"]');
+    var href = portalHref(need);
+    if (a && href) { a.href = href; a.textContent = (RECRUIT[need] || RECRUIT.signatory).portal; }
+  });
+  /* Contract 12.6: the auditor credentials Care Net's standard looks for, per
+     regime; described, never invented, and confirmed by the Recruitment Portal. */
+  var AUDITOR_CREDENTIALS = {
+    CONSTR: 'SACPCMP registration in a construction health and safety category.',
+    MINING: 'Experience under the Mine Health and Safety Act regime.',
+    other: 'A registered health and safety practitioner, SACPCMP or SAIOSH, and, where your company runs a certified management system, an ISO 45001 lead auditor qualification.'
+  };
+  function auditorHtml() {
+    var href = portalHref('auditor');
+    return '<div class="recruit" data-recruit="auditor"><p>Your File should be audited by someone whose registration and experience fit your industry. Care Net&rsquo;s Recruitment Portal matches an auditor to your industry and onboards them, with the appointment and engagement letters on record.</p>'
+      + '<p class="cred"><b>What to look for in this industry:</b> ' + esc(AUDITOR_CREDENTIALS[cur[1]] || AUDITOR_CREDENTIALS.other) + ' Care Net&rsquo;s standard, confirmed by the Recruitment Portal for each auditor.</p>'
+      + '<a class="btn ghost" href="' + esc(href || 'https://wa.me/27600702723') + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_auditor">' + esc(href ? RECRUIT.auditor.portal : RECRUIT.auditor.fallback) + '</a></div>';
+  }
 
   document.title = cur[2] + ' sample Health and Safety File | Care Net Consultants';
   $('title').innerHTML = esc(cur[2]) + ': <span class="r">sample Health and Safety File</span>';
@@ -431,7 +456,7 @@
       var k = x.guide.split(':')[0], ref = x.guide.slice(x.guide.indexOf(':') + 1), g = GD[k] && GD[k][ref];
       if (!g) return '';
       var list = function (a) { return '<ul>' + (a || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>'; };
-      return '<details class="guide"><summary>What to submit, why, and an example</summary><div class="gbody">'
+      return '<details class="guide"><summary>What to submit, why, and an example<span class="vh"> for ' + esc(x.name || x.code) + '</span></summary><div class="gbody">'
         + '<b>What to submit</b>' + list(g.what_to_submit)
         + '<b>Why it matters</b><p>' + esc(g.why) + '</p>'
         + '<b>Example</b><p class="ex">' + esc(g.example) + '</p>'
@@ -450,6 +475,7 @@
         if (x.section !== last) {
           var s = d.sections.filter(function (y) { return y.code === x.section; })[0];
           html += '<tr class="sec"><td colspan="8"><span>' + x.section + '</span>' + esc(s.name) + '  |  ' + pct(s.pct) + '</td></tr>';
+          if (x.section === 'N') html += '<tr class="recruitrow"><td colspan="8">' + auditorHtml() + '</td></tr>';
           last = x.section;
         }
         html += '<tr><td class="code">' + esc(x.code) + '</td>'

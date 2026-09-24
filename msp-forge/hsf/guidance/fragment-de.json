@@ -20,18 +20,18 @@
         "Do the training needs analysis first, from your risk assessment in Section C; it stops you paying for courses nobody needs and missing the ones the work demands.",
         "Build the matrix in one spreadsheet before chasing certificates, then fill the gaps oldest expiry first.",
         "Keep a clear copy of every certificate and licence, front and back, and write the expiry date on the matrix, not only on the card.",
-        "No registered, competent person in house to assess risk, train people or sign competency assessments? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+        "No competent person in house to assess risk, train people or sign competency assessments? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
       ]
     },
     "E": {
       "intro": "Section E shows that people are fit for the work and exposures your risk assessment found, and that their health information is handled confidentially. Its key document is your Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner (OMP), and this section is signed off by the OMP only. Care Net screens fitness for work and does not diagnose. Clinical records stay with the occupational health practitioner; your File holds only the outcome for each person: fit, fit with restrictions or unfit.",
       "what_goes_here": [
-        "The released Medical Surveillance Plan signed by the OMP",
+        "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
         "Certificates of fitness per employee: baseline, periodic and exit",
         "Construction, driving permit and mine fitness certificates where that work applies",
         "Outcomes of the specific examinations your exposures call for, such as lead, noise or hazardous chemical agents",
         "A register of fitness restrictions and how each one was reflected in the person's job",
-        "Occupational disease reports, first aid records and a note on how medical records are kept confidential"
+        "Proof that occupational diseases were reported (date, body notified and reference), first aid records and a note on how medical records are kept confidential"
       ],
       "who_usually_holds": [
         "OH",
@@ -39,7 +39,7 @@
         "SHE"
       ],
       "first_file_tips": [
-        "Finish your risk assessment in Section C first; the Medical Surveillance Plan is built from the exposures it finds, not from job titles.",
+        "Finish your risk assessment in Section C first; the Medical Surveillance Plan, a separate Care Net product signed by the OMP, is built from the exposures it finds, not from job titles.",
         "Never upload clinical notes, test results or doctors' letters to your File. Upload only the certificate of fitness showing the outcome.",
         "Put each person's certificate expiry date in your training and medical diary so nobody works past it.",
         "If a certificate says fit with restrictions, record what you changed in the person's job; that record matters as much as the certificate."
@@ -154,12 +154,12 @@
     },
     "HSF-E-01": {
       "what_to_submit": [
-        "The released Medical Surveillance Plan, signed by the OMP",
+        "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
         "The list of exposure groups and jobs the Plan covers",
         "Record of the yearly review and any changes"
       ],
       "why": "The Plan is Section E's key evidence: it sets out which people need which examinations, based on the exposures your risk assessment found. It is a separate Care Net product signed by the occupational medical practitioner, and it is reviewed once a year and whenever your exposures change.",
-      "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan signed by its OMP, covering welders for noise and fumes and stores staff for manual handling only.",
+      "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan, a separate Care Net product signed by its OMP,, covering welders for noise and fumes and stores staff for manual handling only.",
       "common_gaps": [
         "A Plan copied from another company that does not match your exposures",
         "An unsigned draft filed as the final Plan",
@@ -173,7 +173,7 @@
         "Baseline certificate for new starters, periodic certificates, and exit certificates for leavers",
         "The Plan protocol or exposure group each certificate relates to"
       ],
-      "why": "Certificates show that each person was screened against the exposures in the Plan before and while doing the work. Care Net screens fitness for work and does not diagnose; clinical records stay with the occupational health practitioner and only the outcome goes in your File, renewed before each certificate expires.",
+      "why": "Certificates show that each person was screened against the exposures in the Plan before and while doing the work. Care Net screens fitness for work and does not diagnose; clinical records stay with the occupational health practitioner and only the outcome (fit, fit with restrictions or unfit) goes in your File, renewed before each certificate expires.",
       "example": "Example: Molefe Bricks in Brakpan files a baseline certificate for new kiln operator Themba Mahlangu marked fit, and an exit certificate for a retiring operator marked fit, with no clinical notes attached.",
       "common_gaps": [
         "Filing clinical results or doctors' letters in the File",
@@ -188,7 +188,7 @@
         "A site list matching each worker to a current certificate",
         "Certificates for contractors' workers, obtained from each contractor"
       ],
-      "why": "The Construction Regulations, 2014 expect workers on a construction site to have a valid medical certificate of fitness for the work they do, and the principal contractor checks this at the gate. Only the fitness outcome goes in your File; renew each certificate before it expires.",
+      "why": "The Construction Regulations, 2014 expect workers on a construction site to have a valid medical certificate of fitness for the work they do, and the principal contractor checks this at the gate. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Renew each certificate before it expires.",
       "example": "Example: Shabangu Civils in Emalahleni keeps a site list for a road upgrade that ticks each of its 22 workers against a current construction certificate of fitness from Care Net.",
       "common_gaps": [
         "Allowing a worker on site while the certificate is being renewed",
@@ -199,15 +199,15 @@
     },
     "HSF-E-04": {
       "what_to_submit": [
-        "Medical certificate for each professional driving permit holder",
+        "Fitness outcome (fit, fit with restrictions or unfit) for each professional driving permit holder",
         "Copy of the driver's current professional driving permit",
-        "A diary of permit and medical expiry dates"
+        "A diary of permit and fitness expiry dates"
       ],
-      "why": "A professional driving permit needs a medical fitness declaration, and a driver who becomes unfit puts other road users at risk. Keep the fitness outcome with the permit copy and renew both before they expire.",
-      "example": "Example: Venter Bus Services in Bloemfontein files each driver's permit medical from its occupational health provider next to the permit copy, and checks both every month.",
+      "why": "A professional driving permit needs a medical fitness declaration, and a driver who becomes unfit puts other road users at risk. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Keep the fitness outcome with the permit copy and renew both before they expire.",
+      "example": "Example: Venter Bus Services in Bloemfontein files each driver's fitness outcome from its occupational health provider next to the permit copy, and diarises both expiry dates.",
       "common_gaps": [
-        "Keeping the permit copy but not the medical behind it",
-        "No check that relief drivers hold a current permit and medical"
+        "Filing the permit medical form itself instead of the fitness outcome",
+        "No check that relief drivers hold a current permit and fitness outcome"
       ],
       "suggested_department": "OH"
     },
@@ -217,7 +217,7 @@
         "The fitness to perform work procedure or code of practice your mine follows",
         "Access control record linking entry to a current certificate"
       ],
-      "why": "Mines work under the MHSA regime, which has its own fitness requirements and codes of practice, so people must be certified fit before they go underground or into the plant. Only the outcome goes in your File; renew before expiry.",
+      "why": "Mines work under the MHSA regime, which has its own fitness requirements and codes of practice, so people must be certified fit before they go underground or into the plant. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Renew before expiry.",
       "example": "Example: Themba Drilling Contractors, working at a quarry near Kuruman, files a mine certificate of fitness for each driller and checks it against the mine's access card list.",
       "common_gaps": [
         "Using an ordinary certificate of fitness where the mine requires its own",
@@ -231,7 +231,7 @@
         "The Plan protocol that sets the examination and how often it is done",
         "The exposure group list showing who needs each examination"
       ],
-      "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner.",
+      "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner, and only the outcome (fit, fit with restrictions or unfit) goes in your File.",
       "example": "Example: Hendricks Furniture in Atlantis files noise examination outcomes for its machine shop and solvent examination outcomes for its spray team, each linked to a protocol in its Plan, while the test results stay with the occupational health practitioner.",
       "common_gaps": [
         "Examining everyone for everything instead of by exposure",
@@ -257,14 +257,16 @@
     },
     "HSF-E-08": {
       "what_to_submit": [
-        "Occupational disease report and referral letter for each case, showing the outcome without clinical detail",
-        "COIDA claim reference and correspondence",
-        "Actions taken in the workplace after the case"
+        "Proof that each occupational disease was reported: the date, the body notified and the reference number",
+        "COIDA claim reference and the correspondence that carries no clinical detail",
+        "Actions taken in the workplace after the case",
+        "The fitness outcome only (fit, fit with restrictions or unfit); disease reports and referral letters stay with the occupational health practitioner"
       ],
-      "why": "When a disease may be caused by work, it must be reported and the person referred, so they get care and compensation under COIDA and you can fix the cause. Keep a record each time it happens; clinical details stay with the occupational health practitioner.",
-      "example": "Example: Radebe Panelbeaters in Soweto files the report and COIDA claim reference after its OMP refers a spray painter for suspected work related asthma, plus the record of its spray booth ventilation repair.",
+      "why": "When a disease may be caused by work, it must be reported and the person referred, so they get care and compensation under COIDA and you can fix the cause. Keep a record each time it happens; the reports, referral letters and clinical details stay with the occupational health practitioner, and only the fitness outcome goes in your File.",
+      "example": "Example: Radebe Panelbeaters in Soweto files the date its OMP notified a suspected occupational disease, the COIDA claim reference and the record of its spray booth ventilation repair; the report itself stays with the OMP.",
       "common_gaps": [
         "Treating an occupational disease as a private medical matter and not reporting it",
+        "Filing the disease report or referral letter in the File",
         "No follow up on the workplace cause"
       ],
       "suggested_department": "OH"
@@ -291,7 +293,7 @@
         "Your consent and privacy notice for employees",
         "Record of the yearly review"
       ],
-      "why": "Health information is sensitive, and privacy law expects you to hold only what you need, for a clear purpose, and keep it secure. The note shows that clinical records stay with the occupational health practitioner and that your File holds only outcomes; review it once a year.",
+      "why": "Health information is sensitive, and privacy law expects you to hold only what you need, for a clear purpose, and keep it secure. The note shows that clinical records stay with the occupational health practitioner and that your File holds only the outcome (fit, fit with restrictions or unfit); review it once a year.",
       "example": "Example: Petersen Laundry in Paarl files a one page note: certificates of fitness sit in a locked HR cabinet and a restricted folder, clinical records stay with its occupational health provider, and only the HR officer and section 16(2) assignee may see outcomes.",
       "common_gaps": [
         "Medical files kept in the general personnel file",
@@ -359,8 +361,8 @@
     "HSF-OV-HEALTH-01": {
       "what_to_submit": [
         "Written immunisation and post exposure protocol signed by the OMP",
-        "Record per worker that immunisation was offered, and accepted or declined, as an outcome only",
-        "Post exposure incident log, such as needle stick injuries, without clinical detail"
+        "Record per worker that immunisation was offered, with the date; acceptance, refusal and vaccination status stay with the occupational health practitioner",
+        "Post exposure incident log, such as needle stick injuries, showing the date and that it was reported, with follow up kept by the practitioner"
       ],
       "why": "Healthcare and laboratory staff can catch infections from patients and samples, and the Hazardous Biological Agents Regulations expect you to protect them, including a plan for what happens straight after an exposure. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
       "example": "Example: Kekana Family Clinic in Tzaneen files its post exposure protocol, a log showing a nurse's needle stick injury was reported the same day, and each worker's immunisation offer record.",
@@ -470,14 +472,14 @@
     },
     "HSF-OV-WASTE-03": {
       "what_to_submit": [
-        "Immunisation offer record per worker exposed to biological agents, accepted or declined, as outcome only",
+        "Record per worker exposed to biological agents that immunisation was offered, with the date; acceptance, refusal and vaccination status stay with the occupational health practitioner",
         "Your biological agent risk assessment showing who is exposed",
         "Post exposure procedure for needle stick and sewage contact"
       ],
       "why": "Waste and sewage workers can be exposed to blood, needles and sewage, and the Hazardous Biological Agents Regulations expect you to protect them, including offering immunisation the practitioner recommends. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
-      "example": "Example: Sithebe Waste Management in Hammarsdale files an immunisation offer record for each collection worker and its procedure for a needle found in a bag.",
+      "example": "Example: Sithebe Waste Management in Hammarsdale files a dated immunisation offer record for each collection worker and its procedure for a needle found in a bag.",
       "common_gaps": [
-        "Offering immunisation but not recording who declined",
+        "Keeping vaccination cards or refusal forms in the File instead of with the practitioner",
         "No procedure for sharps found in general waste"
       ],
       "suggested_department": "OH"
@@ -700,7 +702,7 @@
         "Date you last checked both were valid",
         "Link to the permit medical in Section E"
       ],
-      "why": "Drivers carrying passengers, dangerous goods or heavy loads need a professional driving permit, and a lapsed permit can void insurance after a crash. Check it before the person drives and renew it before it expires.",
+      "why": "Drivers carrying passengers, dangerous goods or heavy loads need a professional driving permit, and your insurer or client may ask for it after a crash. Check it before the person drives and renew it before it expires.",
       "example": "Example: Mahlangu Couriers in Centurion files permit copies for its eleven truck drivers and checks them on the first of every month.",
       "common_gaps": [
         "A permit copy with no expiry date recorded",
@@ -824,11 +826,11 @@
     "E06-04": {
       "what_to_submit": [
         "Hazardous biological agent examination outcome per exposed worker",
-        "Vaccination offered and accepted or declined, as outcome only",
+        "Record that vaccination was offered to each exposed worker, with the date; whether the worker accepted or declined stays with the occupational health practitioner",
         "The Plan protocol linked to your biological risk assessment"
       ],
-      "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Nxumalo Veterinary Clinic in Vryheid files fitness outcomes for its animal handlers and a record that each was offered the vaccinations its practitioner recommends.",
+      "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records, including vaccination status and whether a worker accepted or declined a vaccination, stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+      "example": "Example: Nxumalo Veterinary Clinic in Vryheid files fitness outcomes for its animal handlers and a dated record that each was offered the vaccinations its practitioner recommends.",
       "common_gaps": [
         "Keeping vaccination cards with clinical details in the File"
       ]
@@ -894,10 +896,10 @@
     "E06-10": {
       "what_to_submit": [
         "Food handler fitness outcome per food handler",
-        "Illness reporting and exclusion record, as outcome only"
+        "Your illness reporting and exclusion procedure, and a record of the dates a food handler was excluded and cleared to return, without the illness"
       ],
       "why": "Food handlers who are ill can spread infection to customers, so they must be fit to handle food and report illness before a shift. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-      "example": "Example: Mabuza Catering in Mbombela files a fit to handle food outcome for each cook and keeps a sign off sheet where staff report stomach illness before shift.",
+      "example": "Example: Mabuza Catering in Mbombela files a fit to handle food outcome for each cook and a record of the dates a cook was kept off shift and cleared to return, with the reason kept by its practitioner.",
       "common_gaps": [
         "Filing medical notes for sick leave instead of the outcome"
       ]

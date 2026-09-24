@@ -185,14 +185,106 @@ test('builder: loads the guidance and carries the panel, disclosures, preselect 
   assert.ok(h.includes('does not replace the advice of your health and safety practitioner'));
   assert.match(h, /is being reviewed by Care Net(\u2019|\\u2019)s Health and Safety Manager/);
   assert.match(h, /const dept = deptChoice\[c\] \|\| sectionDept\(c\);/);
-  assert.ok(h.includes('data-cta="recruitment_onboard_hs_practitioner"'));
+  assert.ok(h.includes("cta: 'recruitment_onboard_hs_practitioner'"));
+  assert.ok(h.includes('data-cta="\' + r.cta + \'"'));
   assert.ok(h.includes(RECRUIT_LINE));
   assert.ok(h.includes(FALLBACK));
   assert.ok(h.includes("'Onboard a registered Health and Safety practitioner'"));
   assert.match(h, /searchParams\.set\('source', 'hsf'\)/);
   assert.match(h, /recruitHtml\('signatory'\)/);
   assert.match(h, /c === 'B' \? recruitHtml\('appointment'\)/);
-  assert.match(h, /st === 'outstanding' && isAppointmentItem\(it\) \? recruitHtml\('appointment'\)/);
+  assert.match(h, /st === 'outstanding' && isAppointmentItem\(it\) \? recruitHtml\('appointment', it\.name \|\| it\.code\)/);
+});
+
+test('builder: disclosures and per item links are named for their item (F1, F2)', () => {
+  const h = read('vercel/hsf-builder.html');
+  assert.match(h, /What to submit, why, and an example<span class="vh"> for ' \+ esc\(it\.name/);
+  assert.match(h, /What goes in this section<span class="vh">: Section ' \+ esc\(c\)/);
+  assert.match(h, /if \(forItem\) return '<p class="recruit-sm">'/);
+  assert.match(h, /<span class="vh"> for ' \+ esc\(forItem\)/);
+  const sample = read('vercel/hsf-sample.html');
+  assert.match(sample, /What to submit, why, and an example<span class="vh"> for ' \+ esc\(x\.name/);
+});
+
+test('builder: the First File checklist and order sit in a disclosure, open until the File has evidence (F3)', () => {
+  const h = read('vercel/hsf-builder.html');
+  assert.match(h, /<details class="ffd" id="ff-steps"' \+ \(open \? ' open' : ''\) \+ '><summary>What to have ready, and the order we recommend<\/summary>/);
+  assert.match(h, /const open = ffOpen\[S\.fileId\] != null \? ffOpen\[S\.fileId\] : !started;/);
+});
+
+const AUDITOR_LINE = 'Your File should be audited by someone whose registration and experience fit your industry. Care Net';
+test('auditor call to action on Section N, the sample File and the staff console (contract 12.6)', () => {
+  const h = read('vercel/hsf-builder.html');
+  assert.ok(h.includes("cta: 'recruitment_onboard_auditor'"));
+  assert.ok(h.includes("'Onboard a registered, competent auditor'"));
+  assert.ok(h.includes("'Ask a sales executive about onboarding a registered, competent auditor'"));
+  assert.ok(h.includes(AUDITOR_LINE));
+  assert.match(h, /c === 'N' \? recruitHtml\('auditor'\)/);
+  assert.match(h, /st === 'outstanding' && isAuditItem\(sec, it\) \? recruitHtml\('auditor', it\.name \|\| it\.code\)/);
+  assert.ok(h.includes('SACPCMP registration in a construction health and safety category.'));
+  assert.ok(h.includes('Experience under the Mine Health and Safety Act regime.'));
+  assert.ok(h.includes('an ISO 45001 lead auditor qualification.'));
+  const sample = read('vercel/hsf-sample.html');
+  assert.ok(sample.includes('data-cta="recruitment_onboard_auditor"'));
+  assert.ok(sample.includes("if (x.section === 'N') html += '<tr class=\"recruitrow\"><td colspan=\"8\">' + auditorHtml()"));
+  const staff = read('vercel/hsf-staff.html');
+  assert.ok(staff.includes('data-cta="recruitment_onboard_auditor" data-need="auditor"'));
+  assert.ok(staff.includes("portalHref('auditor')"));
+});
+
+test('recruitment links: only an https portal address is used (F7)', () => {
+  for (const p of ['vercel/hsf-builder.html', 'vercel/hsf-sample.html', 'vercel/health-and-safety-file.html', 'vercel/hsf-staff.html']) {
+    const h = read(p);
+    assert.match(h, /protocol (?:===|!==) 'https:'/, p);
+  }
+  /* Run the builder's own recruitHref against several addresses. */
+  const h = read('vercel/hsf-builder.html');
+  const a = h.indexOf('const RECRUIT_LINE'), b = h.indexOf('const isAuditItem');
+  const run = (url) => {
+    const ctx = { URL, location: { href: 'https://www.example.test/hsf-builder.html' }, CFG: { recruitmentPortalUrl: url, whatsappUrl: 'https://wa.me/27600702723' },
+      S: { detail: { file: { industryCode: 'CONSTR', regime: 'OHSA' } } }, esc: (x) => String(x) };
+    vm.runInNewContext(h.slice(a, b) + ';this.out = { p: recruitHref("appointment"), a: recruitHref("auditor"), html: recruitHtml("auditor") };', ctx);
+    return ctx.out;
+  };
+  let r = run('https://portal.example.test/onboard');
+  assert.equal(r.p.href, 'https://portal.example.test/onboard?source=hsf&need=appointment&industry=CONSTR');
+  assert.equal(r.a.href, 'https://portal.example.test/onboard?source=hsf&need=auditor&industry=CONSTR');
+  assert.equal(r.a.label, 'Onboard a registered, competent auditor');
+  assert.ok(r.html.includes('SACPCMP registration in a construction health and safety category.'));
+  for (const bad of ['javascript:alert(1)', 'http://portal.example.test/', 'data:text/html,x', null, '']) {
+    r = run(bad);
+    assert.equal(r.p.href, 'https://wa.me/27600702723', String(bad));
+    assert.equal(r.a.label, 'Ask a sales executive about onboarding a registered, competent auditor', String(bad));
+  }
+});
+
+test('guidance: every mention of the Medical Surveillance Plan names it as a separate Care Net product (contract 12.8)', () => {
+  const g = loadGuidance();
+  const walk = (o, p, out) => {
+    if (typeof o === 'string') { if (/Medical Surveillance Plan/.test(o)) out.push([p, o]); }
+    else if (o && typeof o === 'object') for (const k of Object.keys(o)) walk(o[k], p + '.' + k, out);
+    return out;
+  };
+  const hits = walk(g, '', []);
+  assert.ok(hits.length >= 5);
+  for (const [p, t] of hits) assert.match(t, /separate Care Net product/, p);
+});
+
+test('guidance: health information stays with the practitioner (contract 12.2)', () => {
+  const g = loadGuidance();
+  const all = JSON.stringify(g);
+  assert.doesNotMatch(all, /accepted or declined,? as (?:an )?outcome/i);
+  assert.doesNotMatch(all, /not recording who declined/i);
+  assert.doesNotMatch(all, /referral letter for each case/i);
+  assert.doesNotMatch(all, /asthma after|suspected work related asthma/i);
+  assert.doesNotMatch(all, /the governing regulations set/i);
+  assert.doesNotMatch(all, /void insurance/i);
+  assert.doesNotMatch(all, /No registered, competent person in house/);
+  assert.doesNotMatch(all, /"Onboard a registered/);
+  for (const c of ['HSF-E-02', 'HSF-E-03', 'HSF-E-04', 'HSF-E-05', 'HSF-E-06', 'HSF-E-10']) {
+    assert.match(g.elements[c].why, /clinical (?:records|results) stay with the occupational health practitioner/i, c);
+    assert.match(g.elements[c].why, /\(fit, fit with restrictions or unfit\)/, c);
+  }
 });
 
 test('other pages: the recruitment call to action with the WhatsApp fallback', () => {

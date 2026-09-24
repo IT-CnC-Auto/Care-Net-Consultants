@@ -68,7 +68,7 @@
    "what_to_submit": [
     "Ergonomic risk assessment for each production line or workstation",
     "Records of changes made, such as adjustable benches, lifting aids or job rotation",
-    "Staff complaints or early symptom reports and what you did about them",
+    "Reports of discomfort at a workstation and what you changed, without medical detail",
     "Training record on safe lifting and posture"
    ],
    "why": "Repetitive work, awkward reaching and heavy lifting on a line lead to back, shoulder and wrist injuries that build up slowly and cost you in absence and claims. Showing that you assessed each line and acted on it is what an inspector or client will look for. Review it at least once a year and when a line is redesigned.",
@@ -231,10 +231,10 @@
     "Support standards and making safe procedure",
     "Records of falls of ground and near misses"
    ],
-   "why": "Falls of rock underground and highwall or slope failures in pits kill and injure. The code sets how ground is assessed, supported and inspected, and the inspection records show it happens every shift. Review at least once a year and whenever ground conditions change.",
+   "why": "Falls of rock underground and highwall or slope failures in pits kill and injure. The code sets how ground is assessed, supported and inspected, and the inspection records show it happens at the intervals your mine's code of practice or your practitioner sets. Review at least once a year and whenever ground conditions change.",
    "example": "Example: Letsoalo Chrome keeps its fall of ground code, the rock engineer's quarterly report and the shift supervisor's entry examination book for each working place.",
    "common_gaps": [
-    "Inspection books not signed every shift",
+    "Inspection books not signed at the intervals your mine's code of practice or your practitioner sets",
     "Support standards not updated after a fall of ground",
     "Surface slopes left out of the code"
    ],
@@ -259,15 +259,15 @@
   "HSF-OV-MINING-11": {
    "what_to_submit": [
     "List of current and former workers who need benefit examinations for occupational lung disease",
-    "Record of examination dates and referral letters",
+    "Record of examination dates and that each person was referred, with the referral letters kept by the occupational health practitioner",
     "Proof that results were submitted to the certification body where required",
     "Outcomes only in the File; the clinical records stay with the occupational health practitioner"
    ],
    "why": "Mine and works employees exposed to dust are entitled to lung disease examinations and compensation under a separate law for mines and works. Your records show that people were examined and referred so their claims are not lost; Care Net screens fitness and does not diagnose, and the occupational health practitioner keeps the clinical records. Ask your practitioner which examinations apply and review at least once a year.",
-   "example": "Example: Maseko Sand Mining keeps a list of its 14 dust exposed workers, the date each was examined in 2026 and the referral letter for one worker, with the medical details kept by its occupational health practitioner.",
+   "example": "Example: Maseko Sand Mining keeps a list of its 14 dust exposed workers, the date each was examined in 2026 and the date one worker was referred, with the referral letter and medical details kept by its occupational health practitioner.",
    "common_gaps": [
     "Forgetting former workers and exit examinations",
-    "Filing X ray reports in the File",
+    "Filing X ray reports or referral letters in the File",
     "No proof of submission"
    ],
    "suggested_department": "OH"
@@ -308,11 +308,11 @@
    "what_to_submit": [
     "Register of winders, hoists, cranes and lifting equipment",
     "Inspection and test certificates by a competent person",
-    "Daily or shift checks by operators",
+    "Operator checks at the intervals your mine's code of practice or your practitioner sets",
     "Maintenance and defect records"
    ],
-   "why": "Failure of a winder, hoist or lifting device can kill many people at once. The certificates and checks prove each machine has been tested by someone competent and is watched every shift. Review at least once a year and use the inspection intervals your practitioner or engineer sets.",
-   "example": "Example: Letsoalo Chrome keeps its winder register, the engineer's test certificate for the man winder and the daily banksman checklist in the engineering office.",
+   "why": "Failure of a winder, hoist or lifting device can kill many people at once. The certificates and checks prove each machine has been tested by someone competent and is checked at the intervals your mine's code of practice or your practitioner sets. Review at least once a year and use the inspection intervals your practitioner or engineer sets.",
+   "example": "Example: Letsoalo Chrome keeps its winder register, the engineer's test certificate for the man winder and the banksman's checklist in the engineering office.",
    "common_gaps": [
     "Certificates held by the contractor only",
     "Slings and chains not in the register",
@@ -839,7 +839,7 @@
     "Inspection, test and maintenance records for substations and lines",
     "Certificates of compliance for installations"
    ],
-   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you have no competent person for this appointment, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live. Review at least once a year.",
+   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you have no competent person for this appointment, the recruitment button in Section B connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live. Review at least once a year.",
    "example": "Example: Mashaba Solar Farm near Tzaneen keeps its installation register, the appointment letter of its responsible engineer and the annual inspection report for its main substation.",
    "common_gaps": [
     "Contractor work not tested before energising",
@@ -981,7 +981,7 @@
     "Sharps handling procedure",
     "Needle stick injury reporting and post exposure procedure",
     "Puncture resistant glove issue records",
-    "Register of needle stick injuries and follow up, with clinical details kept by the occupational health practitioner"
+    "Register of needle stick injuries showing the date and that each was reported, with follow up and clinical details kept by the occupational health practitioner"
    ],
    "why": "Hidden needles in waste can transmit blood borne diseases. Your procedure and register show staff know how to avoid injuries and what to do immediately afterwards, as the Hazardous Biological Agents Regulations expect. Clinical follow up stays with the occupational health practitioner, and only the outcome goes in the File; review at least once a year.",
    "example": "Example: Shabalala Waste recorded a needle stick injury to a sorter in April 2026, sent her to the clinic within an hour under its procedure, and then switched to thicker gloves.",

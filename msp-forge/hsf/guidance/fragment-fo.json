@@ -21,7 +21,7 @@
     "Give every item a number and mark it on the item itself, so the register and the equipment can be matched in seconds.",
     "Only switch on the registers your activities need; a small office will not need a scaffold or excavation register.",
     "Link each register to the person appointed to inspect it in Section B, so the signature on the page matches the appointment letter.",
-    "No registered, competent person in house to inspect this equipment? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+    "No competent person in house to inspect this equipment? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
    ]
   },
   "G": {
@@ -93,7 +93,7 @@
    "intro": "Section J holds the measurements that prove what your people are actually exposed to: noise, chemicals, dust, lighting, heat, asbestos and lead. These surveys decide which controls, personal protective equipment and medical surveillance you need, so the rest of the File depends on them being current and done by someone competent.",
    "what_goes_here": [
     "An occupational hygiene survey programme listing which surveys are due and when",
-    "Noise surveys with the noise zone map, done by an approved inspection authority",
+    "Noise surveys with the noise zone map, done by a competent person or approved inspection authority, as your practitioner confirms",
     "Hazardous chemical agent exposure monitoring reports",
     "Illumination, ventilation and thermal surveys",
     "Asbestos and lead air monitoring where those hazards exist",
@@ -108,7 +108,7 @@
     "Let your risk assessment in Section C decide which surveys you need; do not buy surveys for hazards you do not have.",
     "Check that each survey report names the approved inspection authority or competent person who did it and the date of measurement.",
     "Read the recommendations page of every report and log each one in your corrective action register.",
-    "No registered, competent person in house to plan these surveys and act on the reports? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+    "No competent person in house to plan these surveys and act on the reports? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
    ]
   },
   "K": {
@@ -189,7 +189,7 @@
     "EXEC"
    ],
    "first_file_tips": [
-    "Your File should be audited by someone whose registration and experience fit your industry. Use the \"Onboard a registered, competent auditor\" button to have Care Net's Recruitment Portal match and onboard one; until the portal address is live, the button puts you in touch with a sales executive.",
+    "Your File should be audited by someone whose registration and experience fit your industry. The auditor recruitment button on this section has Care Net's Recruitment Portal match and onboard one; until the portal address is live, it puts you in touch with a sales executive.",
     "Set two or three measurable objectives for your first year; a short list you track beats a long list you ignore.",
     "Close every audit finding with evidence such as a photo, a new form or a training record, not just a tick.",
     "Hold the first management review after your first audit, so the review has real findings to discuss."
@@ -222,7 +222,7 @@
     "Signed inspection records by your appointed scaffold inspector",
     "Handover or tag record showing each scaffold was declared safe before use"
    ],
-   "why": "Scaffold collapses and falls from scaffolds cause serious injuries and deaths. The register proves each scaffold was inspected by your appointed scaffold inspector, and inspected again after bad weather or any change. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Scaffold collapses and falls from scaffolds cause serious injuries and deaths. The register proves each scaffold was inspected by your appointed scaffold inspector, and inspected again after bad weather or any change. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ndlovu Builders in Polokwane numbers its three mobile scaffolds S1 to S3 and its inspector, Sipho Maluleke, signs a green tag and the register page before the plasterers start each Monday.",
    "common_gaps": [
     "Inspection pages signed by someone who is not the appointed scaffold inspector",
@@ -237,7 +237,7 @@
     "Inspection checklist pages signed by your ladder inspector",
     "A note of damaged ladders removed from use and how they were destroyed"
    ],
-   "why": "Falls from ladders are one of the most common serious injuries in small businesses. The register shows every ladder is inspected and that damaged ones are taken out of service instead of being left for someone to use. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Falls from ladders are one of the most common serious injuries in small businesses. The register shows every ladder is inspected and that damaged ones are taken out of service instead of being left for someone to use. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Pillay Shopfitters in Durban paints a number on each of its eight ladders; in March its ladder inspector, Kevin Naidoo, cuts up ladder L5 after finding a cracked stile and records it in the register.",
    "common_gaps": [
     "Ladders in the storeroom or vehicles never added to the register",
@@ -252,7 +252,7 @@
     "Load test certificates for each machine",
     "Signed inspection records by your lifting machine and lifting tackle inspector"
    ],
-   "why": "A failed chain, sling or hoist can drop a load onto people. The register and certificates prove each item was load tested and inspected, and inspectors and clients ask for the certificates before a crane or hoist is used on site. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A failed chain, sling or hoist can drop a load onto people. The register and certificates prove each item was load tested and inspected, and inspectors and clients ask for the certificates before a crane or hoist is used on site. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Van Wyk Steel in Vanderbijlpark keeps a register of two overhead cranes and forty slings and shackles, each tagged with its safe working load, and files the load test certificate for crane C1 dated 12 May 2026.",
    "common_gaps": [
     "Slings and shackles not individually numbered, so nobody can prove which were inspected",
@@ -267,7 +267,7 @@
     "Inspection and test records signed by the appointed electrical installation supervisor",
     "Record of faulty tools withdrawn and repaired or scrapped"
    ],
-   "why": "Damaged cables and faulty tools cause shocks, burns and fires. The register proves every drill, grinder and extension lead is inspected and that faulty items are tagged out before someone is hurt. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Damaged cables and faulty tools cause shocks, burns and fires. The register proves every drill, grinder and extension lead is inspected and that faulty items are tagged out before someone is hurt. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mthembu Joinery in Pietermaritzburg tags its 22 power tools with coloured labels after each inspection and records that grinder G4 was withdrawn on 8 July 2026 for a damaged plug.",
    "common_gaps": [
     "Workers' own tools brought from home never inspected",
@@ -282,7 +282,7 @@
     "Installation inspection register signed by the electrical installation supervisor",
     "A new certificate or record for every alteration or addition to the installation"
    ],
-   "why": "An unsafe electrical installation can cause electrocution and fire. The certificate proves a registered person tested the installation and the register shows it is inspected; landlords, insurers and inspectors routinely ask for both. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "An unsafe electrical installation can cause electrocution and fire. The certificate proves a registered person tested the installation and the register shows it is inspected; landlords, insurers and inspectors routinely ask for both. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Botha Printing in Bloemfontein files the certificate of compliance issued when it moved into its unit, plus a second certificate for the new press circuit added in April 2026.",
    "common_gaps": [
     "Relying on the landlord's certificate without a copy on file",
@@ -297,7 +297,7 @@
     "Service certificates or labels from the fire equipment service provider",
     "Routine visual check records between services, signed by your fire equipment inspector"
    ],
-   "why": "Fire equipment that is empty, blocked or out of service cannot save anyone. The register shows every item is checked and serviced, and your insurer and the local fire authority may ask to see it. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Fire equipment that is empty, blocked or out of service cannot save anyone. The register shows every item is checked and serviced, and your insurer and the local fire authority may ask to see it. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Khumalo Motors in Soweto lists nine extinguishers and two hose reels on a site plan; its fire equipment inspector, Palesa Mokoena, initials each service label monthly and files the service provider's certificate dated February 2026.",
    "common_gaps": [
     "Extinguishers moved around the site so the register no longer matches",
@@ -312,7 +312,7 @@
     "Exit and escape route signage checklist",
     "Record of faulty lights or signs fixed, with dates"
    ],
-   "why": "When the power fails during an emergency, people need lights and signs to find the way out. These records prove emergency lighting and signage are tested and repaired when they fail. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "When the power fails during an emergency, people need lights and signs to find the way out. These records prove emergency lighting and signage are tested and repaired when they fail. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Molefe Cold Storage in Rustenburg switches off the mains in its warehouse once a month, times the emergency lights and records that the fitting above exit B failed on 4 August 2026 and was replaced two days later.",
    "common_gaps": [
     "Lights tested but the test not written down",
@@ -327,7 +327,7 @@
     "Inspection and test certificates for each vessel",
     "Records of safety valve checks signed by the pressure equipment supervisor"
    ],
-   "why": "Pressure vessels can explode with enough force to kill. The register and certificates prove every vessel was inspected and tested and that its safety devices work. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Pressure vessels can explode with enough force to kill. The register and certificates prove every vessel was inspected and tested and that its safety devices work. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Dlamini Panelbeaters in Mbombela registers one compressor and air receiver, files its inspection certificate from May 2026 and keeps a sticker on the receiver showing the next inspection date.",
    "common_gaps": [
     "Small compressors assumed to be exempt without checking",
@@ -402,7 +402,7 @@
     "The survey or report the inventory is based on",
     "Signed inspection records by the asbestos work supervisor"
    ],
-   "why": "Asbestos fibres released from damaged material cause fatal lung diseases years after exposure. The inventory tells maintenance staff and contractors where asbestos is so nobody drills, cuts or breaks it unprotected, and the inspections track its condition. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Asbestos fibres released from damaged material cause fatal lung diseases years after exposure. The inventory tells maintenance staff and contractors where asbestos is so nobody drills, cuts or breaks it unprotected, and the inspections track its condition. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mofokeng Properties in Kimberley keeps an inventory showing asbestos cement roof sheets on two older buildings, marked on a site plan that every contractor must see before starting work.",
    "common_gaps": [
     "Assuming a building has no asbestos without a survey",
@@ -417,7 +417,7 @@
     "Guarding inspection checklists signed by the general machinery supervisor",
     "Records of missing or damaged guards and when they were replaced"
    ],
-   "why": "Unguarded belts, gears, blades and rollers cause amputations. The register proves guards are checked and that a machine is stopped when a guard is missing. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Unguarded belts, gears, blades and rollers cause amputations. The register proves guards are checked and that a machine is stopped when a guard is missing. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Venter Packaging in Paarl lists 11 machines; its general machinery supervisor, Riaan Venter, finds a missing guard on the slitter in June 2026, locks the machine out and records the repair the next day.",
    "common_gaps": [
     "Guards removed for cleaning and not refitted",
@@ -522,7 +522,7 @@
     "The name and credentials of the person or body that took the measurements",
     "A list of the actions you took on the recommendations"
    ],
-   "why": "Poor lighting causes accidents and eye strain, and poor ventilation or heat makes people ill. Measured results show where conditions need improving and prove you acted. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Poor lighting causes accidents and eye strain, and poor ventilation or heat makes people ill. Measured results show where conditions need improving and prove you acted. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Nkuna Textiles in Hammarsdale has an occupational hygienist measure lighting, ventilation and heat on its weaving floor; the report finds the dye house too hot and an extraction fan is added in May 2026.",
    "common_gaps": [
     "Measurements never taken, only a walk through opinion",
@@ -717,7 +717,7 @@
     "A record for each drill with the date, scenario and time taken to evacuate",
     "Findings from the drill and the corrective actions taken"
    ],
-   "why": "A drill tests whether the plan works in real life: whether alarms are heard, exits are clear and everyone is accounted for. Holding drills and fixing what they reveal is what makes the plan dependable. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A drill tests whether the plan works in real life: whether alarms are heard, exits are clear and everyone is accounted for. Holding drills and fixing what they reveal is what makes the plan dependable. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Pillay Shopfitters in Durban runs an evacuation drill on 14 May 2026; the factory clears in four minutes, but the spray booth staff did not hear the alarm, so a flashing light is added.",
    "common_gaps": [
     "Drills held but not written up",
@@ -777,7 +777,7 @@
     "Records of information given to the public and neighbours who could be affected",
     "Records of liaison with the local emergency services and the municipality"
    ],
-   "why": "A major hazard installation can harm people well beyond its fence. The plan and public information prove that you, your neighbours and the emergency services know what to do if a major incident happens. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A major hazard installation can harm people well beyond its fence. The plan and public information prove that you, your neighbours and the emergency services know what to do if a major incident happens. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Nel Gas Storage in Secunda shares an information leaflet with the nearby school and businesses and files the minutes of its meeting with the municipal disaster management officer.",
    "common_gaps": [
     "Neighbours never told about the hazard",
@@ -878,11 +878,11 @@
   },
   "HSF-I-05": {
    "what_to_submit": [
-    "Employer's reports of accidents and diseases submitted under COIDA",
+    "Employer's reports of accidents and diseases submitted under COIDA, or proof of the date each was submitted",
     "Claim numbers and correspondence for each claim",
     "Proof that the medical reports for each claim were sent, with the reports themselves kept by the occupational health practitioner"
    ],
-   "why": "COIDA lets injured or ill workers receive compensation without suing you, but only if claims are reported and followed through. Your records show each claim was lodged, followed up and closed, and protect you if a claim is disputed. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in the File.",
+   "why": "COIDA lets injured or ill workers receive compensation without suing you, but only if claims are reported and followed through. Your records show each claim was lodged, followed up and closed, and protect you if a claim is disputed. The COIDA papers in your File hold the employer's report, dates, claim numbers and payment letters; medical reports and other clinical records stay with the occupational health practitioner.",
    "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg files the employer's report for a mechanic's burned hand, the claim number from the Compensation Fund and the final payment letter.",
    "common_gaps": [
     "Claims lodged late or not at all",
@@ -894,11 +894,11 @@
   "HSF-I-06": {
    "what_to_submit": [
     "Confirmation from the occupational medical practitioner that a notification was made",
-    "The date and the body notified",
+    "The date, the body notified and its reference number",
     "The outcome of fitness only: fit, fit with restrictions or unfit"
    ],
    "why": "When a work related disease is found, it must be reported so the worker can be compensated and the cause controlled. The clinical records stay with the occupational health practitioner; your File holds only proof that the notification was made and the fitness outcome, never the clinical details.",
-   "example": "Example: Van Wyk Steel in Vanderbijlpark files a letter from its occupational medical practitioner confirming a noise related notification was made on 5 August 2026, with the worker's outcome recorded as fit with restrictions.",
+   "example": "Example: Van Wyk Steel in Vanderbijlpark files a letter from its occupational medical practitioner confirming a notification was made on 5 August 2026, with the body notified, its reference number and the worker's outcome recorded as fit with restrictions.",
    "common_gaps": [
     "Clinical reports or test results filed in the File",
     "Notification left to the employee to arrange",
@@ -938,14 +938,14 @@
   },
   "HSF-J-02": {
    "what_to_submit": [
-    "Noise survey report by an approved inspection authority",
+    "Noise survey report by a competent person or approved inspection authority, as your practitioner confirms",
     "Noise zone map showing where hearing protection is required",
     "Photographs of the noise zone signs in place"
    ],
-   "why": "Loud noise causes permanent hearing loss that cannot be reversed. The survey shows where noise is too high so you can mark noise zones, reduce noise at source and include the right people in medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
-   "example": "Example: Sithole Precast in Brits receives a noise survey from an approved inspection authority in March 2026; the batching plant and block press are marked as noise zones and signs are put up the same week.",
+   "why": "Loud noise causes permanent hearing loss that cannot be reversed. The survey shows where noise is too high so you can mark noise zones, reduce noise at source and include the right people in medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+   "example": "Example: Sithole Precast in Brits receives a noise survey in March 2026 from the surveyor its practitioner confirmed; the batching plant and block press are marked as noise zones and signs are put up the same week.",
    "common_gaps": [
-    "Survey done by someone who is not an approved inspection authority",
+    "Survey done by someone the practitioner has not confirmed as competent for noise surveys",
     "Noise zones on the map but no signs on site",
     "No new survey after new machines were installed"
    ],
@@ -957,7 +957,7 @@
     "The list of chemicals and work areas measured",
     "Your actions on the report's recommendations"
    ],
-   "why": "Some chemicals cause cancer, lung disease or poisoning long after exposure. Monitoring proves whether controls keep exposure low enough under the Hazardous Chemical Agents Regulations, and it decides who needs medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Some chemicals cause cancer, lung disease or poisoning long after exposure. Monitoring proves whether controls keep exposure low enough under the Hazardous Chemical Agents Regulations, and it decides who needs medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Govender Pool Supplies in Umhlanga has an approved inspection authority measure chlorine exposure in the mixing room in June 2026 and adds extraction after the report recommends it.",
    "common_gaps": [
     "Monitoring skipped because the smell seems fine",
@@ -972,7 +972,7 @@
     "The name of the competent person who measured",
     "Record of lighting improvements made"
    ],
-   "why": "Poor lighting causes trips, mistakes with machines and eye strain. The survey shows which areas are too dark so you can fix them. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Poor lighting causes trips, mistakes with machines and eye strain. The survey shows which areas are too dark so you can fix them. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Radebe Call Centre in Midrand has its illumination measured in April 2026, finds the stairwell and two workstations too dark, and replaces the fittings.",
    "common_gaps": [
     "Lighting judged by eye, not measured",
@@ -987,7 +987,7 @@
     "Measurements for hot, cold or poorly ventilated areas",
     "Actions taken, such as fans, extraction, rest breaks or water points"
    ],
-   "why": "Heat, cold and stale air make people ill, and heat stress can kill. The survey shows which areas are a risk and supports controls such as breaks, water and extraction. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Heat, cold and stale air make people ill, and heat stress can kill. The survey shows which areas are a risk and supports controls such as breaks, water and extraction. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Molefe Bakery in Rustenburg has its oven area surveyed in November 2026, finds high heat stress and introduces extra breaks, cool water and an extraction fan.",
    "common_gaps": [
     "Only measured in winter",
@@ -1002,7 +1002,7 @@
     "Clearance certificate before the area is reoccupied, where the governing regulations or your practitioner require one",
     "The name of the approved body that did the monitoring"
    ],
-   "why": "Asbestos fibres are invisible and deadly. Air monitoring proves fibres stayed controlled during the work and that the area was safe before people returned. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Asbestos fibres are invisible and deadly. Air monitoring proves fibres stayed controlled during the work and that the area was safe before people returned. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mofokeng Properties in Kimberley receives air monitoring results and a clearance certificate after its asbestos roof sheets are removed in July 2026, before tenants move back in.",
    "common_gaps": [
     "Area reoccupied before clearance",
@@ -1017,7 +1017,7 @@
     "The list of areas and tasks measured",
     "Actions taken on the results"
    ],
-   "why": "Lead dust and fumes are absorbed into the body and damage the blood, nerves and kidneys. Monitoring shows whether controls under the Lead Regulations work and who needs medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Lead dust and fumes are absorbed into the body and damage the blood, nerves and kidneys. Monitoring shows whether controls under the Lead Regulations work and who needs medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Botha Battery Recycling in Brakpan has lead in air measured in its breaking area in May 2026 and improves local extraction after the report.",
    "common_gaps": [
     "Monitoring only in the main process area, not in cleaning or maintenance",
@@ -1272,7 +1272,7 @@
     "Completed audit reports with findings",
     "The name and credentials of the auditor"
    ],
-   "why": "An internal audit checks that your File matches what really happens on site and finds gaps before an inspector or client does. If nobody suitable is available, the \"Onboard a registered, competent auditor\" button finds one whose registration and experience fit your industry. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "An internal audit checks that your File matches what really happens on site and finds gaps before an inspector or client does. If nobody suitable is available, the auditor recruitment button on Section N finds one whose registration and experience fit your industry. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ndlovu Builders in Polokwane schedules two internal audits for 2026; the June audit by a registered practitioner finds three expired certificates and two missing permits.",
    "common_gaps": [
     "Audits done by the person who wrote the documents",

@@ -18,7 +18,7 @@
       "first_file_tips": [
         "Start with one honest baseline risk assessment walked on the floor with your supervisors and a health and safety representative; the other items build on it.",
         "Only switch on the activity plans for work you really do, and mark the rest not applicable with a short written reason.",
-        "Every assessment needs a named, competent assessor and a signature. No registered, competent person in house to sign your risk assessments? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive.",
+        "Every assessment needs a named, competent assessor and a signature. No competent person in house to sign your risk assessments? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live.",
         "Keep the last superseded version of each assessment when you revise it, so you can show how your controls improved."
       ]
     }
@@ -234,7 +234,7 @@
         "Action plan with changes made (lifting aids, workstation adjustments)",
         "Risk assessor's signature and date"
       ],
-      "why": "Back, neck and upper limb injuries from lifting, awkward postures and repetitive work are a leading cause of lost time. An ergonomic risk assessment identifies the tasks that strain people and records what you changed. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "Back, neck and upper limb injuries from lifting, awkward postures and repetitive work are a leading cause of lost time. An ergonomic risk assessment identifies the tasks that strain people and records what you changed. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Jacobs Fruit Packers assessed its packing line on 14 January 2026, raised the packing tables and introduced job rotation; the assessment is signed by its risk assessor Marlize Jacobs.",
       "common_gaps": [
         "Only looking at office chairs and ignoring manual handling",
@@ -245,12 +245,12 @@
     },
     "HSF-C-15": {
       "what_to_submit": [
-        "Noise survey and noise risk assessment by a competent person",
+        "Noise survey and noise risk assessment by a competent person or approved inspection authority, as your practitioner confirms",
         "Noise zone map with signage",
         "Appointment letter of the noise zone controller",
         "Hearing protection issue records"
       ],
-      "why": "Noise damage to hearing is permanent and builds up slowly. The survey shows where noise is high enough to need zoning and hearing protection, and it decides who needs hearing tests through your medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "Noise damage to hearing is permanent and builds up slowly. The survey shows where noise is high enough to need zoning and hearing protection, and it decides who needs hearing tests through your medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Dube Steel Fabricators in Newcastle had a noise survey done on 8 February 2026, marked the press shop as a noise zone with signs at every entrance, and appointed foreman Bongani Dube as noise zone controller.",
       "common_gaps": [
         "Relying on an old survey after new machinery was installed",
@@ -266,7 +266,7 @@
         "Air monitoring results where required",
         "Appointment letter of the person who controls hazardous chemical agents"
       ],
-      "why": "The Hazardous Chemical Agents Regulations require you to assess how workers are exposed to the chemicals you use, store or produce and to control that exposure. The assessment also decides who needs medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "The Hazardous Chemical Agents Regulations require you to assess how workers are exposed to the chemicals you use, store or produce and to control that exposure. The assessment also decides who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Aloe Coatings in Pietermaritzburg keeps a chemical exposure assessment for its spray booth, backed by air monitoring results from 19 March 2026 and a chemical inventory with safety data sheets for every product.",
       "common_gaps": [
         "Safety data sheets missing or older than the product on the shelf",
@@ -282,7 +282,7 @@
         "Appointment letter of the asbestos work supervisor",
         "Records of any asbestos removal by a registered contractor"
       ],
-      "why": "Asbestos fibres cause fatal lung disease decades after exposure, and old roofs, ceilings, pipes and floor tiles often contain it. The inventory and management plan show you know where it is and that nobody will disturb it without controls. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "Asbestos fibres cause fatal lung disease decades after exposure, and old roofs, ceilings, pipes and floor tiles often contain it. The inventory and management plan show you know where it is and that nobody will disturb it without controls. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Venter Mill Holdings in Bloemfontein keeps an asbestos inventory showing asbestos cement roof sheets on two old sheds, with a management plan dated 5 February 2026 that forbids drilling or cutting without its asbestos work supervisor's approval.",
       "common_gaps": [
         "Assuming a building is asbestos free because nobody has checked",
@@ -298,7 +298,7 @@
         "Appointment letter of the lead work supervisor",
         "Hygiene facilities and clothing arrangements"
       ],
-      "why": "The Lead Regulations require you to assess exposure where people work with lead, for example in battery work, soldering, some paints and smelting. Lead builds up in the body, so the assessment decides the controls and who needs medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "The Lead Regulations require you to assess exposure where people work with lead, for example in battery work, soldering, some paints and smelting. Lead builds up in the body, so the assessment decides the controls and who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Ngema Battery Recyclers in Benoni completed a lead risk assessment on 17 June 2026 covering its breaking and smelting areas, with air monitoring results and a separate clean change room for workers.",
       "common_gaps": [
         "Workers eating or smoking in lead areas",
@@ -314,7 +314,7 @@
         "Control measures such as vaccination offers, PPE and cleaning procedures",
         "Risk assessor's signature and date"
       ],
-      "why": "The Hazardous Biological Agents Regulations require you to assess exposure to germs such as bacteria, viruses and fungi, for example in healthcare, sewage, waste and animal work, and the assessment decides the controls and any medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "The Hazardous Biological Agents Regulations require you to assess exposure to germs such as bacteria, viruses and fungi, for example in healthcare, sewage, waste and animal work, and the assessment decides the controls and any medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Mthethwa Waste Services assessed its refuse collection teams on 21 January 2026 for exposure to sewage and sharps, and recorded controls including gloves, wash stations and an offer of hepatitis B vaccination.",
       "common_gaps": [
         "Treating biological risk as only a healthcare problem",
@@ -346,7 +346,7 @@
         "On site emergency plan linked to the assessment",
         "Proof of the notifications the governing regulations require, including to the local emergency services"
       ],
-      "why": "Where you hold large quantities of dangerous substances, a fire, explosion or toxic release can harm your workers and the community around you. The major hazard installation risk assessment sets out what could happen and how you will prevent and respond to it. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "Where you hold large quantities of dangerous substances, a fire, explosion or toxic release can harm your workers and the community around you. The major hazard installation risk assessment sets out what could happen and how you will prevent and respond to it. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Indlovu Gas Storage in Richards Bay commissioned a major hazard installation risk assessment on 10 April 2026 for its LPG storage, and shared the emergency plan with the local fire services.",
       "common_gaps": [
         "Not checking whether stock levels reach the major hazard installation thresholds",
@@ -362,7 +362,7 @@
         "Control measures and who is affected",
         "Assessor's signature and date"
       ],
-      "why": "Heat, cold, poor lighting, stale indoor air, vibrating tools and sources such as lasers or welding arcs can all harm health over time. This assessment shows you looked at each one that applies to your workplace. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+      "why": "Heat, cold, poor lighting, stale indoor air, vibrating tools and sources such as lasers or welding arcs can all harm health over time. This assessment shows you looked at each one that applies to your workplace. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
       "example": "Example: Ramaano Brickworks in Polokwane assessed kiln heat, dust in indoor air and hand arm vibration from jackhammers on 25 February 2026, and introduced water stations, rest cycles and anti vibration gloves.",
       "common_gaps": [
         "Only assessing noise and ignoring other physical agents",
@@ -868,11 +868,11 @@
       "what_to_submit": [
         "Sharps and healthcare risk waste procedure",
         "Waste manifests or collection certificates from the licensed waste contractor",
-        "Needlestick injury register and follow up records",
+        "Needlestick injury register showing the date, the place and that each injury was reported, with follow up records kept by the occupational health practitioner",
         "Container supply and placement records"
       ],
-      "why": "Needlestick injuries can transmit HIV and hepatitis, and poorly handled healthcare waste harms staff, waste workers and the public; this record shows waste is separated, contained and removed safely. Clinical follow up records stay with the occupational health practitioner; only the outcome goes in your File. Review it every year.",
-      "example": "Example: The fictitious Ikhaya Care Clinic in Soweto keeps monthly collection certificates from its healthcare waste contractor and a needlestick register, with the last incident reported on 9 July 2026 and followed up.",
+      "why": "Needlestick injuries can transmit HIV and hepatitis, and poorly handled healthcare waste harms staff, waste workers and the public; this record shows waste is separated, contained and removed safely. Clinical follow up records stay with the occupational health practitioner; only the fitness outcome (fit, fit with restrictions or unfit) goes in your File. Review it every year.",
+      "example": "Example: The fictitious Ikhaya Care Clinic in Soweto keeps monthly collection certificates from its healthcare waste contractor and a needlestick register, with the last incident reported on 9 July 2026 and the follow up left to its practitioner.",
       "common_gaps": [
         "Sharps containers overfilled",
         "No collection certificates to prove proper disposal",

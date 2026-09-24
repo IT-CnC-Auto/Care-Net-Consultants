@@ -26,7 +26,7 @@
    },
    {
     "section": "E",
-    "reason": "The Medical Surveillance Plan follows from the exposures found in Section C. Only certificates of fitness (the outcome) go in the File; clinical records stay with the occupational health practitioner."
+    "reason": "Your Medical Surveillance Plan, a separate Care Net product signed by the OMP, follows from the exposures found in Section C. Only certificates of fitness (the outcome) go in the File; clinical records stay with the occupational health practitioner."
    },
    {
     "section": "K",
@@ -76,7 +76,7 @@
    "List the work you do that carries higher risk, for example work at height, machinery, chemicals, driving, construction or confined spaces.",
    "Collect what you already have (old appointment letters, training certificates, inspection records, incident reports) and scan it as PDF; it saves time even if some of it needs updating.",
    "Keep medical files out of the File: ask your occupational health practitioner for certificates of fitness only.",
-   "Check whether you have a registered, competent health and safety practitioner to guide and sign the File. No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+   "Check whether you have a registered, competent health and safety practitioner to guide and sign the File. No suitable person in house? The recruitment button in Section B and on the File header takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
   ]
  },
  "sections": {
@@ -122,7 +122,7 @@
    "first_file_tips": [
     "An appointment is only complete when the letter is signed by the company, signed in acceptance by the appointee, and backed by proof of competence such as a certificate or registration.",
     "Use one appointment letter per person per role, and update it when the person or the scope changes.",
-    "No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+    "No suitable person in house? The recruitment button on this section and on the File header takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
    ]
   }
  },
@@ -194,7 +194,7 @@
    "why": "The Department must know about construction work before it starts so it can plan inspections. The acknowledgement proves the notification was made. Do this per project, before work begins, as the Construction Regulations, 2014 require.",
    "example": "Example: Sibiya Builders, principal contractor for a small office block in Pinetown, notifies the Department before work starts and files the acknowledgement it received before site establishment.",
    "common_gaps": [
-    "Starting work before the notification is acknowledged",
+    "Starting work before the notification was submitted",
     "Using a notification from an earlier project",
     "Not displaying the notification on site"
    ],
@@ -321,7 +321,7 @@
     "Written acceptance signed by the assignee",
     "Scope of the assignment (sites, departments, duties) attached"
    ],
-   "why": "The section 16(2) assignment names the person who carries the chief executive's health and safety duties day to day. It must be in writing, accepted, and clear about scope, or it does not hold. Update it when the person or scope changes.",
+   "why": "The section 16(2) assignment gives a named person specific health and safety duties to carry out day to day; the chief executive stays responsible. Putting it in writing, with the assignee's acceptance and a clear scope, is good practice that makes the assignment easy to defend. Update it when the person or scope changes.",
    "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee for its Emalahleni yard and all its road projects, with her signed acceptance.",
    "common_gaps": [
     "No signed acceptance by the assignee",
@@ -414,7 +414,7 @@
     "Proof that the assignee has the authority and resources to act (job title, reporting line)",
     "Health and safety training or qualification record"
    ],
-   "why": "The section 16(2) assignee carries the chief executive's health and safety duties day to day and is the default owner of the File. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
+   "why": "The section 16(2) assignee is given specific health and safety duties to carry out day to day and is the default owner of the File, while the chief executive stays responsible. A signed letter with a clear scope and the assignee's written acceptance is good practice that makes the assignment easy to defend. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
    "example": "Example: Ntuli Plant Hire's managing director assigns workshop manager Zodwa Ntuli under section 16(2) for both of its depots, and the File holds her dated acceptance and her health and safety management certificate.",
    "common_gaps": [
     "Assigning a junior person with no authority",
@@ -455,7 +455,7 @@
     "Current SACPCMP registration in the construction health and safety officer category, where the Construction Regulations, 2014 or your client require it",
     "CV showing construction health and safety experience"
    ],
-   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live.",
+   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, the recruitment button on this appointment connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live.",
    "example": "Example: Zulu Developments' principal contractor files the appointment of Nomsa Khoza as construction health and safety officer with a copy of her current SACPCMP registration card.",
    "common_gaps": [
     "Registration that has expired during the project",

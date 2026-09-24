@@ -26,7 +26,7 @@
    },
    {
     "section": "E",
-    "reason": "The Medical Surveillance Plan follows from the exposures found in Section C. Only certificates of fitness (the outcome) go in the File; clinical records stay with the occupational health practitioner."
+    "reason": "Your Medical Surveillance Plan, a separate Care Net product signed by the OMP, follows from the exposures found in Section C. Only certificates of fitness (the outcome) go in the File; clinical records stay with the occupational health practitioner."
    },
    {
     "section": "K",
@@ -76,7 +76,7 @@
    "List the work you do that carries higher risk, for example work at height, machinery, chemicals, driving, construction or confined spaces.",
    "Collect what you already have (old appointment letters, training certificates, inspection records, incident reports) and scan it as PDF; it saves time even if some of it needs updating.",
    "Keep medical files out of the File: ask your occupational health practitioner for certificates of fitness only.",
-   "Check whether you have a registered, competent health and safety practitioner to guide and sign the File. No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+   "Check whether you have a registered, competent health and safety practitioner to guide and sign the File. No suitable person in house? The recruitment button in Section B and on the File header takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
   ]
  },
  "sections": {
@@ -122,7 +122,7 @@
    "first_file_tips": [
     "An appointment is only complete when the letter is signed by the company, signed in acceptance by the appointee, and backed by proof of competence such as a certificate or registration.",
     "Use one appointment letter per person per role, and update it when the person or the scope changes.",
-    "No suitable person in house? The \"Onboard a registered Health and Safety practitioner\" button takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
+    "No suitable person in house? The recruitment button on this section and on the File header takes you to Care Net's Recruitment Portal (or to a sales executive until the portal address is live), which places and onboards a registered, competent practitioner with the appointment and engagement letters your File needs."
    ]
   },
   "C": {
@@ -143,7 +143,7 @@
    "first_file_tips": [
     "Start with one honest baseline risk assessment walked on the floor with your supervisors and a health and safety representative; the other items build on it.",
     "Only switch on the activity plans for work you really do, and mark the rest not applicable with a short written reason.",
-    "Every assessment needs a named, competent assessor and a signature. No registered, competent person in house to sign your risk assessments? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive.",
+    "Every assessment needs a named, competent assessor and a signature. No competent person in house to sign your risk assessments? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live.",
     "Keep the last superseded version of each assessment when you revise it, so you can show how your controls improved."
    ]
   },
@@ -167,18 +167,18 @@
     "Do the training needs analysis first, from your risk assessment in Section C; it stops you paying for courses nobody needs and missing the ones the work demands.",
     "Build the matrix in one spreadsheet before chasing certificates, then fill the gaps oldest expiry first.",
     "Keep a clear copy of every certificate and licence, front and back, and write the expiry date on the matrix, not only on the card.",
-    "No registered, competent person in house to assess risk, train people or sign competency assessments? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+    "No competent person in house to assess risk, train people or sign competency assessments? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
    ]
   },
   "E": {
    "intro": "Section E shows that people are fit for the work and exposures your risk assessment found, and that their health information is handled confidentially. Its key document is your Medical Surveillance Plan, a separate Care Net product signed by the occupational medical practitioner (OMP), and this section is signed off by the OMP only. Care Net screens fitness for work and does not diagnose. Clinical records stay with the occupational health practitioner; your File holds only the outcome for each person: fit, fit with restrictions or unfit.",
    "what_goes_here": [
-    "The released Medical Surveillance Plan signed by the OMP",
+    "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
     "Certificates of fitness per employee: baseline, periodic and exit",
     "Construction, driving permit and mine fitness certificates where that work applies",
     "Outcomes of the specific examinations your exposures call for, such as lead, noise or hazardous chemical agents",
     "A register of fitness restrictions and how each one was reflected in the person's job",
-    "Occupational disease reports, first aid records and a note on how medical records are kept confidential"
+    "Proof that occupational diseases were reported (date, body notified and reference), first aid records and a note on how medical records are kept confidential"
    ],
    "who_usually_holds": [
     "OH",
@@ -186,7 +186,7 @@
     "SHE"
    ],
    "first_file_tips": [
-    "Finish your risk assessment in Section C first; the Medical Surveillance Plan is built from the exposures it finds, not from job titles.",
+    "Finish your risk assessment in Section C first; the Medical Surveillance Plan, a separate Care Net product signed by the OMP, is built from the exposures it finds, not from job titles.",
     "Never upload clinical notes, test results or doctors' letters to your File. Upload only the certificate of fitness showing the outcome.",
     "Put each person's certificate expiry date in your training and medical diary so nobody works past it.",
     "If a certificate says fit with restrictions, record what you changed in the person's job; that record matters as much as the certificate."
@@ -213,7 +213,7 @@
     "Give every item a number and mark it on the item itself, so the register and the equipment can be matched in seconds.",
     "Only switch on the registers your activities need; a small office will not need a scaffold or excavation register.",
     "Link each register to the person appointed to inspect it in Section B, so the signature on the page matches the appointment letter.",
-    "No registered, competent person in house to inspect this equipment? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+    "No competent person in house to inspect this equipment? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
    ]
   },
   "G": {
@@ -285,7 +285,7 @@
    "intro": "Section J holds the measurements that prove what your people are actually exposed to: noise, chemicals, dust, lighting, heat, asbestos and lead. These surveys decide which controls, personal protective equipment and medical surveillance you need, so the rest of the File depends on them being current and done by someone competent.",
    "what_goes_here": [
     "An occupational hygiene survey programme listing which surveys are due and when",
-    "Noise surveys with the noise zone map, done by an approved inspection authority",
+    "Noise surveys with the noise zone map, done by a competent person or approved inspection authority, as your practitioner confirms",
     "Hazardous chemical agent exposure monitoring reports",
     "Illumination, ventilation and thermal surveys",
     "Asbestos and lead air monitoring where those hazards exist",
@@ -300,7 +300,7 @@
     "Let your risk assessment in Section C decide which surveys you need; do not buy surveys for hazards you do not have.",
     "Check that each survey report names the approved inspection authority or competent person who did it and the date of measurement.",
     "Read the recommendations page of every report and log each one in your corrective action register.",
-    "No registered, competent person in house to plan these surveys and act on the reports? Use the \"Onboard a registered Health and Safety practitioner\" button: Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs. Until the portal address is live, the button puts you in touch with a sales executive."
+    "No competent person in house to plan these surveys and act on the reports? Care Net's Recruitment Portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live."
    ]
   },
   "K": {
@@ -381,7 +381,7 @@
     "EXEC"
    ],
    "first_file_tips": [
-    "Your File should be audited by someone whose registration and experience fit your industry. Use the \"Onboard a registered, competent auditor\" button to have Care Net's Recruitment Portal match and onboard one; until the portal address is live, the button puts you in touch with a sales executive.",
+    "Your File should be audited by someone whose registration and experience fit your industry. The auditor recruitment button on this section has Care Net's Recruitment Portal match and onboard one; until the portal address is live, it puts you in touch with a sales executive.",
     "Set two or three measurable objectives for your first year; a short list you track beats a long list you ignore.",
     "Close every audit finding with evidence such as a photo, a new form or a training record, not just a tick.",
     "Hold the first management review after your first audit, so the review has real findings to discuss."
@@ -475,7 +475,7 @@
    "why": "The Department must know about construction work before it starts so it can plan inspections. The acknowledgement proves the notification was made. Do this per project, before work begins, as the Construction Regulations, 2014 require.",
    "example": "Example: Sibiya Builders, principal contractor for a small office block in Pinetown, notifies the Department before work starts and files the acknowledgement it received before site establishment.",
    "common_gaps": [
-    "Starting work before the notification is acknowledged",
+    "Starting work before the notification was submitted",
     "Using a notification from an earlier project",
     "Not displaying the notification on site"
    ],
@@ -602,7 +602,7 @@
     "Written acceptance signed by the assignee",
     "Scope of the assignment (sites, departments, duties) attached"
    ],
-   "why": "The section 16(2) assignment names the person who carries the chief executive's health and safety duties day to day. It must be in writing, accepted, and clear about scope, or it does not hold. Update it when the person or scope changes.",
+   "why": "The section 16(2) assignment gives a named person specific health and safety duties to carry out day to day; the chief executive stays responsible. Putting it in writing, with the assignee's acceptance and a clear scope, is good practice that makes the assignment easy to defend. Update it when the person or scope changes.",
    "example": "Example: Mahlangu Civils keeps a signed letter appointing Thandi Nkosi as its section 16(2) assignee for its Emalahleni yard and all its road projects, with her signed acceptance.",
    "common_gaps": [
     "No signed acceptance by the assignee",
@@ -896,7 +896,7 @@
     "Action plan with changes made (lifting aids, workstation adjustments)",
     "Risk assessor's signature and date"
    ],
-   "why": "Back, neck and upper limb injuries from lifting, awkward postures and repetitive work are a leading cause of lost time. An ergonomic risk assessment identifies the tasks that strain people and records what you changed. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "Back, neck and upper limb injuries from lifting, awkward postures and repetitive work are a leading cause of lost time. An ergonomic risk assessment identifies the tasks that strain people and records what you changed. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Jacobs Fruit Packers assessed its packing line on 14 January 2026, raised the packing tables and introduced job rotation; the assessment is signed by its risk assessor Marlize Jacobs.",
    "common_gaps": [
     "Only looking at office chairs and ignoring manual handling",
@@ -907,12 +907,12 @@
   },
   "HSF-C-15": {
    "what_to_submit": [
-    "Noise survey and noise risk assessment by a competent person",
+    "Noise survey and noise risk assessment by a competent person or approved inspection authority, as your practitioner confirms",
     "Noise zone map with signage",
     "Appointment letter of the noise zone controller",
     "Hearing protection issue records"
    ],
-   "why": "Noise damage to hearing is permanent and builds up slowly. The survey shows where noise is high enough to need zoning and hearing protection, and it decides who needs hearing tests through your medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "Noise damage to hearing is permanent and builds up slowly. The survey shows where noise is high enough to need zoning and hearing protection, and it decides who needs hearing tests through your medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Dube Steel Fabricators in Newcastle had a noise survey done on 8 February 2026, marked the press shop as a noise zone with signs at every entrance, and appointed foreman Bongani Dube as noise zone controller.",
    "common_gaps": [
     "Relying on an old survey after new machinery was installed",
@@ -928,7 +928,7 @@
     "Air monitoring results where required",
     "Appointment letter of the person who controls hazardous chemical agents"
    ],
-   "why": "The Hazardous Chemical Agents Regulations require you to assess how workers are exposed to the chemicals you use, store or produce and to control that exposure. The assessment also decides who needs medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "The Hazardous Chemical Agents Regulations require you to assess how workers are exposed to the chemicals you use, store or produce and to control that exposure. The assessment also decides who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Aloe Coatings in Pietermaritzburg keeps a chemical exposure assessment for its spray booth, backed by air monitoring results from 19 March 2026 and a chemical inventory with safety data sheets for every product.",
    "common_gaps": [
     "Safety data sheets missing or older than the product on the shelf",
@@ -944,7 +944,7 @@
     "Appointment letter of the asbestos work supervisor",
     "Records of any asbestos removal by a registered contractor"
    ],
-   "why": "Asbestos fibres cause fatal lung disease decades after exposure, and old roofs, ceilings, pipes and floor tiles often contain it. The inventory and management plan show you know where it is and that nobody will disturb it without controls. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "Asbestos fibres cause fatal lung disease decades after exposure, and old roofs, ceilings, pipes and floor tiles often contain it. The inventory and management plan show you know where it is and that nobody will disturb it without controls. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Venter Mill Holdings in Bloemfontein keeps an asbestos inventory showing asbestos cement roof sheets on two old sheds, with a management plan dated 5 February 2026 that forbids drilling or cutting without its asbestos work supervisor's approval.",
    "common_gaps": [
     "Assuming a building is asbestos free because nobody has checked",
@@ -960,7 +960,7 @@
     "Appointment letter of the lead work supervisor",
     "Hygiene facilities and clothing arrangements"
    ],
-   "why": "The Lead Regulations require you to assess exposure where people work with lead, for example in battery work, soldering, some paints and smelting. Lead builds up in the body, so the assessment decides the controls and who needs medical surveillance. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "The Lead Regulations require you to assess exposure where people work with lead, for example in battery work, soldering, some paints and smelting. Lead builds up in the body, so the assessment decides the controls and who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ngema Battery Recyclers in Benoni completed a lead risk assessment on 17 June 2026 covering its breaking and smelting areas, with air monitoring results and a separate clean change room for workers.",
    "common_gaps": [
     "Workers eating or smoking in lead areas",
@@ -976,7 +976,7 @@
     "Control measures such as vaccination offers, PPE and cleaning procedures",
     "Risk assessor's signature and date"
    ],
-   "why": "The Hazardous Biological Agents Regulations require you to assess exposure to germs such as bacteria, viruses and fungi, for example in healthcare, sewage, waste and animal work, and the assessment decides the controls and any medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "The Hazardous Biological Agents Regulations require you to assess exposure to germs such as bacteria, viruses and fungi, for example in healthcare, sewage, waste and animal work, and the assessment decides the controls and any medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mthethwa Waste Services assessed its refuse collection teams on 21 January 2026 for exposure to sewage and sharps, and recorded controls including gloves, wash stations and an offer of hepatitis B vaccination.",
    "common_gaps": [
     "Treating biological risk as only a healthcare problem",
@@ -1008,7 +1008,7 @@
     "On site emergency plan linked to the assessment",
     "Proof of the notifications the governing regulations require, including to the local emergency services"
    ],
-   "why": "Where you hold large quantities of dangerous substances, a fire, explosion or toxic release can harm your workers and the community around you. The major hazard installation risk assessment sets out what could happen and how you will prevent and respond to it. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "Where you hold large quantities of dangerous substances, a fire, explosion or toxic release can harm your workers and the community around you. The major hazard installation risk assessment sets out what could happen and how you will prevent and respond to it. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Indlovu Gas Storage in Richards Bay commissioned a major hazard installation risk assessment on 10 April 2026 for its LPG storage, and shared the emergency plan with the local fire services.",
    "common_gaps": [
     "Not checking whether stock levels reach the major hazard installation thresholds",
@@ -1024,7 +1024,7 @@
     "Control measures and who is affected",
     "Assessor's signature and date"
    ],
-   "why": "Heat, cold, poor lighting, stale indoor air, vibrating tools and sources such as lasers or welding arcs can all harm health over time. This assessment shows you looked at each one that applies to your workplace. Review it as the governing regulations set; until Care Net confirms that interval, as your risk assessment or the practitioner sets.",
+   "why": "Heat, cold, poor lighting, stale indoor air, vibrating tools and sources such as lasers or welding arcs can all harm health over time. This assessment shows you looked at each one that applies to your workplace. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ramaano Brickworks in Polokwane assessed kiln heat, dust in indoor air and hand arm vibration from jackhammers on 25 February 2026, and introduced water stations, rest cycles and anti vibration gloves.",
    "common_gaps": [
     "Only assessing noise and ignoring other physical agents",
@@ -1140,12 +1140,12 @@
   },
   "HSF-E-01": {
    "what_to_submit": [
-    "The released Medical Surveillance Plan, signed by the OMP",
+    "The released Medical Surveillance Plan, a separate Care Net product signed by the OMP",
     "The list of exposure groups and jobs the Plan covers",
     "Record of the yearly review and any changes"
    ],
    "why": "The Plan is Section E's key evidence: it sets out which people need which examinations, based on the exposures your risk assessment found. It is a separate Care Net product signed by the occupational medical practitioner, and it is reviewed once a year and whenever your exposures change.",
-   "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan signed by its OMP, covering welders for noise and fumes and stores staff for manual handling only.",
+   "example": "Example: Ndlovu Engineering in Middelburg files its Medical Surveillance Plan, a separate Care Net product signed by its OMP,, covering welders for noise and fumes and stores staff for manual handling only.",
    "common_gaps": [
     "A Plan copied from another company that does not match your exposures",
     "An unsigned draft filed as the final Plan",
@@ -1159,7 +1159,7 @@
     "Baseline certificate for new starters, periodic certificates, and exit certificates for leavers",
     "The Plan protocol or exposure group each certificate relates to"
    ],
-   "why": "Certificates show that each person was screened against the exposures in the Plan before and while doing the work. Care Net screens fitness for work and does not diagnose; clinical records stay with the occupational health practitioner and only the outcome goes in your File, renewed before each certificate expires.",
+   "why": "Certificates show that each person was screened against the exposures in the Plan before and while doing the work. Care Net screens fitness for work and does not diagnose; clinical records stay with the occupational health practitioner and only the outcome (fit, fit with restrictions or unfit) goes in your File, renewed before each certificate expires.",
    "example": "Example: Molefe Bricks in Brakpan files a baseline certificate for new kiln operator Themba Mahlangu marked fit, and an exit certificate for a retiring operator marked fit, with no clinical notes attached.",
    "common_gaps": [
     "Filing clinical results or doctors' letters in the File",
@@ -1174,7 +1174,7 @@
     "A site list matching each worker to a current certificate",
     "Certificates for contractors' workers, obtained from each contractor"
    ],
-   "why": "The Construction Regulations, 2014 expect workers on a construction site to have a valid medical certificate of fitness for the work they do, and the principal contractor checks this at the gate. Only the fitness outcome goes in your File; renew each certificate before it expires.",
+   "why": "The Construction Regulations, 2014 expect workers on a construction site to have a valid medical certificate of fitness for the work they do, and the principal contractor checks this at the gate. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Renew each certificate before it expires.",
    "example": "Example: Shabangu Civils in Emalahleni keeps a site list for a road upgrade that ticks each of its 22 workers against a current construction certificate of fitness from Care Net.",
    "common_gaps": [
     "Allowing a worker on site while the certificate is being renewed",
@@ -1185,15 +1185,15 @@
   },
   "HSF-E-04": {
    "what_to_submit": [
-    "Medical certificate for each professional driving permit holder",
+    "Fitness outcome (fit, fit with restrictions or unfit) for each professional driving permit holder",
     "Copy of the driver's current professional driving permit",
-    "A diary of permit and medical expiry dates"
+    "A diary of permit and fitness expiry dates"
    ],
-   "why": "A professional driving permit needs a medical fitness declaration, and a driver who becomes unfit puts other road users at risk. Keep the fitness outcome with the permit copy and renew both before they expire.",
-   "example": "Example: Venter Bus Services in Bloemfontein files each driver's permit medical from its occupational health provider next to the permit copy, and checks both every month.",
+   "why": "A professional driving permit needs a medical fitness declaration, and a driver who becomes unfit puts other road users at risk. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Keep the fitness outcome with the permit copy and renew both before they expire.",
+   "example": "Example: Venter Bus Services in Bloemfontein files each driver's fitness outcome from its occupational health provider next to the permit copy, and diarises both expiry dates.",
    "common_gaps": [
-    "Keeping the permit copy but not the medical behind it",
-    "No check that relief drivers hold a current permit and medical"
+    "Filing the permit medical form itself instead of the fitness outcome",
+    "No check that relief drivers hold a current permit and fitness outcome"
    ],
    "suggested_department": "OH"
   },
@@ -1203,7 +1203,7 @@
     "The fitness to perform work procedure or code of practice your mine follows",
     "Access control record linking entry to a current certificate"
    ],
-   "why": "Mines work under the MHSA regime, which has its own fitness requirements and codes of practice, so people must be certified fit before they go underground or into the plant. Only the outcome goes in your File; renew before expiry.",
+   "why": "Mines work under the MHSA regime, which has its own fitness requirements and codes of practice, so people must be certified fit before they go underground or into the plant. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Renew before expiry.",
    "example": "Example: Themba Drilling Contractors, working at a quarry near Kuruman, files a mine certificate of fitness for each driller and checks it against the mine's access card list.",
    "common_gaps": [
     "Using an ordinary certificate of fitness where the mine requires its own",
@@ -1217,7 +1217,7 @@
     "The Plan protocol that sets the examination and how often it is done",
     "The exposure group list showing who needs each examination"
    ],
-   "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner.",
+   "why": "Certain exposures, such as lead, asbestos, hazardous chemical agents, biological agents or noise, come with their own examinations, and people must stay fit for them while exposed. The timing follows the applicable regulation and your Plan, as the OMP sets; clinical results stay with the occupational health practitioner, and only the outcome (fit, fit with restrictions or unfit) goes in your File.",
    "example": "Example: Hendricks Furniture in Atlantis files noise examination outcomes for its machine shop and solvent examination outcomes for its spray team, each linked to a protocol in its Plan, while the test results stay with the occupational health practitioner.",
    "common_gaps": [
     "Examining everyone for everything instead of by exposure",
@@ -1243,14 +1243,16 @@
   },
   "HSF-E-08": {
    "what_to_submit": [
-    "Occupational disease report and referral letter for each case, showing the outcome without clinical detail",
-    "COIDA claim reference and correspondence",
-    "Actions taken in the workplace after the case"
+    "Proof that each occupational disease was reported: the date, the body notified and the reference number",
+    "COIDA claim reference and the correspondence that carries no clinical detail",
+    "Actions taken in the workplace after the case",
+    "The fitness outcome only (fit, fit with restrictions or unfit); disease reports and referral letters stay with the occupational health practitioner"
    ],
-   "why": "When a disease may be caused by work, it must be reported and the person referred, so they get care and compensation under COIDA and you can fix the cause. Keep a record each time it happens; clinical details stay with the occupational health practitioner.",
-   "example": "Example: Radebe Panelbeaters in Soweto files the report and COIDA claim reference after its OMP refers a spray painter for suspected work related asthma, plus the record of its spray booth ventilation repair.",
+   "why": "When a disease may be caused by work, it must be reported and the person referred, so they get care and compensation under COIDA and you can fix the cause. Keep a record each time it happens; the reports, referral letters and clinical details stay with the occupational health practitioner, and only the fitness outcome goes in your File.",
+   "example": "Example: Radebe Panelbeaters in Soweto files the date its OMP notified a suspected occupational disease, the COIDA claim reference and the record of its spray booth ventilation repair; the report itself stays with the OMP.",
    "common_gaps": [
     "Treating an occupational disease as a private medical matter and not reporting it",
+    "Filing the disease report or referral letter in the File",
     "No follow up on the workplace cause"
    ],
    "suggested_department": "OH"
@@ -1277,7 +1279,7 @@
     "Your consent and privacy notice for employees",
     "Record of the yearly review"
    ],
-   "why": "Health information is sensitive, and privacy law expects you to hold only what you need, for a clear purpose, and keep it secure. The note shows that clinical records stay with the occupational health practitioner and that your File holds only outcomes; review it once a year.",
+   "why": "Health information is sensitive, and privacy law expects you to hold only what you need, for a clear purpose, and keep it secure. The note shows that clinical records stay with the occupational health practitioner and that your File holds only the outcome (fit, fit with restrictions or unfit); review it once a year.",
    "example": "Example: Petersen Laundry in Paarl files a one page note: certificates of fitness sit in a locked HR cabinet and a restricted folder, clinical records stay with its occupational health provider, and only the HR officer and section 16(2) assignee may see outcomes.",
    "common_gaps": [
     "Medical files kept in the general personnel file",
@@ -1292,7 +1294,7 @@
     "Signed inspection records by your appointed scaffold inspector",
     "Handover or tag record showing each scaffold was declared safe before use"
    ],
-   "why": "Scaffold collapses and falls from scaffolds cause serious injuries and deaths. The register proves each scaffold was inspected by your appointed scaffold inspector, and inspected again after bad weather or any change. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Scaffold collapses and falls from scaffolds cause serious injuries and deaths. The register proves each scaffold was inspected by your appointed scaffold inspector, and inspected again after bad weather or any change. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ndlovu Builders in Polokwane numbers its three mobile scaffolds S1 to S3 and its inspector, Sipho Maluleke, signs a green tag and the register page before the plasterers start each Monday.",
    "common_gaps": [
     "Inspection pages signed by someone who is not the appointed scaffold inspector",
@@ -1307,7 +1309,7 @@
     "Inspection checklist pages signed by your ladder inspector",
     "A note of damaged ladders removed from use and how they were destroyed"
    ],
-   "why": "Falls from ladders are one of the most common serious injuries in small businesses. The register shows every ladder is inspected and that damaged ones are taken out of service instead of being left for someone to use. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Falls from ladders are one of the most common serious injuries in small businesses. The register shows every ladder is inspected and that damaged ones are taken out of service instead of being left for someone to use. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Pillay Shopfitters in Durban paints a number on each of its eight ladders; in March its ladder inspector, Kevin Naidoo, cuts up ladder L5 after finding a cracked stile and records it in the register.",
    "common_gaps": [
     "Ladders in the storeroom or vehicles never added to the register",
@@ -1322,7 +1324,7 @@
     "Load test certificates for each machine",
     "Signed inspection records by your lifting machine and lifting tackle inspector"
    ],
-   "why": "A failed chain, sling or hoist can drop a load onto people. The register and certificates prove each item was load tested and inspected, and inspectors and clients ask for the certificates before a crane or hoist is used on site. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A failed chain, sling or hoist can drop a load onto people. The register and certificates prove each item was load tested and inspected, and inspectors and clients ask for the certificates before a crane or hoist is used on site. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Van Wyk Steel in Vanderbijlpark keeps a register of two overhead cranes and forty slings and shackles, each tagged with its safe working load, and files the load test certificate for crane C1 dated 12 May 2026.",
    "common_gaps": [
     "Slings and shackles not individually numbered, so nobody can prove which were inspected",
@@ -1337,7 +1339,7 @@
     "Inspection and test records signed by the appointed electrical installation supervisor",
     "Record of faulty tools withdrawn and repaired or scrapped"
    ],
-   "why": "Damaged cables and faulty tools cause shocks, burns and fires. The register proves every drill, grinder and extension lead is inspected and that faulty items are tagged out before someone is hurt. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Damaged cables and faulty tools cause shocks, burns and fires. The register proves every drill, grinder and extension lead is inspected and that faulty items are tagged out before someone is hurt. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mthembu Joinery in Pietermaritzburg tags its 22 power tools with coloured labels after each inspection and records that grinder G4 was withdrawn on 8 July 2026 for a damaged plug.",
    "common_gaps": [
     "Workers' own tools brought from home never inspected",
@@ -1352,7 +1354,7 @@
     "Installation inspection register signed by the electrical installation supervisor",
     "A new certificate or record for every alteration or addition to the installation"
    ],
-   "why": "An unsafe electrical installation can cause electrocution and fire. The certificate proves a registered person tested the installation and the register shows it is inspected; landlords, insurers and inspectors routinely ask for both. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "An unsafe electrical installation can cause electrocution and fire. The certificate proves a registered person tested the installation and the register shows it is inspected; landlords, insurers and inspectors routinely ask for both. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Botha Printing in Bloemfontein files the certificate of compliance issued when it moved into its unit, plus a second certificate for the new press circuit added in April 2026.",
    "common_gaps": [
     "Relying on the landlord's certificate without a copy on file",
@@ -1367,7 +1369,7 @@
     "Service certificates or labels from the fire equipment service provider",
     "Routine visual check records between services, signed by your fire equipment inspector"
    ],
-   "why": "Fire equipment that is empty, blocked or out of service cannot save anyone. The register shows every item is checked and serviced, and your insurer and the local fire authority may ask to see it. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Fire equipment that is empty, blocked or out of service cannot save anyone. The register shows every item is checked and serviced, and your insurer and the local fire authority may ask to see it. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Khumalo Motors in Soweto lists nine extinguishers and two hose reels on a site plan; its fire equipment inspector, Palesa Mokoena, initials each service label monthly and files the service provider's certificate dated February 2026.",
    "common_gaps": [
     "Extinguishers moved around the site so the register no longer matches",
@@ -1382,7 +1384,7 @@
     "Exit and escape route signage checklist",
     "Record of faulty lights or signs fixed, with dates"
    ],
-   "why": "When the power fails during an emergency, people need lights and signs to find the way out. These records prove emergency lighting and signage are tested and repaired when they fail. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "When the power fails during an emergency, people need lights and signs to find the way out. These records prove emergency lighting and signage are tested and repaired when they fail. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Molefe Cold Storage in Rustenburg switches off the mains in its warehouse once a month, times the emergency lights and records that the fitting above exit B failed on 4 August 2026 and was replaced two days later.",
    "common_gaps": [
     "Lights tested but the test not written down",
@@ -1397,7 +1399,7 @@
     "Inspection and test certificates for each vessel",
     "Records of safety valve checks signed by the pressure equipment supervisor"
    ],
-   "why": "Pressure vessels can explode with enough force to kill. The register and certificates prove every vessel was inspected and tested and that its safety devices work. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Pressure vessels can explode with enough force to kill. The register and certificates prove every vessel was inspected and tested and that its safety devices work. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Dlamini Panelbeaters in Mbombela registers one compressor and air receiver, files its inspection certificate from May 2026 and keeps a sticker on the receiver showing the next inspection date.",
    "common_gaps": [
     "Small compressors assumed to be exempt without checking",
@@ -1472,7 +1474,7 @@
     "The survey or report the inventory is based on",
     "Signed inspection records by the asbestos work supervisor"
    ],
-   "why": "Asbestos fibres released from damaged material cause fatal lung diseases years after exposure. The inventory tells maintenance staff and contractors where asbestos is so nobody drills, cuts or breaks it unprotected, and the inspections track its condition. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Asbestos fibres released from damaged material cause fatal lung diseases years after exposure. The inventory tells maintenance staff and contractors where asbestos is so nobody drills, cuts or breaks it unprotected, and the inspections track its condition. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mofokeng Properties in Kimberley keeps an inventory showing asbestos cement roof sheets on two older buildings, marked on a site plan that every contractor must see before starting work.",
    "common_gaps": [
     "Assuming a building has no asbestos without a survey",
@@ -1487,7 +1489,7 @@
     "Guarding inspection checklists signed by the general machinery supervisor",
     "Records of missing or damaged guards and when they were replaced"
    ],
-   "why": "Unguarded belts, gears, blades and rollers cause amputations. The register proves guards are checked and that a machine is stopped when a guard is missing. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Unguarded belts, gears, blades and rollers cause amputations. The register proves guards are checked and that a machine is stopped when a guard is missing. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Venter Packaging in Paarl lists 11 machines; its general machinery supervisor, Riaan Venter, finds a missing guard on the slitter in June 2026, locks the machine out and records the repair the next day.",
    "common_gaps": [
     "Guards removed for cleaning and not refitted",
@@ -1592,7 +1594,7 @@
     "The name and credentials of the person or body that took the measurements",
     "A list of the actions you took on the recommendations"
    ],
-   "why": "Poor lighting causes accidents and eye strain, and poor ventilation or heat makes people ill. Measured results show where conditions need improving and prove you acted. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Poor lighting causes accidents and eye strain, and poor ventilation or heat makes people ill. Measured results show where conditions need improving and prove you acted. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Nkuna Textiles in Hammarsdale has an occupational hygienist measure lighting, ventilation and heat on its weaving floor; the report finds the dye house too hot and an extraction fan is added in May 2026.",
    "common_gaps": [
     "Measurements never taken, only a walk through opinion",
@@ -1787,7 +1789,7 @@
     "A record for each drill with the date, scenario and time taken to evacuate",
     "Findings from the drill and the corrective actions taken"
    ],
-   "why": "A drill tests whether the plan works in real life: whether alarms are heard, exits are clear and everyone is accounted for. Holding drills and fixing what they reveal is what makes the plan dependable. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A drill tests whether the plan works in real life: whether alarms are heard, exits are clear and everyone is accounted for. Holding drills and fixing what they reveal is what makes the plan dependable. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Pillay Shopfitters in Durban runs an evacuation drill on 14 May 2026; the factory clears in four minutes, but the spray booth staff did not hear the alarm, so a flashing light is added.",
    "common_gaps": [
     "Drills held but not written up",
@@ -1847,7 +1849,7 @@
     "Records of information given to the public and neighbours who could be affected",
     "Records of liaison with the local emergency services and the municipality"
    ],
-   "why": "A major hazard installation can harm people well beyond its fence. The plan and public information prove that you, your neighbours and the emergency services know what to do if a major incident happens. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "A major hazard installation can harm people well beyond its fence. The plan and public information prove that you, your neighbours and the emergency services know what to do if a major incident happens. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Nel Gas Storage in Secunda shares an information leaflet with the nearby school and businesses and files the minutes of its meeting with the municipal disaster management officer.",
    "common_gaps": [
     "Neighbours never told about the hazard",
@@ -1948,11 +1950,11 @@
   },
   "HSF-I-05": {
    "what_to_submit": [
-    "Employer's reports of accidents and diseases submitted under COIDA",
+    "Employer's reports of accidents and diseases submitted under COIDA, or proof of the date each was submitted",
     "Claim numbers and correspondence for each claim",
     "Proof that the medical reports for each claim were sent, with the reports themselves kept by the occupational health practitioner"
    ],
-   "why": "COIDA lets injured or ill workers receive compensation without suing you, but only if claims are reported and followed through. Your records show each claim was lodged, followed up and closed, and protect you if a claim is disputed. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in the File.",
+   "why": "COIDA lets injured or ill workers receive compensation without suing you, but only if claims are reported and followed through. Your records show each claim was lodged, followed up and closed, and protect you if a claim is disputed. The COIDA papers in your File hold the employer's report, dates, claim numbers and payment letters; medical reports and other clinical records stay with the occupational health practitioner.",
    "example": "Example: Mhlongo Auto Repairs in Pietermaritzburg files the employer's report for a mechanic's burned hand, the claim number from the Compensation Fund and the final payment letter.",
    "common_gaps": [
     "Claims lodged late or not at all",
@@ -1964,11 +1966,11 @@
   "HSF-I-06": {
    "what_to_submit": [
     "Confirmation from the occupational medical practitioner that a notification was made",
-    "The date and the body notified",
+    "The date, the body notified and its reference number",
     "The outcome of fitness only: fit, fit with restrictions or unfit"
    ],
    "why": "When a work related disease is found, it must be reported so the worker can be compensated and the cause controlled. The clinical records stay with the occupational health practitioner; your File holds only proof that the notification was made and the fitness outcome, never the clinical details.",
-   "example": "Example: Van Wyk Steel in Vanderbijlpark files a letter from its occupational medical practitioner confirming a noise related notification was made on 5 August 2026, with the worker's outcome recorded as fit with restrictions.",
+   "example": "Example: Van Wyk Steel in Vanderbijlpark files a letter from its occupational medical practitioner confirming a notification was made on 5 August 2026, with the body notified, its reference number and the worker's outcome recorded as fit with restrictions.",
    "common_gaps": [
     "Clinical reports or test results filed in the File",
     "Notification left to the employee to arrange",
@@ -2008,14 +2010,14 @@
   },
   "HSF-J-02": {
    "what_to_submit": [
-    "Noise survey report by an approved inspection authority",
+    "Noise survey report by a competent person or approved inspection authority, as your practitioner confirms",
     "Noise zone map showing where hearing protection is required",
     "Photographs of the noise zone signs in place"
    ],
-   "why": "Loud noise causes permanent hearing loss that cannot be reversed. The survey shows where noise is too high so you can mark noise zones, reduce noise at source and include the right people in medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
-   "example": "Example: Sithole Precast in Brits receives a noise survey from an approved inspection authority in March 2026; the batching plant and block press are marked as noise zones and signs are put up the same week.",
+   "why": "Loud noise causes permanent hearing loss that cannot be reversed. The survey shows where noise is too high so you can mark noise zones, reduce noise at source and include the right people in medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+   "example": "Example: Sithole Precast in Brits receives a noise survey in March 2026 from the surveyor its practitioner confirmed; the batching plant and block press are marked as noise zones and signs are put up the same week.",
    "common_gaps": [
-    "Survey done by someone who is not an approved inspection authority",
+    "Survey done by someone the practitioner has not confirmed as competent for noise surveys",
     "Noise zones on the map but no signs on site",
     "No new survey after new machines were installed"
    ],
@@ -2027,7 +2029,7 @@
     "The list of chemicals and work areas measured",
     "Your actions on the report's recommendations"
    ],
-   "why": "Some chemicals cause cancer, lung disease or poisoning long after exposure. Monitoring proves whether controls keep exposure low enough under the Hazardous Chemical Agents Regulations, and it decides who needs medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Some chemicals cause cancer, lung disease or poisoning long after exposure. Monitoring proves whether controls keep exposure low enough under the Hazardous Chemical Agents Regulations, and it decides who needs medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Govender Pool Supplies in Umhlanga has an approved inspection authority measure chlorine exposure in the mixing room in June 2026 and adds extraction after the report recommends it.",
    "common_gaps": [
     "Monitoring skipped because the smell seems fine",
@@ -2042,7 +2044,7 @@
     "The name of the competent person who measured",
     "Record of lighting improvements made"
    ],
-   "why": "Poor lighting causes trips, mistakes with machines and eye strain. The survey shows which areas are too dark so you can fix them. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Poor lighting causes trips, mistakes with machines and eye strain. The survey shows which areas are too dark so you can fix them. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Radebe Call Centre in Midrand has its illumination measured in April 2026, finds the stairwell and two workstations too dark, and replaces the fittings.",
    "common_gaps": [
     "Lighting judged by eye, not measured",
@@ -2057,7 +2059,7 @@
     "Measurements for hot, cold or poorly ventilated areas",
     "Actions taken, such as fans, extraction, rest breaks or water points"
    ],
-   "why": "Heat, cold and stale air make people ill, and heat stress can kill. The survey shows which areas are a risk and supports controls such as breaks, water and extraction. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Heat, cold and stale air make people ill, and heat stress can kill. The survey shows which areas are a risk and supports controls such as breaks, water and extraction. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Molefe Bakery in Rustenburg has its oven area surveyed in November 2026, finds high heat stress and introduces extra breaks, cool water and an extraction fan.",
    "common_gaps": [
     "Only measured in winter",
@@ -2072,7 +2074,7 @@
     "Clearance certificate before the area is reoccupied, where the governing regulations or your practitioner require one",
     "The name of the approved body that did the monitoring"
    ],
-   "why": "Asbestos fibres are invisible and deadly. Air monitoring proves fibres stayed controlled during the work and that the area was safe before people returned. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Asbestos fibres are invisible and deadly. Air monitoring proves fibres stayed controlled during the work and that the area was safe before people returned. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Mofokeng Properties in Kimberley receives air monitoring results and a clearance certificate after its asbestos roof sheets are removed in July 2026, before tenants move back in.",
    "common_gaps": [
     "Area reoccupied before clearance",
@@ -2087,7 +2089,7 @@
     "The list of areas and tasks measured",
     "Actions taken on the results"
    ],
-   "why": "Lead dust and fumes are absorbed into the body and damage the blood, nerves and kidneys. Monitoring shows whether controls under the Lead Regulations work and who needs medical surveillance. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "Lead dust and fumes are absorbed into the body and damage the blood, nerves and kidneys. Monitoring shows whether controls under the Lead Regulations work and who needs medical surveillance. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Botha Battery Recycling in Brakpan has lead in air measured in its breaking area in May 2026 and improves local extraction after the report.",
    "common_gaps": [
     "Monitoring only in the main process area, not in cleaning or maintenance",
@@ -2342,7 +2344,7 @@
     "Completed audit reports with findings",
     "The name and credentials of the auditor"
    ],
-   "why": "An internal audit checks that your File matches what really happens on site and finds gaps before an inspector or client does. If nobody suitable is available, the \"Onboard a registered, competent auditor\" button finds one whose registration and experience fit your industry. The interval is the one the governing regulations set; until Care Net confirms it, use the interval your risk assessment or the practitioner sets.",
+   "why": "An internal audit checks that your File matches what really happens on site and finds gaps before an inspector or client does. If nobody suitable is available, the auditor recruitment button on Section N finds one whose registration and experience fit your industry. Hold it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
    "example": "Example: Ndlovu Builders in Polokwane schedules two internal audits for 2026; the June audit by a registered practitioner finds three expired certificates and two missing permits.",
    "common_gaps": [
     "Audits done by the person who wrote the documents",
@@ -3023,8 +3025,8 @@
   "HSF-OV-HEALTH-01": {
    "what_to_submit": [
     "Written immunisation and post exposure protocol signed by the OMP",
-    "Record per worker that immunisation was offered, and accepted or declined, as an outcome only",
-    "Post exposure incident log, such as needle stick injuries, without clinical detail"
+    "Record per worker that immunisation was offered, with the date; acceptance, refusal and vaccination status stay with the occupational health practitioner",
+    "Post exposure incident log, such as needle stick injuries, showing the date and that it was reported, with follow up kept by the practitioner"
    ],
    "why": "Healthcare and laboratory staff can catch infections from patients and samples, and the Hazardous Biological Agents Regulations expect you to protect them, including a plan for what happens straight after an exposure. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
    "example": "Example: Kekana Family Clinic in Tzaneen files its post exposure protocol, a log showing a nurse's needle stick injury was reported the same day, and each worker's immunisation offer record.",
@@ -3038,11 +3040,11 @@
    "what_to_submit": [
     "Sharps and healthcare risk waste procedure",
     "Waste manifests or collection certificates from the licensed waste contractor",
-    "Needlestick injury register and follow up records",
+    "Needlestick injury register showing the date, the place and that each injury was reported, with follow up records kept by the occupational health practitioner",
     "Container supply and placement records"
    ],
-   "why": "Needlestick injuries can transmit HIV and hepatitis, and poorly handled healthcare waste harms staff, waste workers and the public; this record shows waste is separated, contained and removed safely. Clinical follow up records stay with the occupational health practitioner; only the outcome goes in your File. Review it every year.",
-   "example": "Example: The fictitious Ikhaya Care Clinic in Soweto keeps monthly collection certificates from its healthcare waste contractor and a needlestick register, with the last incident reported on 9 July 2026 and followed up.",
+   "why": "Needlestick injuries can transmit HIV and hepatitis, and poorly handled healthcare waste harms staff, waste workers and the public; this record shows waste is separated, contained and removed safely. Clinical follow up records stay with the occupational health practitioner; only the fitness outcome (fit, fit with restrictions or unfit) goes in your File. Review it every year.",
+   "example": "Example: The fictitious Ikhaya Care Clinic in Soweto keeps monthly collection certificates from its healthcare waste contractor and a needlestick register, with the last incident reported on 9 July 2026 and the follow up left to its practitioner.",
    "common_gaps": [
     "Sharps containers overfilled",
     "No collection certificates to prove proper disposal",
@@ -3272,7 +3274,7 @@
    "what_to_submit": [
     "Ergonomic risk assessment for each production line or workstation",
     "Records of changes made, such as adjustable benches, lifting aids or job rotation",
-    "Staff complaints or early symptom reports and what you did about them",
+    "Reports of discomfort at a workstation and what you changed, without medical detail",
     "Training record on safe lifting and posture"
    ],
    "why": "Repetitive work, awkward reaching and heavy lifting on a line lead to back, shoulder and wrist injuries that build up slowly and cost you in absence and claims. Showing that you assessed each line and acted on it is what an inspector or client will look for. Review it at least once a year and when a line is redesigned.",
@@ -3449,10 +3451,10 @@
     "Support standards and making safe procedure",
     "Records of falls of ground and near misses"
    ],
-   "why": "Falls of rock underground and highwall or slope failures in pits kill and injure. The code sets how ground is assessed, supported and inspected, and the inspection records show it happens every shift. Review at least once a year and whenever ground conditions change.",
+   "why": "Falls of rock underground and highwall or slope failures in pits kill and injure. The code sets how ground is assessed, supported and inspected, and the inspection records show it happens at the intervals your mine's code of practice or your practitioner sets. Review at least once a year and whenever ground conditions change.",
    "example": "Example: Letsoalo Chrome keeps its fall of ground code, the rock engineer's quarterly report and the shift supervisor's entry examination book for each working place.",
    "common_gaps": [
-    "Inspection books not signed every shift",
+    "Inspection books not signed at the intervals your mine's code of practice or your practitioner sets",
     "Support standards not updated after a fall of ground",
     "Surface slopes left out of the code"
    ],
@@ -3491,15 +3493,15 @@
   "HSF-OV-MINING-11": {
    "what_to_submit": [
     "List of current and former workers who need benefit examinations for occupational lung disease",
-    "Record of examination dates and referral letters",
+    "Record of examination dates and that each person was referred, with the referral letters kept by the occupational health practitioner",
     "Proof that results were submitted to the certification body where required",
     "Outcomes only in the File; the clinical records stay with the occupational health practitioner"
    ],
    "why": "Mine and works employees exposed to dust are entitled to lung disease examinations and compensation under a separate law for mines and works. Your records show that people were examined and referred so their claims are not lost; Care Net screens fitness and does not diagnose, and the occupational health practitioner keeps the clinical records. Ask your practitioner which examinations apply and review at least once a year.",
-   "example": "Example: Maseko Sand Mining keeps a list of its 14 dust exposed workers, the date each was examined in 2026 and the referral letter for one worker, with the medical details kept by its occupational health practitioner.",
+   "example": "Example: Maseko Sand Mining keeps a list of its 14 dust exposed workers, the date each was examined in 2026 and the date one worker was referred, with the referral letter and medical details kept by its occupational health practitioner.",
    "common_gaps": [
     "Forgetting former workers and exit examinations",
-    "Filing X ray reports in the File",
+    "Filing X ray reports or referral letters in the File",
     "No proof of submission"
    ],
    "suggested_department": "OH"
@@ -3540,11 +3542,11 @@
    "what_to_submit": [
     "Register of winders, hoists, cranes and lifting equipment",
     "Inspection and test certificates by a competent person",
-    "Daily or shift checks by operators",
+    "Operator checks at the intervals your mine's code of practice or your practitioner sets",
     "Maintenance and defect records"
    ],
-   "why": "Failure of a winder, hoist or lifting device can kill many people at once. The certificates and checks prove each machine has been tested by someone competent and is watched every shift. Review at least once a year and use the inspection intervals your practitioner or engineer sets.",
-   "example": "Example: Letsoalo Chrome keeps its winder register, the engineer's test certificate for the man winder and the daily banksman checklist in the engineering office.",
+   "why": "Failure of a winder, hoist or lifting device can kill many people at once. The certificates and checks prove each machine has been tested by someone competent and is checked at the intervals your mine's code of practice or your practitioner sets. Review at least once a year and use the inspection intervals your practitioner or engineer sets.",
+   "example": "Example: Letsoalo Chrome keeps its winder register, the engineer's test certificate for the man winder and the banksman's checklist in the engineering office.",
    "common_gaps": [
     "Certificates held by the contractor only",
     "Slings and chains not in the register",
@@ -4113,7 +4115,7 @@
     "Inspection, test and maintenance records for substations and lines",
     "Certificates of compliance for installations"
    ],
-   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you have no competent person for this appointment, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live. Review at least once a year.",
+   "why": "Generation and distribution equipment operates at voltages that kill instantly, and the register, appointments and inspection records prove each installation is controlled by competent people. If you have no competent person for this appointment, the recruitment button in Section B connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live. Review at least once a year.",
    "example": "Example: Mashaba Solar Farm near Tzaneen keeps its installation register, the appointment letter of its responsible engineer and the annual inspection report for its main substation.",
    "common_gaps": [
     "Contractor work not tested before energising",
@@ -4234,14 +4236,14 @@
   },
   "HSF-OV-WASTE-03": {
    "what_to_submit": [
-    "Immunisation offer record per worker exposed to biological agents, accepted or declined, as outcome only",
+    "Record per worker exposed to biological agents that immunisation was offered, with the date; acceptance, refusal and vaccination status stay with the occupational health practitioner",
     "Your biological agent risk assessment showing who is exposed",
     "Post exposure procedure for needle stick and sewage contact"
    ],
    "why": "Waste and sewage workers can be exposed to blood, needles and sewage, and the Hazardous Biological Agents Regulations expect you to protect them, including offering immunisation the practitioner recommends. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File. Review it once a year and whenever the work or the people change.",
-   "example": "Example: Sithebe Waste Management in Hammarsdale files an immunisation offer record for each collection worker and its procedure for a needle found in a bag.",
+   "example": "Example: Sithebe Waste Management in Hammarsdale files a dated immunisation offer record for each collection worker and its procedure for a needle found in a bag.",
    "common_gaps": [
-    "Offering immunisation but not recording who declined",
+    "Keeping vaccination cards or refusal forms in the File instead of with the practitioner",
     "No procedure for sharps found in general waste"
    ],
    "suggested_department": "OH"
@@ -4283,7 +4285,7 @@
     "Sharps handling procedure",
     "Needle stick injury reporting and post exposure procedure",
     "Puncture resistant glove issue records",
-    "Register of needle stick injuries and follow up, with clinical details kept by the occupational health practitioner"
+    "Register of needle stick injuries showing the date and that each was reported, with follow up and clinical details kept by the occupational health practitioner"
    ],
    "why": "Hidden needles in waste can transmit blood borne diseases. Your procedure and register show staff know how to avoid injuries and what to do immediately afterwards, as the Hazardous Biological Agents Regulations expect. Clinical follow up stays with the occupational health practitioner, and only the outcome goes in the File; review at least once a year.",
    "example": "Example: Shabalala Waste recorded a needle stick injury to a sorter in April 2026, sent her to the clinic within an hour under its procedure, and then switched to thicker gloves.",
@@ -4335,7 +4337,7 @@
     "Proof that the assignee has the authority and resources to act (job title, reporting line)",
     "Health and safety training or qualification record"
    ],
-   "why": "The section 16(2) assignee carries the chief executive's health and safety duties day to day and is the default owner of the File. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
+   "why": "The section 16(2) assignee is given specific health and safety duties to carry out day to day and is the default owner of the File, while the chief executive stays responsible. A signed letter with a clear scope and the assignee's written acceptance is good practice that makes the assignment easy to defend. The competence the law requires is still being confirmed in the library, so keep whatever training or experience supports the appointment.",
    "example": "Example: Ntuli Plant Hire's managing director assigns workshop manager Zodwa Ntuli under section 16(2) for both of its depots, and the File holds her dated acceptance and her health and safety management certificate.",
    "common_gaps": [
     "Assigning a junior person with no authority",
@@ -4376,7 +4378,7 @@
     "Current SACPCMP registration in the construction health and safety officer category, where the Construction Regulations, 2014 or your client require it",
     "CV showing construction health and safety experience"
    ],
-   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, the \"Onboard a registered Health and Safety practitioner\" button connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live.",
+   "why": "The construction health and safety officer advises and monitors health and safety on site. Clients normally check that the officer is registered and competent before site establishment. If you do not have one, the recruitment button on this appointment connects you with Care Net's Recruitment Portal, or with a sales executive until the portal address is live.",
    "example": "Example: Zulu Developments' principal contractor files the appointment of Nomsa Khoza as construction health and safety officer with a copy of her current SACPCMP registration card.",
    "common_gaps": [
     "Registration that has expired during the project",
@@ -5094,7 +5096,7 @@
     "Date you last checked both were valid",
     "Link to the permit medical in Section E"
    ],
-   "why": "Drivers carrying passengers, dangerous goods or heavy loads need a professional driving permit, and a lapsed permit can void insurance after a crash. Check it before the person drives and renew it before it expires.",
+   "why": "Drivers carrying passengers, dangerous goods or heavy loads need a professional driving permit, and your insurer or client may ask for it after a crash. Check it before the person drives and renew it before it expires.",
    "example": "Example: Mahlangu Couriers in Centurion files permit copies for its eleven truck drivers and checks them on the first of every month.",
    "common_gaps": [
     "A permit copy with no expiry date recorded",
@@ -5218,11 +5220,11 @@
   "E06-04": {
    "what_to_submit": [
     "Hazardous biological agent examination outcome per exposed worker",
-    "Vaccination offered and accepted or declined, as outcome only",
+    "Record that vaccination was offered to each exposed worker, with the date; whether the worker accepted or declined stays with the occupational health practitioner",
     "The Plan protocol linked to your biological risk assessment"
    ],
-   "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-   "example": "Example: Nxumalo Veterinary Clinic in Vryheid files fitness outcomes for its animal handlers and a record that each was offered the vaccinations its practitioner recommends.",
+   "why": "The Hazardous Biological Agents Regulations call for surveillance of people exposed to germs at work, such as healthcare, laboratory, waste and sewage workers. Clinical records, including vaccination status and whether a worker accepted or declined a vaccination, stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
+   "example": "Example: Nxumalo Veterinary Clinic in Vryheid files fitness outcomes for its animal handlers and a dated record that each was offered the vaccinations its practitioner recommends.",
    "common_gaps": [
     "Keeping vaccination cards with clinical details in the File"
    ]
@@ -5288,10 +5290,10 @@
   "E06-10": {
    "what_to_submit": [
     "Food handler fitness outcome per food handler",
-    "Illness reporting and exclusion record, as outcome only"
+    "Your illness reporting and exclusion procedure, and a record of the dates a food handler was excluded and cleared to return, without the illness"
    ],
    "why": "Food handlers who are ill can spread infection to customers, so they must be fit to handle food and report illness before a shift. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions or unfit) goes in your File.",
-   "example": "Example: Mabuza Catering in Mbombela files a fit to handle food outcome for each cook and keeps a sign off sheet where staff report stomach illness before shift.",
+   "example": "Example: Mabuza Catering in Mbombela files a fit to handle food outcome for each cook and a record of the dates a cook was kept off shift and cleared to return, with the reason kept by its practitioner.",
    "common_gaps": [
     "Filing medical notes for sick leave instead of the outcome"
    ]

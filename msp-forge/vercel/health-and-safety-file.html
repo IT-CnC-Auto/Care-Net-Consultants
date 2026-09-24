@@ -348,8 +348,9 @@
 <script src="/hsf/pricing.js?v=1"></script>
 <script>
 /* Contract 12.5: while CNC_CONFIG.recruitmentPortalUrl is null (pending) the
-   recruitment call to action asks a sales executive on WhatsApp; once set, it
-   opens the Recruitment Portal with source and need. */
+   recruitment call to action asks a sales executive on WhatsApp; once set to
+   an https address, it opens the Recruitment Portal with source and need. Any
+   other address (http, javascript and the like) keeps the WhatsApp fallback. */
 (function () {
   var base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
   if (!base) return;
@@ -358,6 +359,7 @@
     if (!a) return;
     try {
       var u = new URL(base, location.href);
+      if (u.protocol !== 'https:') return;
       u.searchParams.set('source', 'hsf'); u.searchParams.set('need', box.getAttribute('data-recruit'));
       a.href = u.toString(); a.textContent = 'Onboard a registered Health and Safety practitioner';
     } catch (e) { /* an unusable address keeps the WhatsApp fallback */ }

@@ -896,23 +896,28 @@ function resetConfirm(u, o) {
 }
 
 /* ---------- tab 3: signatories */
-/* Contract 12.5: find a practitioner in the Recruitment Portal. While
-   CNC_CONFIG.recruitmentPortalUrl is null (pending) the button asks a sales
-   executive on WhatsApp; once set, it opens the portal for a signatory. */
-function recruitHtml() {
+/* Contract 12.5 and 12.6: find a practitioner, or a registered, competent
+   auditor, in the Recruitment Portal. While CNC_CONFIG.recruitmentPortalUrl is
+   null (pending), or is not an https address, the buttons ask a sales
+   executive on WhatsApp; once set, they open the portal for the need. */
+function portalHref(need) {
   const base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
-  let href = (window.CNC_CONFIG || {}).whatsappUrl || 'https://wa.me/27600702723';
-  let label = 'Ask a sales executive about onboarding a registered Health and Safety practitioner';
-  if (base) {
-    try {
-      const u = new URL(base, location.href);
-      u.searchParams.set('source', 'hsf'); u.searchParams.set('need', 'signatory');
-      href = u.toString(); label = 'Find a practitioner in the Recruitment Portal';
-    } catch (_) { /* an unusable address keeps the WhatsApp fallback */ }
-  }
-  return '<div class="note" style="margin-top:12px"><p style="margin:0 0 8px">Need a SACPCMP or SAIOSH registered practitioner to sign a File, or a competent person for an appointment? Care Net\u2019s Recruitment Portal places and onboards them, with the appointment and engagement letters the File needs. Their recruitment portal reference goes in the letter fields below.'
-    + (base ? '' : ' The portal address is pending, so for now a sales executive arranges it.') + '</p>'
-    + '<a class="btn ghost sm inl" href="' + esc(href) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner" data-need="signatory">' + esc(label) + '</a></div>';
+  if (!base) return null;
+  try {
+    const u = new URL(base, location.href);
+    if (u.protocol !== 'https:') return null;
+    u.searchParams.set('source', 'hsf'); u.searchParams.set('need', need);
+    return u.toString();
+  } catch (_) { return null; }
+}
+function recruitHtml() {
+  const wa = (window.CNC_CONFIG || {}).whatsappUrl || 'https://wa.me/27600702723';
+  const sig = portalHref('signatory'), aud = portalHref('auditor');
+  return '<div class="note" style="margin-top:12px"><p style="margin:0 0 8px">Need a SACPCMP or SAIOSH registered practitioner to sign a File, or a competent person for an appointment? Care Net’s Recruitment Portal places and onboards them, with the appointment and engagement letters the File needs. Their recruitment portal reference goes in the letter fields below.'
+    + (sig ? '' : ' The portal address is pending, so for now a sales executive arranges it.') + '</p>'
+    + '<a class="btn ghost sm inl" href="' + esc(sig || wa) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner" data-need="signatory">' + esc(sig ? 'Find a practitioner in the Recruitment Portal' : 'Ask a sales executive about onboarding a registered Health and Safety practitioner') + '</a>'
+    + '<p style="margin:12px 0 8px">A File should be audited by someone whose registration and experience fit the company’s industry: for construction, SACPCMP registration in a construction health and safety category; for mining, experience under the Mine Health and Safety Act regime; for every other industry, a registered health and safety practitioner, SACPCMP or SAIOSH, and, where the company runs a certified management system, an ISO 45001 lead auditor qualification. This is Care Net’s standard for the Recruitment Portal to confirm.</p>'
+    + '<a class="btn ghost sm inl" href="' + esc(aud || wa) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_auditor" data-need="auditor">' + esc(aud ? 'Onboard a registered, competent auditor' : 'Ask a sales executive about onboarding a registered, competent auditor') + '</a></div>';
 }
 function sigLabel(s) { return (s.full_name || 'Signatory') + ', ' + s.registration_body + ' ' + s.category + ' ' + s.registration_number; }
 function renderSignatories() {
