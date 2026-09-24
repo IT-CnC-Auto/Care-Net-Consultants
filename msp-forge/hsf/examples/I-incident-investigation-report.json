@@ -1,0 +1,204 @@
+{
+  "section": "I",
+  "title": "Incident Investigation Report",
+  "subtitle": "Report IR 2026 07. Minor injury at the guillotine, Tshwane Sheet Metal Works, Rosslyn",
+  "company": "Tshwane Sheet Metal Works (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Incident details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Date and time",
+            "Monday 16 March 2026, 13:40"
+          ],
+          [
+            "Place",
+            "Cutting bay, hydraulic guillotine G2, Rosslyn factory (fictitious)"
+          ],
+          [
+            "Type",
+            "Minor injury (medical treatment case)"
+          ],
+          [
+            "Person involved",
+            "Machine operator, employee number TSM 0318 (name held by HR)"
+          ],
+          [
+            "Outcome",
+            "Treated by the company's appointed doctor the same day; outcome **fit**, returned to normal duties on 17 March 2026. No clinical detail is kept in this File; the medical record stays with the occupational health practitioner"
+          ],
+          [
+            "Investigation team",
+            "Karabo Mothibi, Production Manager (lead); Grace Naidoo, Health and Safety Officer; Elias Maluleke, health and safety representative, cutting bay"
+          ]
+        ],
+        "widths": [
+          28,
+          72
+        ]
+      }
+    },
+    {
+      "h2": "2. What happened"
+    },
+    {
+      "p": "The operator was removing an offcut from the back of guillotine G2 while the machine was switched on. The rear guard had been left open after a blade change that morning. The operator's hand came into contact with the sharp edge of the offcut as the back gauge moved. First aid was given at once by the bay first aider, and the operator was taken to the doctor."
+    },
+    {
+      "page": true
+    },
+    {
+      "h2": "3. Root cause analysis"
+    },
+    {
+      "p": "The team used the five whys method, with the operator, the maintenance fitter and the supervisor interviewed on 17 March 2026."
+    },
+    {
+      "table": {
+        "cols": [
+          "Level",
+          "Finding"
+        ],
+        "rows": [
+          [
+            "Immediate cause",
+            "Hand reached into the rear of the machine while it was live and the back gauge moved"
+          ],
+          [
+            "Contributing cause 1",
+            "The rear guard was open; its interlock had been bypassed with a cable tie during the blade change"
+          ],
+          [
+            "Contributing cause 2",
+            "The blade change was done without a lockout, so nothing prompted a check that the guard was closed and the interlock restored"
+          ],
+          [
+            "Root cause",
+            "The guillotine blade change procedure did not require a guard and interlock check before hand back, and the pre use checklist did not include the rear guard"
+          ]
+        ],
+        "widths": [
+          26,
+          74
+        ]
+      }
+    },
+    {
+      "h2": "4. Corrective actions"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Action",
+          "Owner",
+          "Due",
+          "Status"
+        ],
+        "rows": [
+          [
+            "1",
+            "Remove the cable tie; test the rear guard interlock; guillotine back in use only after the test",
+            "Maintenance Supervisor",
+            "16/03/2026",
+            "Closed 16/03/2026"
+          ],
+          [
+            "2",
+            "Revise the blade change procedure: lockout, guard and interlock test before hand back, signed by the fitter and the operator",
+            "Karabo Mothibi",
+            "31/03/2026",
+            "Closed 27/03/2026"
+          ],
+          [
+            "3",
+            "Add the rear guard and interlock to the daily pre use checklist for G1 and G2",
+            "Grace Naidoo",
+            "31/03/2026",
+            "Closed 24/03/2026"
+          ],
+          [
+            "4",
+            "Toolbox talk to all cutting bay operators and fitters on guards, interlocks and lockout; attendance register filed in Section D",
+            "Elias Maluleke",
+            "20/03/2026",
+            "Closed 19/03/2026"
+          ],
+          [
+            "5",
+            "Check all other machines for bypassed interlocks and record the result in the Section F register",
+            "Maintenance Supervisor",
+            "15/04/2026",
+            "Closed 10/04/2026; one bypass found on press P4 and removed"
+          ]
+        ],
+        "widths": [
+          6,
+          40,
+          18,
+          14,
+          22
+        ]
+      }
+    },
+    {
+      "h2": "5. Reporting status"
+    },
+    {
+      "table": {
+        "cols": [
+          "Report",
+          "Status"
+        ],
+        "rows": [
+          [
+            "Incident register",
+            "Entered 16/03/2026, entry 2026/07"
+          ],
+          [
+            "COIDA",
+            "Employer's report of an accident submitted to the Compensation Fund on 18/03/2026; acknowledgement and claim reference held by HR"
+          ],
+          [
+            "Inspector of the Department of Employment and Labour",
+            "Not reported: the registered practitioner checked the event against the OHS Act reporting criteria on 17/03/2026 and it did not meet them. Her note is filed with this report"
+          ],
+          [
+            "Health and safety committee",
+            "Tabled at the meeting of 09/04/2026; actions accepted"
+          ]
+        ],
+        "widths": [
+          34,
+          66
+        ]
+      }
+    },
+    {
+      "sign": [
+        {
+          "role": "Investigation lead",
+          "name": "Karabo Mothibi",
+          "date": "20/03/2026"
+        },
+        {
+          "role": "Health and safety representative",
+          "name": "Elias Maluleke",
+          "date": "20/03/2026"
+        },
+        {
+          "role": "Chief executive officer (section 16(1)), actions approved",
+          "name": "David Kekana",
+          "date": "23/03/2026"
+        }
+      ]
+    }
+  ]
+}

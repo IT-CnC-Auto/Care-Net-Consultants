@@ -1,0 +1,159 @@
+{
+  "section": "O",
+  "title": "Records Retention Schedule",
+  "subtitle": "Health and safety records, Gqeberha plant, approved 3 August 2026",
+  "company": "Nelson Bay Components (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Purpose"
+    },
+    {
+      "p": "This schedule sets, for every type of health and safety record we keep, why we keep it, where it is held, who may see it, how long we keep it and how we dispose of it. The Health and Safety Manager, Busisiwe Tshabalala, reviews it every year and whenever the law or our operations change."
+    },
+    {
+      "h2": "2. POPIA purpose note"
+    },
+    {
+      "p": "Many of these records hold personal information about our employees, contractors and visitors. Under the Protection of Personal Information Act (POPIA), we collect and keep this information only to meet our health and safety duties under the OHS Act and COIDA and to protect the people on our site. We keep it no longer than the applicable rule requires or the practitioner sets, restrict access to the people named below, keep it secure and dispose of it safely. Medical records are held by the occupational health practitioner; our File holds only the fitness outcome (fit, fit with restrictions, unfit). Employees may ask to see their own records by writing to the Information Officer, Ruan de Villiers."
+    },
+    {
+      "page": true
+    },
+    {
+      "h2": "3. Retention schedule"
+    },
+    {
+      "table": {
+        "cols": [
+          "Record type",
+          "Purpose",
+          "Where held",
+          "Access",
+          "Retention period",
+          "Disposal"
+        ],
+        "rows": [
+          [
+            "File index and legal register",
+            "Show how we meet the OHS Act",
+            "Cabinet HS1, Health and Safety office; scanned copy on the server",
+            "Management, representatives, inspectors",
+            "As the practitioner sets",
+            "Shred; delete copy"
+          ],
+          [
+            "Written appointments, including the section 16(2) assignment",
+            "Prove who holds each duty",
+            "Cabinet HS1",
+            "Management, the appointee, inspectors",
+            "As the applicable rule or the practitioner sets",
+            "Shred"
+          ],
+          [
+            "Risk assessments and safe work procedures",
+            "Record hazards and controls",
+            "Server, Health and Safety folder",
+            "All employees, read only",
+            "As the practitioner sets",
+            "Delete"
+          ],
+          [
+            "Training and induction records",
+            "Prove competence",
+            "Human resources, locked cabinet",
+            "Human resources, the employee",
+            "As the applicable rule or the practitioner sets",
+            "Shred"
+          ],
+          [
+            "Certificates of fitness (outcome only)",
+            "Confirm who is fit for which work",
+            "Human resources, locked cabinet",
+            "Human resources, the employee, the supervisor",
+            "As the applicable rule sets for the exposure",
+            "Shred"
+          ],
+          [
+            "Medical surveillance and clinical records",
+            "Monitor the health of exposed employees",
+            "Occupational health practitioner, never in our File",
+            "The practitioner and the employee",
+            "As the applicable regulations set for the hazard",
+            "Practitioner"
+          ],
+          [
+            "Incident reports and investigations",
+            "Learn from incidents; report under COIDA",
+            "Cabinet HS2 and the server",
+            "Management, representatives, inspectors",
+            "As the applicable rule sets",
+            "Shred; delete"
+          ],
+          [
+            "Committee minutes and inspection reports",
+            "Show consultation and follow up",
+            "Server, Committee folder",
+            "Committee members; employees on request",
+            "As the practitioner sets",
+            "Delete"
+          ],
+          [
+            "Equipment inspection registers",
+            "Prove equipment is inspected",
+            "Maintenance office",
+            "Maintenance, inspectors",
+            "As the applicable rule sets",
+            "Shred"
+          ],
+          [
+            "Contractor Files and section 37(2) agreements",
+            "Control contractors on site",
+            "Cabinet HS2",
+            "Management, the contractor",
+            "As the practitioner sets",
+            "Return or shred"
+          ],
+          [
+            "Visitor registers",
+            "Know who is on site in an emergency",
+            "Security gate, then Health and Safety office",
+            "Security, management",
+            "As the practitioner sets",
+            "Shred"
+          ]
+        ],
+        "widths": [
+          19,
+          16,
+          18,
+          17,
+          16,
+          14
+        ]
+      }
+    },
+    {
+      "h2": "4. Storage, access and disposal"
+    },
+    {
+      "bullets": [
+        "Paper records are kept in locked cabinets; only the people in the access column hold keys.",
+        "Electronic records are kept in folders with access limited to the same people, and the server is backed up.",
+        "No record is destroyed while an inspection, claim, investigation or legal matter about it is open.",
+        "Every disposal is recorded in the disposal log: record type, dates covered, method, date and the person who did it."
+      ]
+    },
+    {
+      "sign": [
+        {
+          "role": "Health and Safety Manager",
+          "name": "Busisiwe Tshabalala"
+        },
+        {
+          "role": "Information Officer",
+          "name": "Ruan de Villiers"
+        }
+      ]
+    }
+  ]
+}

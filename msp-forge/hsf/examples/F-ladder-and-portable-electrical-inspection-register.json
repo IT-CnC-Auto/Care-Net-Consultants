@@ -1,0 +1,225 @@
+{
+  "section": "F",
+  "title": "Ladder and Portable Electrical Equipment Inspection Register",
+  "subtitle": "Karoo Kitchens Manufacturing, Hamilton factory, Bloemfontein. Register for the second quarter of 2026",
+  "company": "Karoo Kitchens Manufacturing (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Register details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Site",
+            "Hamilton factory, 14 Kiewiet Street, Hamilton, Bloemfontein (fictitious address)"
+          ],
+          [
+            "Equipment covered",
+            "Portable ladders and step ladders; portable electrical tools and extension leads used in the workshop and assembly bays"
+          ],
+          [
+            "Appointed inspector",
+            "Pieter Botha, Maintenance Supervisor, appointed in writing as the competent person for ladders and portable electrical equipment (appointment letter in Section B)"
+          ],
+          [
+            "Inspection interval",
+            "Monthly, as the company's risk assessment sets, and before first use of any new or repaired item"
+          ],
+          [
+            "Register kept by",
+            "Naledi Mokoena, Health and Safety Officer"
+          ]
+        ],
+        "widths": [
+          30,
+          70
+        ]
+      }
+    },
+    {
+      "h2": "2. How the register works"
+    },
+    {
+      "numbered": [
+        "Every ladder and portable electrical item carries a unique number and a coloured inspection tag for the current month.",
+        "The inspector checks each item against the checklist for its type and records the result below on the day.",
+        "An item that fails is tagged **Do not use**, removed to the locked quarantine cage and recorded as an action until it is repaired or destroyed.",
+        "The Health and Safety Officer reviews the register monthly and reports open actions to the health and safety committee."
+      ]
+    },
+    {
+      "page": true
+    },
+    {
+      "h2": "3. Ladders"
+    },
+    {
+      "table": {
+        "cols": [
+          "Date",
+          "Item no.",
+          "Description",
+          "By",
+          "Findings",
+          "Action and status"
+        ],
+        "rows": [
+          [
+            "06/04/2026",
+            "LAD 01",
+            "Aluminium step ladder, 6 treads, assembly bay",
+            "P. Botha",
+            "Good condition; feet and locking stays intact",
+            "None. Green tag fitted"
+          ],
+          [
+            "06/04/2026",
+            "LAD 02",
+            "Fibreglass extension ladder, 3,6 m, maintenance store",
+            "P. Botha",
+            "One rubber foot worn through",
+            "Tagged Do not use; foot replaced 08/04/2026; reinspected and passed 08/04/2026. Closed"
+          ],
+          [
+            "06/04/2026",
+            "LAD 03",
+            "Wooden step ladder, paint store",
+            "P. Botha",
+            "Split in rear stile; not repairable",
+            "Destroyed 07/04/2026; replaced with LAD 07 (fibreglass). Closed"
+          ],
+          [
+            "04/05/2026",
+            "LAD 01",
+            "Aluminium step ladder, assembly bay",
+            "P. Botha",
+            "Good condition",
+            "None. Yellow tag fitted"
+          ],
+          [
+            "04/05/2026",
+            "LAD 07",
+            "Fibreglass step ladder, paint store (new)",
+            "P. Botha",
+            "Inspected before first use; good condition",
+            "Entered in register. Closed"
+          ],
+          [
+            "01/06/2026",
+            "LAD 02",
+            "Fibreglass extension ladder, maintenance store",
+            "P. Botha",
+            "Good condition; label legible",
+            "None. Blue tag fitted"
+          ]
+        ],
+        "widths": [
+          15,
+          10,
+          21,
+          10,
+          20,
+          24
+        ]
+      }
+    },
+    {
+      "h2": "4. Portable electrical equipment"
+    },
+    {
+      "table": {
+        "cols": [
+          "Date",
+          "Item no.",
+          "Description",
+          "By",
+          "Findings",
+          "Action and status"
+        ],
+        "rows": [
+          [
+            "06/04/2026",
+            "PE 04",
+            "Angle grinder, 115 mm, workshop",
+            "P. Botha",
+            "Casing sound; plug and cable good; guard fitted",
+            "None. Green tag fitted"
+          ],
+          [
+            "06/04/2026",
+            "PE 09",
+            "Extension lead, 20 m, assembly bay",
+            "P. Botha",
+            "Cable sheath cut near the plug; inner cores visible",
+            "Tagged Do not use; lead shortened and new plug fitted by the electrician 09/04/2026; reinspected and passed. Closed"
+          ],
+          [
+            "06/04/2026",
+            "PE 12",
+            "Portable drill, assembly bay",
+            "P. Botha",
+            "Trigger switch sticks",
+            "Removed from use; sent for repair 07/04/2026; returned and passed 21/04/2026. Closed"
+          ],
+          [
+            "04/05/2026",
+            "PE 15",
+            "Mobile earth leakage unit, workshop",
+            "P. Botha",
+            "Test button trips the unit correctly",
+            "None. Yellow tag fitted"
+          ],
+          [
+            "01/06/2026",
+            "PE 09",
+            "Extension lead, 18 m after repair",
+            "P. Botha",
+            "Good condition",
+            "None. Blue tag fitted"
+          ],
+          [
+            "01/06/2026",
+            "PE 18",
+            "Heat gun, paint store",
+            "P. Botha",
+            "No inspection tag; item brought from home by an employee",
+            "Removed from site 01/06/2026; toolbox talk on personal tools held 02/06/2026. Closed"
+          ]
+        ],
+        "widths": [
+          15,
+          10,
+          21,
+          10,
+          20,
+          24
+        ]
+      }
+    },
+    {
+      "h2": "5. Review"
+    },
+    {
+      "p": "**Quarter summary:** 12 inspections recorded, 5 items failed, all 5 actions closed by 21/04/2026 or on the day. No open actions at the end of June 2026. Reported to the health and safety committee meeting of 09/07/2026."
+    },
+    {
+      "sign": [
+        {
+          "role": "Appointed inspector",
+          "name": "Pieter Botha",
+          "date": "01/07/2026"
+        },
+        {
+          "role": "Health and Safety Officer (register reviewed)",
+          "name": "Naledi Mokoena",
+          "date": "03/07/2026"
+        }
+      ]
+    }
+  ]
+}
