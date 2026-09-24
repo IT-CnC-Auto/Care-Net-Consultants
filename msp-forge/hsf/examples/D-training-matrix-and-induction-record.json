@@ -1,0 +1,192 @@
+{
+ "section": "D",
+ "title": "Training and Competence Matrix",
+ "subtitle": "Mbombela packhouse, status on 31 August 2026, with an induction record",
+ "company": "Lowveld Citrus Packers (Pty) Ltd (fictitious)",
+ "blocks": [
+  {
+   "h2": "1. How to read this matrix"
+  },
+  {
+   "p": "Each row is one person and each column is a requirement from our training needs analysis for that job role. A date shows the course was completed and the certificate is on file in Section D; a **valid to** date comes from the certificate itself. **Not required** means the job role does not need it. **Booked** shows the date of a planned course. The Training Coordinator, Nokuthula Mnisi, updates the matrix every month and flags anything due within 60 days."
+  },
+  {
+   "table": {
+    "cols": [
+     "Name and job role",
+     "Induction",
+     "First aid",
+     "Fire fighting",
+     "Forklift operator",
+     "Chemical handling"
+    ],
+    "rows": [
+     [
+      "Sibusiso Nkosi, Packhouse Supervisor",
+      "06/01/2026",
+      "Valid to 14/03/2027",
+      "Valid to 20/05/2027",
+      "Not required",
+      "03/02/2026"
+     ],
+     [
+      "Maria Sithole, Packer",
+      "06/01/2026",
+      "Not required",
+      "Not required",
+      "Not required",
+      "Not required"
+     ],
+     [
+      "Jabulani Mdluli, Forklift Operator",
+      "06/01/2026",
+      "Not required",
+      "Valid to 20/05/2027",
+      "Licence valid to 30/11/2026",
+      "Not required"
+     ],
+     [
+      "Lerato Maseko, Fruit Treatment Operator",
+      "12/01/2026",
+      "Valid to 14/03/2027",
+      "Not required",
+      "Not required",
+      "03/02/2026"
+     ],
+     [
+      "Pieter Coetzee, Maintenance Fitter",
+      "06/01/2026",
+      "Not required",
+      "Valid to 20/05/2027",
+      "Not required",
+      "03/02/2026"
+     ],
+     [
+      "Thabo Shabangu, Dispatch Clerk",
+      "04/08/2026",
+      "Booked 22/09/2026",
+      "Not required",
+      "Not required",
+      "Not required"
+     ]
+    ],
+    "widths": [
+     22,
+     15,
+     16,
+     16,
+     16,
+     15
+    ]
+   }
+  },
+  {
+   "h2": "2. Actions arising"
+  },
+  {
+   "bullets": [
+    "Jabulani Mdluli: forklift operator refresher due before 30 November 2026; booked for 19 October 2026.",
+    "Lerato Maseko: designated as a health and safety representative on 3 August 2026; representative training booked for 15 September 2026. Sibusiso Nkosi, the other representative, completed it on 10 February 2025.",
+    "Thabo Shabangu: second first aider for the dispatch shift, booked for 22 September 2026."
+   ]
+  },
+  {
+   "h2": "3. Induction record"
+  },
+  {
+   "table": {
+    "cols": [
+     "Item",
+     "Detail"
+    ],
+    "rows": [
+     [
+      "Induction type",
+      "Company and site induction for new employees"
+     ],
+     [
+      "Date and venue",
+      "4 August 2026, training room, 9 Lemoen Road, Riverside Industrial Park, Mbombela"
+     ],
+     [
+      "Presented by",
+      "Nokuthula Mnisi, Training Coordinator, with Sibusiso Nkosi, Packhouse Supervisor"
+     ],
+     [
+      "Duration",
+      "Three hours, followed by a walk through the packhouse"
+     ]
+    ],
+    "widths": [
+     25,
+     75
+    ]
+   }
+  },
+  {
+   "h2": "3.1 Topics covered"
+  },
+  {
+   "numbered": [
+    "Our health and safety policy, and your duty to report unsafe conditions, and your right to raise a health and safety concern without being victimised.",
+    "The main hazards in the packhouse from our risk assessment: forklifts, conveyors, fruit treatment chemicals, cold rooms and manual handling.",
+    "Walkways, forklift zones, protective equipment and how to report an incident or near miss.",
+    "Emergency procedure, assembly point, fire extinguishers and first aiders on each shift.",
+    "Who the health and safety representatives are, and how the health and safety committee works."
+   ]
+  },
+  {
+   "h2": "3.2 Attendance"
+  },
+  {
+   "table": {
+    "cols": [
+     "Name",
+     "Job role",
+     "Understood and signed",
+     "Assessment result"
+    ],
+    "rows": [
+     [
+      "Thabo Shabangu",
+      "Dispatch Clerk",
+      "Signed",
+      "Competent"
+     ],
+     [
+      "Precious Mashaba",
+      "Packer",
+      "Signed",
+      "Competent"
+     ],
+     [
+      "Kagiso Mokoena",
+      "Packer",
+      "Signed",
+      "Competent"
+     ]
+    ],
+    "widths": [
+     30,
+     25,
+     22,
+     23
+    ]
+   }
+  },
+  {
+   "sign": [
+    {
+     "role": "Presenter: Training Coordinator",
+     "name": "Nokuthula Mnisi",
+     "date": "04/08/2026"
+    },
+    {
+     "role": "Reviewed: Health and Safety Officer",
+     "name": "Hendrik Joubert",
+     "date": "05/08/2026"
+    }
+   ]
+  }
+ ]
+}
