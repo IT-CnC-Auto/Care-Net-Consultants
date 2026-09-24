@@ -18,6 +18,11 @@
                       is null, cnc-tracking.js loads no tag at all.
      2. mcoPortalUrl  MyClinicOnline portal and single sign on address.
                       Pending the MCO interface contract (HSF-3).
+     3. recruitmentPortalUrl
+                      Care Net Recruitment Portal address (contract 12.5).
+                      Not known. While it is null, the "Onboard a registered
+                      Health and Safety practitioner" call to action asks a
+                      sales executive on WhatsApp instead.
    ===================================================================== */
 (function (w) {
   'use strict';
@@ -49,6 +54,12 @@
     /* PENDING (HSF-3): MyClinicOnline portal and single sign on address. */
     mcoPortalUrl: null,
 
+    /* PENDING (contract 12.5): the Care Net Recruitment Portal address is
+       not known. Keep null; never type a guessed address here. Once set,
+       the recruitment call to action opens it with
+       ?source=hsf&need=<signatory|appointment>&industry=<code>. */
+    recruitmentPortalUrl: null,
+
     /* Prefix for /api/... calls. Empty means the same origin as the page,
        which is what keeps the pages portable into MCO hosting. */
     apiBase: '',
@@ -61,7 +72,7 @@
   /* Keys a host may override (for example MCO hosting sets apiBase and
      authProvider). Anything else in the overrides is ignored. */
   var OVERRIDABLE = ['supabaseUrl', 'publishableKey', 'gtmId', 'mainSite',
-    'privacyUrl', 'authProvider', 'mcoPortalUrl', 'apiBase'];
+    'privacyUrl', 'authProvider', 'mcoPortalUrl', 'recruitmentPortalUrl', 'apiBase'];
 
   var o = w.CNC_CONFIG_OVERRIDES;
   if (o && typeof o === 'object') {
@@ -74,7 +85,8 @@
   /* Record which values are still pending so pages can say so plainly. */
   base.pending = {
     gtmId: base.gtmId == null,
-    mcoPortalUrl: base.mcoPortalUrl == null
+    mcoPortalUrl: base.mcoPortalUrl == null,
+    recruitmentPortalUrl: base.recruitmentPortalUrl == null
   };
 
   Object.defineProperty(base, '__cnc', { value: 1, enumerable: false });

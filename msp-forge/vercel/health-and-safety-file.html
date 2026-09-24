@@ -83,6 +83,9 @@
   .btn.ghost { background: #fff; color: var(--red-ink); border: 2px solid var(--red); }
   .btn:hover { background: #B7141A; color: #fff; }
   .btn:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  /* Contract 12.5: the recruitment call to action in the sign off card */
+  .recruit { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .recruit p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
   a.inline { color: var(--red-ink); font-weight: bold; }
   .from { font-size: 13px; color: var(--ink-2); margin-top: 12px; }
   .from b { font-family: 'Montserrat', Arial, sans-serif; font-size: 22px; color: var(--charcoal); display: block; font-variant-numeric: tabular-nums; }
@@ -212,6 +215,10 @@
         </ul>
         <div class="from"><span id="from-note">Priced at the market average for your industry.</span><b id="from-figure">Care Net clients pay 25% less</b></div>
         <a class="btn" href="#pricing" data-cta="see_cost_for_my_industry">See the cost for my industry</a>
+        <div class="recruit" data-recruit="signatory">
+          <p>Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net&rsquo;s Recruitment Portal places and onboards them, with the appointment and engagement letters your File needs.</p>
+          <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner">Ask a sales executive about onboarding a registered Health and Safety practitioner</a>
+        </div>
       </div>
     </div>
   </section>
@@ -339,6 +346,24 @@
 </nav>
 
 <script src="/hsf/pricing.js?v=1"></script>
+<script>
+/* Contract 12.5: while CNC_CONFIG.recruitmentPortalUrl is null (pending) the
+   recruitment call to action asks a sales executive on WhatsApp; once set, it
+   opens the Recruitment Portal with source and need. */
+(function () {
+  var base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
+  if (!base) return;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-recruit]'), function (box) {
+    var a = box.querySelector('a[data-cta="recruitment_onboard_hs_practitioner"]');
+    if (!a) return;
+    try {
+      var u = new URL(base, location.href);
+      u.searchParams.set('source', 'hsf'); u.searchParams.set('need', box.getAttribute('data-recruit'));
+      a.href = u.toString(); a.textContent = 'Onboard a registered Health and Safety practitioner';
+    } catch (e) { /* an unusable address keeps the WhatsApp fallback */ }
+  });
+})();
+</script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };

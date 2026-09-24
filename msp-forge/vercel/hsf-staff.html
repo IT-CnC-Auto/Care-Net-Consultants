@@ -896,6 +896,24 @@ function resetConfirm(u, o) {
 }
 
 /* ---------- tab 3: signatories */
+/* Contract 12.5: find a practitioner in the Recruitment Portal. While
+   CNC_CONFIG.recruitmentPortalUrl is null (pending) the button asks a sales
+   executive on WhatsApp; once set, it opens the portal for a signatory. */
+function recruitHtml() {
+  const base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
+  let href = (window.CNC_CONFIG || {}).whatsappUrl || 'https://wa.me/27600702723';
+  let label = 'Ask a sales executive about onboarding a registered Health and Safety practitioner';
+  if (base) {
+    try {
+      const u = new URL(base, location.href);
+      u.searchParams.set('source', 'hsf'); u.searchParams.set('need', 'signatory');
+      href = u.toString(); label = 'Find a practitioner in the Recruitment Portal';
+    } catch (_) { /* an unusable address keeps the WhatsApp fallback */ }
+  }
+  return '<div class="note" style="margin-top:12px"><p style="margin:0 0 8px">Need a SACPCMP or SAIOSH registered practitioner to sign a File, or a competent person for an appointment? Care Net\u2019s Recruitment Portal places and onboards them, with the appointment and engagement letters the File needs. Their recruitment portal reference goes in the letter fields below.'
+    + (base ? '' : ' The portal address is pending, so for now a sales executive arranges it.') + '</p>'
+    + '<a class="btn ghost sm inl" href="' + esc(href) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner" data-need="signatory">' + esc(label) + '</a></div>';
+}
 function sigLabel(s) { return (s.full_name || 'Signatory') + ', ' + s.registration_body + ' ' + s.category + ' ' + s.registration_number; }
 function renderSignatories() {
   const list = S.signatories || [], alerts = S.alerts || [];
@@ -914,7 +932,8 @@ function renderSignatories() {
       + '</li>';
   }).join('') + '</ul>';
   html += '<h3>Signatory credentials</h3>'
-    + '<p class="muted" style="margin:0">One record per registration period: record a renewal as a new signatory. Credentials that support a released File cannot be changed, except to add a recruitment portal reference once.</p>';
+    + '<p class="muted" style="margin:0">One record per registration period: record a renewal as a new signatory. Credentials that support a released File cannot be changed, except to add a recruitment portal reference once.</p>'
+    + recruitHtml();
   html += (o && !o.id ? signatoryForm(null, o) : '<div class="acts"><button type="button" class="btn sm inl" data-act="sig-new" data-cta="hsf_staff_signatory_add">Add a signatory</button></div>');
   if (!list.length) return html + emptyState('No signatory is recorded yet.');
   html += '<ul class="rows">' + list.map((s) => {

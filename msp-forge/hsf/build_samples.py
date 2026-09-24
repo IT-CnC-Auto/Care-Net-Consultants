@@ -14,6 +14,13 @@ put into plain words (hsf/BUILD-CONTRACT.md section 7): no section, regulation,
 annexure or gazette numbers except section 16(2) and section 37(2) of the
 OHS Act. The build stops if a number the rules do not cover gets through.
 
+Every item carries the first File guidance of build contract 12.4 ("What to
+submit, why, and an example"), read from hsf/guidance/guidance.json (built by
+hsf/build_guidance.py): an appointment item shows its appointment guidance, a
+course or licence item its class guidance, a surveillance protocol the
+guidance of the examination element, and every other item its element
+guidance. The build stops if an item has no guidance.
+
 Run from msp-forge/:  python3 hsf/build_samples.py
 """
 import hashlib, json, re, datetime as dt
@@ -24,6 +31,8 @@ SPEC = (ROOT / 'SPEC.md').read_text(encoding='utf-8')
 PART_B = SPEC[SPEC.index('# PART B. CNC HSF FORGE'):]
 OUT = ROOT / 'vercel' / 'hsf' / 'samples'
 AS_AT = dt.date(2026, 9, 23)
+GUIDANCE = json.loads((ROOT / 'hsf' / 'guidance' / 'guidance.json').read_text(encoding='utf-8'))
+GUIDE_KIND = {'e': 'elements', 'a': 'appointments', 'c': 'classes'}
 
 SECTIONS = [
     ('A', 'Legal and administrative'), ('B', 'Policy, organisation and appointments'),
@@ -482,6 +491,33 @@ def build(code):
     }
 
 
+def guide_ref(code):
+    """The guidance an item shows: kind letter and code in guidance.json."""
+    m = re.match(r'^HSF-B-06\.(\d\d)$', code)
+    if m:
+        return 'a', 'APP-' + m.group(1)
+    m = re.match(r'^HSF-(D0[45]-\d\d)$', code)
+    if m:
+        return 'c', m.group(1)
+    if re.match(r'^HSF-E06-P\d\d$', code):
+        return 'e', 'HSF-E-06'
+    return 'e', code
+
+
+def attach_guidance(d):
+    used = {'e': {}, 'a': {}, 'c': {}}
+    for it in d['items']:
+        kind, ref = guide_ref(it['code'])
+        g = GUIDANCE[GUIDE_KIND[kind]].get(ref)
+        if g is None:
+            raise SystemExit('No first File guidance for sample item %s (%s %s): run python3 hsf/build_guidance.py' % (it['code'], GUIDE_KIND[kind], ref))
+        it['guide'] = kind + ':' + ref
+        used[kind][ref] = {k: g[k] for k in ('what_to_submit', 'why', 'example', 'common_gaps')}
+    d['guidance'] = {'version': GUIDANCE['meta']['version'], 'status': GUIDANCE['meta']['status'],
+                     'note': GUIDANCE['meta']['note'],
+                     'e': dict(sorted(used['e'].items())), 'a': dict(sorted(used['a'].items())), 'c': dict(sorted(used['c'].items()))}
+
+
 def check_plain(value):
     if isinstance(value, str):
         assert_plain(value)
@@ -498,6 +534,7 @@ def main():
     index = []
     for code in PROFILES:
         d = build(code)
+        attach_guidance(d)
         check_plain(d)
         (OUT / (d['slug'] + '.js')).write_text('window.__HSF_SAMPLE=' + json.dumps(d, ensure_ascii=False, separators=(',', ':')) + ';\n', encoding='utf-8')
         index.append((d['slug'], code, d['industry'], len(d['items']), d['overall']['pct']))

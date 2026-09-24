@@ -133,6 +133,19 @@
   @media print { body > *:not(#printmsg) { display: none !important; } #printmsg { display: block; padding: 40px; font: 16px Arial, sans-serif; } }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   :target { scroll-margin-top: 130px; }
+  /* First File guidance on every item (contract 12.4) and the recruitment call to action (12.5) */
+  details.guide { margin-top: 6px; max-width: 60ch; }
+  details.guide > summary { cursor: pointer; font-weight: 700; font-size: 12.5px; color: var(--red-ink); padding: 4px 0; }
+  details.guide > summary:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  details.guide .gbody { border-left: 3px solid var(--line); padding: 4px 0 4px 10px; font-size: 12.5px; line-height: 1.5; color: var(--charcoal); white-space: normal; }
+  details.guide .gbody b { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; margin: 6px 0 2px; }
+  details.guide .gbody b:first-child { margin-top: 0; }
+  details.guide .gbody p { margin: 0; }
+  details.guide .gbody ul { margin: 0; padding-left: 18px; }
+  details.guide .gbody .ex { font-style: italic; }
+  .recruit { flex: 1 1 100%; border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 8px; justify-items: start; }
+  .recruit p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--ink-2); }
+  .recruit .btn { white-space: normal; }
 </style>
 <!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
      section 6). Consent mode defaults to denied and no tag loads before consent. -->
@@ -249,6 +262,7 @@
           <span class="pill p-uploaded">Uploaded</span><span>evidence supplied by the client</span>
           <span class="pill p-outstanding">Outstanding</span><span class="pill p-expired">Expired</span><span class="pill p-not_applicable">Not applicable</span>
         </div>
+        <p class="note" id="guide-note" hidden></p>
         <p class="note"><strong>About the legal basis.</strong> Each element names the instrument it rests on. <b>In the framework</b> means the instrument is held in the Care Net Cognitive Kernel; <b>Being verified</b> means it is a candidate still passing the three checks. In Section E, each surveillance protocol carries the strength of its basis from the Care Net OHS Industry Kernel: a strong local basis, practice and agent duty, society guidance and local by law, or catalogue while the instrument is still being fetched. Protocols the kernel lists only for confirmed exposure stay switched off until the risk assessment confirms it. In a real File, only instruments that have passed all three checks are cited, and nothing is released until they have.</p>
       </div>
 
@@ -274,6 +288,10 @@
       <p><b>This is a sample, built for a company that does not exist.</b> Your own File is built from your own sites, activities and people, pulls in the medicals and training you have done with Care Net, and is free to build. If you need it signed, a registered Health and Safety Manager reviews and signs it.</p>
       <a class="btn" href="/hsf-builder.html" data-cta="build_my_file">Build my File</a>
       <a class="btn ghost" href="/health-and-safety-file.html#pricing" data-cta="see_sign_off_costs">See sign off costs</a>
+      <div class="recruit" data-recruit="signatory">
+        <p>Need a SACPCMP or SAIOSH registered practitioner to sign your File, or a competent person for an appointment? Care Net&rsquo;s Recruitment Portal places and onboards them, with the appointment and engagement letters your File needs.</p>
+        <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner">Ask a sales executive about onboarding a registered Health and Safety practitioner</a>
+      </div>
     </section>
   </div>
 </main>
@@ -340,6 +358,23 @@
     return;
   }
 
+  /* Contract 12.5: while CNC_CONFIG.recruitmentPortalUrl is null (pending) the
+     call to action asks a sales executive on WhatsApp; once set, it opens the
+     Recruitment Portal with source, need and this sample's industry code. */
+  (function () {
+    var base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
+    if (!base) return;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-recruit]'), function (box) {
+      var a = box.querySelector('a[data-cta="recruitment_onboard_hs_practitioner"]');
+      if (!a) return;
+      try {
+        var u = new URL(base, location.href);
+        u.searchParams.set('source', 'hsf'); u.searchParams.set('need', box.getAttribute('data-recruit')); u.searchParams.set('industry', cur[1]);
+        a.href = u.toString(); a.textContent = 'Onboard a registered Health and Safety practitioner';
+      } catch (e) { /* an unusable address keeps the WhatsApp fallback */ }
+    });
+  })();
+
   document.title = cur[2] + ' sample Health and Safety File | Care Net Consultants';
   $('title').innerHTML = esc(cur[2]) + ': <span class="r">sample Health and Safety File</span>';
   $('chosen-icon').src = iconFor(cur[0]);
@@ -388,6 +423,25 @@
       var o = document.createElement('option'); o.value = s.code; o.textContent = s.code + '. ' + s.name; sf.appendChild(o);
     });
     Object.keys(STATUS).forEach(function (k) { var o = document.createElement('option'); o.value = k; o.textContent = STATUS[k]; stf.appendChild(o); });
+    /* Contract 12.4: every item carries "What to submit, why, and an example",
+       built into the sample from hsf/guidance/guidance.json. */
+    var GD = d.guidance || null;
+    function guideHtml(x) {
+      if (!GD || !x.guide) return '';
+      var k = x.guide.split(':')[0], ref = x.guide.slice(x.guide.indexOf(':') + 1), g = GD[k] && GD[k][ref];
+      if (!g) return '';
+      var list = function (a) { return '<ul>' + (a || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>'; };
+      return '<details class="guide"><summary>What to submit, why, and an example</summary><div class="gbody">'
+        + '<b>What to submit</b>' + list(g.what_to_submit)
+        + '<b>Why it matters</b><p>' + esc(g.why) + '</p>'
+        + '<b>Example</b><p class="ex">' + esc(g.example) + '</p>'
+        + (g.common_gaps && g.common_gaps.length ? '<b>Common gaps</b>' + list(g.common_gaps) : '')
+        + '</div></details>';
+    }
+    if (GD) {
+      $('guide-note').innerHTML = '<strong>About the guidance.</strong> Each item shows what to submit, why it matters and a fictitious example. The guidance is general, is being reviewed by Care Net&rsquo;s Health and Safety Manager, and does not replace the advice of your health and safety practitioner. Guidance version ' + esc(GD.version) + (GD.status === 'draft' ? ', draft.' : '.');
+      $('guide-note').hidden = false;
+    }
     function drawMatrix() {
       var fs = sf.value, fst = stf.value, html = '', last = '';
       d.items.forEach(function (x) {
@@ -400,7 +454,7 @@
         }
         html += '<tr><td class="code">' + esc(x.code) + '</td>'
           + '<td><b>' + esc(x.name) + '</b><div class="basis">' + esc(x.basis) + '<span class="bs ' + x.basis_state + '">' + BS[x.basis_state] + '</span></div>'
-          + (x.reason ? '<div class="why">Reason: ' + esc(x.reason) + '</div>' : '') + '</td>'
+          + (x.reason ? '<div class="why">Reason: ' + esc(x.reason) + '</div>' : '') + guideHtml(x) + '</td>'
           + '<td>' + esc(x.responsible) + '</td><td>' + esc(EVID[x.evidence] || x.evidence) + '</td><td>' + esc(x.review) + '</td>'
           + '<td><span class="pill p-' + x.status + '">' + STATUS[x.status] + '</span></td>'
           + '<td class="d">' + esc(x.from) + '</td><td class="d">' + esc(x.to) + '</td></tr>';
