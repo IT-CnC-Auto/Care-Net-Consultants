@@ -1,8 +1,8 @@
 {
   "section": "I",
   "title": "Incident Investigation Report",
-  "subtitle": "Report IR 2026 07. Minor injury at the guillotine, Tshwane Sheet Metal Works, Rosslyn",
-  "company": "Tshwane Sheet Metal Works (Pty) Ltd (fictitious)",
+  "subtitle": "Report IR 2026 07. Minor injury at the guillotine, Hofsanger Sheet Metal Works, Rosslyn",
+  "company": "Hofsanger Sheet Metal Works (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Incident details"
@@ -28,7 +28,7 @@
           ],
           [
             "Person involved",
-            "Machine operator, employee number TSM 0318 (name held by HR)"
+            "Machine operator, employee number HSM 0318 (name held by HR)"
           ],
           [
             "Outcome",

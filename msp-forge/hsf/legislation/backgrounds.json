@@ -136,7 +136,7 @@
     "Notification of construction work or the construction work permit, with acknowledgement",
     "Construction appointments in writing, with competence evidence",
     "Fall protection, excavation and demolition plans with their inspection registers",
-    "Medical certificates of fitness for every person on site, showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+    "Medical certificates of fitness for every employee who does construction work on site, showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
    ],
    "file_sections": [
     "A",
@@ -814,10 +814,11 @@
    "slug": "occupational-diseases-in-mines-and-works-act",
    "short_name": "ODMWA",
    "display_name": "Occupational Diseases in Mines and Works Act",
-   "what_it_covers": "This Act provides for benefit medical examinations and compensation for workers and former workers at controlled mines and works who contract certain occupational lung diseases. It sets duties on owners to have workers examined and to report diseases. Care Net screens fitness and does not diagnose; examination outcomes go to the File, and clinical records stay with the practitioner.",
+   "what_it_covers": "This Act provides for medical examinations and compensation for workers and former workers at controlled mines and works who contract certain occupational lung diseases, and sets duties on owners to have workers examined and to report those diseases. Two kinds of document follow from it. A certificate of fitness for work at a controlled mine or works shows the outcome only (fit, fit with restrictions, unfit); the clinical records stay with the occupational health practitioner. A benefit examination is different: it is done for compensation, to find compensable lung disease, by the practitioners and bodies the Act provides for, and its findings are not a fitness outcome. Care Net screens fitness and does not diagnose, so a benefit examination is not part of Care Net's fitness screening.",
    "who_it_applies_to": "Owners of controlled mines and works, and current and former workers there.",
    "evidence_a_company_keeps": [
-    "Benefit examination outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Certificates of fitness for work at the controlled mine or works, showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Records that benefit examinations were arranged as the Act requires; their findings go to the compensation process, not to the File as fitness outcomes",
     "Occupational disease notifications",
     "Referral records"
    ],

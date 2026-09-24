@@ -2,7 +2,7 @@
   "section": "L",
   "title": "Health and Safety Committee Minutes",
   "subtitle": "Meeting held on 18 March 2026 at the Epping site, Cape Town",
-  "company": "Boland Fresh Foods (Pty) Ltd (fictitious)",
+  "company": "Swartpiek Fresh Foods (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Meeting details"
@@ -123,7 +123,7 @@
       "h2": "4.2 Incidents since the last meeting"
     },
     {
-      "p": "One incident was reported: a dispatch employee slipped near cold store door 3 on 9 March 2026, received first aid on site and returned to work the next day. The investigation found a faulty door heater strip as the root cause."
+      "p": "One incident was reported: a dispatch employee slipped near cold store door 3 on 9 March 2026, received first aid on site and returned to work the next day. The investigation found a faulty door heater strip as the root cause. Until the heater strip is repaired, the ice at door 3 is removed at the start of every shift and checked every two hours, and a barrier with a warning sign keeps people off the area whenever ice forms (action 2)."
     },
     {
       "h2": "4.3 Training and toolbox talks"
@@ -159,39 +159,46 @@
           ],
           [
             "2",
+            "Until action 1 is closed: remove the ice at door 3 at the start of every shift and check it every two hours; barricade the area with a warning sign whenever ice forms",
+            "Anele Jacobs",
+            "From 18/03/2026",
+            "In place"
+          ],
+          [
+            "3",
             "Buy and fit anti slip matting at all cold store doors",
             "Anele Jacobs",
             "15/04/2026",
             "Open"
           ],
           [
-            "3",
+            "4",
             "Add door heater checks to the monthly maintenance plan",
             "Johan Pretorius",
             "31/03/2026",
             "Open"
           ],
           [
-            "4",
+            "5",
             "Book refresher first aid training for two first aiders",
             "Monique Adams",
             "30/04/2026",
             "Open"
           ],
           [
-            "5",
-            "Replace the slicer guard at line 2 (carried from February)",
+            "6",
+            "Repair the damaged slicer guard at line 2 (raised in the March inspection reports)",
             "Johan Pretorius",
             "13/03/2026",
-            "Closed"
+            "Closed 13/03/2026"
           ]
         ],
         "widths": [
-          8,
-          44,
-          20,
-          14,
-          14
+          7,
+          45,
+          18,
+          15,
+          15
         ]
       }
     },

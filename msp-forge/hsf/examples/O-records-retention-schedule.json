@@ -2,7 +2,7 @@
   "section": "O",
   "title": "Records Retention Schedule",
   "subtitle": "Health and safety records, Gqeberha plant, approved 3 August 2026",
-  "company": "Nelson Bay Components (Pty) Ltd (fictitious)",
+  "company": "Thalovane Components (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Purpose"
@@ -14,13 +14,16 @@
       "h2": "2. POPIA purpose note"
     },
     {
-      "p": "Many of these records hold personal information about our employees, contractors and visitors. Under the Protection of Personal Information Act (POPIA), we collect and keep this information only to meet our health and safety duties under the OHS Act and COIDA and to protect the people on our site. We keep it no longer than the applicable rule requires or the practitioner sets, restrict access to the people named below, keep it secure and dispose of it safely. Medical records are held by the occupational health practitioner; our File holds only the fitness outcome (fit, fit with restrictions, unfit). Employees may ask to see their own records by writing to the Information Officer, Ruan de Villiers."
+      "p": "Many of these records hold personal information about our employees, contractors and visitors. Under the Protection of Personal Information Act (POPIA), we collect and keep this information only to meet our health and safety duties under the OHS Act and COIDA and to protect the people on our site. We keep it for the period the applicable regulations set, or the practitioner sets where no regulation sets one, and no longer; restrict access to the people named below, keep it secure and dispose of it safely. Medical records are held by the occupational health practitioner; our File holds only the fitness outcome (fit, fit with restrictions, unfit). Employees may ask to see their own records by writing to the Information Officer, Ruan de Villiers."
     },
     {
       "page": true
     },
     {
       "h2": "3. Retention schedule"
+    },
+    {
+      "p": "**How the retention column works.** Where regulations set how long a record type is kept, the column says **as the applicable regulations set**, and the registered Health and Safety practitioner confirms which regulations apply to our agents, equipment and activities. Records of exposure to hazardous agents and of medical surveillance are kept for the long periods those regulations set, because disease from an exposure can appear many years later. **As the practitioner sets** is used only for record types no regulation covers."
     },
     {
       "table": {
@@ -38,7 +41,7 @@
             "Show how we meet the OHS Act",
             "Cabinet HS1, Health and Safety office; scanned copy on the server",
             "Management, representatives, inspectors",
-            "As the practitioner sets",
+            "As the practitioner sets (no regulation sets a period)",
             "Shred; delete copy"
           ],
           [
@@ -46,23 +49,39 @@
             "Prove who holds each duty",
             "Cabinet HS1",
             "Management, the appointee, inspectors",
-            "As the applicable rule or the practitioner sets",
+            "As the applicable regulations set where they cover it; otherwise as the practitioner sets",
             "Shred"
           ],
           [
-            "Risk assessments and safe work procedures",
+            "Risk assessments for hazardous chemical agents, hazardous biological agents, lead, asbestos, noise and other regulated agents, with their safe work procedures",
+            "Record the assessed exposure and its controls",
+            "Server, Health and Safety folder",
+            "All employees, read only",
+            "As the applicable regulations set for the agent",
+            "Delete"
+          ],
+          [
+            "Other risk assessments and safe work procedures",
             "Record hazards and controls",
             "Server, Health and Safety folder",
             "All employees, read only",
-            "As the practitioner sets",
+            "As the applicable regulations set where they cover it; otherwise as the practitioner sets",
             "Delete"
+          ],
+          [
+            "Occupational hygiene and exposure monitoring reports, including air monitoring",
+            "Show that exposure was measured and controlled",
+            "Cabinet HS2 and the server",
+            "Management, representatives, the occupational medical practitioner, inspectors",
+            "As the applicable regulations set for the agent",
+            "Shred; delete"
           ],
           [
             "Training and induction records",
             "Prove competence",
             "Human resources, locked cabinet",
             "Human resources, the employee",
-            "As the applicable rule or the practitioner sets",
+            "As the applicable regulations set where they cover it; otherwise as the practitioner sets",
             "Shred"
           ],
           [
@@ -70,7 +89,7 @@
             "Confirm who is fit for which work",
             "Human resources, locked cabinet",
             "Human resources, the employee, the supervisor",
-            "As the applicable rule sets for the exposure",
+            "As the applicable regulations set for the exposure",
             "Shred"
           ],
           [
@@ -86,7 +105,7 @@
             "Learn from incidents; report under COIDA",
             "Cabinet HS2 and the server",
             "Management, representatives, inspectors",
-            "As the applicable rule sets",
+            "As the OHS Act, COIDA and the applicable regulations set",
             "Shred; delete"
           ],
           [
@@ -94,7 +113,7 @@
             "Show consultation and follow up",
             "Server, Committee folder",
             "Committee members; employees on request",
-            "As the practitioner sets",
+            "As the applicable regulations set",
             "Delete"
           ],
           [
@@ -102,7 +121,7 @@
             "Prove equipment is inspected",
             "Maintenance office",
             "Maintenance, inspectors",
-            "As the applicable rule sets",
+            "As the applicable regulations set for the equipment",
             "Shred"
           ],
           [
@@ -110,7 +129,7 @@
             "Control contractors on site",
             "Cabinet HS2",
             "Management, the contractor",
-            "As the practitioner sets",
+            "As the applicable regulations set where they cover it; otherwise as the practitioner sets",
             "Return or shred"
           ],
           [
@@ -118,16 +137,16 @@
             "Know who is on site in an emergency",
             "Security gate, then Health and Safety office",
             "Security, management",
-            "As the practitioner sets",
+            "As the practitioner sets (no regulation sets a period)",
             "Shred"
           ]
         ],
         "widths": [
-          19,
-          16,
-          18,
           17,
+          15,
           16,
+          19,
+          19,
           14
         ]
       }

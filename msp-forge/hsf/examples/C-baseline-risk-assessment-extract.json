@@ -2,7 +2,7 @@
  "section": "C",
  "title": "Baseline Risk Assessment (Extract)",
  "subtitle": "Hazard register for the Kya Sand bakery, signed 16 February 2026",
- "company": "Highveld Artisan Bakeries (Pty) Ltd (fictitious)",
+ "company": "Neddikkie Artisan Bakeries (Pty) Ltd (fictitious)",
  "blocks": [
   {
    "h2": "1. Scope, team and method"
@@ -78,7 +78,7 @@
      [
       "4. Forklifts and pedestrians at the dispatch dock: being struck",
       "15 High (3 x 5)",
-      "**Elimination:** pedestrians removed from the loading bay during loading. **Engineering:** barriers and marked walkways; blue spot lights on forklifts. **Administrative:** licensed operators only; daily pre use checks; speed limit.",
+      "**Engineering:** barriers and marked walkways that keep pedestrians out of the loading bay; blue spot lights on forklifts. **Administrative:** no pedestrians in the loading bay while loading is under way; trained and authorised operators only; daily pre use checks; speed limit.",
       "5 Low",
       "Deon Swanepoel, review 16/02/2027"
      ],
@@ -107,8 +107,8 @@
     "widths": [
      20,
      12,
-     42,
-     11,
+     39,
+     14,
      15
     ]
    }

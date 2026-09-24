@@ -2,7 +2,7 @@
   "section": "K",
   "title": "Written Agreement with a Contractor (Mandatary)",
   "subtitle": "OHS Act section 37(2) agreement with a contractor, with its File checklist",
-  "company": "Tshwane Valley Packaging (Pty) Ltd (fictitious)",
+  "company": "Draaihals Packaging (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Parties and work"
@@ -16,11 +16,11 @@
         "rows": [
           [
             "Employer",
-            "Tshwane Valley Packaging (Pty) Ltd, 22 Kiaat Street, Rosslyn Industrial Park, Pretoria (the **employer**)"
+            "Draaihals Packaging (Pty) Ltd, 22 Kiaat Street, Rosslyn Industrial Park, Pretoria (the **employer**)"
           ],
           [
             "Contractor (mandatary)",
-            "Khanyisa Electrical and Maintenance CC, 7 Marula Avenue, Akasia (the **contractor**)"
+            "Kleinjantjie Electrical and Maintenance CC, 7 Marula Avenue, Akasia (the **contractor**)"
           ],
           [
             "Work",
@@ -59,7 +59,8 @@
         "Meet the OHS Act and every regulation that applies to the work, and hold its employees and subcontractors to the same standard.",
         "Give the employer its contractor File (checklist in clause 5) before work starts, and keep it current on site.",
         "Do a task based risk assessment for the work and brief every worker on it before work starts.",
-        "Appoint competent persons in writing, including an electrician registered for the installation work.",
+        "Appoint competent persons in writing, including an electrician registered for the installation work, and give the employer proof of the contractor's registration as an electrical contractor.",
+        "Before hand back, give the employer a certificate of compliance, with its test report, for the new distribution board and lighting circuits, issued by a registered person.",
         "Make sure every worker has done the employer's site induction and wears the protective equipment the risk assessment sets.",
         "Work under the employer's permit to work system for isolation, lockout and work at height.",
         "Report every incident, near miss and unsafe condition to the employer's contact on the same day, and use no subcontractor without the employer's written consent."
@@ -72,7 +73,8 @@
       "bullets": [
         "Tell the contractor about the hazards on its premises that may affect the work, including forklift routes and stored packaging.",
         "Induct every contractor worker, issue permits to work, provide the isolation points and keep its own employees clear of the work area.",
-        "Inspect the work area daily, record the inspection in the contractor coordination register, and stop any work that places a person in danger. Work resumes only once both contacts agree the danger is controlled."
+        "Inspect the work area daily, record the inspection in the contractor coordination register, and stop any work that places a person in danger. Work resumes only once both contacts agree the danger is controlled.",
+        "Accept hand back of the work only once the certificate of compliance and its test report have been received and checked, and file them in the Health and Safety File."
       ]
     },
     {
@@ -118,6 +120,12 @@
             "26/02/2026"
           ],
           [
+            "Proof of the contractor's registration as an electrical contractor",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
             "Certificates of fitness showing the outcome only (fit, fit with restrictions, unfit)",
             "Yes",
             "P. van Wyk",
@@ -146,11 +154,17 @@
             "Yes",
             "P. van Wyk",
             "02/03/2026"
+          ],
+          [
+            "Certificate of compliance and test report for the new board and circuits, issued by a registered person",
+            "Due at hand back",
+            "P. van Wyk",
+            "Before hand back"
           ]
         ],
         "widths": [
-          52,
-          12,
+          48,
+          16,
           18,
           18
         ]

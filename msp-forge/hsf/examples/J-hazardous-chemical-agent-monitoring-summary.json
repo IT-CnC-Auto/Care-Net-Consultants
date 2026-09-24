@@ -1,8 +1,8 @@
 {
   "section": "J",
   "title": "Occupational Hygiene Monitoring Summary: Hazardous Chemical Agents",
-  "subtitle": "Solvent vapour survey, spray booth and mixing room, Coastal Coatings, Jacobs, Durban. Survey of 3 and 4 February 2026",
-  "company": "Coastal Coatings (Pty) Ltd (fictitious)",
+  "subtitle": "Solvent vapour survey, spray booth and mixing room, Castavel Coatings, Jacobs, Durban. Survey of 3 and 4 February 2026",
+  "company": "Castavel Coatings (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Purpose"
@@ -22,7 +22,7 @@
         "rows": [
           [
             "Approved inspection authority",
-            "Umgeni Occupational Hygiene (Pty) Ltd (fictitious), an approved inspection authority for hazardous chemical agents; approval certificate on file with the report"
+            "Nimbalo Occupational Hygiene (Pty) Ltd (fictitious), an approved inspection authority for hazardous chemical agents; approval certificate on file with the report"
           ],
           [
             "Occupational hygienist who signed the report",
@@ -34,7 +34,7 @@
           ],
           [
             "Report reference and date",
-            "UOH 2026 031, issued 20 February 2026"
+            "NOH 2026 031, issued 20 February 2026"
           ]
         ],
         "widths": [
@@ -75,7 +75,7 @@
           [
             "Spray painters (4 people)",
             "8 personal",
-            "Within the occupational exposure limits for all agents measured, while wearing the supplied respirators",
+            "Within the occupational exposure limits for all agents measured (personal breathing zone samples)",
             "Spray booth extraction; supplied air respirators; coveralls and gloves"
           ],
           [

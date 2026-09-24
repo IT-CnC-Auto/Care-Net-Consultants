@@ -1,8 +1,8 @@
 {
   "section": "F",
   "title": "Ladder and Portable Electrical Equipment Inspection Register",
-  "subtitle": "Karoo Kitchens Manufacturing, Hamilton factory, Bloemfontein. Register for the second quarter of 2026",
-  "company": "Karoo Kitchens Manufacturing (Pty) Ltd (fictitious)",
+  "subtitle": "Dralenko Kitchens Manufacturing, Hamilton factory, Bloemfontein. Register for the second quarter of 2026",
+  "company": "Dralenko Kitchens Manufacturing (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Register details"
@@ -56,7 +56,52 @@
       "page": true
     },
     {
-      "h2": "3. Ladders"
+      "h2": "3. Monthly inspection rounds"
+    },
+    {
+      "p": "Every ladder and portable electrical item in use was inspected on each monthly round. The round sheets, one line per item for each round, are filed behind this register."
+    },
+    {
+      "table": {
+        "cols": [
+          "Round",
+          "Ladders inspected",
+          "Portable electrical items inspected",
+          "Every item in use inspected"
+        ],
+        "rows": [
+          [
+            "06/04/2026",
+            "6 of 6 (LAD 01 to LAD 06)",
+            "17 of 17 (PE 01 to PE 17)",
+            "Yes"
+          ],
+          [
+            "04/05/2026",
+            "6 of 6 (LAD 03 replaced by LAD 07)",
+            "17 of 17",
+            "Yes"
+          ],
+          [
+            "01/06/2026",
+            "6 of 6",
+            "17 of 17; one untagged item found and removed (PE 18)",
+            "Yes"
+          ]
+        ],
+        "widths": [
+          16,
+          30,
+          36,
+          18
+        ]
+      }
+    },
+    {
+      "h2": "4. Ladders: exceptions and sample entries"
+    },
+    {
+      "p": "An extract from the round sheets: every failure, repair and new item, with a sample of the passed entries."
     },
     {
       "table": {
@@ -129,7 +174,7 @@
       }
     },
     {
-      "h2": "4. Portable electrical equipment"
+      "h2": "5. Portable electrical equipment: exceptions and sample entries"
     },
     {
       "table": {
@@ -202,10 +247,10 @@
       }
     },
     {
-      "h2": "5. Review"
+      "h2": "6. Review"
     },
     {
-      "p": "**Quarter summary:** 12 inspections recorded, 5 items failed, all 5 actions closed by 21/04/2026 or on the day. No open actions at the end of June 2026. Reported to the health and safety committee meeting of 09/07/2026."
+      "p": "**Quarter summary:** three monthly rounds, on 06/04, 04/05 and 01/06/2026, each covering every ladder and portable electrical item in use: 69 inspections in all (23 items on each round), plus the reinspections after repair and before first use. Four items failed and one untagged item was found and removed; all five actions were closed, the April actions by 21/04/2026 and the June action on the day it was found. No open actions at the end of June 2026. Reported to the health and safety committee meeting of 09/07/2026."
     },
     {
       "sign": [

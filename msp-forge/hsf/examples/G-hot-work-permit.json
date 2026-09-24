@@ -1,8 +1,8 @@
 {
   "section": "G",
   "title": "Hot Work Permit to Work",
-  "subtitle": "Permit HW 0142. Welding repair to a steel storage tank support, Vaal River Fabrication, Vanderbijlpark",
-  "company": "Vaal River Fabrication (Pty) Ltd (fictitious)",
+  "subtitle": "Permit HW 0142. Welding repair to a steel storage tank support, Stravane Fabrication, Vanderbijlpark",
+  "company": "Stravane Fabrication (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Permit details"
@@ -71,12 +71,12 @@
         ],
         "rows": [
           [
-            "Tank drained, fill and outlet valves closed, locked and tagged (lock numbers VRF 21 and VRF 22)",
+            "Tank drained, fill and outlet valves closed, locked and tagged (lock numbers SFB 21 and SFB 22)",
             "Yes, 07:20",
             "J. van Wyk"
           ],
           [
-            "Transfer pump electrically isolated at the board, locked and tagged (lock VRF 23); start tested and failed to start",
+            "Transfer pump electrically isolated at the board, locked and tagged (lock SFB 23); start tested and failed to start",
             "Yes, 07:25",
             "J. van Wyk"
           ],
@@ -226,7 +226,7 @@
             "M. Molefe"
           ],
           [
-            "Locks VRF 21, 22 and 23 removed; pump and valves returned to service; permit cancelled",
+            "Locks SFB 21, 22 and 23 removed; pump and valves returned to service; permit cancelled",
             "15:50",
             "J. van Wyk"
           ]

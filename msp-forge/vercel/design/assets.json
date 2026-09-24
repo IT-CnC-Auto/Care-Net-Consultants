@@ -3,11 +3,11 @@
   "generated_by": "hsf/build_asset_manifest.py",
   "source": "vercel/*.html, script#cnc-asset-spec and [data-asset] slots",
   "totals": {
-    "pages": 16,
-    "pages_with_spec": 16,
-    "assets": 211,
-    "needed": 91,
-    "existing": 120,
+    "pages": 17,
+    "pages_with_spec": 17,
+    "assets": 216,
+    "needed": 92,
+    "existing": 124,
     "warnings": 81
   },
   "pages": [
@@ -2794,6 +2794,129 @@
         {
           "n": 6,
           "id": "industry-autohive-bee",
+          "block": "Footer: AutoHive stamp",
+          "purpose": "The AutoHive bee in the credit strip that closes every page.",
+          "type": "icon",
+          "formats": [
+            "svg",
+            "webp",
+            "png"
+          ],
+          "width": 44,
+          "height": 44,
+          "ratio": "1:1",
+          "max_kb": 4,
+          "colour": "AutoHive gold as supplied",
+          "alt": "Decorative, no alternative text (the credit text sits beside it)",
+          "file_name": "New-Site_Bee_Icon_Gold.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "status": "existing",
+          "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address.",
+          "slot_count": 1
+        }
+      ],
+      "slots_without_spec": []
+    },
+    {
+      "file": "legislation.html",
+      "page": "/legislation.html",
+      "spec_found": true,
+      "builds_slots_in_script": false,
+      "assets": [
+        {
+          "n": 1,
+          "id": "leg-favicon",
+          "block": "Head: browser tab icon (favicon)",
+          "purpose": "The small icon in the browser tab, in bookmarks and on a phone home screen. Today the icon tag points at the full logo, which a browser squeezes into a 16 px square.",
+          "type": "logo",
+          "formats": [
+            "svg",
+            "png",
+            "ico"
+          ],
+          "width": 512,
+          "height": 512,
+          "ratio": "1:1",
+          "max_kb": 20,
+          "colour": "A square version of the Care Net logo, simplified until it reads at 16 x 16 px (the logo symbol or initials without the tagline), Care Net red #ED1B24 on white or transparent",
+          "alt": "Decorative, no alternative text (the browser shows the page title beside it)",
+          "file_name": "cnc-favicon-512x512.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
+          "status": "needed",
+          "notes": "One set for the whole site, not per page: cnc-favicon.svg (square artboard), cnc-favicon-512x512.png, cnc-apple-touch-icon-180x180.png and favicon.ico carrying 16, 32 and 48 px, all to the same folder. Keep 10 percent clear space inside the square. Today the icon tag points at New-Site_Care_Net_Logo.webp, a 445 x 160 wordmark, so the tab shows an unreadable sliver. When the set lands, the icon tag on every page changes in one release.",
+          "slot_count": 1
+        },
+        {
+          "n": 2,
+          "id": "leg-logo",
+          "block": "Site header: logo",
+          "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+          "type": "logo",
+          "formats": [
+            "webp",
+            "png",
+            "svg"
+          ],
+          "width": 445,
+          "height": 160,
+          "ratio": "2.78:1",
+          "max_kb": 30,
+          "colour": "Brand master as supplied, on a transparent ground",
+          "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+          "file_name": "New-Site_Care_Net_Logo.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+          "status": "existing",
+          "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email.",
+          "slot_count": 1
+        },
+        {
+          "n": 3,
+          "id": "leg-hero",
+          "block": "Hero: photograph card (right)",
+          "purpose": "The hero photograph for the legislation background page: a health and safety record being completed.",
+          "type": "photo",
+          "formats": [
+            "avif",
+            "webp",
+            "jpg"
+          ],
+          "width": 1920,
+          "height": 1080,
+          "ratio": "16:9",
+          "max_kb": 250,
+          "colour": "Natural light; the card sits on the charcoal hero, so a mid to dark photograph with a touch of Care Net red (a hard hat, a lanyard, a File binder spine) reads best",
+          "alt": "A health and safety record being completed",
+          "file_name": "record-submission.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
+          "status": "existing",
+          "notes": "Same photograph and address as the hero on health-and-safety-file.html, so the File pages look alike; replace it there and it changes here. Shows in the rounded 16:9 hero card, so 1920 x 1080 covers 2x. Model release needed for anyone identifiable; any document in shot shows fictitious data only.",
+          "slot_count": 1
+        },
+        {
+          "n": 4,
+          "id": "leg-pattern",
+          "block": "Africa pattern strip under the hero",
+          "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+          "type": "pattern",
+          "formats": [
+            "png",
+            "webp"
+          ],
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+          "alt": "Decorative, no alternative text",
+          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "status": "existing",
+          "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line.",
+          "slot_count": 1
+        },
+        {
+          "n": 5,
+          "id": "leg-autohive-bee",
           "block": "Footer: AutoHive stamp",
           "purpose": "The AutoHive bee in the credit strip that closes every page.",
           "type": "icon",

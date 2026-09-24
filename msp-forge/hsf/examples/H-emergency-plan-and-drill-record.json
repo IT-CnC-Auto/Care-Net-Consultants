@@ -1,8 +1,8 @@
 {
   "section": "H",
   "title": "Emergency Plan Summary and Evacuation Drill Record",
-  "subtitle": "Mossel Bay Cold Storage, Voorbaai depot. Plan reviewed March 2026; drill held 21 April 2026",
-  "company": "Mossel Bay Cold Storage (Pty) Ltd (fictitious)",
+  "subtitle": "Vleikuiken Cold Storage, Voorbaai depot. Plan reviewed March 2026; drill held 21 April 2026",
+  "company": "Vleikuiken Cold Storage (Pty) Ltd (fictitious)",
   "blocks": [
     {
       "h2": "1. Scope and emergencies planned for"
@@ -43,7 +43,7 @@
           [
             "Ammonia plant operator",
             "Mark Arendse",
-            "Callout: Ammonia Care Refrigeration (fictitious contractor)",
+            "Callout: Ammelkor Refrigeration (fictitious contractor)",
             "Shuts down the plant from outside the plant room; never enters without breathing apparatus and a second person"
           ],
           [
