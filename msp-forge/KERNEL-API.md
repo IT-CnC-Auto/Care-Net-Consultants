@@ -28,7 +28,7 @@ Version 1.1 reconciles sections 2 to 5 and 10 with migration 050 and `vercel/api
 1.4 Status on 23/09/2026:
 1.4.1 In the repository: the API (`vercel/api/kernel.js`) with its unit tests (`test/api/kernel.test.js`), and migration `050_kernel_api.sql` (currency holds, the citable views, the key table, the call log, key issue and revoke, the authorisation function and the read functions). 050 replays cleanly into a local database with `test/sql/replay.sh`, and `test/sql/hsf_flow_checks.sql` exercises it there.
 1.4.2 The fields in section 2 and in `openapi.yaml` were checked one by one against the real output of the read functions on that local replay, and a run of `kernel.js` against the same database returned bodies that pass the OpenAPI schemas.
-1.4.3 Nothing has been applied to the live Supabase project and nothing has been deployed. Until 050 is applied (with the Director's approval) and the API deployed, no key can be issued and the bot cannot run against live data (section 10).
+1.4.3 Applied to the live Supabase project on 24/09/2026 on the Director's instruction: migrations 042 and 047 to 055, each fetched by the database from the repository at commit 7cc7393, checked against its MD5 fingerprint before it ran, run as one transaction, and recorded in supabase_migrations.schema_migrations. The live counts match the local replay (256 File elements, 36 citable instruments, the Asbestos hold). No key has been issued yet: Odendaal issues it by route 2 in section 4.2 and puts it straight into the bot host's secret store. The /api/kernel endpoint on the preview needs SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY set for the Preview environment in Vercel (today they are set for Production only).
 
 ## 2. What the API returns
 
