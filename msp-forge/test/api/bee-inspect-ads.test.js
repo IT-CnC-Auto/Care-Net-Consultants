@@ -9,15 +9,16 @@
 //   ads.js        copy house rules: no dash or hyphen punctuation in prose (the
 //                 names Bee-Inspect and Bee-Matched excepted), rand as R299,00,
 //                 never "compliant" or "guarantee", no internal system names, AI
-//                 only "assists", no Plan links, WhatsApp stubs without UTMs,
-//                 no "See a sample report" before P2, AD-09 and AD-10 parked.
+//                 only "assists", no Plan links, since P2 every call to action
+//                 on /bee-inspect (UTMs added by cnc-ad.js, never on wa.me) and
+//                 See a sample report on AD-01, AD-09 and AD-10 parked.
 //   cnc-ad        the 15 KB budget for cnc-ad.js and cnc-ad.css, no third party
 //                 address, the UTM rules, the flag off no op.
 //   hsf-events    strict validation, size and rate limits, 202 and a dropped
 //                 event when the database or its settings are missing, never 500,
 //                 nothing personal passed on.
 //   pages         the three pages that carry banners load the four files, in the
-//                 right places; no other page does.
+//                 right places; flags.js and ads.js also where P2 needs them.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -176,28 +177,32 @@ test('ads.js: never "compliant" or "guarantee", no internal system names, AI onl
   assert.ok(A.ui.how_steps.some((s) => /AI assists/.test(s) && /competent person reviews and signs/.test(s)));
 });
 
-test('ads.js: every link is a stubbed WhatsApp without UTMs, no Plan page, no sample report before P2', () => {
+/* P1 sent every call to action to WhatsApp until /bee-inspect existed; P2
+   (contract 16, this round) switches them to the product page, where cnc-ad.js
+   adds the UTM rules, and turns on See a sample report. */
+test('ads.js P2: every banner opens /bee-inspect, AD-01 adds See a sample report, WhatsApp keeps no UTM, no Plan page', () => {
   const links = allStrings(A, 'HSF_ADS', []).filter(([at, s]) => /\.(?:href|future_href)$/.test(at) && s);
   assert.ok(links.length >= 9);
   for (const [at, s] of links) {
     assert.equal(sep.planTarget(s, 'https://file-pages.invalid/hsf-builder'), null, at + ' is a Plan page: ' + s);
+    if (/^https:\/\/wa\.me\//.test(s)) {
+      const u = new URL(s);
+      assert.deepEqual(Array.from(u.searchParams.keys()), ['text'], at + ': only the prefilled message, no UTM on wa.me');
+      assert.match(u.searchParams.get('text'), /Bee-Inspect/, at);
+    }
   }
   for (const id of LIVE) {
     const p = A.ads[id].primary;
-    const u = new URL(p.href);
-    assert.equal(u.origin + u.pathname, 'https://wa.me/27600702723', id);
-    assert.deepEqual(Array.from(u.searchParams.keys()), ['text'], id + ': only the prefilled message, no UTM on wa.me');
-    assert.match(u.searchParams.get('text'), /Bee-Inspect/, id);
-    assert.match(u.searchParams.get('text'), new RegExp('\\(ref ' + id + '\\)$'), id);
-    assert.equal(p.stub, true, id + ' is marked as a stub');
-    assert.match(p.stub_note, /P2/, id);
-    assert.equal(p.future_href, '/bee-inspect', id);
-    assert.match(p.aria, /opens WhatsApp with a Care Net sales executive/, id);
+    assert.equal(p.href, '/bee-inspect', id);
+    assert.ok(!p.stub, id + ' is no longer a stub');
+    assert.match(p.aria, /opens the Bee-Inspect page in a new tab$/, id);
   }
-  assert.equal(A.links.sample_report.href, null);
-  assert.equal(A.links.sample_report.withheld_until, 'P2');
-  assert.equal(A.links.open_app.stub, true);
-  for (const [at, s] of WORDS) assert.doesNotMatch(s, /sample report/i, at);
+  assert.equal(A.ads['AD-01'].secondary, 'sample_report', 'AD-01 carries See a sample report');
+  for (const id of LIVE.filter((x) => x !== 'AD-01')) assert.ok(!A.ads[id].secondary, id + ' has one call to action');
+  assert.equal(A.links.sample_report.href, '/bee-inspect/sample-report');
+  assert.equal(A.links.sample_report.label, 'See a sample report');
+  assert.equal(A.links.open_app.stub, true, 'Open Bee-Inspect stays a stub until P3 and P4');
+  assert.match(A.links.open_app.href, /^https:\/\/wa\.me\/27600702723\?text=/);
   assert.deepEqual(JSON.parse(JSON.stringify(A.utm)), {
     utm_source: 'hsf_builder', utm_medium: 'in_product_banner', utm_campaign: 'bee_inspect_addon', utm_content: '{ad_id}_{variant}',
     never_on_hosts: ['wa.me', 'api.whatsapp.com']
@@ -266,7 +271,11 @@ test('cnc-ad.js: flag off is a no op; band, UTM rules and the tenant hook', () =
 });
 
 /* ------------------------------------------------------------ the pages */
-test('flags.js, ads.js, cnc-ad.js and cnc-ad.css load on the three banner pages only', () => {
+/* P2: flags.js also runs on the other File pages (the flagged menu items) and on
+   the Bee-Inspect pages (noindex until the flag is on); ads.js, data only, also
+   feeds the Bee-Inspect pages their prices. The banner itself stays on the three
+   banner pages. */
+test('the banner (cnc-ad.js and cnc-ad.css) loads on the three banner pages only; flags.js and ads.js where P2 needs them', () => {
   const pages = { 'hsf-builder.html': '/', 'health-and-safety-file.html': '/', 'portal.html': '' };
   for (const [page, pre] of Object.entries(pages)) {
     const html = read(page);
@@ -277,7 +286,16 @@ test('flags.js, ads.js, cnc-ad.js and cnc-ad.css load on the three banner pages 
     assert.ok(html.includes('<script src="' + pre + 'js/cnc-ad.js" defer></script>'), page + ': cnc-ad.js');
     assert.ok(html.indexOf(pre + 'js/flags.js') < html.indexOf(pre + 'js/cnc-ad.js'));
   }
-  for (const f of fs.readdirSync(VERCEL).filter((x) => x.endsWith('.html') && !(x in pages))) {
+  const flagsToo = ['hsf-sample.html', 'hsf-staff.html', 'legislation.html', 'bee-inspect.html', 'get-app.html', 'claim.html', 'bee-inspect/sample-report.html'];
+  const adsData = ['bee-inspect.html', 'get-app.html', 'claim.html'];
+  for (const f of flagsToo) {
+    const html = read(f);
+    assert.ok(html.slice(0, html.indexOf('</head>')).includes('<script src="/js/flags.js"></script>'), f + ': flags.js in <head>');
+    assert.doesNotMatch(html, /cnc-ad\.(?:js|css)/, f + ' carries no banner');
+    if (adsData.includes(f)) assert.ok(html.includes('<script src="/hsf/ads.js"></script>'), f + ': ads.js for its prices and links');
+    else assert.doesNotMatch(html, /hsf\/ads\.js/, f);
+  }
+  for (const f of fs.readdirSync(VERCEL).filter((x) => x.endsWith('.html') && !(x in pages) && !flagsToo.includes(x))) {
     assert.doesNotMatch(read(f), /cnc-ad\.(?:js|css)|hsf\/ads\.js|js\/flags\.js/, f + ' carries no banner');
   }
 });

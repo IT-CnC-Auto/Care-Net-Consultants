@@ -39,7 +39,10 @@ const { compileSource, fillDestination } = require('../../server/serve.js');
 const ROOT = path.join(__dirname, '..', '..');
 const VERCEL = path.join(ROOT, 'vercel');
 
-const FILE_PAGES = ['health-and-safety-file.html', 'hsf-builder.html', 'hsf-sample.html', 'hsf-staff.html', 'legislation.html'];
+/* Bee-Inspect P2 (contract 16.1): the Bee-Inspect pages sit on the File site and
+   follow the same rules. */
+const FILE_PAGES = ['health-and-safety-file.html', 'hsf-builder.html', 'hsf-sample.html', 'hsf-staff.html', 'legislation.html',
+  'bee-inspect.html', 'bee-inspect/sample-report.html', 'get-app.html', 'claim.html'];
 
 /* Every Plan page, as its clean path (contract 15.1). */
 const PLAN_PATHS = ['/', '/pilot', '/method', '/shop', '/sample', '/medical-surveillance-plans', '/industry', '/assess', '/account'];

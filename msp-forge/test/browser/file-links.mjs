@@ -53,6 +53,8 @@
                    and "Explore it interactively")
      legislation   without a hash, with an instrument's hash and with an
                    unknown hash
+     bee-inspect, bee-inspect/sample-report, get-app, claim/{code} and the
+                   landing's industry variant (Bee-Inspect P2)
    On each it notes the address the page opened at (after any server
    redirect) and collects every a[href], area[href], form action,
    formaction and frame address; fills and submits every visible form
@@ -242,7 +244,13 @@ function crawlPlan(quick) {
     { name: 'staff signed out', path: '/hsf-staff', state: 'signed out', session: null, api: 'signedOut', expect: visibleEmail },
     { name: 'staff not staff', path: '/hsf-staff', state: 'signed in without staff access', session: USER, api: 'notStaff' },
     { name: 'staff sign in unreachable', path: '/hsf-staff', state: 'sign in unreachable', supabase: 'fail' },
-    { name: 'sample chooser', path: '/hsf-sample', state: 'industry chooser' }
+    { name: 'sample chooser', path: '/hsf-sample', state: 'industry chooser' },
+    /* Bee-Inspect P2 (contract 16.1): the Bee-Inspect pages follow the same rule. */
+    { name: 'bee-inspect', path: '/bee-inspect', state: 'product page' },
+    { name: 'bee-inspect sample report', path: '/bee-inspect/sample-report', state: 'sample report' },
+    { name: 'get-app', path: '/get-app', state: 'coming soon' },
+    { name: 'claim', path: '/claim/K7PQ2MX9', state: 'a claim link' },
+    { name: 'health-and-safety-file industry', path: '/health-and-safety-file?industry=construction', state: 'industry variant' }
   ];
   let slugs = [];
   try { slugs = fs.readdirSync(path.join(VERCEL, 'hsf', 'samples')).filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort(); } catch (_) { slugs = []; }

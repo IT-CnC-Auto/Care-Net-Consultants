@@ -371,8 +371,15 @@ async function builderDemo(browser, origin, vp, o) {
   /* Links, impressions and the event fields. */
   const all = await page.evaluate(bannerState);
   const hrefs = all.flatMap((x) => x.hrefs);
-  check(tag('every banner link opens WhatsApp in a new tab, with no UTM, and none leads to a Plan page'),
-    hrefs.length >= 5 && hrefs.every(([h, t, r]) => h.startsWith('https://wa.me/27600702723?text=') && !/utm_/.test(h) && t === '_blank' && /noopener/.test(r) && !lib.planTarget(h, origin + '/hsf-builder', [origin])), hrefs);
+  /* P2 (contract 16): every banner opens /bee-inspect in a new tab with the UTM
+     rules (utm_content {ad_id}_{variant}); AD-01 also opens the sample report. */
+  const utmOk = (h) => { const u = new URL(h); const id = (u.searchParams.get('utm_content') || '').split('_')[0];
+    return u.origin === origin && (u.pathname === '/bee-inspect' || (u.pathname === '/bee-inspect/sample-report' && id === 'AD-01'))
+      && u.searchParams.get('utm_source') === 'hsf_builder' && u.searchParams.get('utm_medium') === 'in_product_banner' && u.searchParams.get('utm_campaign') === 'bee_inspect_addon'
+      && /^AD-0[1-8]_[a-z0-9_]+$/.test(u.searchParams.get('utm_content') || ''); };
+  check(tag('every banner link opens /bee-inspect (AD-01 also the sample report) in a new tab with the UTM rules, and none leads to a Plan page'),
+    hrefs.length >= 6 && hrefs.every(([h, t, r]) => utmOk(h) && t === '_blank' && /noopener/.test(r) && !lib.planTarget(h, origin + '/hsf-builder', [origin]))
+    && hrefs.some(([h]) => /\/bee-inspect\/sample-report\?/.test(h)), hrefs);
   const imp = run.events.filter((e) => e.body && e.body.event === 'ad_impression').map((e) => e.body.ad_id);
   const expected = ['AD-01', 'AD-02', 'AD-03', 'AD-05', 'AD-07'].concat(W >= 768 ? ['AD-04'] : []);
   check(tag('one impression per banner seen, and none twice'), expected.every((id) => imp.includes(id)) && new Set(imp).size === imp.length && (W >= 768 || !imp.includes('AD-04')), imp);

@@ -1,4 +1,4 @@
-/* cnc-ad.css v1.0 24/09/2026: slots take room only under html.cnc-ads-on (js/flags.js) */
+/* cnc-ad.css v1.1 25/09/2026: slots take room only under html.cnc-ads-on (js/flags.js) */
 .cnc-ad-slot{display:none}
 .cnc-ads-on .cnc-ad-slot{display:flex;flex-direction:column;container-type:inline-size;margin:14px 0}
 .cnc-ads-on .cnc-ad-slot[hidden]{display:none}
@@ -15,6 +15,7 @@
 .cnc-ad .cnc-ad-p{color:var(--g);font-weight:700;font-size:13px;margin-top:6px}
 .cnc-ad .cnc-ad-go{display:inline-block;margin:0;background:var(--dr);color:#fff;border:0;border-radius:5px;padding:11px 18px;font:700 14px/1.3 Inter,Arial,sans-serif;text-decoration:none;white-space:nowrap;text-align:center}
 .cnc-ad .cnc-ad-go:hover{background:#8C0F14;color:#fff}
+.cnc-ad .cnc-ad-2{display:block;margin-top:8px;color:#fff;font-weight:700;text-align:center}
 .cnc-ad-x{position:absolute;top:8px;right:8px;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;font-size:22px;line-height:1;cursor:pointer}
 .cnc-ad a:focus-visible,.cnc-ad button:focus-visible,.cnc-ad summary:focus-visible{outline:3px solid var(--g);outline-offset:2px}
 .cnc-ad--strip,.cnc-ad--tip{background:#FFF7E8;color:var(--k);padding:8px 44px 8px 12px;gap:4px 10px;border-radius:8px;font-size:13.5px}

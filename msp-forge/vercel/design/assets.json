@@ -3,11 +3,11 @@
   "generated_by": "hsf/build_asset_manifest.py",
   "source": "vercel/*.html, script#cnc-asset-spec and [data-asset] slots",
   "totals": {
-    "pages": 17,
-    "pages_with_spec": 17,
-    "assets": 216,
-    "needed": 92,
-    "existing": 124,
+    "pages": 20,
+    "pages_with_spec": 20,
+    "assets": 229,
+    "needed": 98,
+    "existing": 131,
     "warnings": 81
   },
   "pages": [
@@ -188,6 +188,323 @@
       "slots_without_spec": []
     },
     {
+      "file": "bee-inspect.html",
+      "page": "/bee-inspect",
+      "spec_found": true,
+      "builds_slots_in_script": false,
+      "assets": [
+        {
+          "n": 1,
+          "id": "bi-og",
+          "block": "Head: social share card (og:image)",
+          "purpose": "The image shown when the Bee-Inspect page is shared on WhatsApp, LinkedIn or in email previews.",
+          "type": "og_image",
+          "formats": [
+            "jpg",
+            "webp"
+          ],
+          "width": 1200,
+          "height": 630,
+          "ratio": "1.91:1",
+          "max_kb": 200,
+          "colour": "Ink #0F0F0F ground, gold #F0A32B bee, white Bebas Neue headline \"Inspect it on your phone. File it here.\", Care Net logo top left",
+          "alt": "Bee-Inspect: inspect it on your phone, file it in your free Health and Safety File",
+          "file_name": "bee-inspect-og-1200x630.jpg",
+          "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-og-1200x630.jpg",
+          "status": "needed",
+          "notes": "Text inside the central 1080 x 566 safe area. No store badge on the card until the apps are in the stores.",
+          "slot_count": 1
+        },
+        {
+          "n": 2,
+          "id": "bi-favicon",
+          "block": "Head: browser tab icon",
+          "purpose": "The browser tab icon, shared with every Care Net page.",
+          "type": "logo",
+          "formats": [
+            "svg",
+            "png",
+            "ico"
+          ],
+          "width": 512,
+          "height": 512,
+          "ratio": "1:1",
+          "max_kb": 20,
+          "colour": "Care Net red #ED1B24 on white",
+          "alt": "Decorative",
+          "file_name": "cnc-favicon-512x512.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
+          "status": "needed",
+          "notes": "The same set as hsf-favicon on health-and-safety-file.html.",
+          "slot_count": 1
+        },
+        {
+          "n": 3,
+          "id": "bi-logo",
+          "block": "Site header: logo",
+          "purpose": "The Care Net Consultants logo in the shared site header, linking to the Health and Safety File.",
+          "type": "logo",
+          "formats": [
+            "webp",
+            "png",
+            "svg"
+          ],
+          "width": 445,
+          "height": 160,
+          "ratio": "2.78:1",
+          "max_kb": 30,
+          "colour": "Brand master as supplied",
+          "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+          "file_name": "New-Site_Care_Net_Logo.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+          "status": "existing",
+          "notes": "Shared by every page.",
+          "slot_count": 1
+        },
+        {
+          "n": 4,
+          "id": "bi-hero-illustration",
+          "block": "Hero: illustration (right)",
+          "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. Drawn inline today.",
+          "type": "illustration",
+          "formats": [
+            "svg"
+          ],
+          "width": 720,
+          "height": 600,
+          "ratio": "6:5",
+          "max_kb": 30,
+          "colour": "Ink #0F0F0F phone, gold #F0A32B accents, pass green, fail red, observe amber on white",
+          "alt": "A phone showing an inspection checklist with a pass, a fail and a photo, beside a gold bee",
+          "file_name": "bee-inspect-hero-phone.svg",
+          "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-hero-phone.svg",
+          "status": "needed",
+          "notes": "No stock photographs and no real app screens until the app exists. Keep the 6:5 box so nothing moves when it is swapped in.",
+          "slot_count": 1
+        },
+        {
+          "n": 5,
+          "id": "bi-pattern",
+          "block": "Africa pattern strip under the hero",
+          "purpose": "The Care Net Africa pattern strip.",
+          "type": "pattern",
+          "formats": [
+            "png",
+            "webp"
+          ],
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "Brand pattern",
+          "alt": "Decorative",
+          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "status": "existing",
+          "notes": "Set by /css/cnc-pattern.css.",
+          "slot_count": 1
+        },
+        {
+          "n": 6,
+          "id": "bi-autohive-bee",
+          "block": "AutoHive credit stamp",
+          "purpose": "The AutoHive bee in the credit stamp.",
+          "type": "icon",
+          "formats": [
+            "webp",
+            "svg"
+          ],
+          "width": 44,
+          "height": 44,
+          "ratio": "1:1",
+          "max_kb": 6,
+          "colour": "Gold",
+          "alt": "Decorative",
+          "file_name": "New-Site_Bee_Icon_Gold.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "status": "existing",
+          "notes": "Shared by every page.",
+          "slot_count": 1
+        }
+      ],
+      "slots_without_spec": []
+    },
+    {
+      "file": "claim.html",
+      "page": "/claim",
+      "spec_found": true,
+      "builds_slots_in_script": false,
+      "assets": [
+        {
+          "n": 1,
+          "id": "cl-favicon",
+          "block": "Head: browser tab icon",
+          "purpose": "The browser tab icon, shared with every Care Net page.",
+          "type": "logo",
+          "formats": [
+            "svg",
+            "png",
+            "ico"
+          ],
+          "width": 512,
+          "height": 512,
+          "ratio": "1:1",
+          "max_kb": 20,
+          "colour": "Care Net red #ED1B24 on white",
+          "alt": "Decorative",
+          "file_name": "cnc-favicon-512x512.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
+          "status": "needed",
+          "notes": "The same set as hsf-favicon.",
+          "slot_count": 1
+        },
+        {
+          "n": 2,
+          "id": "cl-logo",
+          "block": "Site header: logo",
+          "purpose": "The Care Net Consultants logo, linking to the Health and Safety File.",
+          "type": "logo",
+          "formats": [
+            "webp",
+            "png",
+            "svg"
+          ],
+          "width": 445,
+          "height": 160,
+          "ratio": "2.78:1",
+          "max_kb": 30,
+          "colour": "Brand master as supplied",
+          "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+          "file_name": "New-Site_Care_Net_Logo.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+          "status": "existing",
+          "notes": "Shared by every page.",
+          "slot_count": 1
+        },
+        {
+          "n": 3,
+          "id": "cl-pattern",
+          "block": "Africa pattern strip under the header",
+          "purpose": "The Care Net Africa pattern strip.",
+          "type": "pattern",
+          "formats": [
+            "png",
+            "webp"
+          ],
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "Brand pattern",
+          "alt": "Decorative",
+          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "status": "existing",
+          "notes": "Set by /css/cnc-pattern.css.",
+          "slot_count": 1
+        }
+      ],
+      "slots_without_spec": []
+    },
+    {
+      "file": "get-app.html",
+      "page": "/get-app",
+      "spec_found": true,
+      "builds_slots_in_script": false,
+      "assets": [
+        {
+          "n": 1,
+          "id": "ga-favicon",
+          "block": "Head: browser tab icon",
+          "purpose": "The browser tab icon, shared with every Care Net page.",
+          "type": "logo",
+          "formats": [
+            "svg",
+            "png",
+            "ico"
+          ],
+          "width": 512,
+          "height": 512,
+          "ratio": "1:1",
+          "max_kb": 20,
+          "colour": "Care Net red #ED1B24 on white",
+          "alt": "Decorative",
+          "file_name": "cnc-favicon-512x512.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
+          "status": "needed",
+          "notes": "The same set as hsf-favicon.",
+          "slot_count": 1
+        },
+        {
+          "n": 2,
+          "id": "ga-logo",
+          "block": "Site header: logo",
+          "purpose": "The Care Net Consultants logo, linking to the Health and Safety File.",
+          "type": "logo",
+          "formats": [
+            "webp",
+            "png",
+            "svg"
+          ],
+          "width": 445,
+          "height": 160,
+          "ratio": "2.78:1",
+          "max_kb": 30,
+          "colour": "Brand master as supplied",
+          "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+          "file_name": "New-Site_Care_Net_Logo.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+          "status": "existing",
+          "notes": "Shared by every page.",
+          "slot_count": 1
+        },
+        {
+          "n": 3,
+          "id": "ga-pattern",
+          "block": "Africa pattern strip under the header",
+          "purpose": "The Care Net Africa pattern strip.",
+          "type": "pattern",
+          "formats": [
+            "png",
+            "webp"
+          ],
+          "width": 2400,
+          "height": 96,
+          "ratio": "25:1",
+          "max_kb": 80,
+          "colour": "Brand pattern",
+          "alt": "Decorative",
+          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "status": "existing",
+          "notes": "Set by /css/cnc-pattern.css.",
+          "slot_count": 1
+        },
+        {
+          "n": 4,
+          "id": "ga-store-badges",
+          "block": "Store badges (not shown yet)",
+          "purpose": "The official App Store and Google Play badges, once the apps are in the stores. Until then the page shows text only.",
+          "type": "logo",
+          "formats": [
+            "svg"
+          ],
+          "width": 240,
+          "height": 80,
+          "ratio": "3:1",
+          "max_kb": 12,
+          "colour": "As Apple and Google supply them, unaltered",
+          "alt": "Download on the App Store; Get it on Google Play",
+          "file_name": "store-badges.svg",
+          "delivery": "/assets/bee-inspect/store-badges.svg",
+          "status": "needed",
+          "notes": "Parked until the Apple and Google developer accounts exist and the apps are listed (contract 16.4). Use the official badge artwork and its usage rules only.",
+          "slot_count": 1
+        }
+      ],
+      "slots_without_spec": []
+    },
+    {
       "file": "health-and-safety-file.html",
       "page": "/health-and-safety-file.html",
       "spec_found": true,
@@ -281,7 +598,7 @@
           "file_name": "record-submission.webp",
           "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
           "status": "existing",
-          "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on shop.html (Build your Plan) and hsf-sample.html, so the Plan and File pages look alike. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information.",
+          "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on hsf-sample.html, and today also on the Medical Surveillance Plan pages, a separate Care Net product; the File should get its own photograph so the two products are not confused. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information.",
           "slot_count": 1
         },
         {
@@ -1831,7 +2148,7 @@
           "file_name": "record-submission.webp",
           "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
           "status": "existing",
-          "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on shop.html (Build your Plan) and health-and-safety-file.html, so the Plan and File pages look alike. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information.",
+          "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Loads with high fetch priority, so keep it under 250 KB. The same photograph is the hero on health-and-safety-file.html, and today also on the Medical Surveillance Plan pages, a separate Care Net product; the File should get its own photograph so the two products are not confused. hsf-builder.html lists a dedicated File photograph as needed (hsf-builder-hero-1920x1080.webp); once it is delivered this page can move to it too, so one new photograph serves the builder, the File page and the sample File. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious data only, with no readable personal or health information.",
           "slot_count": 1
         },
         {

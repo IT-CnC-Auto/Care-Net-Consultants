@@ -41,7 +41,7 @@
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" data-asset="hsf-favicon">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
@@ -180,6 +180,9 @@
         <li><a href="/health-and-safety-file.html">Health and Safety File</a></li>
         <li><a href="/hsf-builder.html">Build my File</a></li>
         <li><a href="/hsf-sample.html">Sample File</a></li>
+        <!-- Bee-Inspect P2: shown only while CNC_FLAGS.bee_inspect_ads is on (css/cnc-header.css). -->
+        <li data-flag="bee_inspect_ads"><a href="/bee-inspect">Bee-Inspect</a></li>
+        <li data-flag="bee_inspect_ads"><a href="/get-app">Get the app</a></li>
         <li><a href="/portal.html">Sign in</a></li>
       </ul>
     </div>
@@ -189,8 +192,8 @@
 <section class="cnc-hero">
   <div class="hwrap">
     <div>
-      <span class="eyebrow">Health and Safety File</span>
-      <h1>Your Health and Safety File, free to build. <span class="r">Signed off when you need it.</span></h1>
+      <span class="eyebrow" id="hero-eyebrow">Health and Safety File</span>
+      <h1><span id="hero-line">Your Health and Safety File, free to build.</span> <span class="r">Signed off when you need it.</span></h1>
       <p class="lede">Every element the law asks of your industry, who owns it, the evidence behind it and what is still outstanding, in one File an inspector can read. Build it at no charge. When you need it signed, a registered Health and Safety Manager reviews it. <span id="lede-price">Care Net clients pay one flat price for sign off, whatever their industry.</span></p>
       <div class="chips">
         <a class="chip" href="#two-ways" data-cta="chip_free_for_every_client">Free for every client</a>
@@ -204,6 +207,33 @@
     </div>
   </div>
 </section>
+<!-- Bee-Inspect P2 (contract 16), flag bee_inspect_ads: industry landing variants.
+     /health-and-safety-file?industry=construction|manufacturing|agriculture|food|logistics|cleaning|security
+     adjusts the hero line here, before the first paint (no layout shift), and
+     preselects the matching industry code of /hsf/pricing.js in the sign off
+     price selector below. Any other value, or the flag off, changes nothing. -->
+<script>
+window.CNC_HSF_INDUSTRY_VARIANT = (function () {
+  var V = {
+    construction: ['CONSTR', 'construction', 'Your construction Health and Safety File, free to build.'],
+    manufacturing: ['MANU', 'manufacturing', 'Your manufacturing Health and Safety File, free to build.'],
+    agriculture: ['AGRI', 'agriculture and forestry', 'Your farming and forestry Health and Safety File, free to build.'],
+    food: ['HOSP', 'hospitality and food service', 'Your food service Health and Safety File, free to build.'],
+    logistics: ['TRANS', 'transport and logistics', 'Your transport and logistics Health and Safety File, free to build.'],
+    cleaning: ['CLEAN', 'cleaning and hygiene services', 'Your cleaning services Health and Safety File, free to build.'],
+    security: ['SEC', 'security services', 'Your security services Health and Safety File, free to build.']
+  };
+  try {
+    if (!(window.CNC_FLAGS && window.CNC_FLAGS.bee_inspect_ads)) return null;
+    var k = String(new URLSearchParams(location.search).get('industry') || '').trim().toLowerCase();
+    if (!Object.prototype.hasOwnProperty.call(V, k)) return null;
+    var v = V[k];
+    document.getElementById('hero-line').textContent = v[2];
+    document.getElementById('hero-eyebrow').textContent = 'Health and Safety File for ' + v[1];
+    return { slug: k, code: v[0] };
+  } catch (e) { return null; }
+})();
+</script>
 <div class="pattern-strip" role="presentation" data-asset="hsf-pattern"></div>
 
 <main id="main">
@@ -361,7 +391,7 @@
     </div>
   </section>
 </main>
-<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.<nav class="cnc-footlinks" data-flag="bee_inspect_ads" aria-label="Bee-Inspect"><a href="/bee-inspect" data-cta="footer_bee_inspect">Bee-Inspect</a><a href="/get-app" data-cta="footer_get_app">Get the app</a></nav></footer>
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
@@ -549,10 +579,16 @@
     $('formula').hidden = false;
     var row = $('row-' + sel.value); if (row) row.className = 'sel';
   });
+  /* Bee-Inspect P2: an industry landing variant preselects its industry, when
+     /hsf/pricing.js knows the code. */
+  var IV = window.CNC_HSF_INDUSTRY_VARIANT;
+  if (IV && byCode[IV.code]) { sel.value = IV.code; sel.dispatchEvent(new Event('change')); }
 })();
 </script>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<!-- Bee-Inspect P2: campaign tags of this visit kept for the sign in link (nothing unless the flag is on). -->
+<script src="/js/cnc-utm.js" defer></script>
 <!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
      /js/cnc-design-assets.js when the address carries ?design=1 or #design,
      and by hsf/build_asset_manifest.py. Visitors see no difference. -->

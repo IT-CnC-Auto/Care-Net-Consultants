@@ -1,4 +1,4 @@
-/* cnc-ad.js v1.0 24/09/2026 Bee-Inspect banners (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
+/* cnc-ad.js v1.1 25/09/2026 Bee-Inspect banners (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
 (function (w, d) {
 'use strict';
 var A = w.HSF_ADS, KEY = 'cnc_bee_ads_v1', DAY = 864e5;
@@ -56,11 +56,11 @@ function bee(s) {
     + '<path d="M11.4 22h17.2M11.2 27h17.6M13.4 32h13.2" stroke="#0F0F0F" stroke-width="2.6"/>'
     + '<circle cx="20" cy="12" r="4.2" fill="#0F0F0F" stroke="#F0A32B" stroke-width="1"/></svg>';
 }
-function link(e, cls) {
-  var ad = A.ads[e.id], p = S.sub ? A.links.open_app : ad.primary, v = variant(e);
+function link(e, cls, q) {
+  var ad = A.ads[e.id], p = q || (S.sub ? A.links.open_app : ad.primary), v = variant(e);
   var href = p.stub || /^https:\/\/wa\.me\//.test(p.href) ? p.href : withUtm(p.href, e.id, v);
   return '<a class="' + cls + '" href="' + esc(href) + '" target="_blank" rel="noopener" aria-label="' + esc(p.aria || p.label)
-    + '" data-cta="bee_inspect_' + e.id.replace('-', '').toLowerCase() + '" data-go>' + tx(p.label) + '</a>';
+    + '" data-cta="bee_inspect_' + e.id.replace('-', '').toLowerCase() + (q ? '_sample' : '') + '" data-go>' + tx(p.label) + '</a>';
 }
 function html(e) {
   var ad = A.ads[e.id], U = A.ui, k = kind(e), n = Number(e.ctx.n) || 0, v = variant(e);
@@ -82,7 +82,7 @@ function html(e) {
     + '<div class="cnc-ad-tx"><p class="cnc-ad-eb">' + esc((S.brand && S.brand.label) || A.eyebrow) + '</p>'
     + '<p class="cnc-ad-h">' + tx(h) + '</p><p class="cnc-ad-b">' + tx(S.sub ? U.subscriber_body : ad.body) + '</p>'
     + (S.sub ? '' : '<p class="cnc-ad-p">' + esc(A.price.line) + '</p>') + '</div>'
-    + '<div class="cnc-ad-ac">' + link(e, 'cnc-ad-go btn') + '</div>' + x + '</aside>';
+    + '<div class="cnc-ad-ac">' + link(e, 'cnc-ad-go btn') + (!S.sub && ad.secondary ? link(e, 'cnc-ad-2', A.links[ad.secondary]) : '') + '</div>' + x + '</aside>';
 }
 
 /* ---- slots */

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Claim your Bee-Inspect sign in | Care Net Consultants</title>
+<meta name="description" content="A Bee-Inspect claim link signs the app in to your account. The app is not released yet.">
+<!--
+=====================================================================
+ claim.html :: Version 1.0 :: 25 September 2026
+ /claim/{code}: vercel.json rewrites /claim/:code here (server/serve.js does
+ the same locally). The Universal Link and App Link target for the claim code
+ a desktop shows as a QR (hsf/BEE-INSPECT-BUILD-PROMPT.md A3 and B3, applied
+ under hsf/BUILD-CONTRACT.md 16, Bee-Inspect P2).
+ STUB until P3 (claim-code-create and claim-code-redeem) and the store
+ accounts: the page checks only the shape of the code (6 to 12 letters or
+ digits, /js/cnc-bee.js claimCode) and explains that the app is not released
+ yet. It never writes the code into the page, never sends it anywhere and
+ never stores it; referrer is off so it does not leave in a Referer header.
+ Always noindex (a claim link is personal and short lived).
+=====================================================================
+-->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" data-asset="cl-favicon">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-bee.css?v=20260925a">
+<script src="/js/cnc-config.js" defer></script>
+<script src="/js/cnc-tracking.js" defer></script>
+<script src="/js/flags.js"></script>
+</head>
+<body>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/health-and-safety-file" aria-label="Care Net Consultants, Health and Safety File home">
+        <img class="logo-img" data-asset="cl-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/health-and-safety-file.html">Health and Safety File</a></li>
+        <li><a href="/hsf-builder.html">Build my File</a></li>
+        <li><a href="/hsf-sample.html">Sample File</a></li>
+        <li><a href="/bee-inspect">Bee-Inspect</a></li>
+        <li><a href="/get-app">Get the app</a></li>
+        <li><a href="/portal.html">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<div class="pattern-strip" role="presentation" data-asset="cl-pattern"></div>
+
+<main id="main">
+  <section class="panel" aria-labelledby="cl-title">
+    <div class="card">
+      <span class="eyebrow">Bee&#8209;Inspect</span>
+      <h1 id="cl-title">Claim your sign in</h1>
+      <div id="cl-valid" hidden>
+        <p>This is a Bee&#8209;Inspect claim link, and the code in it has the right shape.</p>
+        <p>The Bee&#8209;Inspect app is not released yet, so the code cannot be claimed today. Once the app is out, opening a claim link like this on your phone signs the app in to the same account and File as the computer that showed it.</p>
+      </div>
+      <div id="cl-invalid">
+        <p>This is not a Bee&#8209;Inspect claim link we recognise. Check that the whole link was copied, or ask for a new one.</p>
+        <p>The Bee&#8209;Inspect app is not released yet, so no claim link can be used today.</p>
+      </div>
+      <script src="/hsf/ads.js"></script>
+      <script src="/js/cnc-bee.js"></script>
+      <script>
+      /* The shape only (stub until claim-code-redeem, P3). The code itself is
+         never written into the page, stored or sent. */
+      (function () {
+        var ok = false;
+        try { ok = CNCBee.claimCode(location.pathname).valid; } catch (e) { ok = false; }
+        document.getElementById('cl-valid').hidden = !ok;
+        document.getElementById('cl-invalid').hidden = ok;
+      })();
+      </script>
+      <div class="btns">
+        <a class="btn" href="/get-app" data-cta="claim_get_app">Get the app</a>
+        <a class="btn ghost" href="/bee-inspect" data-cta="claim_back_to_bee_inspect">About Bee&#8209;Inspect</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.<nav class="cnc-footlinks" aria-label="Bee-Inspect"><a href="/bee-inspect" data-cta="footer_bee_inspect">Bee-Inspect</a><a href="/get-app" data-cta="footer_get_app">Get the app</a></nav></footer>
+
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-design-assets.js" defer></script>
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/claim",
+ "title": "Claim your Bee-Inspect sign in",
+ "version": "1.0",
+ "date": "25/09/2026",
+ "assets": [
+  {"id": "cl-favicon", "block": "Head: browser tab icon", "purpose": "The browser tab icon, shared with every Care Net page.", "type": "logo", "formats": ["svg", "png", "ico"], "width": 512, "height": 512, "ratio": "1:1", "max_kb": 20, "colour": "Care Net red #ED1B24 on white", "alt": "Decorative", "file_name": "cnc-favicon-512x512.png", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png", "status": "needed", "notes": "The same set as hsf-favicon."},
+  {"id": "cl-logo", "block": "Site header: logo", "purpose": "The Care Net Consultants logo, linking to the Health and Safety File.", "type": "logo", "formats": ["webp", "png", "svg"], "width": 445, "height": 160, "ratio": "2.78:1", "max_kb": 30, "colour": "Brand master as supplied", "alt": "Care Net Consultants, Occupational Health Medical Specialists", "file_name": "New-Site_Care_Net_Logo.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp", "status": "existing", "notes": "Shared by every page."},
+  {"id": "cl-pattern", "block": "Africa pattern strip under the header", "purpose": "The Care Net Africa pattern strip.", "type": "pattern", "formats": ["png", "webp"], "width": 2400, "height": 96, "ratio": "25:1", "max_kb": 80, "colour": "Brand pattern", "alt": "Decorative", "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png", "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png", "status": "existing", "notes": "Set by /css/cnc-pattern.css."}
+ ]
+}
+</script>
+</body>
+</html>

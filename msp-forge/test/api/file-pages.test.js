@@ -24,7 +24,10 @@ const lib = require('./file-separation.test.js');
 globalThis.__CNC_FILE_SEPARATION_LIB_ONLY = before;
 
 const VERCEL = path.join(__dirname, '..', '..', 'vercel');
-const FILE_PAGES = ['health-and-safety-file.html', 'hsf-builder.html', 'hsf-sample.html', 'hsf-staff.html', 'legislation.html'];
+/* Bee-Inspect P2 (contract 16.1): the Bee-Inspect pages sit on the File site and
+   follow the same rules. */
+const FILE_PAGES = ['health-and-safety-file.html', 'hsf-builder.html', 'hsf-sample.html', 'hsf-staff.html', 'legislation.html',
+  'bee-inspect.html', 'bee-inspect/sample-report.html', 'get-app.html', 'claim.html'];
 const read = (rel) => fs.readFileSync(path.join(VERCEL, rel), 'utf8');
 
 /* Offering the Plan, or calling the File a Plan. */

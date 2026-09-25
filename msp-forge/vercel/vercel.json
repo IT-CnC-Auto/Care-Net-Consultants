@@ -68,12 +68,33 @@
           "value": "noindex, nofollow, noarchive"
         }
       ]
+    },
+    {
+      "source": "/claim/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
     }
   ],
   "rewrites": [
     {
       "source": "/build-your-plan",
       "destination": "/shop.html"
+    },
+    {
+      "source": "/claim/:code",
+      "destination": "/claim.html"
     },
     {
       "source": "/icon-src/ms/:file",

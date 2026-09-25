@@ -1,6 +1,6 @@
 /* =====================================================================
    flags.js :: feature flags for the Health and Safety File site
-   Version: 1.0 | 24/09/2026 | Bee-Inspect P1 (hsf/BUILD-CONTRACT.md 16.3)
+   Version: 1.1 | 25/09/2026 | Bee-Inspect P1 and P2 (hsf/BUILD-CONTRACT.md 16)
 
    window.CNC_FLAGS = { bee_inspect_ads, welcome_hook }
 
@@ -18,6 +18,16 @@
    Load it in <head>, before css/cnc-ad.css is used (it sets the class
    cnc-ads-on on <html> while the banners are on). Plain script, no
    dependencies, safe to include twice (the first copy wins).
+
+   While bee_inspect_ads is on (html.cnc-ads-on):
+   - menu items marked <li data-flag="bee_inspect_ads"> show (css/cnc-header.css);
+   - a page that is public only once the flag is on carries, in <head> BEFORE
+     this script, <meta name="robots" content="noindex" data-noindex-unless="bee_inspect_ads">.
+     The tag is removed here when that flag is on for this host, so the page
+     is indexable exactly where the flag is on and noindex everywhere else
+     (and for any reader that runs no script). When the Director switches the
+     flag on for production, also drop the tag from those pages in the same
+     release, so a crawler that does not run scripts sees the same answer.
    ===================================================================== */
 (function (w) {
   'use strict';
@@ -55,8 +65,21 @@
      so a page with the flag off lays out exactly as before. Loaded in <head>,
      before first paint, so the reserved room never moves anything. */
   try { if (flags.bee_inspect_ads && w.document) w.document.documentElement.classList.add('cnc-ads-on'); } catch (e) { /* no document */ }
+  /* noindex unless the named flag is on (see above). */
+  function robots(doc) {
+    var removed = 0;
+    try {
+      var list = doc.querySelectorAll('meta[data-noindex-unless]');
+      for (var i = 0; i < list.length; i++) {
+        var m = list[i], name = m.getAttribute('data-noindex-unless');
+        if (NAMES.indexOf(name) !== -1 && flags[name] === true && m.parentNode) { m.parentNode.removeChild(m); removed++; }
+      }
+    } catch (e) { /* no document */ }
+    return removed;
+  }
+  robots(w.document);
   Object.defineProperty(flags, '__cnc', { value: 1, enumerable: false });
   /* For the tests: the pure parts, not enumerable. */
-  Object.defineProperty(flags, '_lib', { value: { parse: parse, compute: compute, isStagingHost: isStagingHost, NAMES: NAMES }, enumerable: false });
+  Object.defineProperty(flags, '_lib', { value: { parse: parse, compute: compute, isStagingHost: isStagingHost, robots: robots, NAMES: NAMES }, enumerable: false });
   w.CNC_FLAGS = Object.freeze(flags);
 })(typeof window !== 'undefined' ? window : globalThis);
