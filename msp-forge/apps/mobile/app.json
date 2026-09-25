@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Bee-Inspect",
-    "slug": "bee-inspect",
+    "slug": "care-net-consultants",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.carenetconsultants.carenetconsultants"
     },
     "web": {
       "output": "static",
@@ -42,6 +43,7 @@
       "eas": {
         "projectId": "c292cf70-a15c-4b64-8925-fbd1c238d2d4"
       }
-    }
+    },
+    "owner": "care-net-consultants"
   }
 }
