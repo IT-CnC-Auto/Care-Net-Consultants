@@ -216,7 +216,13 @@ test('cnc-ad.js and cnc-ad.css stay under 15 KB together, with no third party ad
   const css = fs.statSync(path.join(VERCEL, 'css/cnc-ad.css')).size;
   assert.ok(js + css < BUDGET, 'cnc-ad.js ' + js + ' + cnc-ad.css ' + css + ' = ' + (js + css) + ' bytes, budget ' + BUDGET);
   const src = read('js/cnc-ad.js') + read('css/cnc-ad.css');
-  assert.doesNotMatch(src, /https?:\/\/(?!wa\.me)/, 'no address off this site: no pixel, no tag manager, no font or image CDN');
+  /* The one address allowed besides wa.me: the official Care Net gold bee on
+     Care Net's own image host (the Director, 25/09/2026: the same file as the
+     footer credit on www.carenetconsultants.co.za), never a drawn bee. */
+  const BEE = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+  assert.doesNotMatch(src, /https?:\/\/(?!wa\.me|img\.carenetcdn\.com\/medical-surveillance\/New-Site_Bee_Icon_Gold\.webp["'])/, 'no address off this site: no pixel, no tag manager, no font or image CDN');
+  assert.ok(read('js/cnc-ad.js').includes('<img class="cnc-ad-bee" src="' + BEE + '" alt="" width="\' + s + \'" height="\' + s + \'"'), 'the banner bee is the official gold bee image, square, sized by width and height');
+  assert.doesNotMatch(read('js/cnc-ad.js'), /<svg|<ellipse|<circle/, 'no hand drawn bee in the banners');
   assert.doesNotMatch(src, /googletagmanager|gtag\(|fbq\(|dataLayer|doubleclick|facebook|linkedin|hotjar|clarity/i);
   assert.doesNotMatch(src, /document\.cookie/, 'no cookie is read or written');
   assert.match(read('js/cnc-ad.js'), /'\/api\/hsf-events'/, 'first party events only');

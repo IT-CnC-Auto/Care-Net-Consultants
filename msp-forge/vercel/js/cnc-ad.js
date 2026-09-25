@@ -1,4 +1,4 @@
-/* cnc-ad.js v1.1 25/09/2026 Bee-Inspect banners (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
+/* cnc-ad.js v1.2 25/09/2026 Bee-Inspect banners (bee: official gold image) (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
 (function (w, d) {
 'use strict';
 var A = w.HSF_ADS, KEY = 'cnc_bee_ads_v1', DAY = 864e5;
@@ -48,13 +48,7 @@ function variant(e) {
 }
 function fillN(t, n) { return String(t || '').replace('{n}', String(n)); }
 function bee(s) {
-  return '<svg class="cnc-ad-bee" viewBox="0 0 40 40" width="' + s + '" height="' + s + '" aria-hidden="true">'
-    + '<path d="M18 9 15 4M22 9l3-5" stroke="#F0A32B" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
-    + '<ellipse cx="13" cy="15" rx="8" ry="5.5" transform="rotate(-28 13 15)" fill="#fff" opacity=".88"/>'
-    + '<ellipse cx="27" cy="15" rx="8" ry="5.5" transform="rotate(28 27 15)" fill="#fff" opacity=".88"/>'
-    + '<ellipse cx="20" cy="25" rx="9" ry="11" fill="#F0A32B"/>'
-    + '<path d="M11.4 22h17.2M11.2 27h17.6M13.4 32h13.2" stroke="#0F0F0F" stroke-width="2.6"/>'
-    + '<circle cx="20" cy="12" r="4.2" fill="#0F0F0F" stroke="#F0A32B" stroke-width="1"/></svg>';
+  return '<img class="cnc-ad-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="' + s + '" height="' + s + '" decoding="async">';
 }
 function link(e, cls, q) {
   var ad = A.ads[e.id], p = q || (S.sub ? A.links.open_app : ad.primary), v = variant(e);

@@ -5,9 +5,9 @@
   "totals": {
     "pages": 20,
     "pages_with_spec": 20,
-    "assets": 229,
+    "assets": 231,
     "needed": 98,
-    "existing": 131,
+    "existing": 133,
     "warnings": 81
   },
   "pages": [
@@ -265,7 +265,7 @@
           "n": 4,
           "id": "bi-hero-illustration",
           "block": "Hero: illustration (right)",
-          "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. Drawn inline today.",
+          "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. The phone is drawn inline today; the bee is the official gold bee image laid over it (bi-bee).",
           "type": "illustration",
           "formats": [
             "svg"
@@ -285,27 +285,48 @@
         {
           "n": 5,
           "id": "bi-pattern",
-          "block": "Africa pattern strip under the hero",
-          "purpose": "The Care Net Africa pattern strip.",
+          "block": "Faded Africa pattern page break under the hero",
+          "purpose": "The faded Africa pattern page break used across www.carenetconsultants.co.za.",
           "type": "pattern",
           "formats": [
-            "png",
-            "webp"
+            "webp",
+            "png"
           ],
           "width": 2400,
-          "height": 96,
-          "ratio": "25:1",
-          "max_kb": 80,
-          "colour": "Brand pattern",
-          "alt": "Decorative",
-          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "height": 120,
+          "ratio": "20:1",
+          "max_kb": 60,
+          "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity",
+          "alt": "Decorative, no alternative text",
+          "file_name": "cnc-africa-pattern-faded-2400x120.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp",
           "status": "existing",
-          "notes": "Set by /css/cnc-pattern.css.",
+          "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100), shown at the content width with its height auto, never stretched. The same file as msp-faq-divider. Deliver the 2400 x 120 copy to the address given, then point the page at it.",
           "slot_count": 1
         },
         {
           "n": 6,
+          "id": "bi-bee",
+          "block": "Hero: the gold bee beside the phone",
+          "purpose": "The official Care Net gold bee beside the drawn phone in the hero.",
+          "type": "icon",
+          "formats": [
+            "webp"
+          ],
+          "width": 168,
+          "height": 168,
+          "ratio": "1:1",
+          "max_kb": 6,
+          "colour": "Gold, as supplied; never recoloured or redrawn",
+          "alt": "Decorative, no alternative text",
+          "file_name": "New-Site_Bee_Icon_Gold.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "status": "existing",
+          "notes": "The official Care Net gold bee, the same file as the AutoHive footer credit on www.carenetconsultants.co.za.",
+          "slot_count": 1
+        },
+        {
+          "n": 7,
           "id": "bi-autohive-bee",
           "block": "AutoHive credit stamp",
           "purpose": "The AutoHive bee in the credit stamp.",
@@ -384,23 +405,23 @@
         {
           "n": 3,
           "id": "cl-pattern",
-          "block": "Africa pattern strip under the header",
-          "purpose": "The Care Net Africa pattern strip.",
+          "block": "Faded Africa pattern page break under the header",
+          "purpose": "The faded Africa pattern page break used across www.carenetconsultants.co.za.",
           "type": "pattern",
           "formats": [
-            "png",
-            "webp"
+            "webp",
+            "png"
           ],
           "width": 2400,
-          "height": 96,
-          "ratio": "25:1",
-          "max_kb": 80,
-          "colour": "Brand pattern",
-          "alt": "Decorative",
-          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "height": 120,
+          "ratio": "20:1",
+          "max_kb": 60,
+          "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity",
+          "alt": "Decorative, no alternative text",
+          "file_name": "cnc-africa-pattern-faded-2400x120.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp",
           "status": "existing",
-          "notes": "Set by /css/cnc-pattern.css.",
+          "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100), shown at the content width with its height auto, never stretched. The same file as msp-faq-divider. Deliver the 2400 x 120 copy to the address given, then point the page at it.",
           "slot_count": 1
         }
       ],
@@ -461,27 +482,48 @@
         {
           "n": 3,
           "id": "ga-pattern",
-          "block": "Africa pattern strip under the header",
-          "purpose": "The Care Net Africa pattern strip.",
+          "block": "Faded Africa pattern page break under the header",
+          "purpose": "The faded Africa pattern page break used across www.carenetconsultants.co.za.",
           "type": "pattern",
           "formats": [
-            "png",
-            "webp"
+            "webp",
+            "png"
           ],
           "width": 2400,
-          "height": 96,
-          "ratio": "25:1",
-          "max_kb": 80,
-          "colour": "Brand pattern",
-          "alt": "Decorative",
-          "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+          "height": 120,
+          "ratio": "20:1",
+          "max_kb": 60,
+          "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity",
+          "alt": "Decorative, no alternative text",
+          "file_name": "cnc-africa-pattern-faded-2400x120.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp",
           "status": "existing",
-          "notes": "Set by /css/cnc-pattern.css.",
+          "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100), shown at the content width with its height auto, never stretched. The same file as msp-faq-divider. Deliver the 2400 x 120 copy to the address given, then point the page at it.",
           "slot_count": 1
         },
         {
           "n": 4,
+          "id": "ga-bee",
+          "block": "Panel: the gold bee above the heading",
+          "purpose": "The official Care Net gold bee that opens the Get the app card.",
+          "type": "icon",
+          "formats": [
+            "webp"
+          ],
+          "width": 112,
+          "height": 112,
+          "ratio": "1:1",
+          "max_kb": 6,
+          "colour": "Gold, as supplied; never recoloured or redrawn",
+          "alt": "Decorative, no alternative text",
+          "file_name": "New-Site_Bee_Icon_Gold.webp",
+          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "status": "existing",
+          "notes": "The official Care Net gold bee, the same file as the AutoHive footer credit on www.carenetconsultants.co.za.",
+          "slot_count": 1
+        },
+        {
+          "n": 5,
           "id": "ga-store-badges",
           "block": "Store badges (not shown yet)",
           "purpose": "The official App Store and Google Play badges, once the apps are in the stores. Until then the page shows text only.",

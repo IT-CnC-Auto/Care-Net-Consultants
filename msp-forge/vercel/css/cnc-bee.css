@@ -1,7 +1,8 @@
 /* =====================================================================
    cnc-bee.css :: the Bee-Inspect pages (/bee-inspect, /bee-inspect/sample-report,
    /get-app, /claim/{code}) on the Health and Safety File shell
-   Version 1.0 | 25/09/2026 | Bee-Inspect P2 (hsf/BUILD-CONTRACT.md 16)
+   Version 1.1 | 25/09/2026 | Bee-Inspect P2 (hsf/BUILD-CONTRACT.md 16)
+   1.1: the official gold bee image and the faded Africa pattern page break.
    The same tokens and card style as health-and-safety-file.html; gold for
    the Bee-Inspect accent. Small text uses the deeper reds for AA contrast.
    ===================================================================== */
@@ -54,7 +55,12 @@ footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
 
 /* Hero: the shared cnc-hero band, with a drawn phone instead of a photograph. */
 .cnc-hero .heroart { position: relative; display: flex; justify-content: center; }
+.cnc-hero .heroart-in { position: relative; width: 100%; max-width: 360px; }
 .cnc-hero .heroart svg { width: 100%; max-width: 360px; height: auto; display: block; }
+/* The official gold bee (New-Site_Bee_Icon_Gold.webp), laid over the drawn
+   phone where the old drawn bee sat: its box scales with the drawing (84 of
+   360 by 300 units) and its square is set by width and height, so nothing moves. */
+.cnc-hero .hero-bee { position: absolute; left: 71.67%; top: 14%; width: 23.33%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; display: block; }
 .cnc-hero .chip:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .cnc-hero .price-line { margin: 14px 0 0; color: var(--gold); font-weight: 700; font-size: 14.5px; }
 /* The price line is written from /hsf/ads.js as the hero is parsed: its room is
@@ -102,4 +108,11 @@ footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
 .panel .device { font-size: 14px; font-weight: 600; margin: 10px 0 0; line-height: 1.5; min-height: 3em; }
 @media (max-width: 640px) { .panel .device { min-height: 4.5em; } }
 @media (max-width: 359px) { .panel .device { min-height: 6em; } }
-.bee-mark { display: block; width: 56px; height: 56px; margin-bottom: 10px; }
+.bee-mark { display: block; width: 56px; height: 56px; margin-bottom: 10px; object-fit: contain; }
+
+/* The faded Africa pattern page break, the same file and the same rule as
+   .divider on medical-surveillance-plans.html (www.carenetconsultants.co.za):
+   the content width, height auto from its 2000 by 100 box, never stretched.
+   Multiply drops the file's white ground to the page grey. */
+.cnc-divider { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+.divider { width: 100%; height: auto; display: block; margin: 8px 0 0; opacity: .9; mix-blend-mode: multiply; }

@@ -41,7 +41,9 @@
    /opt/node22/lib/node_modules/playwright, or PLAYWRIGHT_MODULE. Browsers
    from PLAYWRIGHT_BROWSERS_PATH (for example /opt/pw-browsers). Every
    address off the local server is refused or answered by a stub: nothing
-   reaches Supabase, Vercel or any live service.
+   reaches Supabase, Vercel or any live service. The banner bee (the official
+   New-Site_Bee_Icon_Gold.webp) is answered by a square gold stand in marked
+   "stand in", so screenshots show the stand in, not the real bee.
    ===================================================================== */
 
 import { createRequire } from 'node:module';
@@ -175,6 +177,11 @@ function check(name, cond, detail) {
   results.push({ name, ok: !!cond, detail: cond ? '' : (detail === undefined ? '' : (typeof detail === 'string' ? detail : JSON.stringify(detail))) });
 }
 
+const BEE_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const BEE_STAND_IN = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><circle cx="128" cy="128" r="120" fill="#F0A32B"/>'
+  + '<text x="128" y="146" font-family="Arial" font-size="56" font-weight="700" fill="#0F0F0F" text-anchor="middle">BEE</text>'
+  + '<text x="128" y="190" font-family="Arial" font-size="26" fill="#0F0F0F" text-anchor="middle">stand in</text></svg>';
+
 async function open(browser, origin, vp, o) {
   const opts = o || {};
   const context = await browser.newContext({ viewport: vp, serviceWorkers: 'block', reducedMotion: 'reduce' });
@@ -212,6 +219,11 @@ async function open(browser, origin, vp, o) {
     if (/\.supabase\.co$/i.test(u.hostname)) {
       if (req.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors, body: '' }).catch(() => {});
       return route.fulfill({ status: 200, headers: Object.assign({ 'content-type': 'application/json' }, cors), body: u.pathname.startsWith('/rest/') ? '[]' : '{}' }).catch(() => {});
+    }
+    /* The official gold bee (the one image a banner loads): a square stand in,
+       labelled as one, since the image host is out of reach here. */
+    if (u.hostname === 'img.carenetcdn.com' && /\/New-Site_Bee_Icon_Gold\.webp$/.test(u.pathname)) {
+      return route.fulfill({ status: 200, headers: Object.assign({ 'content-type': 'image/svg+xml' }, cors), body: BEE_STAND_IN }).catch(() => {});
     }
     return route.abort('blockedbyclient').catch(() => {});
   });
@@ -550,6 +562,12 @@ async function landing(browser, origin, vp, o) {
       check(tag('AD-06 sits between Two ways and What is in the File, outside the pricing table'), pos.between && !pos.inPricing, pos);
       check(tag('AD-06 shows its headline'), b['AD-06'] && b['AD-06'].shown && /The File is free\. The risk assessment is Bee-Inspect\./i.test(b['AD-06'].text), b['AD-06']);
       check(tag('AD-06 impression counted with page /health-and-safety-file'), run.events.some((e) => e.body.event === 'ad_impression' && e.body.ad_id === 'AD-06' && e.body.page === '/health-and-safety-file'), run.events.map((e) => e.body));
+      const bee = await page.evaluate(() => Array.from(document.querySelectorAll('[data-cnc-ad-slot="AD-06"] .cnc-ad-bee')).map((i) => {
+        const r = i.getBoundingClientRect();
+        return { tag: i.tagName, src: i.getAttribute('src'), nw: i.naturalWidth, alt: i.getAttribute('alt'), w: r.width, h: r.height };
+      }));
+      check(tag('AD-06 bee is the official gold bee image, loaded and square, not a drawing'), bee.length === 1 && bee[0].tag === 'IMG' && bee[0].src === BEE_SRC && bee[0].nw > 0 && bee[0].alt === ''
+        && bee[0].w > 0 && Math.abs(bee[0].w - bee[0].h) < 0.6, bee);
       await shot(page, 'AD-06', 'AD-06-landing', vp, o);
     } else {
       check(tag('flag off: the AD-06 slot takes no room and nothing is drawn or sent'), pos.h === 0 && !b['AD-06'] && run.events.length === 0, { pos, b, events: run.events.length });

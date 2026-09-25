@@ -28,6 +28,9 @@
    On every page at both widths: no console error, no horizontal scroll,
    keyboard focus visible on every tab stop reached, layout shift near 0 while
    loading and scrolling, and no link to a Medical Surveillance Plan page.
+   On /bee-inspect, /get-app and /claim (and no drawn bee on the sample
+   report): every bee is the official gold bee image, and the faded Africa
+   page break of www.carenetconsultants.co.za replaces the pattern strip.
 
    Run:  node test/browser/bee-inspect-pages.mjs           (checks)
          node test/browser/bee-inspect-pages.mjs --shots   (and writes the
@@ -89,11 +92,51 @@ function logoSvg() {
     : '<svg xmlns="http://www.w3.org/2000/svg" width="445" height="160"><rect width="445" height="160" fill="#fff"/><text x="20" y="95" font-family="Arial" font-size="48" font-weight="700" fill="#ED1B24">CARE NET</text></svg>';
   return LOGO_SVG;
 }
+/* Stand ins for the two files the Director named (25/09/2026), at their real
+   shape: the faded Africa page break (2000 x 100) and the square gold bee.
+   Both say "stand in" so no screenshot passes for the real artwork. */
+const FADED_STAND_IN = '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100" viewBox="0 0 2000 100"><rect width="2000" height="100" fill="#fff"/>'
+  + '<path d="' + Array.from({ length: 50 }, (_, i) => 'M' + (i * 40) + ' 70l20-40 20 40').join('') + '" stroke="#e7b8ba" stroke-width="6" fill="none"/>'
+  + '<text x="1000" y="62" font-family="Arial" font-size="26" fill="#9a9a9a" text-anchor="middle">stand in: CNC Website Page break Africa Pattern faded 2000 x 100</text></svg>';
+const BEE_STAND_IN = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><circle cx="128" cy="128" r="120" fill="#F0A32B"/>'
+  + '<text x="128" y="146" font-family="Arial" font-size="56" font-weight="700" fill="#0F0F0F" text-anchor="middle">BEE</text>'
+  + '<text x="128" y="190" font-family="Arial" font-size="26" fill="#0F0F0F" text-anchor="middle">stand in</text></svg>';
+const BEE_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const FADED_SRC = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp';
+
+/* The Director's brand fixes (25/09/2026): every bee is the official gold bee
+   image (square, loaded, never a drawing) and, where asked, the pattern is
+   the faded page break of www.carenetconsultants.co.za at the content width,
+   its 20:1 shape kept (no stretching), never the old pattern strip. */
+async function brandArt(run, tag, o) {
+  const d = await run.page.evaluate(() => {
+    const box = (el) => { const r = el.getBoundingClientRect(); return { w: r.width, h: r.height }; };
+    const drawn = Array.from(document.querySelectorAll('svg')).filter((s) => /rotate\(-?28/.test(s.innerHTML) || s.matches('.bee-mark, .cnc-ad-bee')).length;
+    const bees = Array.from(document.querySelectorAll('img[src*="Bee_Icon"]')).map((i) => Object.assign({ src: i.getAttribute('src'), nw: i.naturalWidth, alt: i.getAttribute('alt'), aw: i.getAttribute('width'), ah: i.getAttribute('height') }, box(i)));
+    const div = Array.from(document.querySelectorAll('img.divider')).map((i) => {
+      const cs = getComputedStyle(i.parentElement);
+      return Object.assign({ src: i.getAttribute('src'), nw: i.naturalWidth, aw: i.getAttribute('width'), ah: i.getAttribute('height'), alt: i.getAttribute('alt'), hidden: i.getAttribute('aria-hidden'),
+        cw: i.parentElement.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) }, box(i));
+    });
+    return { drawn, bees, div, strips: document.querySelectorAll('.pattern-strip').length };
+  });
+  check(tag('no hand drawn bee'), d.drawn === 0, d.drawn);
+  if (o && o.bee) check(tag('the bee is the official gold bee image, loaded, square, sized by width and height'), d.bees.length >= o.bee
+    && d.bees.every((b) => b.src === BEE_SRC && b.nw > 0 && b.alt === '' && b.aw === b.ah && Math.abs(b.w - b.h) < 0.6 && b.w > 0), d.bees);
+  if (o && o.divider) {
+    check(tag('the faded Africa page break replaces the pattern strip'), d.strips === 0 && d.div.length === 1, d);
+    const v = d.div[0] || {};
+    check(tag('the page break is the site file at the content width, 20:1 kept (' + (v.w || 0).toFixed(0) + ' x ' + (v.h || 0).toFixed(1) + ')'),
+      v.src === FADED_SRC && v.nw > 0 && v.aw === '2000' && v.ah === '100' && v.alt === '' && v.hidden === 'true' && Math.abs(v.w - v.cw) < 1 && Math.abs(v.h - v.w / 20) < 1, v);
+  }
+}
+
 function standIn(u) {
   const p = u.pathname;
   if (/Care_Net_Logo/i.test(p)) return logoSvg();
   if (/pattern-strip/i.test(p)) return '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="48"><rect width="96" height="48" fill="#fff"/><path d="M0 24l12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12" stroke="#ED1B24" stroke-width="3" fill="none"/><path d="M0 40h96" stroke="#F0A32B" stroke-width="4"/></svg>';
-  if (/Bee_Icon/i.test(p)) return '<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"><circle cx="22" cy="22" r="18" fill="#F0A32B"/></svg>';
+  if (/Page-break-Africa-Pattern-faded/i.test(p)) return FADED_STAND_IN;
+  if (/Bee_Icon/i.test(p)) return BEE_STAND_IN;
   return '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="8" fill="#e9e6e6"/></svg>';
 }
 
@@ -341,6 +384,7 @@ async function productPage(browser, origin, vp, o) {
   await shot(page, 'bee-inspect-pricing', vp, o, { sel: '#pricing', max: 1500 });
   await shot(page, 'bee-inspect-faq', vp, o, { sel: '#app', max: 1500 });
   await common(run, origin, tag);
+  await brandArt(run, tag, { bee: 2, divider: true });
   await run.context.close();
 
   const off = await open(browser, origin, vp, { path: '/bee-inspect?flags=bee_inspect_ads:0' });
@@ -390,6 +434,7 @@ async function sampleReport(browser, origin, vp, o) {
   await shot(page, 'sample-report-findings', vp, o, { sel: 'article.rp:nth-of-type(4)', max: 1400 });
   await shot(page, 'sample-report-sign-off', vp, o, { sel: 'article.rp:nth-of-type(8) .hist', max: 1100 });
   await common(run, origin, tag);
+  await brandArt(run, tag, {});
   await run.context.close();
 }
 
@@ -407,6 +452,7 @@ async function getApp(browser, origin, vp, o) {
   check(tag('Tell me when it is ready opens WhatsApp with a prefilled message, and a link goes back to /bee-inspect'), d.wa.some((h) => /when the Bee-Inspect app is in the App Store and Google Play/.test(h)) && d.back, d.wa);
   await shot(page, 'get-app', vp, o);
   await common(run, origin, tag);
+  await brandArt(run, tag, { bee: 1, divider: true });
   await run.context.close();
   if (W < 768) {
     const a = await open(browser, origin, vp, { path: '/get-app', ua: UA.android, mobile: true });
@@ -424,6 +470,7 @@ async function claim(browser, origin, vp, o) {
   check(tag('the code is never written into the page'), !d.html.includes('K7PQ2MX9') && !d.text.includes('K7PQ2MX9'));
   await shot(run.page, 'claim-code', vp, o);
   await common(run, origin, tag, { tabs: 12 });
+  await brandArt(run, tag, { divider: true });
   await run.context.close();
   const hostile = '/claim/%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E';
   run = await open(browser, origin, vp, { path: hostile });

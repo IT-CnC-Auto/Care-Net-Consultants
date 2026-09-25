@@ -20,4 +20,6 @@ Regenerate with `node test/browser/bee-inspect-ads.mjs --shots` (the same run ch
 
 Not shown, by design: no banner on the loading, sign in, registration, consent or error states, inside the consent panel, or in setup; none at all with the flag off (`?flags=bee_inspect_ads:0`, and every host other than *.vercel.app, localhost and 127.0.0.1). AD-09 (export page) and AD-10 (email) are parked.
 
+Brand fix, 25/09/2026: the banner bee is now the official Care Net gold bee image, `https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp` (the file of the footer credit on www.carenetconsultants.co.za), in place of the hand drawn one; every banner screenshot was refreshed. **Stand in:** the image host is not reachable from the build environment, so in these screenshots the bee is a gold disc marked "BEE stand in" of the same square size; on staging and live the real bee loads in the same box. AD-04-hidden-on-phone-390.png shows no banner and is unchanged.
+
 All 19 images are under 300 KB (the largest about 75 KB).

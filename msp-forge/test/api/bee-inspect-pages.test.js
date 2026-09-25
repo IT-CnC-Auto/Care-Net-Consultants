@@ -113,6 +113,43 @@ for (const page of NEW_PAGES) {
   });
 }
 
+/* ------------------------------------------------------------ brand art */
+// The Director, 25/09/2026: "Get the bee Icon right and use the same theme as
+// on www.carenetconsultants.co.za to get the pattern right."
+const BEE_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const FADED_SRC = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp';
+test('brand art: every bee is the official gold bee image, and the faded Africa page break replaces the pattern strip', () => {
+  for (const page of NEW_PAGES) {
+    const h = read(page);
+    assert.doesNotMatch(h, /<svg[^>]*class="[^"]*bee|rotate\(-?28 /, page + ': no hand drawn bee');
+    assert.doesNotMatch(h, /class="pattern-strip"|cnc-pattern\.css/, page + ': no pattern strip');
+    for (const img of h.match(/<img\b[^>]*Bee_Icon[^>]*>/g) || []) {
+      assert.ok(img.includes('src="' + BEE_SRC + '"') && / alt=""/.test(img) && /decoding="async"/.test(img), page + ': ' + img);
+      const w = img.match(/ width="(\d+)"/), hh = img.match(/ height="(\d+)"/);
+      assert.ok(w && hh && w[1] === hh[1], page + ': the bee is square, sized by width and height: ' + img);
+    }
+  }
+  const divider = (id, lazy) => '<div class="cnc-divider"><img data-asset="' + id + '" decoding="async" width="2000" height="100" class="divider" src="' + FADED_SRC + '" alt="" aria-hidden="true"' + (lazy ? ' loading="lazy"' : '') + '></div>';
+  assert.ok(read('bee-inspect.html').includes(divider('bi-pattern', true)), 'bee-inspect.html: the faded page break under the hero');
+  assert.ok(read('get-app.html').includes(divider('ga-pattern', false)), 'get-app.html: the faded page break under the header');
+  assert.ok(read('claim.html').includes(divider('cl-pattern', false)), 'claim.html: the faded page break under the header');
+  assert.match(read('bee-inspect.html'), /<img class="hero-bee" data-asset="bi-bee" src="[^"]+" alt="" width="84" height="84" decoding="async"/, 'the hero bee is the official image');
+  assert.match(read('get-app.html'), /<img class="bee-mark" data-asset="ga-bee" src="[^"]+" alt="" width="56" height="56" decoding="async">/, 'the Get the app bee is the official image');
+  const css = read('css/cnc-bee.css');
+  assert.ok(css.includes('.divider { width: 100%; height: auto; display: block; margin: 8px 0 0; opacity: .9;'), 'styled as .divider on medical-surveillance-plans.html');
+  assert.match(read('medical-surveillance-plans.html'), /\.divider\{width:100%;height:auto;display:block;margin:8px 0 0;opacity:\.9\}/, 'the source rule is unchanged');
+  // the asset specification points at the official files, status existing
+  for (const [page, ids] of [['bee-inspect.html', ['bi-pattern', 'bi-bee', 'bi-autohive-bee']], ['get-app.html', ['ga-pattern', 'ga-bee']], ['claim.html', ['cl-pattern']]]) {
+    const spec = JSON.parse(read(page).match(/<script type="application\/json" id="cnc-asset-spec">([\s\S]*?)<\/script>/)[1]);
+    for (const id of ids) {
+      const a = spec.assets.find((x) => x.id === id);
+      assert.ok(a && a.status === 'existing', page + ': ' + id + ' is existing');
+      if (/pattern/.test(id)) assert.ok(a.notes.includes(FADED_SRC) && a.type === 'pattern', page + ': ' + id + ' names the faded page break');
+      else assert.equal(a.file_name, 'New-Site_Bee_Icon_Gold.webp', page + ': ' + id);
+    }
+  }
+});
+
 test('the new pages and every script they load are covered by the File separation checks', () => {
   for (const p of NEW_PAGES) assert.ok(sep.FILE_PAGES.includes(p), p + ' is in FILE_PAGES of test/api/file-separation.test.js');
   const scripts = sep.fileScripts();

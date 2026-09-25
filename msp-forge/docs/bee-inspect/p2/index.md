@@ -56,6 +56,10 @@ Regenerate with `node test/browser/bee-inspect-pages.mjs --shots` (the image hos
 | /health-and-safety-file?industry=food | [hsf-industry-food-1280.png](hsf-industry-food-1280.png) | [hsf-industry-food-390.png](hsf-industry-food-390.png) |
 | Builder demonstration, Section F Inspection reports under AD-01 | [section-f-inspection-reports-1280.png](section-f-inspection-reports-1280.png) | [section-f-inspection-reports-390.png](section-f-inspection-reports-390.png) |
 
+Brand fix, 25/09/2026 (the Director: "Get the bee Icon right and use the same theme as on www.carenetconsultants.co.za to get the pattern right"): every bee on these pages and in the banners is now the official gold bee, `https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp` (the file of the footer credit), and the pattern strip under the hero or header on /bee-inspect, /get-app and /claim is now the faded Africa page break of the main site, `https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp` (2000 x 100), styled as `.divider` on medical-surveillance-plans.html. The sample report has no bee and no pattern (its locked footer keeps the Care Net logo). Refreshed for this: bee-inspect-top, get-app, claim-code and section-f-inspection-reports (both widths); the others show neither and were left as they were.
+
+**Stand ins:** neither image host is reachable from the build environment, so in these screenshots the bee is a gold disc marked "BEE stand in" and the page break is a pale zigzag marked "stand in", both drawn locally at the real shape (square; 2000 x 100). On staging and live the real files load in the same boxes.
+
 ## Stubs and open inputs
 
 - Store accounts, {{store_publisher}}, {{apple_team_id}}, {{android_sha256}}: no badges, store links, smart app banner or association files until they exist (HSF_ADS.app all null).

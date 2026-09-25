@@ -8,7 +8,7 @@
 @media (max-width:767px){.cnc-ad-slot--full{min-height:300px}.cnc-ad-slot--tip{min-height:150px}.cnc-ads-on .cnc-ad-slot--desk{display:none}}
 .cnc-ad{--g:#F0A32B;--r:#ED1B24;--dr:#B7141A;--k:#0F0F0F;--a:var(--g);flex:1;position:relative;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr auto;gap:4px 16px;align-items:center;background:var(--k);color:#fff;border-radius:10px;border-left:6px solid var(--a);padding:16px 48px 16px 16px;font:14px/1.5 Inter,Arial,sans-serif;animation:cnc-ad-in .25s ease-out}
 .cnc-ad p{margin:0}
-.cnc-ad-bee{align-self:start}
+.cnc-ad-bee{align-self:start;object-fit:contain}
 .cnc-ad-eb{font:800 11px/1.3 Montserrat,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--a)}
 .cnc-ad .cnc-ad-h{font:400 28px/1.05 'Bebas Neue',Montserrat,Arial,sans-serif;letter-spacing:.03em;text-transform:uppercase;margin:3px 0 4px;color:#fff}
 .cnc-ad-b{color:#e8e8e8}

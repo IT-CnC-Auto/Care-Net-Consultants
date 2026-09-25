@@ -34,9 +34,8 @@
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
-<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
-<link rel="stylesheet" href="/css/cnc-bee.css?v=20260925a">
+<link rel="stylesheet" href="/css/cnc-bee.css?v=20260925b">
 <script type="application/ld+json" id="faq-ld">
 {
  "@context": "https://schema.org",
@@ -101,7 +100,7 @@
         <a class="chip" href="/bee-inspect/sample-report" data-cta="bee_chip_sample_report">Sample report</a>
       </div>
     </div>
-    <div class="heroart" data-asset="bi-hero-illustration">
+    <div class="heroart"><div class="heroart-in" data-asset="bi-hero-illustration">
       <svg viewBox="0 0 360 300" width="360" height="300" role="img" aria-labelledby="hero-art-t">
         <title id="hero-art-t">A phone showing an inspection checklist with a pass, a fail and a photo, beside a gold bee</title>
         <rect x="96" y="14" width="168" height="276" rx="24" fill="#0F0F0F" stroke="#F0A32B" stroke-width="3"/>
@@ -117,19 +116,12 @@
         <rect x="118" y="194" width="58" height="44" rx="5" fill="#e9e6e6"/><path d="M122 232l14-16 10 10 8-7 18 13z" fill="#bdb6b6"/><circle cx="160" cy="206" r="5" fill="#bdb6b6"/>
         <rect x="184" y="194" width="58" height="44" rx="5" fill="#0F0F0F"/><circle cx="213" cy="211" r="7" fill="#F0A32B"/><rect x="195" y="224" width="36" height="5" rx="2.5" fill="#F0A32B"/>
         <rect x="118" y="248" width="124" height="16" rx="5" fill="#C5141B"/>
-        <g transform="translate(262 46)">
-          <path d="M34 18l-6-10M42 18l6-10" stroke="#F0A32B" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <ellipse cx="24" cy="30" rx="16" ry="11" transform="rotate(-28 24 30)" fill="#fff" opacity=".92"/>
-          <ellipse cx="52" cy="30" rx="16" ry="11" transform="rotate(28 52 30)" fill="#fff" opacity=".92"/>
-          <ellipse cx="38" cy="50" rx="18" ry="22" fill="#F0A32B"/>
-          <path d="M21 44h34M20.5 54h35M25 64h26" stroke="#0F0F0F" stroke-width="5"/>
-          <circle cx="38" cy="24" r="8.5" fill="#0F0F0F" stroke="#F0A32B" stroke-width="2"/>
-        </g>
       </svg>
-    </div>
+      <img class="hero-bee" data-asset="bi-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="84" height="84" decoding="async" fetchpriority="low">
+    </div></div>
   </div>
 </section>
-<div class="pattern-strip" role="presentation" data-asset="bi-pattern"></div>
+<div class="cnc-divider"><img data-asset="bi-pattern" decoding="async" width="2000" height="100" class="divider" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp" alt="" aria-hidden="true" loading="lazy"></div>
 
 <main id="main">
 
@@ -311,8 +303,9 @@ try { CNCBee.price(document); CNCBee.pricing(document); CNCBee.links(document); 
   {"id": "bi-og", "block": "Head: social share card (og:image)", "purpose": "The image shown when the Bee-Inspect page is shared on WhatsApp, LinkedIn or in email previews.", "type": "og_image", "formats": ["jpg", "webp"], "width": 1200, "height": 630, "ratio": "1.91:1", "max_kb": 200, "colour": "Ink #0F0F0F ground, gold #F0A32B bee, white Bebas Neue headline \"Inspect it on your phone. File it here.\", Care Net logo top left", "alt": "Bee-Inspect: inspect it on your phone, file it in your free Health and Safety File", "file_name": "bee-inspect-og-1200x630.jpg", "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-og-1200x630.jpg", "status": "needed", "notes": "Text inside the central 1080 x 566 safe area. No store badge on the card until the apps are in the stores."},
   {"id": "bi-favicon", "block": "Head: browser tab icon", "purpose": "The browser tab icon, shared with every Care Net page.", "type": "logo", "formats": ["svg", "png", "ico"], "width": 512, "height": 512, "ratio": "1:1", "max_kb": 20, "colour": "Care Net red #ED1B24 on white", "alt": "Decorative", "file_name": "cnc-favicon-512x512.png", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png", "status": "needed", "notes": "The same set as hsf-favicon on health-and-safety-file.html."},
   {"id": "bi-logo", "block": "Site header: logo", "purpose": "The Care Net Consultants logo in the shared site header, linking to the Health and Safety File.", "type": "logo", "formats": ["webp", "png", "svg"], "width": 445, "height": 160, "ratio": "2.78:1", "max_kb": 30, "colour": "Brand master as supplied", "alt": "Care Net Consultants, Occupational Health Medical Specialists", "file_name": "New-Site_Care_Net_Logo.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp", "status": "existing", "notes": "Shared by every page."},
-  {"id": "bi-hero-illustration", "block": "Hero: illustration (right)", "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. Drawn inline today.", "type": "illustration", "formats": ["svg"], "width": 720, "height": 600, "ratio": "6:5", "max_kb": 30, "colour": "Ink #0F0F0F phone, gold #F0A32B accents, pass green, fail red, observe amber on white", "alt": "A phone showing an inspection checklist with a pass, a fail and a photo, beside a gold bee", "file_name": "bee-inspect-hero-phone.svg", "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-hero-phone.svg", "status": "needed", "notes": "No stock photographs and no real app screens until the app exists. Keep the 6:5 box so nothing moves when it is swapped in."},
-  {"id": "bi-pattern", "block": "Africa pattern strip under the hero", "purpose": "The Care Net Africa pattern strip.", "type": "pattern", "formats": ["png", "webp"], "width": 2400, "height": 96, "ratio": "25:1", "max_kb": 80, "colour": "Brand pattern", "alt": "Decorative", "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png", "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png", "status": "existing", "notes": "Set by /css/cnc-pattern.css."},
+  {"id": "bi-hero-illustration", "block": "Hero: illustration (right)", "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. The phone is drawn inline today; the bee is the official gold bee image laid over it (bi-bee).", "type": "illustration", "formats": ["svg"], "width": 720, "height": 600, "ratio": "6:5", "max_kb": 30, "colour": "Ink #0F0F0F phone, gold #F0A32B accents, pass green, fail red, observe amber on white", "alt": "A phone showing an inspection checklist with a pass, a fail and a photo, beside a gold bee", "file_name": "bee-inspect-hero-phone.svg", "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-hero-phone.svg", "status": "needed", "notes": "No stock photographs and no real app screens until the app exists. Keep the 6:5 box so nothing moves when it is swapped in."},
+  {"id": "bi-pattern", "block": "Faded Africa pattern page break under the hero", "purpose": "The faded Africa pattern page break used across www.carenetconsultants.co.za.", "type": "pattern", "formats": ["webp", "png"], "width": 2400, "height": 120, "ratio": "20:1", "max_kb": 60, "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity", "alt": "Decorative, no alternative text", "file_name": "cnc-africa-pattern-faded-2400x120.webp", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp", "status": "existing", "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100), shown at the content width with its height auto, never stretched. The same file as msp-faq-divider. Deliver the 2400 x 120 copy to the address given, then point the page at it."},
+  {"id": "bi-bee", "block": "Hero: the gold bee beside the phone", "purpose": "The official Care Net gold bee beside the drawn phone in the hero.", "type": "icon", "formats": ["webp"], "width": 168, "height": 168, "ratio": "1:1", "max_kb": 6, "colour": "Gold, as supplied; never recoloured or redrawn", "alt": "Decorative, no alternative text", "file_name": "New-Site_Bee_Icon_Gold.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp", "status": "existing", "notes": "The official Care Net gold bee, the same file as the AutoHive footer credit on www.carenetconsultants.co.za."},
   {"id": "bi-autohive-bee", "block": "AutoHive credit stamp", "purpose": "The AutoHive bee in the credit stamp.", "type": "icon", "formats": ["webp", "svg"], "width": 44, "height": 44, "ratio": "1:1", "max_kb": 6, "colour": "Gold", "alt": "Decorative", "file_name": "New-Site_Bee_Icon_Gold.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp", "status": "existing", "notes": "Shared by every page."}
  ]
 }
