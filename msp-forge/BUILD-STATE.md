@@ -182,3 +182,12 @@ Built under hsf/BUILD-CONTRACT.md 16 (hsf/BEE-INSPECT-BUILD-PROMPT.md A3). Not c
 
 ### Migration 058 applied to live; P2 accepted | 26/09/2026
 On the Director's "correct": 058 (hsf_attribution_event, hsf_attribution_record, hsf_attribution_summary) fetched from GitHub at 2ffa521, MD5 checked, applied in one transaction, logged as 20260926090000. Live check: RLS on, no anon read or execute, service role only. P2 accepted; P3 (Bee-Inspect backend) started.
+
+### Bee-Inspect P3 backend | 26/09/2026
+Built under hsf/BUILD-CONTRACT.md 16 (hsf/BEE-INSPECT-BUILD-PROMPT.md sections 6 and 7). Not committed, not deployed, nothing applied to live. Details, migration list, RLS table, Edge Functions and open questions: docs/bee-inspect/p3/index.md.
+
+- Migrations 059 to 063 (47 `bi_` tables, one view; none alters an applied table; 059 refuses to run over an existing `bi_` object): tenancy and roles (inspector, assistant, company_admin, ops through hsf_is_staff), the company is the File's msp_client_account; sites tree and inspection engine with the Fail rule, sealed evidence and 5 x 5 risk; reports, signatures with step up MFA, the Issued guard, kernels (pgvector) and Section F filing into the File through hsf_evidence (engine_generated) and the new bi_report_file_link; AI Wallet in rand with the B8 rules, receipts, storage gate; banner config, claim codes (hash only, 10 minutes, single use), attribution, MCO nodes and packages (supabase_stored only), qualification expiry, POPIA clinical column check, private buckets bi-evidence and bi-reports.
+- Edge Functions: 18 thin Deno entry points over tested handlers in supabase/functions/_shared/bi/; stubs answering 501 for transcription, Ozow (rejects), KYC, MCO export and saved card charging; hsf-events stays the Vercel endpoint.
+- Seed: supabase/seed/bee_inspect_demo.sql, fictitious Rietvlei Civils and Building with one Issued report filed into HSF-F-01 and a wallet; never for live.
+- Proof: replay 001 to 063 clean; five new check files (bi_rls, bi_engine, bi_wallet, bi_claim, bi_popia) and the eleven existing ones pass; node tests 600 of 600 (546 before plus 54 new); migrations 001 to 058 byte identical.
+- Waiting on Care Net: the section 12 inputs (email platform, store accounts, saved card gateway, KYC vendor, kernel source, rate card and fx, VAT, MCO endpoint, welcome_hook), the transcription vendor, Ozow's notification specification, RevenueCat product ids, consent wordings, and confirmation of the nine build decisions listed in docs/bee-inspect/p3/index.md.
