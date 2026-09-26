@@ -1,0 +1,1155 @@
+{
+ "meta": {
+  "version": "HSF-LEG-1.0",
+  "status": "draft for practitioner review",
+  "note": "Plain words backgrounds for the instruments that File elements draw on, one per instrument in hsf/sample-file/instruments.json. They describe duties in general terms and do not cite provisions; the legislation page shows each instrument's kernel status live (verified through the kernel's three checks, awaiting verification, or held with its reason), and these backgrounds never override it. Where the kernel status is pending the background says the instrument is being verified. The Noise Exposure Regulations, 2024 and the Physical Agents Regulations, 2024 are named on static pages only once register item HSF-7 is closed. Medical items carry outcomes only (fit, fit with restrictions, unfit); Care Net screens fitness and does not diagnose. General guidance, being reviewed by Care Net's Health and Safety Manager; it does not replace the practitioner's advice."
+ },
+ "instruments": [
+  {
+   "slug": "asbestos-abatement-regulations-2020",
+   "short_name": "Asbestos Abatement Regulations, 2020",
+   "display_name": "Asbestos Abatement Regulations, 2020",
+   "what_it_covers": "These regulations, made under the OHS Act, control work where asbestos is present or may be disturbed, including removal, demolition and maintenance on buildings and plant that contain asbestos. They expect an inventory of asbestos, an assessment of the risk, a plan to manage or remove it, air monitoring and medical surveillance of exposed workers. Care Net holds this instrument back from citation while a reference in its amendment history is checked, so the page shows it as held until that check is finished.",
+   "who_it_applies_to": "Employers and self employed persons whose premises, plant or work involve asbestos, and the contractors who remove it.",
+   "evidence_a_company_keeps": [
+    "Asbestos inventory and register for each site",
+    "Asbestos risk assessment and management plan",
+    "Asbestos air monitoring results",
+    "Written appointment of the asbestos work supervisor",
+    "Certificates of fitness for exposed workers showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "F",
+    "J",
+    "O"
+   ]
+  },
+  {
+   "slug": "basic-conditions-of-employment-act",
+   "short_name": "BCEA",
+   "display_name": "Basic Conditions of Employment Act",
+   "what_it_covers": "This Act sets the basic conditions of employment, including working hours, overtime, rest periods, night work and leave. In a Health and Safety File it matters mainly for fatigue, because long hours, shift patterns and night work affect how safely people work. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Most employers and employees in South Africa, with limited exclusions the Act itself sets.",
+   "evidence_a_company_keeps": [
+    "Shift rosters and working time records",
+    "Overtime records",
+    "Psychosocial and fatigue risk assessment",
+    "Driver fatigue management records where you run vehicles"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "working-time-and-night-work-code",
+   "short_name": "BCEA night work Code",
+   "display_name": "Code of Good Practice on the Arrangement of Working Time",
+   "what_it_covers": "This code of good practice guides employers on arranging working time, with particular attention to night work and shift work. It covers assessing the health and safety risks of night work, telling night workers about those risks, offering them health assessments, and moving a worker to suitable day work where their health requires it. Care Net screens fitness for night work and does not diagnose.",
+   "who_it_applies_to": "Employers whose employees work regularly at night or on rotating shifts.",
+   "evidence_a_company_keeps": [
+    "Night work and fatigue risk assessment",
+    "Record that night workers were told about the risks of night work",
+    "Fitness outcomes for night workers (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Lone worker and night work controls"
+   ],
+   "file_sections": [
+    "C",
+    "E"
+   ]
+  },
+  {
+   "slug": "coida",
+   "short_name": "COIDA",
+   "display_name": "Compensation for Occupational Injuries and Diseases Act",
+   "what_it_covers": "This Act provides no fault compensation to employees who are injured at work or who contract an occupational disease, paid from a fund to which employers contribute. Employers must register, pay their annual assessment, and report accidents and occupational diseases in the way and time the Act sets. A letter of good standing shows that your registration and payments are up to date.",
+   "who_it_applies_to": "Every employer who employs workers, and those workers when they are injured or fall ill because of their work.",
+   "evidence_a_company_keeps": [
+    "Letter of good standing, with its expiry date",
+    "Employer's reports of accidents and occupational diseases",
+    "Claim records and correspondence",
+    "Occupational disease notifications and referral records"
+   ],
+   "file_sections": [
+    "A",
+    "E",
+    "I"
+   ]
+  },
+  {
+   "slug": "civil-aviation-act",
+   "short_name": "Civil Aviation Act",
+   "display_name": "Civil Aviation Act",
+   "what_it_covers": "This Act sets up the civil aviation regulatory system and the authority that oversees aviation safety and security. For a Health and Safety File it matters where your people work airside, for example in ground handling, fuelling or aircraft maintenance, because aviation and airport rules apply alongside workplace safety law. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Airport operators, airlines, ground handling and aircraft maintenance companies, and contractors who work airside.",
+   "evidence_a_company_keeps": [
+    "Airside access permits held by your workers",
+    "The airport operator's rules and your written acknowledgement of them",
+    "Ground handling safe work procedures",
+    "Aviation training records"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "civil-aviation-regulations",
+   "short_name": "Civil Aviation Regulations",
+   "display_name": "Civil Aviation Regulations",
+   "what_it_covers": "These regulations, made under the civil aviation law, set detailed requirements for aviation operations, including licensing of personnel, maintenance, dangerous goods and ground handling. Where your workers handle aircraft, cargo or fuel, these rules sit alongside your workplace safety duties. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Aviation operators and the companies and people who work on or around aircraft.",
+   "evidence_a_company_keeps": [
+    "Licences and certificates held by aviation personnel",
+    "Ground handling and fuelling procedures",
+    "Dangerous goods training records where cargo is handled",
+    "Findings from airport operator or authority inspections"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "employment-of-persons-with-disabilities-code",
+   "short_name": "Code of Good Practice on Employment of Persons with Disabilities",
+   "display_name": "Code of Good Practice on the Employment of Persons with Disabilities",
+   "what_it_covers": "This code, issued under employment equity law, guides employers on employing people with disabilities fairly, including reasonable accommodation and the careful handling of medical and fitness information. In a Health and Safety File it matters where a fitness outcome carries restrictions: the job should be adapted where reasonable rather than the person simply excluded. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Employers covered by employment equity law, at recruitment, placement and every later stage of employment.",
+   "evidence_a_company_keeps": [
+    "Record of fitness restrictions and the adjustments made to the job, without clinical detail",
+    "Reasonable accommodation decisions and who made them",
+    "Placement records showing the fitness outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "construction-regulations-2014",
+   "short_name": "Construction Regulations, 2014",
+   "display_name": "Construction Regulations, 2014",
+   "what_it_covers": "These regulations, made under the OHS Act, govern construction work from design through to handover. They set duties for the client, designers, principal contractors and contractors, including a health and safety specification, a health and safety plan, risk assessments, fall protection, excavations, demolition, scaffolding, construction vehicles and medical certificates of fitness. Some construction work must be notified to the Department of Employment and Labour, and larger work needs a construction work permit, at the thresholds the regulations set.",
+   "who_it_applies_to": "Clients who commission construction work, designers, principal contractors, contractors, and everyone who works on a construction site.",
+   "evidence_a_company_keeps": [
+    "Client health and safety specification and the approved health and safety plan",
+    "Notification of construction work or the construction work permit, with acknowledgement",
+    "Construction appointments in writing, with competence evidence",
+    "Fall protection, excavation and demolition plans with their inspection registers",
+    "Medical certificates of fitness for every employee who does construction work on site, showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "K",
+    "L",
+    "N"
+   ]
+  },
+  {
+   "slug": "mining-mandatory-code-guidelines",
+   "short_name": "DMRE mandatory Code guidelines",
+   "display_name": "Guidelines for Mandatory Codes of Practice (mining)",
+   "what_it_covers": "Under the MHSA regime, the mining department issues guidelines that set out what a mine's mandatory codes of practice must cover, on topics such as noise, airborne pollutants, thermal stress, fatigue, trackless mobile machinery, fall of ground and emergency preparedness. Each mine then writes its own codes of practice following these guidelines. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Mines, and the contractors who work at mines, under the MHSA regime.",
+   "evidence_a_company_keeps": [
+    "The mine's code of practice for each applicable topic",
+    "Record of how each code was drawn up, consulted on and approved at the mine",
+    "Monitoring and inspection records the codes call for",
+    "Training records on the codes"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "disaster-management-act",
+   "short_name": "Disaster Management Act",
+   "display_name": "Disaster Management Act",
+   "what_it_covers": "This Act sets out how national, provincial and municipal government plan for, and respond to, disasters. For a workplace it matters mainly as the public framework your own emergency plan connects to, such as the municipal disaster management centre and any directions issued while a disaster is declared. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Mainly organs of state; businesses are affected when a disaster is declared or when their emergency plans must link with municipal arrangements.",
+   "evidence_a_company_keeps": [
+    "Contact details for the local disaster management centre in your emergency plan",
+    "Record of any directions issued during a declared disaster and how you acted on them",
+    "Emergency plan review notes showing the link with municipal arrangements"
+   ],
+   "file_sections": [
+    "H"
+   ]
+  },
+  {
+   "slug": "driven-machinery-regulations",
+   "short_name": "Driven Machinery Regulations",
+   "display_name": "Driven Machinery Regulations",
+   "what_it_covers": "These regulations, made under the OHS Act, cover driven machinery, most often lifting machines and lifting tackle such as cranes, hoists, forklifts, slings and chains. They require lifting equipment to be inspected and load tested by a competent person at the intervals they set, operators to be trained and authorised, and records to be kept.",
+   "who_it_applies_to": "Employers and users whose work involves lifting machines, lifting tackle or other driven machinery.",
+   "evidence_a_company_keeps": [
+    "Lifting machines and lifting tackle register with load tests and inspections",
+    "Written appointment of the lifting machine and lifting tackle inspector",
+    "Operator training and competence records",
+    "Lifting plans and permits for lifts that need them"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "D",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "slug": "employment-equity-act-medical-testing",
+   "short_name": "EEA section 7",
+   "display_name": "Employment Equity Act, medical testing provision",
+   "what_it_covers": "This part of the Employment Equity Act prohibits medical testing of an employee or job applicant unless law permits or requires it, or it is justifiable in the light of medical facts, employment conditions, social policy, the fair distribution of employee benefits or the inherent requirements of the job. It is why every fitness examination must be linked to the real risks of the job, and why the employer receives only the outcome. Care Net screens fitness against those risks and does not diagnose.",
+   "who_it_applies_to": "All employers, their employees and job applicants.",
+   "evidence_a_company_keeps": [
+    "The documented reason each medical examination is needed for the job, such as the risk assessment",
+    "Fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Placement decisions that reflect any restrictions"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "electrical-installation-regulations-2009",
+   "short_name": "Electrical Installation Regulations, 2009",
+   "display_name": "Electrical Installation Regulations, 2009",
+   "what_it_covers": "These regulations, made under the OHS Act, deal with fixed electrical installations. Work on an installation must be done or supervised by a registered person, and each installation needs a valid certificate of compliance (the official name of the certificate) with a test report. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Users and lessors of electrical installations, and the electricians who work on them.",
+   "evidence_a_company_keeps": [
+    "Certificate of compliance and test report for each installation",
+    "Proof of registration of the electrician who issued it",
+    "Installation inspection register",
+    "Licences and registrations held by your electrical staff"
+   ],
+   "file_sections": [
+    "D",
+    "F"
+   ]
+  },
+  {
+   "slug": "electrical-machinery-and-installation-regulations",
+   "short_name": "Electrical Machinery and Installation Regulations",
+   "display_name": "Electrical Machinery and Installation Regulations",
+   "what_it_covers": "These regulations, made under the OHS Act, cover electrical machinery and installations at work, including safe design and use, isolation before work, protection against contact with live parts, and equipment in hazardous locations where flammable gas or dust may be present. They expect electrical work to be controlled by competent, authorised people.",
+   "who_it_applies_to": "Employers and users of electrical machinery and installations, including generation and distribution, and anyone who works on them.",
+   "evidence_a_company_keeps": [
+    "Written appointment of the electrical installation supervisor",
+    "Portable electrical tools and equipment register with inspections",
+    "Isolation, lockout and tagout records",
+    "Hazardous location zoning and equipment records where relevant"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "slug": "ergonomics-regulations-2019",
+   "short_name": "Ergonomics Regulations, 2019",
+   "display_name": "Ergonomics Regulations, 2019",
+   "what_it_covers": "These regulations, made under the OHS Act, require employers to identify and manage ergonomic risks such as awkward postures, repetitive movements, heavy manual handling and poorly set up workstations. They expect an ergonomic risk assessment, controls following the hierarchy of control, information and training, and medical surveillance where the risk assessment calls for it.",
+   "who_it_applies_to": "Employers and self employed persons whose work exposes people to ergonomic risk, which covers most workplaces from offices to production lines.",
+   "evidence_a_company_keeps": [
+    "Ergonomic risk assessment",
+    "Records of controls such as workstation changes or lifting aids",
+    "Ergonomics training records",
+    "Fitness outcomes where surveillance applies (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "C",
+    "E"
+   ]
+  },
+  {
+   "slug": "explosive-powered-tools-regulations",
+   "short_name": "Explosive powered tools regulations",
+   "display_name": "Explosive Powered Tools Regulations",
+   "what_it_covers": "These regulations, made under the OHS Act, control tools that use an explosive charge to drive fasteners into hard surfaces. They cover safe storage and issue of tools and cartridges, trained and authorised operators, and a record of the tools in use. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Employers whose workers use explosive powered tools, often in construction and installation work.",
+   "evidence_a_company_keeps": [
+    "Explosive powered tool register",
+    "Written appointments of the tool issuer and authorised operators",
+    "Operator training records",
+    "Cartridge issue and return records"
+   ],
+   "file_sections": [
+    "B",
+    "F"
+   ]
+  },
+  {
+   "slug": "explosives-regulations",
+   "short_name": "Explosives Regulations",
+   "display_name": "Explosives Regulations",
+   "what_it_covers": "These regulations, made under the explosives law, control the manufacture, storage, transport and use of explosives, including licensing of stores and of the people who handle and use explosives. In a Health and Safety File they matter for blasting in mining, quarrying and construction. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Businesses that store, transport or use explosives, and the licensed people who handle them.",
+   "evidence_a_company_keeps": [
+    "Licences and permits held by blasters and explosives handlers",
+    "Licences for explosives stores and the stock register",
+    "Blasting procedures and blasting records"
+   ],
+   "file_sections": [
+    "C",
+    "D"
+   ]
+  },
+  {
+   "slug": "facilities-regulations-2004",
+   "short_name": "Facilities Regulations, 2004",
+   "display_name": "Facilities Regulations, 2004",
+   "what_it_covers": "These regulations, made under the OHS Act, set requirements for welfare facilities at work: toilets, washing facilities, drinking water, change rooms and places to eat. The facilities must be kept clean and provided in the numbers the regulations set for the size of your workforce.",
+   "who_it_applies_to": "Every employer, with the facilities scaled to the number of people at the workplace.",
+   "evidence_a_company_keeps": [
+    "Welfare facilities inspection checklist",
+    "Head count per site set against the facilities provided",
+    "Cleaning schedules and records"
+   ],
+   "file_sections": [
+    "F",
+    "M"
+   ]
+  },
+  {
+   "slug": "fire-brigade-services-act",
+   "short_name": "Fire Brigade Services Act",
+   "display_name": "Fire Brigade Services Act",
+   "what_it_covers": "This Act governs municipal fire services and gives fire officers powers to inspect premises and to act in emergencies. Together with local fire by laws, it shapes how your fire plan, fire equipment and fire team link with the local fire service. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Municipalities and their fire services; businesses are affected through fire inspections and the fire safety requirements that follow.",
+   "evidence_a_company_keeps": [
+    "Fire risk assessment and fire plan",
+    "Fire team appointments and training records",
+    "Fire inspection reports and certificates from the local fire service"
+   ],
+   "file_sections": [
+    "B",
+    "H"
+   ]
+  },
+  {
+   "slug": "firearms-control-act",
+   "short_name": "Firearms Control Act",
+   "display_name": "Firearms Control Act",
+   "what_it_covers": "This Act controls the possession, use and safe storage of firearms and ammunition, including competency certificates and licences for people and businesses. In a Health and Safety File it matters for armed security and cash in transit work. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Security businesses and any business whose workers carry firearms, and the individual firearm holders.",
+   "evidence_a_company_keeps": [
+    "Competency certificate and licence for each armed worker",
+    "Firearm safe storage and issue register",
+    "Firearm training records"
+   ],
+   "file_sections": [
+    "C",
+    "D"
+   ]
+  },
+  {
+   "slug": "mining-fitness-to-perform-work-guideline",
+   "short_name": "Fitness to Perform Work Guideline (MHSA)",
+   "display_name": "Fitness to Perform Work Guideline (mining)",
+   "what_it_covers": "This guideline, issued under the MHSA regime, sets out what a mine's code of practice on fitness to perform work must cover, including fitness assessments linked to the risks of each job and certificates of fitness. Care Net screens fitness against the job's risks and does not diagnose; the mine receives the outcome only.",
+   "who_it_applies_to": "Mines and mine contractors whose employees need a certificate of fitness to work at the mine.",
+   "evidence_a_company_keeps": [
+    "The mine's code of practice on fitness to perform work",
+    "Certificates of fitness showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Records of restrictions reflected in job placement"
+   ],
+   "file_sections": [
+    "C",
+    "E"
+   ]
+  },
+  {
+   "slug": "food-premises-hygiene-regulations-2018",
+   "short_name": "Food Premises Hygiene Regulations, R638 of 2018",
+   "display_name": "Food Premises Hygiene Regulations, 2018",
+   "what_it_covers": "These regulations set hygiene requirements for premises where food is handled, prepared, stored or sold. They cover the certificate of acceptability issued by the local authority, the condition of the premises and equipment, food handler hygiene and training, and keeping people who may spread infection away from handling food.",
+   "who_it_applies_to": "Anyone who operates food premises, from restaurants and staff canteens to food factories and retailers.",
+   "evidence_a_company_keeps": [
+    "Certificate of acceptability for each food premises",
+    "Written appointment of the food safety and hygiene supervisor",
+    "Food handler training records",
+    "Food handler fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Cleaning and hygiene inspection records"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E"
+   ]
+  },
+  {
+   "slug": "foodstuffs-cosmetics-and-disinfectants-act",
+   "short_name": "Foodstuffs, Cosmetics and Disinfectants Act",
+   "display_name": "Foodstuffs, Cosmetics and Disinfectants Act",
+   "what_it_covers": "This Act controls the manufacture, import and sale of foodstuffs, cosmetics and disinfectants, and the food hygiene regulations for food premises are made under it. For a Health and Safety File it sits behind the hygiene rules for kitchens and other food premises. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Businesses that make, import, sell or serve food, cosmetics or disinfectants.",
+   "evidence_a_company_keeps": [
+    "Certificate of acceptability for food premises",
+    "Supplier records for food and disinfectants",
+    "Hygiene inspection records"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "general-administrative-regulations-2003",
+   "short_name": "General Administrative Regulations, 2003",
+   "display_name": "General Administrative Regulations, 2003",
+   "what_it_covers": "These regulations, made under the OHS Act, deal with how health and safety is administered at work: designating health and safety representatives, running health and safety committees, reporting incidents to the inspector, recording and investigating incidents, and keeping the Act and its regulations available. They also set the forms and records the Act relies on.",
+   "who_it_applies_to": "Every employer covered by the OHS Act.",
+   "evidence_a_company_keeps": [
+    "Designations of health and safety representatives",
+    "Health and safety committee constitution, membership and minutes",
+    "Incident register and reports made to the inspector",
+    "Incident investigation reports and the appointment of the incident investigator"
+   ],
+   "file_sections": [
+    "B",
+    "I",
+    "L"
+   ]
+  },
+  {
+   "slug": "general-machinery-regulations-1988",
+   "short_name": "General Machinery Regulations, 1988",
+   "display_name": "General Machinery Regulations, 1988",
+   "what_it_covers": "These regulations, made under the OHS Act, cover machinery at work, including the appointment of a competent person to supervise machinery, guarding of dangerous moving parts, safe operation and maintenance, and records of incidents involving machinery. They also expect machinery to be used only by people who have been trained and authorised to use it.",
+   "who_it_applies_to": "Employers whose workplaces use machinery, from factories and workshops to farms.",
+   "evidence_a_company_keeps": [
+    "Written appointment of the general machinery supervisor",
+    "Machine guarding inspection register",
+    "Safe operating procedures for machines",
+    "Records of incidents involving machinery"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "F"
+   ]
+  },
+  {
+   "slug": "general-safety-regulations-1986",
+   "short_name": "General Safety Regulations, 1986",
+   "display_name": "General Safety Regulations, 1986",
+   "what_it_covers": "These regulations, made under the OHS Act, cover a range of everyday hazards: personal protective equipment, first aid, confined spaces, work in elevated positions, hot work such as welding and cutting, stacking of articles, and ladders. They expect competent supervision, the right equipment, training and inspections for each of these.",
+   "who_it_applies_to": "Most employers, depending on which of these hazards are present at the workplace.",
+   "evidence_a_company_keeps": [
+    "First aider list, first aid box inspections and treatment register",
+    "Personal protective equipment issue register",
+    "Confined space and hot work permits",
+    "Ladder and stacking inspection records",
+    "Written appointments of the relevant supervisors"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "F",
+    "G",
+    "H"
+   ]
+  },
+  {
+   "slug": "hazardous-biological-agents-regulations-2022",
+   "short_name": "HBA Regulations, 2022",
+   "display_name": "Hazardous Biological Agents Regulations, 2022",
+   "what_it_covers": "These regulations, made under the OHS Act, control work where people may be exposed to hazardous biological agents, such as bacteria and viruses that can cause infection or illness, for example in healthcare, laboratories, waste, farming and sanitation. They expect a risk assessment, control of exposure, information and training, immunisation where appropriate, medical surveillance where the risk assessment requires it, and records kept for the periods the regulations set.",
+   "who_it_applies_to": "Employers and self employed persons whose work may expose people to hazardous biological agents.",
+   "evidence_a_company_keeps": [
+    "Hazardous biological agent risk assessment",
+    "Record that immunisation was offered, with clinical records kept by the occupational health practitioner",
+    "Sharps and exposure incident procedures",
+    "Fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Retention schedule for the related records"
+   ],
+   "file_sections": [
+    "C",
+    "E",
+    "O"
+   ]
+  },
+  {
+   "slug": "hazardous-chemical-agents-regulations-2021",
+   "short_name": "HCA Regulations, 2021",
+   "display_name": "Hazardous Chemical Agents Regulations, 2021",
+   "what_it_covers": "These regulations, made under the OHS Act, control exposure to hazardous chemical agents at work. They expect an inventory of chemicals with safety data sheets, a risk assessment, exposure monitoring where the assessment requires it, control following the hierarchy of control, information and training, medical surveillance where needed, and records kept for the periods the regulations set.",
+   "who_it_applies_to": "Employers and self employed persons who use, store, produce or handle hazardous chemical agents.",
+   "evidence_a_company_keeps": [
+    "Hazardous chemical agent register with safety data sheets",
+    "Chemical risk and exposure assessment",
+    "Exposure monitoring reports by an approved inspection authority",
+    "Written appointment of the hazardous chemical agent controller",
+    "Fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "F",
+    "H",
+    "J",
+    "O"
+   ]
+  },
+  {
+   "slug": "hpcsa-general-ethical-guidelines",
+   "short_name": "HPCSA Booklet 1",
+   "display_name": "HPCSA General Ethical Guidelines for Health Care Professions",
+   "what_it_covers": "These are the Health Professions Council's general ethical guidelines for registered health practitioners, covering confidentiality, informed consent and acting in the patient's best interest. In a Health and Safety File they explain why the occupational health practitioner shares only the fitness outcome with the employer and keeps clinical records confidential.",
+   "who_it_applies_to": "Registered health practitioners, including the occupational medical practitioners who examine your workers; employers are affected through what they may receive.",
+   "evidence_a_company_keeps": [
+    "Statement of which medical information the employer holds and which the practitioner holds",
+    "Consent wording used for examinations",
+    "Record that only outcomes (fit, fit with restrictions, unfit) are kept in the File"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "hazardous-substances-act-radiation-control",
+   "short_name": "Hazardous Substances Act (radiation control)",
+   "display_name": "Hazardous Substances Act, radiation control",
+   "what_it_covers": "This Act, as it applies to radiation, controls equipment that emits ionising radiation, such as X ray units, and radioactive sources. Users need a licence or authority from the radiation control regulator, a radiation protection officer, dose monitoring for radiation workers and medical surveillance where required.",
+   "who_it_applies_to": "Hospitals, clinics, dental practices, industrial radiography, laboratories and any business that uses radiation sources or X ray equipment.",
+   "evidence_a_company_keeps": [
+    "Licence or authority for each radiation source or X ray unit",
+    "Written appointment of the radiation protection officer",
+    "Dose records for radiation workers",
+    "Radiation work authorisations",
+    "Fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "G"
+   ]
+  },
+  {
+   "slug": "health-care-waste-regulations",
+   "short_name": "Health Care Waste regulations",
+   "display_name": "Health care waste regulations",
+   "what_it_covers": "Health care risk waste, such as sharps, infectious waste and pathological waste, is controlled by national norms and by provincial and municipal rules on how it is separated, stored, transported, treated and disposed of. In a Health and Safety File it matters for clinics, hospitals, laboratories and waste companies. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Generators of health care risk waste and the companies that collect, transport, treat and dispose of it.",
+   "evidence_a_company_keeps": [
+    "Waste separation and storage procedure",
+    "Sharps container and waste storage area inspections",
+    "Waste manifests and safe disposal certificates from a licensed service provider",
+    "Training records for waste handlers"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "health-professions-act",
+   "short_name": "Health Professions Act",
+   "display_name": "Health Professions Act",
+   "what_it_covers": "This Act establishes the Health Professions Council of South Africa and requires health practitioners, including occupational medical practitioners, to be registered before they practise. In a Health and Safety File it is a reference point: where medical outcomes are signed or clinical staff work at your site, the practitioners must hold current registration.",
+   "who_it_applies_to": "Health practitioners registered with the council, and the organisations that employ or contract them.",
+   "evidence_a_company_keeps": [
+    "Registration check for each practitioner who signs medical outcomes",
+    "Register of professional registrations for clinical staff you employ"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "lead-regulations-2001",
+   "short_name": "Lead Regulations, 2001",
+   "display_name": "Lead Regulations, 2001",
+   "what_it_covers": "These regulations, made under the OHS Act, control exposure to lead at work, for example in battery work, smelting, soldering, paint removal and recycling. They expect a risk assessment, air monitoring, control of exposure, washing and changing facilities, medical surveillance including biological monitoring, and records kept for the periods the regulations set.",
+   "who_it_applies_to": "Employers and self employed persons whose work may expose people to lead.",
+   "evidence_a_company_keeps": [
+    "Lead risk assessment",
+    "Lead air monitoring results",
+    "Written appointment of the lead work supervisor",
+    "Fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner, and biological monitoring shown in aggregate",
+    "Retention schedule for the related records"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "J",
+    "O"
+   ]
+  },
+  {
+   "slug": "municipal-by-laws",
+   "short_name": "Local by laws",
+   "display_name": "Municipal by laws",
+   "what_it_covers": "Municipalities make by laws on matters such as public health, swimming pools, noise nuisance, building use and trading. Which by laws apply depends on where your sites are, so they are checked site by site. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Businesses operating within a municipality, according to the activities at each site.",
+   "evidence_a_company_keeps": [
+    "List of the by laws that apply at each site",
+    "Permits or certificates issued by the municipality",
+    "Pool safety and lifeguard records where a pool is operated"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "municipal-fire-by-laws",
+   "short_name": "Local fire by laws",
+   "display_name": "Municipal fire safety by laws",
+   "what_it_covers": "Municipal fire safety by laws set requirements for fire equipment, escape routes, the storage of flammable liquids and fire inspections, and they often refer to national standards. Your local fire service enforces them. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Businesses operating within a municipality, especially premises open to the public and those that store flammable substances.",
+   "evidence_a_company_keeps": [
+    "Fire equipment register with service dates",
+    "Fire risk assessment and fire plan",
+    "Flammable substances certificate where the municipality requires one",
+    "Fire inspection reports",
+    "Fire team appointments"
+   ],
+   "file_sections": [
+    "B",
+    "F",
+    "H"
+   ]
+  },
+  {
+   "slug": "major-hazard-installation-regulations-2022",
+   "short_name": "MHI Regulations, 2022",
+   "display_name": "Major Hazard Installation Regulations, 2022",
+   "what_it_covers": "These regulations, made under the OHS Act, apply to installations that hold or process hazardous substances in quantities that could cause a major incident affecting people beyond the site. They expect the installation to be identified and notified, a risk assessment by an approved inspection authority, an emergency plan coordinated with the local authority, and information for the public who could be affected.",
+   "who_it_applies_to": "Employers and users of installations that meet the thresholds the regulations set, such as fuel depots and chemical plants.",
+   "evidence_a_company_keeps": [
+    "Major hazard installation risk assessment",
+    "Site emergency plan coordinated with the local authority",
+    "Record of information given to the public and the local authority",
+    "Notification records"
+   ],
+   "file_sections": [
+    "C",
+    "H"
+   ]
+  },
+  {
+   "slug": "mine-health-and-safety-act",
+   "short_name": "MHSA",
+   "display_name": "Mine Health and Safety Act",
+   "what_it_covers": "This Act is the separate health and safety regime for mines, with its own inspectorate, duties for the mine owner and manager, codes of practice, health and safety representatives and committees, and medical surveillance with certificates of fitness. Where the MHSA regime applies, it takes the place of the OHS Act for mining activities.",
+   "who_it_applies_to": "Mine owners, managers, contractors and employees at mines.",
+   "evidence_a_company_keeps": [
+    "Statutory appointments at the mine",
+    "The mine's codes of practice",
+    "Certificates of fitness showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Health and safety representative and committee records",
+    "Records of reporting to the mine inspectorate"
+   ],
+   "file_sections": [
+    "A",
+    "B",
+    "C",
+    "E"
+   ]
+  },
+  {
+   "slug": "mine-health-and-safety-regulations",
+   "short_name": "MHSA regulations",
+   "display_name": "Mine Health and Safety Regulations",
+   "what_it_covers": "Regulations made under the MHSA regime set detailed rules for mining topics such as winding and lifting plant, ventilation and mine rescue. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Mines and the contractors who work at mines.",
+   "evidence_a_company_keeps": [
+    "Winding and lifting plant inspection and test records",
+    "Ventilation surveys",
+    "Mine rescue arrangements and drill records"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "merchant-shipping-act",
+   "short_name": "Merchant Shipping Act",
+   "display_name": "Merchant Shipping Act",
+   "what_it_covers": "This Act governs South African ships and seafarers, including the safety of ships, crew certification and the medical fitness of seafarers. In a Health and Safety File it matters for port and marine work, alongside the port authority's rules. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Ship owners, operators and seafarers, and businesses whose work takes place on board ships.",
+   "evidence_a_company_keeps": [
+    "Seafarer certificates of competency",
+    "Seafarer fitness outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Port and vessel work procedures"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "national-environmental-management-waste-act",
+   "short_name": "NEM Waste Act",
+   "display_name": "National Environmental Management: Waste Act",
+   "what_it_covers": "This Act regulates waste management to protect health and the environment. It places a duty on everyone who holds waste to manage it properly, requires licences for certain waste activities, and expects records of waste generated, stored and disposed of.",
+   "who_it_applies_to": "Everyone who generates, stores, transports, treats or disposes of waste, with licences needed for the activities the Act lists.",
+   "evidence_a_company_keeps": [
+    "Waste register",
+    "Waste manifests and safe disposal certificates",
+    "Waste licences where your activities need them",
+    "Contracts with licensed waste service providers"
+   ],
+   "file_sections": [
+    "C",
+    "D",
+    "F",
+    "M"
+   ]
+  },
+  {
+   "slug": "national-environmental-management-act",
+   "short_name": "NEMA and its instruments",
+   "display_name": "National Environmental Management Act and its instruments",
+   "what_it_covers": "This is the framework environmental law. It sets a duty of care to prevent pollution and environmental harm, requires environmental authorisation for listed activities, and expects incidents such as spills to be reported and cleaned up. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Everyone whose activities may cause pollution or environmental harm, with authorisations needed for listed activities.",
+   "evidence_a_company_keeps": [
+    "Environmental authorisations for listed activities",
+    "Spill response procedure and incident reports",
+    "Environmental monitoring results"
+   ],
+   "file_sections": [
+    "C",
+    "H",
+    "M"
+   ]
+  },
+  {
+   "slug": "professional-driving-permit-medical",
+   "short_name": "NRTA PrDP medical",
+   "display_name": "National Road Traffic Act, professional driving permit medical",
+   "what_it_covers": "Drivers of certain vehicles, such as heavier goods vehicles, buses, minibuses and vehicles carrying dangerous goods or passengers for reward, need a professional driving permit. Applying for or renewing the permit requires a medical declaration of fitness. Care Net screens fitness to drive and does not diagnose.",
+   "who_it_applies_to": "Employers whose drivers need a professional driving permit, and the drivers themselves.",
+   "evidence_a_company_keeps": [
+    "Copy of each driver's licence and professional driving permit with its expiry",
+    "Professional driving permit medical outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Written appointment of each driver"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "D",
+    "E"
+   ]
+  },
+  {
+   "slug": "national-health-act",
+   "short_name": "National Health Act",
+   "display_name": "National Health Act",
+   "what_it_covers": "This Act sets the framework for the national health system, including health records, the confidentiality of health information and municipal health services, which include the control of health care waste. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Health establishments, health care providers and users of health services, and businesses that generate health care waste.",
+   "evidence_a_company_keeps": [
+    "Health care risk waste procedures",
+    "Confidentiality arrangements for any health records you hold"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "national-road-traffic-act",
+   "short_name": "National Road Traffic Act",
+   "display_name": "National Road Traffic Act",
+   "what_it_covers": "This Act governs road vehicles and drivers: vehicle registration and roadworthiness, driving licences and professional driving permits, operator registration for certain vehicles, loading and securing of loads, and the carriage of dangerous goods by road. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Vehicle owners and operators, fleet operators and every driver on a public road.",
+   "evidence_a_company_keeps": [
+    "Fleet register with licence and roadworthy status",
+    "Operator cards where required",
+    "Driver licences and permits with expiry dates",
+    "Dangerous goods documentation where carried",
+    "Road closure and traffic accommodation approvals"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "G"
+   ]
+  },
+  {
+   "slug": "noise-exposure-regulations-2024",
+   "short_name": "Noise Exposure Regulations, 2024",
+   "display_name": "Noise Exposure Regulations, 2024",
+   "what_it_covers": "These regulations, made under the OHS Act, control exposure to noise at work and replace the earlier noise regulations. They expect a noise risk assessment, noise surveys by an approved inspection authority, marked noise zones, noise control following the hierarchy of control, hearing protection and training, and medical surveillance including hearing tests where the assessment requires it.",
+   "who_it_applies_to": "Employers and self employed persons whose work exposes people to noise.",
+   "evidence_a_company_keeps": [
+    "Noise survey and noise zone map",
+    "Noise risk assessment",
+    "Written appointment of the noise zone controller",
+    "Hearing protection issue records",
+    "Hearing screening outcomes only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "E",
+    "J"
+   ]
+  },
+  {
+   "slug": "nursing-act",
+   "short_name": "Nursing Act",
+   "display_name": "Nursing Act",
+   "what_it_covers": "This Act establishes the South African Nursing Council and requires nurses, including occupational health nurses, to be registered before they practise. In a Health and Safety File it is a reference point for clinical workplaces and occupational health services.",
+   "who_it_applies_to": "Nurses, and the organisations that employ or contract them.",
+   "evidence_a_company_keeps": [
+    "Registration check for each nurse who performs examinations",
+    "Register of professional registrations for nursing staff you employ"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "occupational-diseases-in-mines-and-works-act",
+   "short_name": "ODMWA",
+   "display_name": "Occupational Diseases in Mines and Works Act",
+   "what_it_covers": "This Act provides for medical examinations and compensation for workers and former workers at controlled mines and works who contract certain occupational lung diseases, and sets duties on owners to have workers examined and to report those diseases. Two kinds of document follow from it. A certificate of fitness for work at a controlled mine or works shows the outcome only (fit, fit with restrictions, unfit); the clinical records stay with the occupational health practitioner. A benefit examination is different: it is done for compensation, to find compensable lung disease, by the practitioners and bodies the Act provides for, and its findings are not a fitness outcome. Care Net screens fitness and does not diagnose, so a benefit examination is not part of Care Net's fitness screening.",
+   "who_it_applies_to": "Owners of controlled mines and works, and current and former workers there.",
+   "evidence_a_company_keeps": [
+    "Certificates of fitness for work at the controlled mine or works, showing the outcome only (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Records that benefit examinations were arranged as the Act requires; their findings go to the compensation process, not to the File as fitness outcomes",
+    "Occupational disease notifications",
+    "Referral records"
+   ],
+   "file_sections": [
+    "C",
+    "E",
+    "I"
+   ]
+  },
+  {
+   "slug": "ohs-act",
+   "short_name": "OHS Act",
+   "display_name": "Occupational Health and Safety Act",
+   "what_it_covers": "This Act is the main workplace health and safety law outside mines. It requires every employer to provide and maintain, as far as reasonably practicable, a working environment that is safe and without risk to health, to identify hazards and control them, to inform and train workers, and to consult them through health and safety representatives and committees. The chief executive officer carries the duties under section 16(1) and may assign them in writing under section 16(2), and a section 37(2) agreement sets how a mandatary or contractor takes responsibility for its own work.",
+   "who_it_applies_to": "Every employer and self employed person outside the MHSA regime, and every employee, who has duties too.",
+   "evidence_a_company_keeps": [
+    "Health and safety policy signed by the chief executive officer",
+    "Section 16(2) assignment in writing, accepted in writing",
+    "Section 37(2) agreements with mandataries and contractors",
+    "Risk assessments and safe work procedures",
+    "Health and safety representative and committee records"
+   ],
+   "file_sections": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "F",
+    "G",
+    "H",
+    "I",
+    "K",
+    "L",
+    "N"
+   ]
+  },
+  {
+   "slug": "popia",
+   "short_name": "POPIA",
+   "display_name": "Protection of Personal Information Act",
+   "what_it_covers": "This Act controls how personal information is collected, used, stored, shared and deleted. Health information is special personal information with stricter rules, which is why medical records have tight access controls and only the fitness outcome goes into the File. Where Care Net holds records for you, an operator agreement sets out how they are handled.",
+   "who_it_applies_to": "Every public and private body that processes personal information.",
+   "evidence_a_company_keeps": [
+    "Storage location and access control for each record type",
+    "Operator agreement between your company and Care Net for the records Care Net holds",
+    "Privacy notice and consent wording given to workers",
+    "Record of what medical information the employer holds and the lawful basis for it"
+   ],
+   "file_sections": [
+    "E",
+    "O"
+   ]
+  },
+  {
+   "slug": "psira-training-regulations",
+   "short_name": "PSIRA training regulations",
+   "display_name": "PSIRA training regulations",
+   "what_it_covers": "Under the PSIRA regime, security officers must be trained through recognised training providers and registered at the grade that matches their duties. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Security businesses and security officers.",
+   "evidence_a_company_keeps": [
+    "Registration and grade of each security officer",
+    "Training certificates from recognised providers",
+    "Record that each officer's duties match the grade held"
+   ],
+   "file_sections": [
+    "D"
+   ]
+  },
+  {
+   "slug": "physical-agents-regulations-2024",
+   "short_name": "Physical Agents Regulations, 2024",
+   "display_name": "Physical Agents Regulations, 2024",
+   "what_it_covers": "These regulations, made under the OHS Act, cover physical agents other than noise, such as heat, cold, lighting, indoor air quality, ventilation, vibration and non ionising radiation, and replace the earlier regulations on the working environment. They expect an assessment of exposure, measurements where needed, controls, and records.",
+   "who_it_applies_to": "Employers and self employed persons whose workplaces expose people to these physical agents.",
+   "evidence_a_company_keeps": [
+    "Physical agents exposure risk assessment",
+    "Illumination, ventilation and thermal survey results",
+    "Heat and cold exposure controls",
+    "Records of corrective action on measurements"
+   ],
+   "file_sections": [
+    "C",
+    "F",
+    "J",
+    "M"
+   ]
+  },
+  {
+   "slug": "national-ports-act",
+   "short_name": "Ports Act",
+   "display_name": "National Ports Act",
+   "what_it_covers": "This Act governs the national ports and the port authority, which sets port rules for safety, access and operations. Work in a port follows those rules alongside workplace safety law. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Port operators, terminal operators and businesses whose people work in a port.",
+   "evidence_a_company_keeps": [
+    "Port access permits for your workers",
+    "The port rules and your written acknowledgement of them",
+    "Port work procedures"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "pressure-equipment-regulations-2009",
+   "short_name": "Pressure Equipment Regulations, 2009",
+   "display_name": "Pressure Equipment Regulations, 2009",
+   "what_it_covers": "These regulations, made under the OHS Act, cover pressure equipment such as boilers, pressure vessels, air receivers and gas installations, including their design, inspection and testing by approved inspection authorities or competent persons, and the records kept. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Users and owners of pressure equipment, and the people who install, inspect or maintain it.",
+   "evidence_a_company_keeps": [
+    "Pressure equipment register with inspections and certificates",
+    "Written appointment of the pressure equipment supervisor",
+    "Gas installation certificates",
+    "Operator competence records"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "D",
+    "F"
+   ]
+  },
+  {
+   "slug": "private-security-industry-regulation-act",
+   "short_name": "Private Security Industry Regulation Act",
+   "display_name": "Private Security Industry Regulation Act",
+   "what_it_covers": "This Act sets up the regulator of the private security industry, known as the PSIRA regime. Security businesses and security officers must be registered, and officers work at the grade their training supports. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Security businesses, in house security departments and security officers.",
+   "evidence_a_company_keeps": [
+    "Registration of the security business",
+    "Registration and grade of each security officer",
+    "Security emergency procedures"
+   ],
+   "file_sections": [
+    "D",
+    "H"
+   ]
+  },
+  {
+   "slug": "railway-safety-regulator-act",
+   "short_name": "Railway Safety Regulator Act",
+   "display_name": "Railway Safety Regulator Act",
+   "what_it_covers": "This Act set up the railway safety regulator, which oversees the safety of railway operations. Railway operators need a safety permit and a safety management system, which includes managing the fitness of workers in safety critical roles. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Railway operators and the contractors who work on railway operations.",
+   "evidence_a_company_keeps": [
+    "Safety permit held by the operator",
+    "Safety management system documents",
+    "Fitness outcomes for safety critical workers (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "hazardous-work-by-children-regulations-2010",
+   "short_name": "Regulations on Hazardous Work by Children, 2010",
+   "display_name": "Regulations on Hazardous Work by Children, 2010",
+   "what_it_covers": "These regulations, made under employment law, list work that children may not do because it is hazardous, and set protections for children who work lawfully. In a Health and Safety File they matter mainly in farming and seasonal work. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Employers who employ, or may employ, children, particularly in agriculture.",
+   "evidence_a_company_keeps": [
+    "Age verification records for workers",
+    "Record that no child does prohibited work",
+    "Seasonal worker induction records"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "sahpra-provisions",
+   "short_name": "SAHPRA provisions",
+   "display_name": "South African Health Products Regulatory Authority provisions",
+   "what_it_covers": "The health products regulator licenses medicines, medical devices and radiation sources, and controls how they are stored and handled. In a Health and Safety File it is a reference point for clinical workplaces. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Clinical workplaces and businesses that hold medicines, medical devices or radiation sources.",
+   "evidence_a_company_keeps": [
+    "Licences held by the clinical workplace",
+    "Storage and handling procedures for medicines"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "sans-10142",
+   "short_name": "SANS 10142",
+   "display_name": "SANS 10142, the wiring of premises",
+   "what_it_covers": "SANS 10142 is the national standard for the wiring of premises, and certificates for electrical installations are issued against it. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Owners and users of electrical installations, and the electricians who design, install, test and certify them.",
+   "evidence_a_company_keeps": [
+    "Certificate and test report for each installation, issued against the standard",
+    "Record of the licensed copy of the standard your electrician works from"
+   ],
+   "file_sections": [
+    "F"
+   ]
+  },
+  {
+   "slug": "sans-10231",
+   "short_name": "SANS 10231",
+   "display_name": "SANS 10231, transport of dangerous goods: operational requirements for road vehicles",
+   "what_it_covers": "SANS 10231 sets operational requirements for road vehicles that carry dangerous goods, including vehicle equipment, driver training and loading. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Consignors, carriers and drivers of dangerous goods by road.",
+   "evidence_a_company_keeps": [
+    "Dangerous goods driver training records",
+    "Vehicle equipment checklists",
+    "Loading and securing records"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "sans-10232",
+   "short_name": "SANS 10232",
+   "display_name": "SANS 10232, transport of dangerous goods: emergency information systems",
+   "what_it_covers": "SANS 10232 sets the emergency information that must travel with dangerous goods, such as placards, labels and the documents that tell emergency services what is carried. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Consignors, carriers and drivers of dangerous goods by road.",
+   "evidence_a_company_keeps": [
+    "Placarding and labelling checks",
+    "Transport emergency cards or equivalent documents",
+    "Spill and emergency response procedures for loads carried"
+   ],
+   "file_sections": [
+    "C"
+   ]
+  },
+  {
+   "slug": "sans-10400",
+   "short_name": "SANS 10400",
+   "display_name": "SANS 10400, application of the National Building Regulations",
+   "what_it_covers": "SANS 10400 is the set of national standards used to apply the building regulations, covering matters such as structure, fire, lighting, ventilation, escape routes and emergency signage. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Building owners, designers and occupiers, and the businesses that use the buildings.",
+   "evidence_a_company_keeps": [
+    "Emergency lighting and signage inspection records",
+    "Approved building plans and occupancy certificates where available"
+   ],
+   "file_sections": [
+    "F"
+   ]
+  },
+  {
+   "slug": "sans-10400-part-t",
+   "short_name": "SANS 10400 T part",
+   "display_name": "SANS 10400, part T: fire protection",
+   "what_it_covers": "This part of SANS 10400 deals with fire protection in buildings, including escape routes, fire detection, fire equipment and the provision for firefighting. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Building owners, designers and occupiers, and the businesses that use the buildings.",
+   "evidence_a_company_keeps": [
+    "Fire equipment register with service dates",
+    "Written appointment of the fire equipment inspector",
+    "Fire risk assessment and fire plan",
+    "Evacuation plans for public spaces"
+   ],
+   "file_sections": [
+    "B",
+    "C",
+    "F",
+    "H"
+   ]
+  },
+  {
+   "slug": "sans-3000-series",
+   "short_name": "SANS 3000 series",
+   "display_name": "SANS 3000 railway safety standards",
+   "what_it_covers": "The SANS 3000 series sets national standards for railway safety management, which the railway safety regulator uses when it assesses operators. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Railway operators and the contractors who work on railway operations.",
+   "evidence_a_company_keeps": [
+    "Safety management system documents mapped to the standards",
+    "Record of the licensed copies held"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "sans-3000-4",
+   "short_name": "SANS 3000-4 (RSR)",
+   "display_name": "SANS 3000-4, railway human factors management",
+   "what_it_covers": "SANS 3000-4 deals with human factors in railway safety, including managing the medical fitness of workers in safety critical roles. The railway safety regulator refers to it. It is a national standard referenced by law or by your client, not a law on its own, and you need a licensed copy from the South African Bureau of Standards to work from the full text. Care Net screens fitness against the role's risks and does not diagnose.",
+   "who_it_applies_to": "Railway operators and the contractors who employ workers in safety critical roles.",
+   "evidence_a_company_keeps": [
+    "List of safety critical roles",
+    "Fitness outcomes for safety critical workers (fit, fit with restrictions, unfit), with the clinical records kept by the occupational health practitioner",
+    "Record of the licensed copy of the standard held"
+   ],
+   "file_sections": [
+    "E"
+   ]
+  },
+  {
+   "slug": "seta-unit-standards",
+   "short_name": "SETA unit standards",
+   "display_name": "SETA unit standards and qualifications",
+   "what_it_covers": "Unit standards and qualifications registered through the sector education and training authorities describe what a person must know and be able to do. Many safety courses are built on them, so a certificate that names what was assessed shows the level of competence. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Training providers, and employers who rely on accredited training for safety critical roles.",
+   "evidence_a_company_keeps": [
+    "Training certificates that name the standard or qualification assessed",
+    "Accreditation of the training provider",
+    "Competency assessment records"
+   ],
+   "file_sections": [
+    "D"
+   ]
+  },
+  {
+   "slug": "skills-development-act",
+   "short_name": "Skills Development Act",
+   "display_name": "Skills Development Act",
+   "what_it_covers": "This Act sets the framework for workplace skills development, through the sector education and training authorities, workplace skills plans and accredited training. In a Health and Safety File it supports the training needs analysis and the records of statutory and safety critical training. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Employers, especially those who pay the skills development levy, and training providers.",
+   "evidence_a_company_keeps": [
+    "Training needs analysis per job role",
+    "Training records from accredited providers",
+    "Competency assessment records"
+   ],
+   "file_sections": [
+    "D"
+   ]
+  },
+  {
+   "slug": "tobacco-products-control-act",
+   "short_name": "Tobacco Products Control Act",
+   "display_name": "Tobacco Products Control Act",
+   "what_it_covers": "This Act controls smoking in public places and workplaces, including where smoking may be allowed, the signs required and the protection of people who do not smoke. The kernel is still verifying this instrument, so this background is general and will be tightened once verification is finished.",
+   "who_it_applies_to": "Employers and anyone who controls a workplace or public place.",
+   "evidence_a_company_keeps": [
+    "Workplace smoking policy",
+    "Designated smoking area details and signage",
+    "Record of complaints and actions taken"
+   ],
+   "file_sections": [
+    "M"
+   ]
+  }
+ ]
+}

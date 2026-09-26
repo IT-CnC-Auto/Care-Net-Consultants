@@ -1,0 +1,201 @@
+{
+  "section": "N",
+  "title": "Internal Audit Report: Health and Safety File",
+  "subtitle": "Audit of the File for the Polokwane workshop, 8 and 9 June 2026",
+  "company": "Katlagter Earthmoving Services (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Audit details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Audited site",
+            "Polokwane workshop and yard, 16 Mopani Crescent, Ladanna, Polokwane"
+          ],
+          [
+            "Audit dates",
+            "Monday 8 June and Tuesday 9 June 2026; report issued 16 June 2026"
+          ],
+          [
+            "Lead auditor",
+            "Nomsa Maluleke, registered health and safety practitioner (registration with the professional body checked and a copy kept on the audit file)"
+          ],
+          [
+            "Auditee",
+            "Frans Venter, Workshop Manager (appointed under section 16(2))"
+          ]
+        ],
+        "widths": [
+          28,
+          72
+        ]
+      }
+    },
+    {
+      "h2": "2. Scope"
+    },
+    {
+      "p": "All fifteen sections of the Health and Safety File for the Polokwane workshop, Section A to Section O, for the period 1 June 2025 to 31 May 2026. The company's construction sites are audited separately."
+    },
+    {
+      "h2": "3. Method"
+    },
+    {
+      "bullets": [
+        "Opening meeting with the Workshop Manager and the health and safety representatives on 8 June 2026.",
+        "Document review of all fifteen sections against the File index and the legal register; site walk through the workshop, wash bay, stores and yard.",
+        "Interviews with eight employees, two representatives and one contractor supervisor, and a closing meeting on 9 June 2026 where the findings were accepted."
+      ]
+    },
+    {
+      "h2": "4. How findings are graded"
+    },
+    {
+      "p": "**Major**: a required document or control is missing, or a person may be in danger. **Minor**: a document or control exists but is incomplete, out of date or not always followed. **Observation**: not a gap yet, but a chance to improve."
+    },
+    {
+      "h2": "5. Findings"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Section",
+          "Finding",
+          "Grade"
+        ],
+        "rows": [
+          [
+            "1",
+            "B",
+            "The written appointment of the machinery supervisor for the workshop expired in March 2026 and was not renewed.",
+            "Major"
+          ],
+          [
+            "2",
+            "C",
+            "The task based risk assessment for tyre changing on haul trucks was not signed by the employees who do the work.",
+            "Minor"
+          ],
+          [
+            "3",
+            "D",
+            "Two of the eleven forklift operators have no record of refresher training on file.",
+            "Minor"
+          ],
+          [
+            "4",
+            "E",
+            "Certificates of fitness are on file showing outcomes only, as required. Clinical records are held by the occupational health practitioner. No finding.",
+            "None"
+          ],
+          [
+            "5",
+            "F",
+            "Portable electrical tool register up to date, but the tags on three grinders in the stores do not match the register.",
+            "Minor"
+          ],
+          [
+            "6",
+            "K",
+            "The section 37(2) agreement with the tyre contractor is signed, but its contractor File has no current letter of good standing under COIDA.",
+            "Major"
+          ],
+          [
+            "7",
+            "N",
+            "Corrective actions from the 2025 audit are closed, but the closure evidence sits in email and not in the File.",
+            "Observation"
+          ]
+        ],
+        "widths": [
+          7,
+          13,
+          65,
+          15
+        ]
+      }
+    },
+    {
+      "h2": "6. Corrective actions"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Corrective action",
+          "Owner",
+          "Due"
+        ],
+        "rows": [
+          [
+            "1",
+            "Appoint the machinery supervisor again in writing and file the appointment with the credentials",
+            "Frans Venter",
+            "30/06/2026"
+          ],
+          [
+            "2",
+            "Review the tyre changing risk assessment with the team and have it signed",
+            "Lindiwe Mathebula",
+            "10/07/2026"
+          ],
+          [
+            "3",
+            "Book refresher training for the two forklift operators and file the certificates",
+            "Lindiwe Mathebula",
+            "31/07/2026"
+          ],
+          [
+            "5",
+            "Retag the three grinders and bring the register in line",
+            "Jacques Olivier",
+            "19/06/2026"
+          ],
+          [
+            "6",
+            "Obtain the tyre contractor's current letter of good standing; no work until received",
+            "Frans Venter",
+            "19/06/2026"
+          ],
+          [
+            "7",
+            "Move closure evidence into the corrective action log in Section N",
+            "Lindiwe Mathebula",
+            "31/07/2026"
+          ]
+        ],
+        "widths": [
+          7,
+          58,
+          20,
+          15
+        ]
+      }
+    },
+    {
+      "h2": "7. Management review note"
+    },
+    {
+      "p": "Tabled at the management review on 23 June 2026, chaired by the Managing Director, Tumelo Sekgala. Management accepted all findings and actions, approved the refresher training from the training budget, and asked for appointment expiry dates in the monthly management report. The auditor verifies closure of both Major findings on site in July 2026."
+    },
+    {
+      "sign": [
+        {
+          "role": "Lead auditor",
+          "name": "Nomsa Maluleke"
+        },
+        {
+          "role": "Managing Director",
+          "name": "Tumelo Sekgala"
+        }
+      ]
+    }
+  ]
+}

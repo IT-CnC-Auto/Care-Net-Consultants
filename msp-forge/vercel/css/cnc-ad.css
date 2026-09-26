@@ -1,0 +1,48 @@
+/* cnc-ad.css v1.1 25/09/2026: slots take room only under html.cnc-ads-on (js/flags.js) */
+.cnc-ad-slot{display:none}
+.cnc-ads-on .cnc-ad-slot{display:flex;flex-direction:column;container-type:inline-size;margin:14px 0}
+.cnc-ads-on .cnc-ad-slot[hidden]{display:none}
+.cnc-ad-slot--full{min-height:170px}
+.cnc-ad-slot--strip{min-height:44px}
+.cnc-ad-slot--tip{min-height:100px}.cnc-ad-slot--desk{min-height:112px}
+@media (max-width:767px){.cnc-ad-slot--full{min-height:300px}.cnc-ad-slot--tip{min-height:150px}.cnc-ads-on .cnc-ad-slot--desk{display:none}}
+.cnc-ad{--g:#F0A32B;--r:#ED1B24;--dr:#B7141A;--k:#0F0F0F;--a:var(--g);flex:1;position:relative;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr auto;gap:4px 16px;align-items:center;background:var(--k);color:#fff;border-radius:10px;border-left:6px solid var(--a);padding:16px 48px 16px 16px;font:14px/1.5 Inter,Arial,sans-serif;animation:cnc-ad-in .25s ease-out}
+.cnc-ad p{margin:0}
+.cnc-ad-bee{align-self:start;object-fit:contain}
+.cnc-ad-eb{font:800 11px/1.3 Montserrat,Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--a)}
+.cnc-ad .cnc-ad-h{font:400 28px/1.05 'Bebas Neue',Montserrat,Arial,sans-serif;letter-spacing:.03em;text-transform:uppercase;margin:3px 0 4px;color:#fff}
+.cnc-ad-b{color:#e8e8e8}
+.cnc-ad .cnc-ad-p{color:var(--g);font-weight:700;font-size:13px;margin-top:6px}
+.cnc-ad .cnc-ad-go{display:inline-block;margin:0;background:var(--dr);color:#fff;border:0;border-radius:5px;padding:11px 18px;font:700 14px/1.3 Inter,Arial,sans-serif;text-decoration:none;white-space:nowrap;text-align:center}
+.cnc-ad .cnc-ad-go:hover{background:#8C0F14;color:#fff}
+.cnc-ad .cnc-ad-2{display:block;margin-top:8px;color:#fff;font-weight:700;text-align:center}
+.cnc-ad-x{position:absolute;top:8px;right:8px;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;font-size:22px;line-height:1;cursor:pointer}
+.cnc-ad a:focus-visible,.cnc-ad button:focus-visible,.cnc-ad summary:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.cnc-ad--strip,.cnc-ad--tip{background:#FFF7E8;color:var(--k);padding:8px 44px 8px 12px;gap:4px 10px;border-radius:8px;font-size:13.5px}
+.cnc-ad--tip{align-items:start}
+.cnc-ad--strip .cnc-ad-show{grid-column:3}
+.cnc-ad--strip :focus-visible,.cnc-ad--tip :focus-visible{outline-color:var(--k)!important}
+.cnc-ad-lk{color:var(--dr);font-weight:700;text-decoration:underline;white-space:nowrap}
+.cnc-ad--tip .cnc-ad-lk{display:inline-block;margin-top:4px}
+.cnc-ad-show{margin:0 -34px 0 0;padding:6px 14px;border:2px solid var(--dr);border-radius:5px;background:#fff;color:var(--dr);font:700 13px/1.2 Inter,Arial,sans-serif;cursor:pointer}
+.cnc-ad-show:hover{background:var(--dr);color:#fff}
+.cnc-ad-how summary{cursor:pointer;color:var(--dr);font-weight:700}
+.cnc-ad-how ol{margin:6px 0;padding-left:20px}
+.cnc-ad-twin{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;margin-top:12px}
+.cnc-ad-twin>*{margin:0!important;align-content:start}
+.cnc-ad-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@container (max-width:600px){
+.cnc-ad--full{display:block;padding:14px 16px 16px}
+.cnc-ad--full .cnc-ad-bee{width:34px;height:34px;float:left;margin:0 10px 4px 0}
+.cnc-ad-eb,.cnc-ad .cnc-ad-h{padding-right:30px}
+.cnc-ad .cnc-ad-h{font-size:25px}
+.cnc-ad-b{clear:left}
+.cnc-ad-ac{margin-top:12px}
+.cnc-ad .cnc-ad-go{display:block;white-space:normal}
+.cnc-ad--strip:not(.cnc-ad--fold){grid-template-columns:auto 1fr}
+.cnc-ad--strip .cnc-ad-lk{grid-column:2;justify-self:start}
+}
+@media (max-width:767px){.cnc-ad-twin{grid-template-columns:1fr}}
+@keyframes cnc-ad-in{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cnc-ad{animation:none}}
+@media print{.cnc-ad-slot,.cnc-ads-on .cnc-ad-slot{display:none!important}}

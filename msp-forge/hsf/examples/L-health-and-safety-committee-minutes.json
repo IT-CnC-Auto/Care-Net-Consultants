@@ -1,0 +1,230 @@
+{
+  "section": "L",
+  "title": "Health and Safety Committee Minutes",
+  "subtitle": "Meeting held on 18 March 2026 at the Epping site, Cape Town",
+  "company": "Swartpiek Fresh Foods (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Meeting details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Date and time",
+            "Wednesday 18 March 2026, 10:00 to 11:15"
+          ],
+          [
+            "Venue",
+            "Training room, 41 Protea Road, Epping Industria, Cape Town"
+          ],
+          [
+            "Chairperson",
+            "Anele Jacobs, Operations Manager (appointed under section 16(2))"
+          ],
+          [
+            "Minute taker",
+            "Monique Adams, Human Resources Officer"
+          ],
+          [
+            "Quorum",
+            "Present: the chairperson and four of the five health and safety representatives"
+          ]
+        ],
+        "widths": [
+          30,
+          70
+        ]
+      }
+    },
+    {
+      "h2": "2. Attendance"
+    },
+    {
+      "table": {
+        "cols": [
+          "Name",
+          "Role",
+          "Area represented",
+          "Present"
+        ],
+        "rows": [
+          [
+            "Anele Jacobs",
+            "Chairperson, employer nominee",
+            "Whole site",
+            "Yes"
+          ],
+          [
+            "Johan Pretorius",
+            "Maintenance Supervisor, employer nominee",
+            "Engineering",
+            "Yes"
+          ],
+          [
+            "Nomvula Dlamini",
+            "Health and safety representative",
+            "Production line 1",
+            "Yes"
+          ],
+          [
+            "Ricardo Februarie",
+            "Health and safety representative",
+            "Production line 2",
+            "Yes"
+          ],
+          [
+            "Thandiwe Ngcobo",
+            "Health and safety representative",
+            "Cold store and dispatch",
+            "Yes"
+          ],
+          [
+            "Zaid Hendricks",
+            "Health and safety representative",
+            "Warehouse",
+            "Yes"
+          ],
+          [
+            "Chantel Booysen",
+            "Health and safety representative",
+            "Offices and canteen",
+            "Apology"
+          ]
+        ],
+        "widths": [
+          26,
+          34,
+          26,
+          14
+        ]
+      }
+    },
+    {
+      "h2": "3. Previous minutes"
+    },
+    {
+      "p": "The minutes of 18 February 2026 were read and accepted as a true record. Proposed by Nomvula Dlamini and seconded by Zaid Hendricks."
+    },
+    {
+      "h2": "4. Matters discussed"
+    },
+    {
+      "h2": "4.1 Representative inspection reports"
+    },
+    {
+      "p": "All four representatives present tabled their inspection reports for March. Ricardo Februarie reported a damaged guard on the slicer at line 2. The machine was locked out on 12 March and the guard was repaired on 13 March. Thandiwe Ngcobo reported ice build up on the cold store floor near door 3."
+    },
+    {
+      "h2": "4.2 Incidents since the last meeting"
+    },
+    {
+      "p": "One incident was reported: a dispatch employee slipped near cold store door 3 on 9 March 2026, received first aid on site and returned to work the next day. The investigation found a faulty door heater strip as the root cause. Until the heater strip is repaired, the ice at door 3 is removed at the start of every shift and checked every two hours, and a barrier with a warning sign keeps people off the area whenever ice forms (action 2)."
+    },
+    {
+      "h2": "4.3 Training and toolbox talks"
+    },
+    {
+      "p": "Six toolbox talks were held in March on manual handling and forklift pedestrian routes. Three new employees completed site induction. Refresher first aid training for two first aiders is due before the end of May."
+    },
+    {
+      "h2": "4.4 Recommendations to the employer"
+    },
+    {
+      "p": "The committee recommends that the employer fits anti slip matting at all cold store doors and adds a check of the door heater strips to the monthly maintenance plan. The chairperson accepted the recommendation on behalf of the employer."
+    },
+    {
+      "h2": "5. Action register"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Action",
+          "Owner",
+          "Due",
+          "Status"
+        ],
+        "rows": [
+          [
+            "1",
+            "Repair the heater strip at cold store door 3",
+            "Johan Pretorius",
+            "25/03/2026",
+            "Open"
+          ],
+          [
+            "2",
+            "Until action 1 is closed: remove the ice at door 3 at the start of every shift and check it every two hours; barricade the area with a warning sign whenever ice forms",
+            "Anele Jacobs",
+            "From 18/03/2026",
+            "In place"
+          ],
+          [
+            "3",
+            "Buy and fit anti slip matting at all cold store doors",
+            "Anele Jacobs",
+            "15/04/2026",
+            "Open"
+          ],
+          [
+            "4",
+            "Add door heater checks to the monthly maintenance plan",
+            "Johan Pretorius",
+            "31/03/2026",
+            "Open"
+          ],
+          [
+            "5",
+            "Book refresher first aid training for two first aiders",
+            "Monique Adams",
+            "30/04/2026",
+            "Open"
+          ],
+          [
+            "6",
+            "Repair the damaged slicer guard at line 2 (raised in the March inspection reports)",
+            "Johan Pretorius",
+            "13/03/2026",
+            "Closed 13/03/2026"
+          ]
+        ],
+        "widths": [
+          7,
+          45,
+          18,
+          15,
+          15
+        ]
+      }
+    },
+    {
+      "h2": "6. General"
+    },
+    {
+      "p": "Zaid Hendricks asked for the updated emergency evacuation plan to be displayed in the warehouse. Monique Adams will display it by 27 March 2026."
+    },
+    {
+      "h2": "7. Next meeting"
+    },
+    {
+      "p": "Wednesday 15 April 2026 at 10:00 in the training room. The meeting closed at 11:15."
+    },
+    {
+      "sign": [
+        {
+          "role": "Chairperson",
+          "name": "Anele Jacobs"
+        },
+        {
+          "role": "Minute taker",
+          "name": "Monique Adams"
+        }
+      ]
+    }
+  ]
+}

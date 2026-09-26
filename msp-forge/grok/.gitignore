@@ -1,0 +1,3 @@
+# Keys for the Grok kernel bot live here on the bot host only (grok/setup.mjs).
+.env
+.env.*

@@ -1,0 +1,226 @@
+{
+  "section": "M",
+  "title": "Welfare and Facilities Inspection Checklist",
+  "subtitle": "Annual inspection of the Bloemfontein depot, 11 May 2026",
+  "company": "Kornetvale Agri Logistics (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Inspection details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Site",
+            "Bloemfontein depot, 9 Kameeldoring Street, Hamilton, Bloemfontein"
+          ],
+          [
+            "Employees on site",
+            "38 (29 men, 9 women) over two shifts"
+          ],
+          [
+            "Inspected by",
+            "Karabo Mokoena, Health and Safety Officer, with Elna Botha, health and safety representative"
+          ],
+          [
+            "Date",
+            "Monday 11 May 2026, 08:00 to 10:30"
+          ],
+          [
+            "Previous inspection",
+            "12 May 2025; all findings closed"
+          ]
+        ],
+        "widths": [
+          30,
+          70
+        ]
+      }
+    },
+    {
+      "p": "Each item is marked **Yes** (in order), **No** (a finding) or **N/A**. Numbers of toilets, basins and showers and the lighting and ventilation levels are checked against what the applicable regulations and your risk assessment set; where you are unsure, ask your registered Health and Safety practitioner."
+    },
+    {
+      "h2": "2. Checklist"
+    },
+    {
+      "table": {
+        "cols": [
+          "Area",
+          "What we checked",
+          "Result",
+          "Finding"
+        ],
+        "rows": [
+          [
+            "Sanitation",
+            "Separate, clean, lockable toilets for men and women, with paper, soap and hand drying",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Sanitation",
+            "Enough toilets and basins for the number of employees on the largest shift",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Sanitation",
+            "Sanitary bins in the women's toilets, emptied by the service provider",
+            "No",
+            "Service record for April missing"
+          ],
+          [
+            "Drinking water",
+            "Clean drinking water close to work areas, with cups or a fountain",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Changing rooms",
+            "Separate changing rooms with lockers and seating",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Changing rooms",
+            "Showers working with hot and cold water",
+            "No",
+            "One of three showers in the men's room has no hot water"
+          ],
+          [
+            "Eating areas",
+            "A clean eating area away from the loading bay, with tables, seating, a fridge and a way to heat food",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Eating areas",
+            "No food or drink in the chemical store or the workshop",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Lighting",
+            "Lighting in the warehouse aisles, loading bay and yard is good enough for the tasks",
+            "No",
+            "Two lamps out in aisle 4"
+          ],
+          [
+            "Lighting",
+            "Emergency lighting works on the escape routes",
+            "Yes",
+            "Tested on the day"
+          ],
+          [
+            "Ventilation",
+            "Workshop and battery charging bay ventilated, extraction fan working",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Ventilation",
+            "Offices and eating area have openable windows or working air conditioning",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Waste",
+            "General waste in closed bins, removed by the municipal service",
+            "Yes",
+            "In order"
+          ],
+          [
+            "Waste",
+            "Used oil, oily rags and fluorescent tubes kept apart and removed by a licensed contractor with a manifest",
+            "No",
+            "Last waste manifest not on file"
+          ]
+        ],
+        "widths": [
+          15,
+          45,
+          10,
+          30
+        ]
+      }
+    },
+    {
+      "h2": "3. Findings and corrective actions"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Finding",
+          "Action",
+          "Owner",
+          "Due"
+        ],
+        "rows": [
+          [
+            "1",
+            "Sanitary bin service record for April missing",
+            "Obtain the record from the service provider and file it",
+            "Elna Botha",
+            "15/05/2026"
+          ],
+          [
+            "2",
+            "No hot water in one shower",
+            "Repair the geyser valve",
+            "Willem Nel",
+            "18/05/2026"
+          ],
+          [
+            "3",
+            "Two lamps out in aisle 4",
+            "Replace the lamps and add aisle lighting to the weekly check",
+            "Willem Nel",
+            "13/05/2026"
+          ],
+          [
+            "4",
+            "Last waste manifest not on file",
+            "Obtain the manifest from the waste contractor and file it",
+            "Karabo Mokoena",
+            "22/05/2026"
+          ]
+        ],
+        "widths": [
+          7,
+          28,
+          35,
+          15,
+          15
+        ]
+      }
+    },
+    {
+      "h2": "4. Close out"
+    },
+    {
+      "p": "The inspector checks each action on its due date and signs it off in the corrective action log. The next full inspection is due in May 2027, or earlier if the depot changes its layout or its number of employees."
+    },
+    {
+      "sign": [
+        {
+          "role": "Health and Safety Officer",
+          "name": "Karabo Mokoena"
+        },
+        {
+          "role": "Health and safety representative",
+          "name": "Elna Botha"
+        },
+        {
+          "role": "Depot Manager (appointed under section 16(2))",
+          "name": "Hendrik Coetzee"
+        }
+      ]
+    }
+  ]
+}

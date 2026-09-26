@@ -1,0 +1,118 @@
+/* =====================================================================
+   cnc-bee.css :: the Bee-Inspect pages (/bee-inspect, /bee-inspect/sample-report,
+   /get-app, /claim/{code}) on the Health and Safety File shell
+   Version 1.1 | 25/09/2026 | Bee-Inspect P2 (hsf/BUILD-CONTRACT.md 16)
+   1.1: the official gold bee image and the faded Africa pattern page break.
+   The same tokens and card style as health-and-safety-file.html; gold for
+   the Bee-Inspect accent. Small text uses the deeper reds for AA contrast.
+   ===================================================================== */
+:root { --red: #ED1B24; --red-ink: #C5141B; --deep: #B7141A; --charcoal: #1A1A1A; --ink: #0F0F0F; --ink-2: #4d4d4d; --line: #e5e2e2; --soft: #f7f5f5; --green: #2A7D4E; --green-ink: #1B6E45; --gold: #F0A32B; --gold-ink: #8A5A00; --gold-bg: #FFF7E8; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+main { max-width: 1000px; margin: 0 auto; padding: 26px 16px 70px; }
+main > *, .card, .grid > * { min-width: 0; }
+section { scroll-margin-top: 130px; margin-bottom: 30px; }
+.nb { white-space: nowrap; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 860px) { .grid3, .grid4 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .grid3, .grid4 { grid-template-columns: 1fr; } }
+.card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+@media (max-width: 480px) { .card { padding: 18px 16px; } }
+.card h2 { color: var(--red-ink); font-size: 17px; margin: 0 0 10px; }
+.card h3 { font-size: 15px; margin: 0 0 6px; }
+.card p, .card li { font-size: 14px; line-height: 1.55; }
+.card p { margin: 0 0 10px; }
+.card > :last-child { margin-bottom: 0; }
+.muted { font-size: 13px; color: var(--ink-2); }
+.eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red-ink); margin-bottom: 6px; }
+.sechead { margin: 6px 0 14px; }
+.sechead h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(26px, 3.6vw, 36px); line-height: 1; margin: 0; color: var(--charcoal); text-transform: uppercase; text-wrap: balance; }
+.sechead h2 .r { color: var(--red-ink); }
+.sechead p { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 10px 0 0; max-width: 72ch; }
+.tag { display: inline-block; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; margin-bottom: 10px; }
+.tag.free { background: #e8f7ec; color: var(--green-ink); border: 1px solid var(--green); }
+.tag.paid { background: var(--gold-bg); color: var(--gold-ink); border: 1px solid var(--gold); }
+.card.featured { border: 2px solid var(--gold); }
+.tick { list-style: none; margin: 8px 0 0; padding: 0; }
+.tick li { position: relative; padding-left: 28px; margin-bottom: 9px; }
+.tick li::before { content: ""; position: absolute; left: 0; top: 2px; width: 16px; height: 16px; border: 2px solid var(--green); border-radius: 3px; background: #fff; }
+.tick li::after { content: ""; position: absolute; left: 5px; top: 5px; width: 6px; height: 10px; border: solid var(--green); border-width: 0 2px 2px 0; transform: rotate(42deg); }
+.btn { display: block; text-align: center; text-decoration: none; background: var(--red-ink); color: #fff; border: 2px solid var(--red-ink); border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; font-size: 14px; font-family: inherit; line-height: 1.3; }
+.btn.ghost { background: #fff; color: var(--red-ink); border-color: var(--red); }
+.btn:hover { background: var(--deep); border-color: var(--deep); color: #fff; }
+.btn:focus-visible, a:focus-visible, summary:focus-visible, button:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px 12px; margin-top: 14px; }
+.btns .btn { margin-top: 0; flex: 1 1 220px; }
+a.inline { color: var(--red-ink); font-weight: bold; }
+.note { background: var(--gold-bg); border: 1px solid #efd29c; color: #4a3200; border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+.note b { color: #2b1d00; }
+footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
+
+/* Hero: the shared cnc-hero band, with a drawn phone instead of a photograph. */
+.cnc-hero .heroart { position: relative; display: flex; justify-content: center; }
+.cnc-hero .heroart-in { position: relative; width: 100%; max-width: 360px; }
+.cnc-hero .heroart svg { width: 100%; max-width: 360px; height: auto; display: block; }
+/* The official gold bee (New-Site_Bee_Icon_Gold.webp), laid over the drawn
+   phone where the old drawn bee sat: its box scales with the drawing (84 of
+   360 by 300 units) and its square is set by width and height, so nothing moves. */
+.cnc-hero .hero-bee { position: absolute; left: 71.67%; top: 14%; width: 23.33%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; display: block; }
+.cnc-hero .chip:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.cnc-hero .price-line { margin: 14px 0 0; color: var(--gold); font-weight: 700; font-size: 14.5px; }
+/* The price line is written from /hsf/ads.js as the hero is parsed: its room is
+   reserved (one line on a wide hero, two or three on a phone) so nothing moves. */
+.cnc-hero .price-line { line-height: 1.5; min-height: 1.5em; }
+@media (max-width: 640px) { .cnc-hero .price-line { min-height: 3em; } }
+@media (max-width: 359px) { .cnc-hero .price-line { min-height: 4.5em; } }
+
+/* Steps */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.steps li { position: relative; background: #fff; border-radius: 8px; padding: 18px 18px 18px 64px; box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: 14px; line-height: 1.5; }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 16px; top: 16px; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--gold); font: 400 22px/34px 'Bebas Neue', Montserrat, Arial, sans-serif; text-align: center; }
+.steps b { display: block; font-size: 15px; margin-bottom: 4px; }
+
+/* Features */
+.feat { background: #fff; border-radius: 8px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border-top: 3px solid var(--gold); }
+.feat h3 { margin: 0 0 6px; font-size: 14.5px; }
+.feat p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+
+/* Pricing */
+.plan b.amt { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: clamp(26px, 3.4vw, 32px); font-weight: 800; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+.plan b.amt small { font-size: 14px; font-weight: 700; color: var(--ink-2); }
+.plan .vat { font-size: 12.5px; color: var(--ink-2); margin: 0 0 10px; }
+.topups { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 12px; }
+.topups th { text-align: left; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 8px; border-bottom: 2px solid var(--line); }
+.topups td { padding: 9px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.topups td.more { color: var(--green-ink); font-weight: 700; }
+.wallet-points { margin: 6px 0 0; padding-left: 20px; }
+.wallet-points li { margin-bottom: 6px; }
+
+/* FAQ */
+.faq details { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 10px; }
+.faq summary { cursor: pointer; padding: 14px 18px; font-weight: 700; font-size: 14.5px; list-style-position: inside; }
+.faq details > div { padding: 0 18px 14px; font-size: 14px; line-height: 1.55; }
+.faq details > div p { margin: 0; }
+
+/* Store status: text only until the store accounts exist. */
+.stores { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 10px; }
+.stores span { display: inline-block; border: 1px dashed #9a9a9a; border-radius: 8px; padding: 9px 14px; font-size: 13px; font-weight: 700; color: var(--charcoal); background: #fff; }
+
+/* get-app and claim: one centred panel */
+.panel { max-width: 640px; margin: 0 auto; }
+.panel h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(32px, 5vw, 46px); line-height: 1; margin: 0 0 12px; text-transform: uppercase; }
+.panel .intro { font-size: 17px; line-height: 1.55; margin: 0 0 14px; }
+.panel .device { font-size: 14px; font-weight: 600; margin: 10px 0 0; line-height: 1.5; min-height: 3em; }
+@media (max-width: 640px) { .panel .device { min-height: 4.5em; } }
+@media (max-width: 359px) { .panel .device { min-height: 6em; } }
+.bee-mark { display: block; width: 56px; height: 56px; margin-bottom: 10px; object-fit: contain; }
+
+/* The faded Africa pattern page break, the same file and the same rule as
+   .divider on medical-surveillance-plans.html (www.carenetconsultants.co.za):
+   the content width, height auto from its 2000 by 100 box, never stretched.
+   Multiply drops the file's white ground to the page grey. */
+.cnc-divider { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+.divider { width: 100%; height: auto; display: block; margin: 8px 0 0; opacity: .9; mix-blend-mode: multiply; }

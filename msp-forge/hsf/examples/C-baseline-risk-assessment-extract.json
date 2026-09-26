@@ -1,0 +1,148 @@
+{
+ "section": "C",
+ "title": "Baseline Risk Assessment (Extract)",
+ "subtitle": "Hazard register for the Kya Sand bakery, signed 16 February 2026",
+ "company": "Neddikkie Artisan Bakeries (Pty) Ltd (fictitious)",
+ "blocks": [
+  {
+   "h2": "1. Scope, team and method"
+  },
+  {
+   "table": {
+    "cols": [
+     "Item",
+     "Detail"
+    ],
+    "rows": [
+     [
+      "Site and activities",
+      "Bakery at 41 Bernie Street, Kya Sand, Randburg: flour receiving and storage, mixing, dividing and moulding, baking, packing, cleaning, dispatch and maintenance. 88 employees on two shifts."
+     ],
+     [
+      "Risk assessor",
+      "Karabo Mokoena, registered health and safety practitioner, appointed in writing as risk assessor on 12 January 2026 (appointment and registration filed in Section B)"
+     ],
+     [
+      "Team",
+      "Deon Swanepoel, Production Manager; Gift Mathebula, Maintenance Foreman; Zanele Khumalo, health and safety representative, mixing and baking; Ayesha Patel, health and safety representative, packing and dispatch"
+     ],
+     [
+      "Assessment dates",
+      "2 to 13 February 2026, on both shifts"
+     ],
+     [
+      "Method",
+      "Walk through of every area and task, talks with the people doing the work, and a review of the incident register for 2025. Each risk is rated as likelihood (1 rare to 5 almost certain) times severity (1 first aid case to 5 fatality or permanent disability): 1 to 6 low, 8 to 12 medium, 15 to 25 high. Controls are chosen in the order elimination, substitution, engineering, administrative, then protective equipment."
+     ]
+    ],
+    "widths": [
+     25,
+     75
+    ]
+   }
+  },
+  {
+   "h2": "2. Hazard register"
+  },
+  {
+   "table": {
+    "cols": [
+     "Hazard and possible harm",
+     "Risk (L x S)",
+     "Controls, in the order of the hierarchy",
+     "Residual risk",
+     "Owner"
+    ],
+    "rows": [
+     [
+      "1. Flour dust in mixing and when tipping bags: breathing problems and skin irritation",
+      "16 High (4 x 4)",
+      "**Substitution:** bulk flour silo feed replaces hand tipping on mixers 1 and 2. **Engineering:** local exhaust ventilation at the tipping station. **Administrative:** no dry sweeping; vacuum cleaning; exposure monitoring by an approved inspection authority. **Protective equipment:** respirators fit tested for bag tipping.",
+      "8 Medium",
+      "Deon Swanepoel, review 16/02/2027"
+     ],
+     [
+      "2. Hot ovens, trays and racks: burns",
+      "9 Medium (3 x 3)",
+      "**Engineering:** oven door guards and rack stops. **Administrative:** hot surface signs; safe work procedure for loading ovens. **Protective equipment:** heat resistant gloves and sleeves.",
+      "4 Low",
+      "Deon Swanepoel, review 16/02/2027"
+     ],
+     [
+      "3. Moving parts of mixers and dividers during cleaning: crushing and amputation",
+      "10 Medium (2 x 5)",
+      "**Engineering:** interlocked guards on every mixer and divider. **Administrative:** lockout before cleaning or clearing a blockage; only trained operators; daily guard check by the supervisor.",
+      "5 Low",
+      "Gift Mathebula, review 16/02/2027"
+     ],
+     [
+      "4. Forklifts and pedestrians at the dispatch dock: being struck",
+      "15 High (3 x 5)",
+      "**Engineering:** barriers and marked walkways that keep pedestrians out of the loading bay; blue spot lights on forklifts. **Administrative:** no pedestrians in the loading bay while loading is under way; trained and authorised operators only; daily pre use checks; speed limit.",
+      "5 Low",
+      "Deon Swanepoel, review 16/02/2027"
+     ],
+     [
+      "5. Lifting 25 kg flour bags and full trays: back and shoulder injuries",
+      "12 Medium (4 x 3)",
+      "**Engineering:** bag lift assist at the small batch mixer; trolleys for trays. **Administrative:** team lifts; manual handling training; job rotation every two hours.",
+      "6 Low",
+      "Deon Swanepoel, review 16/02/2027"
+     ],
+     [
+      "6. Cleaning chemicals, including caustic oven cleaner: burns to skin and eyes",
+      "12 Medium (3 x 4)",
+      "**Substitution:** milder degreaser for daily cleaning. **Engineering:** dosing unit for dilution. **Administrative:** safety data sheets at the chemical store; chemical handling training. **Protective equipment:** goggles, gloves and aprons; eyewash station.",
+      "6 Low",
+      "Ayesha Patel, review 16/02/2027"
+     ],
+     [
+      "7. Wet and floury floors: slips and falls",
+      "8 Medium (4 x 2)",
+      "**Engineering:** slip resistant flooring in the wash area. **Administrative:** clean as you go; wet floor signs. **Protective equipment:** slip resistant safety shoes.",
+      "4 Low",
+      "Deon Swanepoel, review 16/02/2027"
+     ]
+    ],
+    "widths": [
+     20,
+     12,
+     39,
+     14,
+     15
+    ]
+   }
+  },
+  {
+   "h2": "3. Employee consultation"
+  },
+  {
+   "p": "The draft register was discussed at the health and safety committee meeting of **11 February 2026** and at toolbox talks on both shifts on **12 and 13 February 2026**, attended by 79 employees (registers filed in Section D). Employees asked for a second eyewash station at the wash bay and for job rotation on the packing line; both were added. The health and safety representatives walked the site with the risk assessor and signed below."
+  },
+  {
+   "h2": "4. Review"
+  },
+  {
+   "p": "This assessment is reviewed every year, and sooner after an incident, a new machine, a new substance, a change in a process or a request from the health and safety committee. Issue based and task based risk assessments are filed with it in Section C."
+  },
+  {
+   "sign": [
+    {
+     "role": "Risk assessor",
+     "name": "Karabo Mokoena",
+     "date": "16/02/2026"
+    },
+    {
+     "role": "Health and safety representative",
+     "name": "Zanele Khumalo",
+     "date": "16/02/2026"
+    },
+    {
+     "role": "Approved: Managing Director",
+     "name": "Rudi Venter",
+     "date": "16/02/2026"
+    }
+   ]
+  }
+ ]
+}

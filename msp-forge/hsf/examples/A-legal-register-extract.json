@@ -1,0 +1,130 @@
+{
+ "section": "A",
+ "title": "Legal Register (Extract)",
+ "subtitle": "Health and safety legislation that applies to the Epping cold store, reviewed 1 September 2026",
+ "company": "Bokmakierie Cold Storage (Pty) Ltd (fictitious)",
+ "blocks": [
+  {
+   "h2": "1. Purpose and scope"
+  },
+  {
+   "p": "This register lists the health and safety legislation that applies to **Bokmakierie Cold Storage (Pty) Ltd**, 14 Kiewiet Road, Epping Industria, Cape Town: a cold store with an ammonia refrigeration plant, forklift operations, a loading dock for 22 trucks a day and 64 employees. It shows, for each instrument, what it asks of us in plain words, why it applies, its verification status, the owner who keeps our evidence current, and when the entry was last reviewed and is next due for review."
+  },
+  {
+   "h2": "2. How the status column works"
+  },
+  {
+   "p": "The status comes from Care Net's legislation register on the day of our review. **Awaiting verification for health and safety provisions** means Care Net has not yet completed its checks of that instrument's health and safety provisions; we keep our evidence for the duty in the meantime and do not treat the entry as confirmed. When the status changes, the owner updates the entry and the evidence list."
+  },
+  {
+   "h2": "3. Register"
+  },
+  {
+   "table": {
+    "cols": [
+     "Instrument",
+     "What it asks of us, and why it applies",
+     "Status",
+     "Owner",
+     "Reviewed"
+    ],
+    "rows": [
+     [
+      "The OHS Act",
+      "A safe workplace without risk to health: assess risks, inform and train employees, appoint people in writing, keep a copy of the Act on site. **Applies:** we employ people.",
+      "Awaiting verification for health and safety provisions",
+      "Nomvula Dlamini, Health and Safety Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "The OHS Act, section 16(2) and section 37(2)",
+      "Assign the chief executive's duties in writing; agree in writing with every contractor how it will keep to the Act on our premises. **Applies:** duties assigned to the Operations Director; refrigeration and cleaning contractors.",
+      "Awaiting verification for health and safety provisions",
+      "Andre Jacobs, Operations Director",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "COIDA",
+      "Register with the Compensation Fund, keep a current letter of good standing, report injuries on duty and occupational diseases. **Applies:** we employ people.",
+      "Awaiting verification for health and safety provisions",
+      "Fatima Isaacs, Human Resources Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "The Hazardous Chemical Agents Regulations",
+      "Assess and control exposure, keep safety data sheets, train exposed employees, keep records. **Applies:** ammonia refrigeration plant; cleaning chemicals.",
+      "Awaiting verification for health and safety provisions",
+      "Nomvula Dlamini, Health and Safety Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "Rules under the OHS Act for electrical installations and machinery",
+      "Keep the electrical installation certified, guard and maintain machinery, have lifting equipment and forklifts inspected by competent people. **Applies:** plant, conveyors, dock levellers, 11 forklifts.",
+      "Awaiting verification for health and safety provisions",
+      "Werner Botha, Maintenance Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "Rules under the OHS Act for pressure equipment",
+      "Keep the refrigeration plant's pressure vessels and pipework safe to use, have them inspected and tested as those rules set by the competent people and inspection bodies they name, and keep the records. **Applies:** the ammonia refrigeration plant's receivers, separators and other pressure vessels.",
+      "Awaiting verification for health and safety provisions",
+      "Werner Botha, Maintenance Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "Rules under the OHS Act for major hazard installations",
+      "Determine in writing whether the ammonia held on site makes the cold store a major hazard installation, and meet the further duties those rules set if it does. **Determination:** the registered practitioner assessed the plant's ammonia inventory on 18/08/2026 and found that the site is a major hazard installation. The assessment is filed with this register, the duties that follow are tracked under this entry, and the assessment is repeated whenever the ammonia charge changes.",
+      "Awaiting verification for health and safety provisions",
+      "Andre Jacobs, Operations Director",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "The Construction Regulations, 2014",
+      "Client duties when we commission building work, including a health and safety specification and approving the contractor's plan. **Applies:** from the chamber six extension planned for 2027.",
+      "Awaiting verification for health and safety provisions",
+      "Andre Jacobs, Operations Director",
+      "Last 01/09/2026; next 01/10/2026"
+     ],
+     [
+      "The Hazardous Biological Agents Regulations; the Lead Regulations",
+      "**Not applicable:** we store sealed, packaged product and do no work with lead. Checked at every review.",
+      "Awaiting verification for health and safety provisions",
+      "Nomvula Dlamini, Health and Safety Manager",
+      "Last 01/09/2026; next 01/10/2026"
+     ]
+    ],
+    "widths": [
+     16,
+     38,
+     15,
+     15,
+     16
+    ]
+   }
+  },
+  {
+   "h2": "4. Review and control"
+  },
+  {
+   "numbered": [
+    "The Health and Safety Manager reviews this register every month, and also whenever a new activity, substance, site or contractor is introduced, or Care Net's legislation register shows a change.",
+    "Each owner confirms at the review that the evidence for their entries is current and filed in the right section of the Health and Safety File.",
+    "The register is version controlled: this is version 7, replacing version 6 of 3 August 2026. Superseded versions are kept in the File archive."
+   ]
+  },
+  {
+   "sign": [
+    {
+     "role": "Reviewed by: Health and Safety Manager",
+     "name": "Nomvula Dlamini",
+     "date": "01/09/2026"
+    },
+    {
+     "role": "Approved by: Operations Director (assigned under section 16(2))",
+     "name": "Andre Jacobs",
+     "date": "02/09/2026"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,289 @@
+{
+  "section": "H",
+  "title": "Emergency Plan Summary and Evacuation Drill Record",
+  "subtitle": "Vleikuiken Cold Storage, Voorbaai depot. Plan reviewed March 2026; drill held 21 April 2026",
+  "company": "Vleikuiken Cold Storage (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Scope and emergencies planned for"
+    },
+    {
+      "p": "This summary covers the Voorbaai depot (fictitious address: 8 Kaap Street, Voorbaai, Mossel Bay): two cold rooms, the blast freezer, the ammonia plant room, the loading dock and the office block, with usually 46 people on day shift and 12 on night shift. It plans for fire, an ammonia release, a person trapped in a cold room or the blast freezer, a serious injury or medical emergency, and a security emergency at the dock. The full plan, the site plan and the fire risk assessment are filed with this summary."
+    },
+    {
+      "h2": "2. Roles"
+    },
+    {
+      "table": {
+        "cols": [
+          "Role",
+          "Name (day shift)",
+          "Name (night shift)",
+          "Duties"
+        ],
+        "rows": [
+          [
+            "Chief emergency controller",
+            "Anele Jacobs, Depot Manager",
+            "Ruan Pieterse, Shift Supervisor",
+            "Declares the emergency, calls emergency services, decides on evacuation, meets the fire brigade"
+          ],
+          [
+            "Fire marshals",
+            "Lindiwe Cele (offices), Kobus Smit (dock)",
+            "Ruan Pieterse",
+            "Sweep their area, close doors, report to the assembly point"
+          ],
+          [
+            "First aiders",
+            "Lindiwe Cele, Mark Arendse",
+            "Nosipho Zulu",
+            "Give first aid; bring the first aid box and trauma kit to the assembly point"
+          ],
+          [
+            "Ammonia plant operator",
+            "Mark Arendse",
+            "Callout: Ammelkor Refrigeration (fictitious contractor)",
+            "Shuts down the plant from outside the plant room; never enters without breathing apparatus and a second person"
+          ],
+          [
+            "Roll call",
+            "Reception administrator",
+            "Security officer at the gate",
+            "Brings the visitor and contractor register and the shift list; reports missing people to the controller"
+          ]
+        ],
+        "widths": [
+          20,
+          22,
+          22,
+          36
+        ]
+      }
+    },
+    {
+      "h2": "3. Assembly points"
+    },
+    {
+      "table": {
+        "cols": [
+          "Assembly point",
+          "Location",
+          "Use"
+        ],
+        "rows": [
+          [
+            "AP 1 (main)",
+            "Front car park, next to the main gate, upwind of the plant room in the usual south westerly wind",
+            "All emergencies"
+          ],
+          [
+            "AP 2 (alternative)",
+            "Truck yard, east fence",
+            "When the controller announces that AP 1 is unsafe, for example an ammonia release drifting toward the car park"
+          ]
+        ],
+        "widths": [
+          18,
+          52,
+          30
+        ]
+      }
+    },
+    {
+      "h2": "4. Emergency contacts"
+    },
+    {
+      "table": {
+        "cols": [
+          "Who",
+          "How to reach them"
+        ],
+        "rows": [
+          [
+            "Ambulance",
+            "10177, or 112 from a mobile phone"
+          ],
+          [
+            "Fire brigade and local municipality emergency line",
+            "Number on the contact list at reception and in each marshal's file"
+          ],
+          [
+            "Nearest hospital with an emergency unit",
+            "Named with directions on the contact list at reception"
+          ],
+          [
+            "Chief emergency controller",
+            "Radio channel 1; mobile numbers on the contact list"
+          ],
+          [
+            "Ammonia refrigeration contractor (24 hours)",
+            "Callout number on the plant room door and the contact list"
+          ],
+          [
+            "Armed response company",
+            "Panic buttons at reception and the dock office"
+          ]
+        ],
+        "widths": [
+          42,
+          58
+        ]
+      }
+    },
+    {
+      "h2": "5. Drill record"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Record"
+        ],
+        "rows": [
+          [
+            "Date and time",
+            "Tuesday 21 April 2026, 10:15, day shift, announced to managers only"
+          ],
+          [
+            "Scenario",
+            "Simulated ammonia release in the plant room; controller moved everyone to AP 2"
+          ],
+          [
+            "People on site",
+            "44 employees, 3 visitors, 2 contractors (49)"
+          ],
+          [
+            "Time to clear the buildings",
+            "4 minutes 40 seconds from the alarm to the last marshal's report"
+          ],
+          [
+            "Roll call",
+            "Complete at 10:24; all 49 accounted for"
+          ],
+          [
+            "Observers",
+            "Refilwe Mahlangu, Health and Safety practitioner registered with SAIOSH (fictitious), with Anele Jacobs, chief emergency controller"
+          ],
+          [
+            "Next drill",
+            "At the interval the emergency plan and the risk assessment set, on night shift so that the night team practises too"
+          ]
+        ],
+        "widths": [
+          30,
+          70
+        ]
+      }
+    },
+    {
+      "h2": "5.1 Findings and actions"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Finding",
+          "Action",
+          "Owner",
+          "Due",
+          "Status"
+        ],
+        "rows": [
+          [
+            "1",
+            "Alarm not heard in cold room 2 with the fans running",
+            "Fit a flashing beacon and sounder inside cold room 2",
+            "Mark Arendse",
+            "31/05/2026",
+            "Open"
+          ],
+          [
+            "2",
+            "Two visitors went to AP 1 because the change to AP 2 was not heard",
+            "Add AP 2 signs at both exits; marshals carry a loud hailer",
+            "Kobus Smit",
+            "15/05/2026",
+            "Open"
+          ],
+          [
+            "3",
+            "Visitor register at reception was two names short",
+            "Security checks every visitor signs in at the gate before entry",
+            "Anele Jacobs",
+            "30/04/2026",
+            "Open"
+          ]
+        ],
+        "widths": [
+          6,
+          26,
+          26,
+          14,
+          14,
+          14
+        ]
+      }
+    },
+    {
+      "sign": [
+        {
+          "role": "Chief emergency controller",
+          "name": "Anele Jacobs",
+          "date": "24/04/2026"
+        },
+        {
+          "role": "Health and Safety practitioner registered with SAIOSH (drill observer)",
+          "name": "Refilwe Mahlangu",
+          "date": "24/04/2026"
+        }
+      ]
+    },
+    {
+      "h2": "5.2 Close out of actions"
+    },
+    {
+      "p": "Recorded after the drill record was signed. Each action was checked on site before it was closed."
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Closed on",
+          "Checked by"
+        ],
+        "rows": [
+          [
+            "3",
+            "28/04/2026",
+            "Anele Jacobs"
+          ],
+          [
+            "2",
+            "12/05/2026",
+            "Anele Jacobs"
+          ],
+          [
+            "1",
+            "19/05/2026",
+            "Anele Jacobs"
+          ]
+        ],
+        "widths": [
+          10,
+          45,
+          45
+        ]
+      }
+    },
+    {
+      "sign": [
+        {
+          "role": "Chief emergency controller (all actions closed)",
+          "name": "Anele Jacobs",
+          "date": "19/05/2026"
+        }
+      ]
+    }
+  ]
+}

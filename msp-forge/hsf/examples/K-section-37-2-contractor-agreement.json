@@ -1,0 +1,192 @@
+{
+  "section": "K",
+  "title": "Written Agreement with a Contractor (Mandatary)",
+  "subtitle": "OHS Act section 37(2) agreement with a contractor, with its File checklist",
+  "company": "Draaihals Packaging (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Parties and work"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Employer",
+            "Draaihals Packaging (Pty) Ltd, 22 Kiaat Street, Rosslyn Industrial Park, Pretoria (the **employer**)"
+          ],
+          [
+            "Contractor (mandatary)",
+            "Kleinjantjie Electrical and Maintenance CC, 7 Marula Avenue, Akasia (the **contractor**)"
+          ],
+          [
+            "Work",
+            "Replacement of the main distribution board and the lighting circuits in the warehouse at the Rosslyn site"
+          ],
+          [
+            "Period",
+            "2 March 2026 to 30 April 2026, or until the work is handed over and signed off"
+          ],
+          [
+            "Employer contact",
+            "Pieter van Wyk, Plant Manager (appointed under section 16(2))"
+          ],
+          [
+            "Contractor contact",
+            "Sipho Mahlangu, Member and Site Supervisor"
+          ]
+        ],
+        "widths": [
+          30,
+          70
+        ]
+      }
+    },
+    {
+      "h2": "2. Purpose of this agreement"
+    },
+    {
+      "p": "The contractor is a mandatary of the employer while it does the work above. Under **section 37(2) of the OHS Act**, the employer and the contractor agree in writing on the arrangements and procedures the contractor will follow to meet the OHS Act on the employer's premises. This agreement records those arrangements. It does not remove the employer's own duties to its employees and visitors, and each party remains responsible for its own acts and omissions."
+    },
+    {
+      "h2": "3. The contractor agrees to"
+    },
+    {
+      "numbered": [
+        "Meet the OHS Act and every regulation that applies to the work, and hold its employees and subcontractors to the same standard.",
+        "Give the employer its contractor File (checklist in clause 5) before work starts, and keep it current on site.",
+        "Do a task based risk assessment for the work and brief every worker on it before work starts.",
+        "Appoint competent persons in writing, including an electrician registered for the installation work, and give the employer proof of the contractor's registration as an electrical contractor.",
+        "Before hand back, give the employer a certificate of compliance, with its test report, for the new distribution board and lighting circuits, issued by a registered person.",
+        "Make sure every worker has done the employer's site induction and wears the protective equipment the risk assessment sets.",
+        "Work under the employer's permit to work system for isolation, lockout and work at height.",
+        "Report every incident, near miss and unsafe condition to the employer's contact on the same day, and use no subcontractor without the employer's written consent."
+      ]
+    },
+    {
+      "h2": "4. The employer agrees to, and monitoring"
+    },
+    {
+      "bullets": [
+        "Tell the contractor about the hazards on its premises that may affect the work, including forklift routes and stored packaging.",
+        "Induct every contractor worker, issue permits to work, provide the isolation points and keep its own employees clear of the work area.",
+        "Inspect the work area daily, record the inspection in the contractor coordination register, and stop any work that places a person in danger. Work resumes only once both contacts agree the danger is controlled.",
+        "Accept hand back of the work only once the certificate of compliance and its test report have been received and checked, and file them in the Health and Safety File."
+      ]
+    },
+    {
+      "h2": "5. Contractor File checklist"
+    },
+    {
+      "table": {
+        "cols": [
+          "Document",
+          "Received",
+          "Checked by",
+          "Date"
+        ],
+        "rows": [
+          [
+            "Letter of good standing under COIDA, valid for the work period",
+            "Yes",
+            "P. van Wyk",
+            "25/02/2026"
+          ],
+          [
+            "Contractor's signed health and safety policy",
+            "Yes",
+            "P. van Wyk",
+            "25/02/2026"
+          ],
+          [
+            "Task based risk assessment and safe work procedures for the work",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Written appointments of the site supervisor and competent persons",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Registration and training certificates for the electricians",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Proof of the contractor's registration as an electrical contractor",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Certificates of fitness showing the outcome only (fit, fit with restrictions, unfit)",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Personal protective equipment issue record",
+            "Yes",
+            "P. van Wyk",
+            "26/02/2026"
+          ],
+          [
+            "Tool and equipment inspection register",
+            "Yes",
+            "P. van Wyk",
+            "27/02/2026"
+          ],
+          [
+            "Site induction attendance register",
+            "Yes",
+            "P. van Wyk",
+            "02/03/2026"
+          ],
+          [
+            "Emergency contacts and first aider on site",
+            "Yes",
+            "P. van Wyk",
+            "02/03/2026"
+          ],
+          [
+            "Certificate of compliance and test report for the new board and circuits, issued by a registered person",
+            "Due at hand back",
+            "P. van Wyk",
+            "Before hand back"
+          ]
+        ],
+        "widths": [
+          48,
+          16,
+          18,
+          18
+        ]
+      }
+    },
+    {
+      "p": "Medical documents in the contractor File show the fitness outcome only. Clinical records stay with the contractor's occupational health practitioner."
+    },
+    {
+      "h2": "6. Signatures"
+    },
+    {
+      "sign": [
+        {
+          "role": "For the employer: Chief Executive Officer",
+          "name": "Lerato Molefe"
+        },
+        {
+          "role": "For the contractor: Member",
+          "name": "Sipho Mahlangu"
+        }
+      ]
+    }
+  ]
+}

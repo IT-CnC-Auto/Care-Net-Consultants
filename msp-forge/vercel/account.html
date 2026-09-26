@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Redirecting to your journey | Care Net Consultants</title>
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/index-og-1200x630.jpg" data-asset="account-og">
 <!--
 =====================================================================
  account.html :: retired, kept as a redirect
@@ -27,6 +28,9 @@
    its sign in tokens in the hash, so dropping it would break the link. Using
    replace() keeps the back button working. */
 (function () {
+  /* Designer mode (?design=1 or #design) stays here so the asset list can
+     be read. Neither ever carries sign in tokens, so no link breaks. */
+  if (/[?&]design=1(?:&|$)/.test(location.search) || location.hash === '#design') return;
   try {
     location.replace('/' + location.search + location.hash);
   } catch (e) {
@@ -34,11 +38,49 @@
   }
 })();
 </script>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
   <div class="box">
     <p>Taking you to your Medical Surveillance Plan journey.</p>
-    <p><a href="/">Continue to the Care Net landing page</a> if nothing happens.</p>
+    <p><a href="/" data-cta="continue_to_landing">Continue to the Care Net landing page</a> if nothing happens.</p>
   </div>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/account.html",
+ "title": "Account (retired, forwards to the landing page)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "account-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when a sign in link to this forwarding page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Medical Surveillance Plan Assessment\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Start your Medical Surveillance Plan with Care Net Consultants",
+   "file_name": "index-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/index-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before. Same file as index-og on index.html: this page only forwards to the landing page, so it shares the landing page card and there is nothing extra to design. It is listed so every page has its card, and because sign in links already emailed to people still point here."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

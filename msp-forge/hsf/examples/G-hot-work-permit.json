@@ -1,0 +1,256 @@
+{
+  "section": "G",
+  "title": "Hot Work Permit to Work",
+  "subtitle": "Permit HW 0142. Welding repair to a steel storage tank support, Stravane Fabrication, Vanderbijlpark",
+  "company": "Stravane Fabrication (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Permit details"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Permit number",
+            "HW 0142 (from the numbered permit book; copy stays in the book)"
+          ],
+          [
+            "Date and valid period",
+            "Tuesday 12 May 2026, 08:00 to 16:00. Not valid after 16:00 or if conditions change"
+          ],
+          [
+            "Location",
+            "Bay 3, diesel storage tank support frame, Vanderbijlpark plant (fictitious)"
+          ],
+          [
+            "Work",
+            "Arc welding and grinding to repair a cracked support leg on the empty diesel storage tank frame"
+          ],
+          [
+            "Permit issuer",
+            "Johan van Wyk, Plant Engineer, authorised in writing to issue hot work permits"
+          ],
+          [
+            "Permit receiver (person in charge of the work)",
+            "Sipho Dlamini, Boilermaker Foreman"
+          ],
+          [
+            "Work team",
+            "Sipho Dlamini (welder), Thabo Nkosi (assistant)"
+          ],
+          [
+            "Fire watch after work stops",
+            "For the period the permit procedure and the risk assessment set; the issuer wrote 14:40 to 15:40 on this permit"
+          ]
+        ],
+        "widths": [
+          34,
+          66
+        ]
+      }
+    },
+    {
+      "h2": "2. Hazards identified"
+    },
+    {
+      "p": "Fire or explosion from diesel vapour or residue near the tank; sparks and hot slag reaching combustible material; arc flash, fumes and hot surfaces; electrical shock from the welding set."
+    },
+    {
+      "h2": "3. Isolation and preparation"
+    },
+    {
+      "table": {
+        "cols": [
+          "Control",
+          "Done",
+          "Checked by"
+        ],
+        "rows": [
+          [
+            "Tank drained, fill and outlet valves closed, locked and tagged (lock numbers SFB 21 and SFB 22)",
+            "Yes, 07:20",
+            "J. van Wyk"
+          ],
+          [
+            "Transfer pump electrically isolated at the board, locked and tagged (lock SFB 23); start tested and failed to start",
+            "Yes, 07:25",
+            "J. van Wyk"
+          ],
+          [
+            "Combustible material removed from the work area; drains and openings covered with fire blankets",
+            "Yes, 07:35",
+            "S. Dlamini"
+          ],
+          [
+            "Welding screens erected; area barricaded and hot work signs posted",
+            "Yes, 07:40",
+            "S. Dlamini"
+          ],
+          [
+            "Welding set, cables and earth clamp inspected; register entry current (Section F)",
+            "Yes, 07:45",
+            "S. Dlamini"
+          ],
+          [
+            "Two 9 kg dry chemical powder extinguishers and a charged hose reel at the work area",
+            "Yes, 07:45",
+            "M. Molefe"
+          ]
+        ],
+        "widths": [
+          60,
+          18,
+          22
+        ]
+      }
+    },
+    {
+      "h2": "4. Gas test"
+    },
+    {
+      "p": "Required, because the work is next to a tank that held diesel. Tested with a calibrated flammable gas detector (calibration record on file) at the tank openings, under the frame and at the drains."
+    },
+    {
+      "table": {
+        "cols": [
+          "Time",
+          "Flammable gas reading",
+          "Result against the permit procedure",
+          "Tested by"
+        ],
+        "rows": [
+          [
+            "07:50",
+            "0% of the lower explosive limit",
+            "Acceptable; work may start",
+            "J. van Wyk"
+          ],
+          [
+            "11:30",
+            "0% of the lower explosive limit",
+            "Acceptable; work may continue",
+            "J. van Wyk"
+          ]
+        ],
+        "widths": [
+          14,
+          30,
+          34,
+          22
+        ]
+      }
+    },
+    {
+      "h2": "5. Fire watch"
+    },
+    {
+      "p": "**Fire watch:** Mpho Molefe, trained in the use of the extinguishers, stayed at the work area for the whole job with no other duties, and remained after the work stopped for the period the issuer wrote in part 1. Fire watch started 08:00 and ended 15:40 after a final check found no smouldering or hot spots."
+    },
+    {
+      "h2": "6. Personal protective equipment"
+    },
+    {
+      "p": "Welding helmet with the correct filter, leather gloves, apron and spats, safety boots, flame resistant overalls, hearing protection while grinding, and local fume extraction at the weld."
+    },
+    {
+      "h2": "7. Sign on"
+    },
+    {
+      "p": "The issuer and receiver confirm that the controls in parts 3 to 6 are in place and that the work team was briefed on the hazards and controls."
+    },
+    {
+      "table": {
+        "cols": [
+          "Name",
+          "Role on this permit",
+          "Date and time",
+          "Signature"
+        ],
+        "rows": [
+          [
+            "Johan van Wyk",
+            "Permit issuer",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Sipho Dlamini",
+            "Permit receiver",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Mpho Molefe",
+            "Fire watch",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ],
+          [
+            "Thabo Nkosi",
+            "Work team member (briefed)",
+            "12/05/2026 at 07:55",
+            "Signed"
+          ]
+        ],
+        "widths": [
+          24,
+          32,
+          24,
+          20
+        ]
+      }
+    },
+    {
+      "h2": "8. Sign off and hand back"
+    },
+    {
+      "table": {
+        "cols": [
+          "Step",
+          "Time",
+          "By"
+        ],
+        "rows": [
+          [
+            "Work complete; team and tools withdrawn; area left clean",
+            "14:40",
+            "S. Dlamini"
+          ],
+          [
+            "Final fire watch check: no smouldering, hot spots or damage",
+            "15:40",
+            "M. Molefe"
+          ],
+          [
+            "Locks SFB 21, 22 and 23 removed; pump and valves returned to service; permit cancelled",
+            "15:50",
+            "J. van Wyk"
+          ]
+        ],
+        "widths": [
+          60,
+          14,
+          26
+        ]
+      }
+    },
+    {
+      "sign": [
+        {
+          "role": "Permit receiver (work complete; team and tools withdrawn)",
+          "name": "Sipho Dlamini",
+          "date": "12/05/2026 at 14:40"
+        },
+        {
+          "role": "Permit issuer (permit closed)",
+          "name": "Johan van Wyk",
+          "date": "12/05/2026 at 15:50"
+        }
+      ]
+    }
+  ]
+}

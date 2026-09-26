@@ -18,9 +18,9 @@
    no accreditation badges (this is not a training page).
  Slot markers left for the shared Nexus artefacts (quote form I2, Sr Thandi widget T1).
  Pending inputs (never fabricated): https://www.carenetconsultants.co.za, [[GTM_ID]], lead endpoint, privacy URL.
- PRICING NOTE: the rate card amounts and the practitioner review fee shown in the
-   packages section are the current internal placeholders. Confirm both with commercial
-   leadership before this page goes live, or replace the figures with 'from quotation'.
+ PRICING: no amount is published on this page. The Plan is free to build; the
+   practitioner review is charged per person and worked out in the calculator on
+   shop.html from bands held in the parameter store.
 =====================================================================
 -->
 
@@ -68,12 +68,12 @@
 <meta property="og:title" content="Medical Surveillance Plans | Care Net Consultants">
 <meta property="og:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
 <meta property="og:url" content="https://www.carenetconsultants.co.za/medical-surveillance-plans">
-<meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
+<meta property="og:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" data-asset="msp-og">
 <meta property="og:locale" content="en_ZA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Medical Surveillance Plans | Care Net Consultants">
 <meta name="twitter:description" content="Built on verified South African law for your industry, signed by a registered Occupational Medical Practitioner, and kept current as the law changes.">
-<meta name="twitter:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp">
+<meta name="twitter:image" content="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" data-asset="msp-og">
 <link rel="alternate" hreflang="en-za" href="https://www.carenetconsultants.co.za/medical-surveillance-plans">
 <!-- CNC:END id=meta_block -->
 
@@ -87,7 +87,7 @@
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <!-- The shared site header, footer stamp, pattern strip and section band.
      Presentation only: no endpoints, no data handling. -->
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
 <link rel="stylesheet" href="/css/cnc-secnav.css?v=20260918a">
@@ -369,6 +369,10 @@ footer.foot .base img{height:46px;width:auto}
 .skip{position:absolute;left:-9999px}
 .skip:focus{left:16px;top:10px;background:#fff;color:var(--ink);padding:8px 12px;border-radius:8px;z-index:100}
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
@@ -384,13 +388,13 @@ footer.foot .base img{height:46px;width:auto}
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="msp-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
         <li><a href="/pilot.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/shop.html">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
     </div>
@@ -409,27 +413,27 @@ footer.foot .base img{height:46px;width:auto}
 
   <!-- CNC:SECTION id=hero v=1 lock=false -->
   <section class="hero-banner" aria-labelledby="hero-title">
-    <img src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" alt="Care Net Consultants occupational health team supporting workplace medical surveillance" loading="eager" decoding="async" width="1024" height="384" fetchpriority="high">
+    <img data-asset="msp-hero" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp" alt="Care Net Consultants occupational health team supporting workplace medical surveillance" loading="eager" decoding="async" width="1024" height="384" fetchpriority="high">
     <div class="hero-overlay">
       <div class="wrap">
         <span class="eyebrow">Medical Surveillance Plans</span>
         <h1 id="hero-title">The plan your medicals run from, built on <span class="r">the law your industry answers to.</span></h1>
         <p class="lede">Your Plan sets out, for every job on your site, which medicals your people need, how often, and the exact regulation behind each one. Written from your own risk information, reviewed and signed by a registered Occupational Medical Practitioner, and kept current as the law changes.</p>
         <div class="cta">
-          <a class="btn btn-red" href="#quote">Get a quote</a>
-          <a class="btn btn-ghost" href="/sample.html">See a sample Plan</a>
+          <a class="btn btn-red" href="#quote" data-cta="get_a_quote">Get a quote</a>
+          <a class="btn btn-ghost" href="/sample.html" data-cta="view_sample_plan">See a sample Plan</a>
         </div>
         <div class="chips">
-          <span class="chip">17 industries covered</span>
-          <span class="chip">31 verified instruments</span>
+          <a class="chip" href="/shop.html#law" style="text-decoration:none" data-cta="chip_industries">17 industries covered</a>
+          <a class="chip" href="/shop.html#law" style="text-decoration:none" data-cta="chip_instruments">31 verified instruments</a>
           <span class="chip">Practitioner signed</span>
-          <span class="chip">POPIA compliant</span>
+          <span class="chip">Records handled under POPIA</span>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="pattern-strip" role="presentation"></div>
+  <div class="pattern-strip" role="presentation" data-asset="msp-pattern"></div>
   <!-- CNC:END id=hero -->
 
   <div class="kpis">
@@ -457,7 +461,7 @@ footer.foot .base img{height:46px;width:auto}
         <p>We built our Plans to survive all four of those moments.</p>
       </div>
       <div>
-        <img decoding="async" src="https://www.carenetconsultants.co.za/images/Company_Overview.png" alt="Care Net Consultants occupational health team reviewing workplace medical surveillance requirements" loading="lazy" width="1024" height="576">
+        <img data-asset="msp-why-photo" decoding="async" src="https://www.carenetconsultants.co.za/images/Company_Overview.png" alt="Care Net Consultants occupational health team reviewing workplace medical surveillance requirements" loading="lazy" width="1024" height="576">
       </div>
     </div>
   </section>
@@ -479,7 +483,7 @@ footer.foot .base img{height:46px;width:auto}
         <article class="card">
           <span class="num">02</span>
           <h3>A legal reason for every test</h3>
-          <p>Each medical assessment carries two reasons: the hazard on your site that calls for it, and section 7 of the Employment Equity Act, which is what makes testing a worker lawful in the first place. No test without a reason. No reason without a law.</p>
+          <p>Each medical assessment carries two reasons: the hazard on your site that calls for it, and the employment law rule that decides when testing a worker is lawful in the first place. No test without a reason. No reason without a law.</p>
         </article>
         <article class="card">
           <span class="num">03</span>
@@ -487,7 +491,7 @@ footer.foot .base img{height:46px;width:auto}
           <p>A registered Occupational Medical Practitioner reviews the draft, records recommendations, and signs with their HPCSA number. That gate sits inside our systems, not in a policy document, so no Plan can be released around it.</p>
         </article>
       </div>
-      <p style="color:var(--ink-2);font-size:15px;margin-top:20px">One example of the review at work: the Noise Induced Hearing Loss Regulations are replaced by the Noise Exposure Regulations on 6 September 2026. That change is already loaded, with the new action levels for workers exposed to both noise and certain chemicals, and it takes effect in your Plan on the day the law does.</p>
+      <p style="color:var(--ink-2);font-size:15px;margin-top:20px">One example of the review at work: the Noise Exposure Regulations, 2024 and the Physical Agents Regulations, 2024 replaced the Noise Induced Hearing Loss Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 from 6 September 2026. The Plan engine is being updated to cite the new Regulations, and every Plan is reviewed by our Occupational Medical Practitioner before release.</p>
     </div>
   </section>
 
@@ -500,35 +504,35 @@ footer.foot .base img{height:46px;width:auto}
         <p>Most of the work sits with us. What we need from you is one structured assessment, with your risk assessment at hand.</p>
       </div>
       <div class="steps">
-        <a class="step" href="/pilot.html">
+        <a class="step" href="/pilot.html" data-cta="how_step_1">
           <b>1</b>
           <h3>Tell us about the work</h3>
           <p>A guided assessment covers your sites, job categories, hazards, controls and any exposure readings you already have. About 30 to 45 minutes.</p>
         </a>
-        <a class="step" href="/pilot.html">
+        <a class="step" href="/pilot.html" data-cta="how_step_2">
           <b>2</b>
           <h3>We match your jobs</h3>
           <p>Each job category is matched against the role library for your industry, then adjusted to your real operations, shifts and measured exposures.</p>
         </a>
-        <a class="step" href="/pilot.html">
+        <a class="step" href="/pilot.html" data-cta="how_step_3">
           <b>3</b>
           <h3>The Plan is drafted</h3>
           <p>Your surveillance programme is set out per job: baseline, periodic interval, exit medical, and the regulation behind each test.</p>
         </a>
-        <a class="step" href="/pilot.html">
+        <a class="step" href="/pilot.html" data-cta="how_step_4">
           <b>4</b>
           <h3>A practitioner reviews</h3>
           <p>A registered Occupational Medical Practitioner checks the clinical detail, adds recommendations, and signs the Plan.</p>
         </a>
-        <a class="step" href="/pilot.html">
+        <a class="step" href="/pilot.html" data-cta="how_step_5">
           <b>5</b>
           <h3>You receive and we maintain</h3>
           <p>Your Plan arrives with revision control and is updated as your operations or the law change, through the same review.</p>
         </a>
       </div>
       <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
-        <a class="btn btn-red" href="/pilot.html">Walk through the full journey</a>
-        <a class="btn btn-ghost-dark" href="/assess.html?demo=1">Preview the assessment</a>
+        <a class="btn btn-red" href="/pilot.html" data-cta="walk_pilot_journey">Walk through the full journey</a>
+        <a class="btn btn-ghost-dark" href="/assess.html?demo=1" data-cta="preview_assessment">Preview the assessment</a>
       </div>
     </div>
   </section>
@@ -568,61 +572,61 @@ footer.foot .base img{height:46px;width:auto}
         <p>A cashier and a forklift driver in the same building need different medicals. So do a rock drill operator and a contact centre agent. Every industry below carries its own verified regulations and its own job role library.</p>
       </div>
       <div class="ind-grid">
-        <a class="ind" href="/industry.html?code=CONSTR">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Construction.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=CONSTR" data-cta="industry_tile:CONSTR">
+          <img data-fit-icon data-asset="msp-icon-constr" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Construction.webp" alt="" loading="lazy">
           <b>Construction</b>
           <span class="sr-only">Five subindustries covered, including civil works, building, demolition, electrical construction and roadworks.</span>
         </a>
-        <a class="ind" href="/industry.html?code=MINING">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=MINING" data-cta="industry_tile:MINING">
+          <img data-fit-icon data-asset="msp-icon-mining" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp" alt="" loading="lazy">
           <b>Mining &amp; Quarrying</b>
           <span class="sr-only">Gold, coal, platinum, chrome, diamond and quarrying, with dust disease surveillance routed through the statutory mines pathway.</span>
         </a>
-        <a class="ind" href="/industry.html?code=TRANS">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=TRANS" data-cta="industry_tile:TRANS">
+          <img data-fit-icon data-asset="msp-icon-trans" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp" alt="" loading="lazy">
           <b>Transport, Logistics &amp; Warehousing</b>
           <span class="sr-only">Road freight, warehousing, rail operations, ports and terminals, and aviation ground handling.</span>
         </a>
-        <a class="ind" href="/industry.html?code=MANU">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=MANU" data-cta="industry_tile:MANU">
+          <img data-fit-icon data-asset="msp-icon-manu" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp" alt="" loading="lazy">
           <b>Manufacturing &amp; Engineering</b>
           <span class="sr-only">Food and beverage, metals and foundries, chemical, automotive, textiles, plastics, wood and furniture.</span>
         </a>
-        <a class="ind" href="/industry.html?code=AGRI">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=AGRI" data-cta="industry_tile:AGRI">
+          <img data-fit-icon data-asset="msp-icon-agri" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp" alt="" loading="lazy">
           <b>Agriculture &amp; Forestry</b>
           <span class="sr-only">Crop farming, livestock and forestry, including pesticide exposure monitoring.</span>
         </a>
-        <a class="ind" href="/industry.html?code=HOSP">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Food-Handling.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=HOSP" data-cta="industry_tile:HOSP">
+          <img data-fit-icon data-asset="msp-icon-hosp" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Food-Handling.webp" alt="" loading="lazy">
           <b>Hospitality &amp; Food Handling</b>
           <span class="sr-only">Hotels and accommodation, restaurants and catering, with food handler requirements under the food premises regulations.</span>
         </a>
-        <a class="ind" href="/industry.html?code=CLEAN">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=CLEAN" data-cta="industry_tile:CLEAN">
+          <img data-fit-icon data-asset="msp-icon-clean" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp" alt="" loading="lazy">
           <b>Cleaning, Hygiene &amp; Waste</b>
           <span class="sr-only">Commercial cleaning, specialised hygiene, waste collection, landfill and recycling.</span>
         </a>
-        <a class="ind" href="/industry.html?code=TEL">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=TEL" data-cta="industry_tile:TEL">
+          <img data-fit-icon data-asset="msp-icon-tel" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp" alt="" loading="lazy">
           <b>Telecommunications</b>
           <span class="sr-only">Tower construction and rigging, field network services, and data centre operations.</span>
         </a>
-        <a class="ind" href="/industry.html?code=SEC">
-          <img decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp" alt="" loading="lazy">
+        <a class="ind" href="/industry.html?code=SEC" data-cta="industry_tile:SEC">
+          <img data-fit-icon data-asset="msp-icon-sec" decoding="async" width="84" height="84" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp" alt="" loading="lazy">
           <b>Safety &amp; Security</b>
           <span class="sr-only">Guarding services, armed response and cash in transit.</span>
         </a>
       </div>
       <p style="margin-top:24px;font-weight:600">Also covered, with the same depth:</p>
       <div class="pills">
-        <a class="pill" href="/industry.html?code=HEALTH">Healthcare and laboratories</a>
-        <a class="pill" href="/industry.html?code=UTIL">Utilities and energy</a>
-        <a class="pill" href="/industry.html?code=PETRO">Petrochemical and fuel retail</a>
-        <a class="pill" href="/industry.html?code=RETAIL">Retail and wholesale</a>
-        <a class="pill" href="/industry.html?code=GOV">Government and municipal</a>
-        <a class="pill" href="/industry.html?code=EDU">Education</a>
-        <a class="pill" href="/industry.html?code=OFFICE">Office and contact centres</a>
+        <a class="pill" href="/industry.html?code=HEALTH" data-cta="industry_pill:HEALTH">Healthcare and laboratories</a>
+        <a class="pill" href="/industry.html?code=UTIL" data-cta="industry_pill:UTIL">Utilities and energy</a>
+        <a class="pill" href="/industry.html?code=PETRO" data-cta="industry_pill:PETRO">Petrochemical and fuel retail</a>
+        <a class="pill" href="/industry.html?code=RETAIL" data-cta="industry_pill:RETAIL">Retail and wholesale</a>
+        <a class="pill" href="/industry.html?code=GOV" data-cta="industry_pill:GOV">Government and municipal</a>
+        <a class="pill" href="/industry.html?code=EDU" data-cta="industry_pill:EDU">Education</a>
+        <a class="pill" href="/industry.html?code=OFFICE" data-cta="industry_pill:OFFICE">Office and contact centres</a>
       </div>
       <p style="color:var(--ink-2);font-size:15px;margin-top:16px">Work that sits across two industries, or outside all of them, goes to a sales executive to be mapped properly. We would rather ask than guess.</p>
     </div>
@@ -638,8 +642,8 @@ footer.foot .base img{height:46px;width:auto}
           <p>A complete sample Plan for a civil engineering company, produced the same way yours will be. The company is fictitious and every page is watermarked, so you can see the real depth without the document being reusable.</p>
         </div>
         <div class="cta">
-          <a class="btn btn-red" href="/sample.html">View the sample Plan</a>
-          <a class="btn btn-ghost" href="/method.html">See the law behind it</a>
+          <a class="btn btn-red" href="/sample.html" data-cta="view_sample_plan">View the sample Plan</a>
+          <a class="btn btn-ghost" href="/method.html" data-cta="see_law_behind_plan">See the law behind it</a>
         </div>
       </div>
     </div>
@@ -650,43 +654,42 @@ footer.foot .base img{height:46px;width:auto}
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Packages and pricing</span>
-        <h2 id="pack-title">Two ways to take it, <span class="r">priced before you commit.</span></h2>
-        <p>Your quotation is worked out from your industry, your headcount and the number of job descriptions you carry. You see the full amount before anything begins.</p>
+        <h2 id="pack-title">Your Plan is free to build. <span class="r">The signature is what you pay for.</span></h2>
+        <p>Build your Medical Surveillance Plan at no charge and keep it as your working copy. If you need it in front of an auditor or an inspector, a registered practitioner reads it line by line and signs it, and that review is charged per person on the report.</p>
       </div>
       <div class="packs">
         <article class="pack">
-          <span class="tag">For internal planning</span>
-          <h3>Working draft</h3>
-          <p class="price">From R4 500,00<small>Plus a per employee and per job category amount, shown on your quotation</small></p>
+          <span class="tag">Free to build</span>
+          <h3>Your Plan, watermarked</h3>
           <ul>
             <li>The full guided assessment</li>
             <li>Your Plan drafted against the verified law for your industry</li>
-            <li>Delivered watermarked as a working document</li>
-            <li>No practitioner signature, so it is not a clinical document</li>
+            <li>Every section of the sample Plan, from the regulatory framework to the surveillance calendar</li>
+            <li>Yours to keep, plan from and budget from</li>
+            <li>The watermark lifts for Care Net clients, or the day you book your medicals with us</li>
           </ul>
-          <div class="pack-cta"><a class="btn btn-ghost-dark" href="/shop.html">Price this package</a></div>
+          <div class="pack-cta"><a class="btn btn-ghost-dark" href="/shop.html#inside" data-cta="see_what_is_in_plan">See what is in the Plan</a></div>
         </article>
         <article class="pack featured">
-          <span class="tag">Recommended, and audit ready</span>
-          <h3>Reviewed and signed</h3>
-          <p class="price">Draft price plus R2 500,00<small>Practitioner review fee, confirmed on your invoice</small></p>
+          <span class="tag">Defensible</span>
+          <h3>Reviewed and signed by the practitioner</h3>
           <ul>
-            <li>Everything in the working draft</li>
-            <li>Clinical review and recommendations by a registered Occupational Medical Practitioner</li>
+            <li>Everything in your Plan</li>
+            <li>Read line by line by a registered Occupational Medical Practitioner</li>
+            <li>Clinical recommendations recorded against your Plan</li>
             <li>Signed with practitioner name and HPCSA number</li>
-            <li>Released with revision control and secure hosting</li>
-            <li>Revisions follow the same review when things change</li>
+            <li>Released with revision numbers and secure hosting</li>
+            <li>Charged per person on the report, worked out for your headcount in the calculator</li>
           </ul>
-          <div class="pack-cta"><a class="btn btn-red" href="/shop.html">Price this package</a></div>
+          <div class="pack-cta"><a class="btn btn-red" href="/shop.html#calc" data-cta="work_out_review_fee">Work out my review fee</a></div>
         </article>
       </div>
       <div class="freebox">
-        <b>The tool is free for many of our clients.</b>
-        <p>If your company is under an active service level agreement with Care Net, or you do 100 or more occupational medicals a year with us, the assessment and the Plan are included at no charge. You pay only the practitioner review fee if you want the signed version. A sales executive confirms your volume before the waiver is applied.</p>
+        <b>Why the signature is charged and the Plan is not.</b>
+        <p>Your Plan is drafted by a trained language model working from a framework we update every month for legislation and again for job roles and risk. That framework is strong. It is still not a person, and we will not put a practitioner's name on a document no person has read. The review is the practitioner's time, and it is priced on the number of people whose surveillance they are signing off.</p>
       </div>
-      <p style="color:var(--ink-2);font-size:14px;margin-top:16px">All amounts exclude VAT and are confirmed on your invoice before work begins. Industries without a published rate go to a sales executive for a tailored quotation rather than an automatic price.</p>
-    </div>
-  </section>
+      <p style="color:var(--ink-2);font-size:14px;margin-top:16px">All amounts exclude VAT and are confirmed on your quotation before work begins. Industries the framework does not yet hold go to a sales executive for a tailored quotation rather than an automatic figure.</p>
+    </section>
 
   <!-- RECORD RETENTION -->
   <section class="soft" aria-labelledby="retain-title">
@@ -740,7 +743,7 @@ footer.foot .base img{height:46px;width:auto}
           <p>A registered Occupational Medical Practitioner reviews the draft, records clinical recommendations, and signs with their name and HPCSA registration number. No Plan is released without that signature.</p>
         </details>
       </div>
-      <img decoding="async" width="2000" height="100" class="divider" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp" alt="" aria-hidden="true" loading="lazy">
+      <img data-asset="msp-faq-divider" decoding="async" width="2000" height="100" class="divider" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp" alt="" aria-hidden="true" loading="lazy">
     </div>
   </section>
 
@@ -753,8 +756,8 @@ footer.foot .base img{height:46px;width:auto}
           <p>Tell us your industry and your headcount. A sales executive replies the same working day with a firm proposal.</p>
         </div>
         <div class="cta" style="display:flex;gap:12px;flex-wrap:wrap">
-          <a class="btn" href="/shop.html">Get a quote</a>
-          <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp us</a>
+          <a class="btn" href="/shop.html" data-cta="build_my_plan">Build my Plan</a>
+          <a class="btn" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
         </div>
       </div>
       <!-- CNC:SLOT I2 START -->
@@ -799,11 +802,11 @@ footer.foot .base img{height:46px;width:auto}
         <h2>Surveillance Plans</h2>
         <ul>
           <li><a href="#how">How it works</a></li>
-          <li><a href="#packages">Packages and pricing</a></li>
+          <li><a href="#packages">Build your Plan</a></li>
           <li><a href="/method.html">The law we verify</a></li>
           <li><a href="/sample.html">Sample Plan</a></li>
           <li><a href="/pilot.html">The full journey</a></li>
-          <li><a href="/account.html">Client sign in</a></li>
+          <li><a href="/portal.html" data-cta="sign_in">Sign in</a></li>
         </ul>
       </div>
       <div>
@@ -812,7 +815,7 @@ footer.foot .base img{height:46px;width:auto}
           <li><a href="https://www.carenetconsultants.co.za/fixed-clinic-medicals">Fixed clinics</a></li>
           <li><a href="https://www.carenetconsultants.co.za/on-site-mobile-clinics">Mobile clinics</a></li>
           <li><a href="https://www.carenetconsultants.co.za/my-clinic-online">My Clinic Online</a></li>
-          <li><a href="https://app.mycliniconline.co.za/verify" target="_blank" rel="noopener">Verify a certificate</a></li>
+          <li><a href="https://app.mycliniconline.co.za/verify" target="_blank" rel="noopener" data-cta="verify_certificate">Verify a certificate</a></li>
         </ul>
         <h2 style="margin-top:18px">Legal</h2>
         <ul>
@@ -823,16 +826,16 @@ footer.foot .base img{height:46px;width:auto}
       <div>
         <h2>Contact</h2>
         <ul>
-          <li><a href="tel:+27600702723">+27 60 070 2723</a></li>
-          <li><a href="tel:+27100210520">+27 10 021 0520</a></li>
-          <li><a href="mailto:salesdesk@carenetconsultants.co.za">salesdesk@carenetconsultants.co.za</a></li>
-          <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="tel:+27600702723" data-cta="call_sales_desk">+27 60 070 2723</a></li>
+          <li><a href="tel:+27100210520" data-cta="call_office">+27 10 021 0520</a></li>
+          <li><a href="mailto:salesdesk@carenetconsultants.co.za" data-cta="email_sales_desk">salesdesk@carenetconsultants.co.za</a></li>
+          <li><a href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a></li>
           <li>Care Net Consultants (Pty) Ltd</li>
         </ul>
       </div>
     </div>
     <div class="base">
-      <img decoding="async" loading="lazy" width="1024" height="331" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp" alt="Care Net Consultants logo">
+      <img data-asset="msp-footer-logo" decoding="async" loading="lazy" width="1024" height="331" src="https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp" alt="Care Net Consultants logo">
       <span>Occupational health, on site or at our four clinics. &copy; Care Net Consultants 2026</span>
     </div>
   </div>
@@ -844,7 +847,7 @@ footer.foot .base img{height:46px;width:auto}
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="msp-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
@@ -899,5 +902,374 @@ footer.foot .base img{height:46px;width:auto}
 </script>
 <script src="/js/cnc-header.js?v=20260918a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260918a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/medical-surveillance-plans.html",
+ "title": "Medical Surveillance Plans (service page)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "msp-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"The plan your medicals run from\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Medical Surveillance Plans from Care Net Consultants",
+   "file_name": "msp-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/msp-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. Today the og:image and twitter:image tags carry the 1024 x 384 home banner from the R2 development address (https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp), which platforms crop badly at 1.91:1. Point both tags at the delivery address once the file is live."
+  },
+  {
+   "id": "msp-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "msp-hero",
+   "block": "Hero banner behind the heading and calls to action",
+   "purpose": "The photograph behind the opening heading: an occupational health team supporting workplace medical surveillance.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 3840,
+   "height": 2160,
+   "ratio": "16:9",
+   "max_kb": 450,
+   "colour": "Warm natural light; the page lays a dark gradient over it (92 percent at the left fading to 30 percent at the right) with white text on the left, so the left half may be busy or dark without harm",
+   "alt": "Care Net Consultants occupational health team supporting workplace medical surveillance",
+   "file_name": "msp-hero-3840x2160.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/msp-hero-3840x2160.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2026/03/Home-1024x384.webp (1024 x 384), which shows soft on any screen wider than 1024 px. The band is the full page width and 360 to 560 px high (440 px on phones), so 3840 px across covers 2x on a 1920 px screen. Keep the subject between 45 and 75 percent across: right of the text on desktop, and still inside the centred crop on phones. Also supply 1920 px wide versions under 220 KB. Deliver to the address given, then point the page at it. Model release needed for anyone identifiable."
+  },
+  {
+   "id": "msp-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "msp-why-photo",
+   "block": "Why this matters: photograph beside the list",
+   "purpose": "An occupational health team reviewing medical surveillance requirements, beside the four moments a plan must survive.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 220,
+   "colour": "Natural light on a white page; rounded corners and the thin border come from the page, not the file",
+   "alt": "Care Net Consultants occupational health team reviewing workplace medical surveillance requirements",
+   "file_name": "msp-why-company-overview-1920x1080.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/msp-why-company-overview-1920x1080.webp",
+   "status": "existing",
+   "notes": "Live today at https://www.carenetconsultants.co.za/images/Company_Overview.png (PNG, 1024 x 576 declared), loaded from the main site. Shows about 557 px wide on desktop and up to 836 px wide below 880 px, so 1920 x 1080 covers 2x. A PNG photograph is heavy: supply AVIF, WebP and JPG, deliver to the address given, then point the page at it."
+  },
+  {
+   "id": "msp-icon-constr",
+   "block": "Built for your industry: icon grid, tile 1 of 9",
+   "purpose": "Tile icon for Construction. The tile opens the Construction industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Construction.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Construction.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Construction.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-mining",
+   "block": "Built for your industry: icon grid, tile 2 of 9",
+   "purpose": "Tile icon for Mining and quarrying. The tile opens the Mining and quarrying industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Mining-Medicals_V2.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-trans",
+   "block": "Built for your industry: icon grid, tile 3 of 9",
+   "purpose": "Tile icon for Transport, logistics and warehousing. The tile opens the Transport, logistics and warehousing industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Transport-Logistics-Warehouse-Medicals_V2.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-manu",
+   "block": "Built for your industry: icon grid, tile 4 of 9",
+   "purpose": "Tile icon for Manufacturing and engineering. The tile opens the Manufacturing and engineering industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Manufacturing-Engineering-Medicals.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-agri",
+   "block": "Built for your industry: icon grid, tile 5 of 9",
+   "purpose": "Tile icon for Agriculture and forestry. The tile opens the Agriculture and forestry industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Agriculture-Abattoir_V2.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-hosp",
+   "block": "Built for your industry: icon grid, tile 6 of 9",
+   "purpose": "Tile icon for Hospitality and food handling. The tile opens the Hospitality and food handling industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Food-Handling.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Food-Handling.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Food-Handling.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-clean",
+   "block": "Built for your industry: icon grid, tile 7 of 9",
+   "purpose": "Tile icon for Cleaning, hygiene and waste. The tile opens the Cleaning, hygiene and waste industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Industry-Medicals-Icons_Cleaning-Hygiene-Recycling-Medicals_V2.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-tel",
+   "block": "Built for your industry: icon grid, tile 8 of 9",
+   "purpose": "Tile icon for Telecommunications. The tile opens the Telecommunications industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Telecommunications-Medicals.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-icon-sec",
+   "block": "Built for your industry: icon grid, tile 9 of 9",
+   "purpose": "Tile icon for Safety and security. The tile opens the Safety and security industry page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 168,
+   "height": 168,
+   "ratio": "1:1",
+   "max_kb": 15,
+   "colour": "Match the existing Care Net industry icon set, on a transparent ground",
+   "alt": "Decorative, no alternative text (the industry name sits under it)",
+   "file_name": "CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Industry-Medicals-Icons_Safety-Security-Medicals.webp. Shows at 84 x 84 px, so supply 168 x 168 (or SVG) for 2x, deliver it to the address given, then point the page at it. sample.html uses a second icon family (SVG, cnc-medical-surveillance-SLUG-icon.svg) for the same industries: one family across both pages is recommended."
+  },
+  {
+   "id": "msp-faq-divider",
+   "block": "Questions: faded pattern divider under the answers",
+   "purpose": "A faded Africa pattern that closes the questions section.",
+   "type": "pattern",
+   "formats": [
+    "webp",
+    "png"
+   ],
+   "width": 2400,
+   "height": 120,
+   "ratio": "20:1",
+   "max_kb": 60,
+   "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity",
+   "alt": "Decorative, no alternative text",
+   "file_name": "cnc-africa-pattern-faded-2400x120.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100). Spans the content width, up to 1156 px, so 2400 x 120 covers 2x. Deliver to the address given, then point the page at it."
+  },
+  {
+   "id": "msp-footer-logo",
+   "block": "Footer: base row logo",
+   "purpose": "The Care Net Consultants logo with its tag line, closing the dark footer.",
+   "type": "logo",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 284,
+   "height": 92,
+   "ratio": "3.09:1",
+   "max_kb": 15,
+   "colour": "The red Care Net logo with tag line, readable on the charcoal footer #16161A",
+   "alt": "Care Net Consultants logo",
+   "file_name": "cnc-logo-red-tagline-284x92.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/cnc-logo-red-tagline-284x92.webp",
+   "status": "existing",
+   "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/04/CNC-Logo-Re-working-red-with-tag-line-1.1-big-1024x331.webp (1024 x 331), far larger than it shows. It sits on the charcoal footer at 46 px high, about 142 px wide, so 284 x 92 covers 2x on this page and on medical-surveillance-plans.html. Supply the file under the name given at the delivery address, with an SVG master, then point both footers at it. The Organization schema in the head names the same 1024 x 331 file as the company logo; move it with the footer."
+  },
+  {
+   "id": "msp-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
+<script src="/js/cnc-icon-fit.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,206 @@
+/* CNC HSF FORGE | sign off pricing for health-and-safety-file.html.
+   Market figures (low, high and avg per industry, the method and the sources)
+   generated 23/09/2026 from hsf/PRICING-RESEARCH.md; they stay as researched.
+   No generator writes this file any more: it is kept by hand, and every rand
+   amount in it, the source names included, is written in the house style
+   R4 000,00 (checked by test/api/file-separation.test.js).
+   Care Net client price (Director's instruction 24/09/2026, contract 15.2; it
+   replaces the earlier percentage off the market average): a flat cnc_client_price
+   per signed off File, excluding VAT, one File for one site, whatever the
+   industry average. The signed off File is free when the company does more than
+   free_medicals_threshold occupational medicals a year with Care Net; a big site
+   with more than site_and_subcontractors_threshold a year gets a free signed off
+   File for the whole site and for each of its subcontractors working on that
+   site. A sales executive verifies the declared volume before a free tier is
+   confirmed, and multi site and above threshold construction work is still
+   quoted by a sales executive. The page reads every figure and threshold from
+   here and types none of them. */
+window.HSF_PRICING={
+ "as_at": "23/09/2026",
+ "cnc_client_price": 4000,
+ "cnc_client_price_basis": "excluding VAT, one File for one site",
+ "free_medicals_threshold": 100,
+ "site_and_subcontractors_threshold": 500,
+ "cnc_pricing_as_at": "24/09/2026",
+ "method": "Published prices for a Health and Safety File compiled by a safety practitioner, gathered from South African provider websites on 23/09/2026. Automated app files and do it yourself templates are excluded because they are different products. The average is the plain mean of the published prices. Most providers do not state whether VAT is included. No provider publishes a separate price for sign off by a registered Health and Safety Manager, so the compiled File price is the market comparison.",
+ "sources": [
+  {
+   "name": "Rapid Safety Files, construction safety file, R2 000,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://www.rapidsafetyfiles.co.za/safety-file/construction"
+  },
+  {
+   "name": "Safety File South Africa, site specific safety file, R3 000,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://safetyfile.co.za/product/safety-file/"
+  },
+  {
+   "name": "Q-Safe, software and setup of one safety file, R4 200,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://safety-file.co.za/qsafe-with-safety-file-setup/"
+  },
+  {
+   "name": "No Risk Solutions, construction safety file, from R4 850,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://norisk.co.za/product/construction-safety-file/"
+  },
+  {
+   "name": "Key Safety Sector, site specific health and safety file, R6 480,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://keysafetyfile.co.za/products/site-specific-health-and-safety-file"
+  },
+  {
+   "name": "Company Partners, full health and safety file, R2 990,00 plus R6 900,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://companypartners.co.za/health-safety-file/"
+  },
+  {
+   "name": "SafetySupplier, SHE File option A, R6 000,00 excluding VAT",
+   "date": "retrieved 23/09/2026",
+   "url": "https://safetysupplier.co.za/product/safety-file-completed-she-file-excl-vat/"
+  },
+  {
+   "name": "SafetySupplier, completed SHE File, R10 000,00",
+   "date": "retrieved 23/09/2026",
+   "url": "https://safetysupplier.co.za/product-category/safety-file-completed-she-file/"
+  }
+ ],
+ "industries": [
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "AGRI",
+   "name": "Agriculture and forestry"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "CLEAN",
+   "name": "Cleaning and hygiene services"
+  },
+  {
+   "avg": 5802.5,
+   "low": 2000,
+   "high": 10000,
+   "basis": "Construction File compiled by a safety practitioner: 8 published prices from 7 providers.",
+   "code": "CONSTR",
+   "name": "Construction"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "EDU",
+   "name": "Education"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "GOV",
+   "name": "Government and municipal"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "HEALTH",
+   "name": "Healthcare and laboratories"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "HOSP",
+   "name": "Hospitality and food service"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers. A manufacturing template sells for R1 500,00; no compiled price is published.",
+   "code": "MANU",
+   "name": "Manufacturing"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers. Mines follow the Mine Health and Safety Act; this figure may understate the cost.",
+   "code": "MINING",
+   "name": "Mining and quarrying"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "OFFICE",
+   "name": "Office and professional services"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers. High risk operations; this figure may understate the cost.",
+   "code": "PETRO",
+   "name": "Petrochemical and fuel retail"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "RETAIL",
+   "name": "Retail and wholesale"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers. A security template sells for R3 500,00; no compiled price is published.",
+   "code": "SEC",
+   "name": "Security services"
+  },
+  {
+   "avg": 5802.5,
+   "low": 2000,
+   "high": 10000,
+   "basis": "No price published for tower work. Tower and fibre work falls under the Construction Regulations, so the construction average applies.",
+   "code": "TEL",
+   "name": "Telecommunications and tower work"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "TRANS",
+   "name": "Transport and logistics"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "UTIL",
+   "name": "Utilities and energy"
+  },
+  {
+   "avg": 8630.0,
+   "low": 6000,
+   "high": 10000,
+   "basis": "No price published for this industry. General business File compiled by a practitioner: 3 published prices from 2 providers.",
+   "code": "WASTE",
+   "name": "Waste management"
+  }
+ ]
+};

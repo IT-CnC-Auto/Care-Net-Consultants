@@ -1,0 +1,194 @@
+{
+  "section": "J",
+  "title": "Occupational Hygiene Monitoring Summary: Hazardous Chemical Agents",
+  "subtitle": "Solvent vapour survey, spray booth and mixing room, Castavel Coatings, Jacobs, Durban. Survey of 3 and 4 February 2026",
+  "company": "Castavel Coatings (Pty) Ltd (fictitious)",
+  "blocks": [
+    {
+      "h2": "1. Purpose"
+    },
+    {
+      "p": "This summary records the airborne solvent exposure survey in the spray booth and paint mixing room, done because the company's risk assessment identified hazardous chemical agents in the paints and thinners used. It sits in front of the full survey report in this section and tells the reader what was measured, by whom, what the approved inspection authority concluded, and what the company did about it."
+    },
+    {
+      "h2": "2. Who did the survey"
+    },
+    {
+      "table": {
+        "cols": [
+          "Item",
+          "Detail"
+        ],
+        "rows": [
+          [
+            "Approved inspection authority",
+            "Nimbalo Occupational Hygiene (Pty) Ltd (fictitious), an approved inspection authority for hazardous chemical agents; approval certificate on file with the report"
+          ],
+          [
+            "Occupational hygienist who signed the report",
+            "Priya Govender (fictitious), registered occupational hygienist; registration proof on file with the report"
+          ],
+          [
+            "Company contact",
+            "Sanele Mthembu, Health and Safety Officer"
+          ],
+          [
+            "Report reference and date",
+            "NOH 2026 031, issued 20 February 2026"
+          ]
+        ],
+        "widths": [
+          36,
+          64
+        ]
+      }
+    },
+    {
+      "page": true
+    },
+    {
+      "h2": "3. What was measured"
+    },
+    {
+      "bullets": [
+        "Personal air samples in the breathing zone of spray painters and the paint mixer over a full shift on both days",
+        "Static samples at the spray booth doorway and in the mixing room",
+        "Solvent components named in the safety data sheets of the paints and thinners in use",
+        "Airflow at the spray booth extraction face"
+      ]
+    },
+    {
+      "h2": "4. Results as the approved inspection authority reported them"
+    },
+    {
+      "p": "The limits used and the interpretation are the approved inspection authority's, from its report. This summary does not add limits of its own."
+    },
+    {
+      "table": {
+        "cols": [
+          "Similar exposure group",
+          "Samples",
+          "Interpretation in the report",
+          "Controls in place"
+        ],
+        "rows": [
+          [
+            "Spray painters (4 people)",
+            "8 personal",
+            "Within the occupational exposure limits for all agents measured (personal breathing zone samples)",
+            "Spray booth extraction; supplied air respirators; coveralls and gloves"
+          ],
+          [
+            "Paint mixer (1 person)",
+            "2 personal",
+            "One agent above the occupational exposure limit on 4 February during bulk thinning",
+            "General ventilation only; half mask respirator worn part of the shift"
+          ],
+          [
+            "Mixing room (static)",
+            "2 static",
+            "Elevated background levels; ventilation inadequate",
+            "Door open; one wall fan"
+          ],
+          [
+            "Spray booth extraction face",
+            "Airflow readings",
+            "Below the design airflow stated by the booth supplier at two of six points",
+            "Filters last changed in December 2025"
+          ]
+        ],
+        "widths": [
+          22,
+          14,
+          36,
+          28
+        ]
+      }
+    },
+    {
+      "h2": "5. Actions taken"
+    },
+    {
+      "table": {
+        "cols": [
+          "No.",
+          "Action",
+          "Owner",
+          "Due",
+          "Status"
+        ],
+        "rows": [
+          [
+            "1",
+            "Local exhaust ventilation hood fitted over the mixing bench, designed and tested by a ventilation contractor",
+            "Operations Manager",
+            "31/03/2026",
+            "Closed 26/03/2026"
+          ],
+          [
+            "2",
+            "Paint mixer to wear the respirator for all thinning until the retest confirms the new extraction works; fit test done",
+            "Sanele Mthembu",
+            "23/02/2026",
+            "Closed 23/02/2026"
+          ],
+          [
+            "3",
+            "Spray booth filters changed and airflow rebalanced; filter changes added to the maintenance plan",
+            "Maintenance Supervisor",
+            "06/03/2026",
+            "Closed 04/03/2026"
+          ],
+          [
+            "4",
+            "Retest of the paint mixer and the mixing room by the approved inspection authority after the new hood",
+            "Sanele Mthembu",
+            "30/04/2026",
+            "Closed; retest of 21/04/2026 reported within the occupational exposure limits"
+          ],
+          [
+            "5",
+            "Survey results shared with the occupational medical practitioner, who set the medical surveillance for the exposed groups; outcomes only (fit, fit with restrictions, unfit) are filed in Section E",
+            "Sanele Mthembu",
+            "28/02/2026",
+            "Closed 25/02/2026"
+          ],
+          [
+            "6",
+            "Results explained to the affected employees and the health and safety representative; attendance register filed",
+            "Sanele Mthembu",
+            "27/02/2026",
+            "Closed 26/02/2026"
+          ]
+        ],
+        "widths": [
+          6,
+          44,
+          16,
+          14,
+          20
+        ]
+      }
+    },
+    {
+      "h2": "6. Next survey"
+    },
+    {
+      "p": "The next survey is done at the interval the approved inspection authority recommends in its report and the registered Health and Safety practitioner confirms, and sooner if a product, process or control changes. The due date is entered in the occupational hygiene survey programme at the front of this section."
+    },
+    {
+      "sign": [
+        {
+          "role": "Health and Safety Officer",
+          "name": "Sanele Mthembu",
+          "date": "28/04/2026"
+        },
+        {
+          "role": "Operations Manager (actions approved)",
+          "name": "Thandeka Ngcobo",
+          "date": "29/04/2026"
+        }
+      ]
+    }
+  ]
+}

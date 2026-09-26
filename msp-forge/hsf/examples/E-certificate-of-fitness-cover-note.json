@@ -1,0 +1,124 @@
+{
+ "section": "E",
+ "title": "Certificates of Fitness: Cover Note",
+ "subtitle": "Outcomes of the August 2026 fitness screening, Vanderbijlpark workshop",
+ "company": "Tavoreng Steel Fabricators (Pty) Ltd (fictitious)",
+ "blocks": [
+  {
+   "h2": "1. Purpose"
+  },
+  {
+   "p": "This note covers the certificates of fitness filed in Section E after the fitness screening of **18 and 19 August 2026** at our workshop, 27 Rhodes Avenue, Vanderbijlpark. It lists the **outcome only** for each person: fit, fit with restrictions, or unfit. For an exit examination it records only that the examination was done. Care Net Consultants screened fitness for work against the exposures in our risk assessment; Care Net screens fitness and does not diagnose. Each certificate was signed by the occupational medical practitioner (OMP)."
+  },
+  {
+   "h2": "2. Outcomes"
+  },
+  {
+   "table": {
+    "cols": [
+     "Employee",
+     "Job role",
+     "Type",
+     "Date",
+     "Outcome",
+     "Next screening"
+    ],
+    "rows": [
+     [
+      "Mandla Radebe",
+      "Welder",
+      "Periodic",
+      "18/08/2026",
+      "Fit",
+      "Per the Plan"
+     ],
+     [
+      "Stefan du Toit",
+      "Boilermaker",
+      "Periodic",
+      "18/08/2026",
+      "Fit",
+      "Per the Plan"
+     ],
+     [
+      "Nthabiseng Mofokeng",
+      "Spray Painter",
+      "Periodic",
+      "18/08/2026",
+      "Fit with restrictions",
+      "As the OMP sets"
+     ],
+     [
+      "Kabelo Tau",
+      "Overhead Crane Operator",
+      "Baseline",
+      "19/08/2026",
+      "Fit",
+      "Per the Plan"
+     ],
+     [
+      "Themba Ndlovu",
+      "Grinder",
+      "Periodic",
+      "19/08/2026",
+      "Unfit",
+      "As the OMP sets"
+     ],
+     [
+      "Anele Jacobs",
+      "Welder",
+      "Exit",
+      "19/08/2026",
+      "Exit examination done; record held by the OMP",
+      "Not applicable"
+     ]
+    ],
+    "widths": [
+     19,
+     19,
+     11,
+     14,
+     23,
+     14
+    ]
+   }
+  },
+  {
+   "p": "**Per the Plan** means the interval the Medical Surveillance Plan, a separate Care Net product, sets for that job role. Where a person is fit with restrictions or unfit, the OMP sets the next screening."
+  },
+  {
+   "h2": "3. What we did with each outcome"
+  },
+  {
+   "bullets": [
+    "**Fit with restrictions:** the practitioner gave us the work restriction in writing. The supervisor has placed the employee in work within the restriction and the restriction date is diarised. No reason is recorded in this File.",
+    "**Unfit:** the employee no longer does the work the certificate covers and has been placed in available work without that exposure, while the occupational medical practitioner manages the follow up. Human Resources handles any further steps with the employee, fairly and in confidence.",
+    "**Exit:** an exit examination records the employee's health when the exposure ends; it does not certify fitness for work. The occupational medical practitioner holds the record, and this File notes only that the examination was done, kept for the retention period the applicable regulations set."
+   ]
+  },
+  {
+   "h2": "4. Confidentiality and where the records are"
+  },
+  {
+   "numbered": [
+    "Clinical records and test results stay with the occupational health practitioner and are never filed in the Health and Safety File.",
+    "This File holds only the certificate of fitness showing the outcome, the job role and the date; access is limited to the Human Resources Manager, the Health and Safety Manager and an inspector on request.",
+    "The **Medical Surveillance Plan**, a separate Care Net product signed by the occupational medical practitioner, is filed in Section E ahead of these certificates as evidence; it sets who is screened, for which exposures and how often."
+   ]
+  },
+  {
+   "sign": [
+    {
+     "role": "Human Resources Manager",
+     "name": "Refilwe Motaung",
+     "date": "26/08/2026"
+    },
+    {
+     "role": "Health and Safety Manager",
+     "name": "Charl Pienaar",
+     "date": "26/08/2026"
+    }
+   ]
+  }
+ ]
+}

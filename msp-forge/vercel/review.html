@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>CNC MSP FORGE Review</title>
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/review-og-1200x630.jpg" data-asset="review-og">
 <link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <!-- The shared site header, footer stamp and pattern strip, the same as the
      client facing pages. Presentation only: no endpoints, no data handling. -->
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
 <style>
@@ -51,6 +52,10 @@
   .muted { color: #777; font-size: 12px; }
   #msg { margin: 10px 0; font-size: 13px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <!-- ============ Site header, matching carenetconsultants.co.za ============
@@ -64,20 +69,20 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="review-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
         <li><a href="/pilot.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/shop.html">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
     </div>
   </nav>
 </header>
 
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="review-pattern"></div>
 
 <!-- The strip the old dark banner used to carry: which tool this is, who is
      signed in, and the way across to the other one. #who is still filled by
@@ -86,7 +91,7 @@
   <div class="awrap">
     <b>MSP Forge Review</b>
     <span class="spacer"></span>
-    <a class="adminlink" href="/settings.html">Settings</a>
+    <a class="adminlink" href="/settings.html" data-cta="staff_settings">Settings</a>
     <span id="who" class="muted"></span>
   </div>
 </div>
@@ -95,17 +100,18 @@
     <h3>Reviewer sign in</h3>
     <p class="muted">Access requires a Care Net account carrying a forge role. A magic link is emailed to you; no passwords are stored.</p>
     <input id="email" type="email" placeholder="name@carenetconsultants.co.za">
-    <button id="send">Email me a sign in link</button>
+    <button id="send" data-cta="send_sign_in_link">Email me a sign in link</button>
     <div id="msg"></div>
+    <p class="muted">Looking for your Plans and Files? <a href="/portal.html" data-cta="sign_in" style="color:#C5141B;font-weight:bold">Sign in</a> to the Care Net portal.</p>
   </div>
 
   <div id="app" style="display:none">
     <nav>
-      <button data-tab="queue" class="active">OMP queue</button>
-      <button data-tab="confirmation">Confirmation register</button>
-      <button data-tab="exclusion">Exclusion register</button>
-      <button data-tab="due">Verification due</button>
-      <button data-tab="audit">Audit tail</button>
+      <button data-tab="queue" data-cta="review_tab_queue" class="active">OMP queue</button>
+      <button data-tab="confirmation" data-cta="review_tab_confirmation">Confirmation register</button>
+      <button data-tab="exclusion" data-cta="review_tab_exclusion">Exclusion register</button>
+      <button data-tab="due" data-cta="review_tab_due">Verification due</button>
+      <button data-tab="audit" data-cta="review_tab_audit">Audit tail</button>
     </nav>
     <div id="content"></div>
   </div>
@@ -173,7 +179,7 @@ const tabs = {
           </select>
           <span></span>
           <textarea name="recommendation" rows="2" placeholder="Programme level recommendation. Never name an individual or a diagnosis here." required></textarea>
-          <button type="submit">Record recommendation</button>
+          <button type="submit" data-cta="record_recommendation">Record recommendation</button>
         </form>
 
         <h3 style="margin-top:16px">Decision and signature</h3>
@@ -190,9 +196,9 @@ const tabs = {
           <div style="grid-column:1/-1">
             <p class="muted" style="margin:4px 0">Draw your signature below (or leave blank to sign with your typed name):</p>
             <canvas class="sig" width="420" height="110" style="border:1px dashed #bbb;border-radius:5px;background:#fff;touch-action:none"></canvas>
-            <button type="button" class="clear-sig" style="width:auto;background:#fff;color:#ED1B24;border:1px solid #ED1B24;padding:5px 12px;font-size:12px;margin-left:8px">Clear</button>
+            <button type="button" class="clear-sig" data-cta="clear_signature" style="width:auto;background:#fff;color:#ED1B24;border:1px solid #ED1B24;padding:5px 12px;font-size:12px;margin-left:8px">Clear</button>
           </div>
-          <button type="submit">Apply signature and record decision</button>
+          <button type="submit" data-cta="apply_signature_and_decide">Apply signature and record decision</button>
         </form>
       </div>`).join('');
   },
@@ -306,11 +312,107 @@ boot();
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="review-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
 </div>
 <script src="/js/cnc-header.js?v=20260918a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/review.html",
+ "title": "MSP Forge Review (staff tool)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "review-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when the MSP Forge Review staff page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"MSP Forge Review\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Care Net MSP Forge review, a staff tool",
+   "file_name": "review-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/review-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before. The page is a staff tool behind a sign in and is not indexed (noindex), but its link is shared between staff, so it still needs a card. The card shows only the tool name: no queue content, names, practice numbers, references or settings."
+  },
+  {
+   "id": "review-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "review-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "review-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>
