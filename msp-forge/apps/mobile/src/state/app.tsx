@@ -13,8 +13,10 @@ import { secureKv } from '@/backend/secure-kv';
 import { NotConnectedError, type AuthState, type Backend, type Mode, type Profile } from '@/backend/types';
 import { env } from '@/config/env';
 import { DataStore } from '@/data/data-store';
+import { ensureKernelTemplates } from '@/data/kernel-templates';
 import { openLocalStore } from '@/data/local-store';
 import { SyncEngine } from '@/data/sync-engine';
+import { pushRecent } from '@/lib/places';
 import { isStepUpValid, unlockMode, type StepUpPurpose } from '@/lib/step-up';
 
 export type Phase = 'booting' | 'signed_out' | 'needs_mfa_enrol' | 'needs_mfa_verify' | 'locked' | 'ready' | 'problem';
@@ -23,6 +25,8 @@ const KEY_MODE = 'bi.mode';
 const KEY_LAST_MFA = 'bi.mfa.last';
 const KEY_BIO = 'bi.bio';
 const RELOCK_AFTER_MS = 5 * 60 * 1000;
+const KV_ACTIVE_COMPANY = 'active.company';
+const KV_RECENT_PLACES = 'recent.places';
 
 export interface AppValue {
   phase: Phase;
@@ -39,6 +43,13 @@ export interface AppValue {
   biometricOffered: boolean;
   lastStepUpAt: number | null;
   liveAvailable: boolean;
+  /** The company the person is working on now (the switcher changes it); defaults to the profile's company. */
+  activeCompanyId: string | null;
+  /** Places opened lately, most recent first (kept on this phone). */
+  recentPlaceIds: string[];
+  setActiveCompany(id: string): Promise<void>;
+  /** Marks a place as used now (recent places) and makes its company the active one. */
+  touchPlace(placeId: string, companyId: string): Promise<void>;
   chooseMode(mode: Mode): Promise<Backend>;
   afterSignIn(): Promise<void>;
   completeMfa(): Promise<void>;
@@ -82,6 +93,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [biometricEnabled, setBioEnabled] = useState(false);
   const [biometricOffered, setBiometricOffered] = useState(false);
   const [lastStepUpAt, setLastStepUpAt] = useState<number | null>(null);
+  const [activeCompanyId, setActiveCompanyId] = useState<string | null>(null);
+  const [recentPlaceIds, setRecentPlaceIds] = useState<string[]>([]);
   const mfaThisLaunch = useRef(false);
   const backgroundAt = useRef<number | null>(null);
   const refs = useRef<{ store: DataStore | null; backend: Backend | null; engine: SyncEngine | null }>({ store: null, backend: null, engine: null });
@@ -102,7 +115,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const goReady = useCallback(async (s: DataStore, b: Backend) => {
     try {
       const p = await b.loadProfile(s);
+      await ensureKernelTemplates(s);
       setProfile(p);
+      const savedCompany = await s.kvGet(KV_ACTIVE_COMPANY);
+      setActiveCompanyId(savedCompany && s.get('company', savedCompany) ? savedCompany : p.companyId);
+      try {
+        const r = JSON.parse((await s.kvGet(KV_RECENT_PLACES)) ?? '[]') as unknown;
+        setRecentPlaceIds(Array.isArray(r) ? r.filter((x): x is string => typeof x === 'string') : []);
+      } catch {
+        setRecentPlaceIds([]);
+      }
       const e = new SyncEngine(s, b);
       refs.current.engine?.stop();
       refs.current.engine = e;
@@ -223,6 +245,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     biometricOffered,
     lastStepUpAt,
     liveAvailable: env.liveConfigured,
+    activeCompanyId,
+    recentPlaceIds,
+    async setActiveCompany(id) {
+      setActiveCompanyId(id);
+      await refs.current.store?.kvSet(KV_ACTIVE_COMPANY, id);
+    },
+    async touchPlace(placeId, companyId) {
+      const next = pushRecent(recentPlaceIds, placeId);
+      setRecentPlaceIds(next);
+      if (companyId !== activeCompanyId) setActiveCompanyId(companyId);
+      await refs.current.store?.kvSet(KV_RECENT_PLACES, JSON.stringify(next));
+      await refs.current.store?.kvSet(KV_ACTIVE_COMPANY, companyId);
+    },
     async chooseMode(m) {
       const { backend: b } = await open(m);
       await secureKv.setItem(KEY_MODE, m);
@@ -286,6 +321,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setAuth(null);
       setProfile(null);
       setEngine(null);
+      setActiveCompanyId(null);
       setPhase('signed_out');
     },
     async resetDemo() {
@@ -303,7 +339,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const { store: s, backend: b } = refs.current;
       if (s && b) setProfile(await b.loadProfile(s));
     },
-  }), [phase, mode, backend, store, engine, auth, profile, problem, deviceRooted, biometricAvailable, biometricEnabled, biometricOffered, lastStepUpAt, open, decide, goReady]);
+  }), [phase, mode, backend, store, engine, auth, profile, problem, deviceRooted, biometricAvailable, biometricEnabled, biometricOffered, lastStepUpAt, activeCompanyId, recentPlaceIds, open, decide, goReady]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

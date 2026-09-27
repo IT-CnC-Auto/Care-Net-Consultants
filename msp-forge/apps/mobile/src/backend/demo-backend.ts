@@ -5,11 +5,13 @@
 
 import type { DataStore } from '@/data/data-store';
 import { normaliseClaimCode } from '@/lib/claim-code';
+import { blobId, latestVersions } from '@/lib/evidence-store';
 import { formatRand, TOP_UPS } from '@/lib/money';
 import { AI_OUTPUT_TOKENS, buildDraftSkeleton, estimateTokensIn, voicePreviewLine } from '@/lib/report';
 import { isSixDigitCode } from '@/lib/step-up';
 import type { PushOutcome, SyncItem } from '@/lib/sync-queue';
 import type { Company, Inspection, LedgerEntry, Report, VoiceNote } from '@/lib/types';
+import { markChunkDone, newUpload, remainingChunks, verifyUpload, withSession } from '@/lib/upload-plan';
 import { applyCharge, balanceFromLedger, chargeRuleCents, priceCents } from '@/lib/wallet';
 
 import { DEMO, demoSeed } from './demo-seed';
@@ -102,7 +104,8 @@ export class DemoBackend implements Backend {
   }
 
   async loadProfile(store: DataStore): Promise<Profile> {
-    if (!store.get('company', DEMO.company)) {
+    // Seed once; a phone holding the earlier construction only demo is seeded again.
+    if (!store.get('company', DEMO.company)?.industry_code) {
       await store.putServerMany(demoSeed());
     }
     return {
@@ -118,12 +121,32 @@ export class DemoBackend implements Backend {
 
   async push(item: SyncItem, store: DataStore): Promise<PushOutcome> {
     await wait(250);
-    if (item.op === 'upload' && item.kind === 'voice_note') {
-      const vn = store.get('voice_note', item.recordId);
-      if (vn && !vn.vn_number) {
-        const max = Math.max(0, ...store.where('voice_note', (v: VoiceNote) => v.inspection_id === vn.inspection_id).map((v) => v.vn_number ?? 0));
-        return { kind: 'ok', rowVersion: 1, patch: { vn_number: max + 1 } };
+    if (item.op === 'upload') {
+      // The chunked, resumable upload as the server will run it (a simulation):
+      // a session per blob, the chunks not yet sent, then the server's hash is
+      // compared with the phone's. Bytes already held (dedupe) are not sent again.
+      const rec = item.kind === 'photo' ? store.get('photo', item.recordId) : store.get('voice_note', item.recordId);
+      if (!rec) return { kind: 'rejected', error: 'The file is no longer on this phone.' };
+      const sha = 'sha256' in rec ? rec.sha256 : rec.audio_sha256;
+      const company = store.get('inspection', rec.inspection_id)?.client_account_id ?? '';
+      const blob = store.get('blob', blobId(company, sha));
+      let u = rec._upload && rec._upload.sha256 === sha ? rec._upload : newUpload(sha, rec.size_bytes);
+      if (!blob?.verified_at) {
+        u = withSession(u, `demo-session-${sha.slice(0, 8)}`);
+        for (const c of remainingChunks(u)) u = markChunkDone(u, c.index);
       }
+      const v = verifyUpload(u, sha);
+      if (!v.ok) return { kind: 'retry', error: v.state.last_error ?? 'Upload check failed.' };
+      if (blob && !blob.verified_at) await store.putServer('blob', { ...blob, uploaded: true, verified_at: new Date().toISOString() });
+      const patch: Record<string, unknown> = { _upload: v.state };
+      if (item.kind === 'voice_note') {
+        const vn = rec as VoiceNote;
+        if (!vn.vn_number && !vn.supersedes_id) {
+          const max = Math.max(0, ...store.where('voice_note', (x: VoiceNote) => x.inspection_id === vn.inspection_id).map((x) => x.vn_number ?? 0));
+          patch.vn_number = max + 1;
+        }
+      }
+      return { kind: 'ok', rowVersion: 1, patch };
     }
     return { kind: 'ok', rowVersion: item.op === 'update' ? (item.baseRowVersion ?? 1) + 1 : 1 };
   }
@@ -152,8 +175,8 @@ export class DemoBackend implements Backend {
       templateItems: store.where('template_item', (t) => t.template_id === inspection.template_id),
       areas: store.where('area', (a) => a.inspection_id === inspectionId).sort((a, b) => a.ordinal - b.ordinal),
       findings: store.where('finding', (f) => f.inspection_id === inspectionId),
-      photos: store.where('photo', (x) => x.inspection_id === inspectionId),
-      voiceNotes,
+      photos: latestVersions(store.where('photo', (x) => x.inspection_id === inspectionId)),
+      voiceNotes: latestVersions(voiceNotes),
       transcripts: store.where('transcript', (t) => vnIds.has(t.voice_note_id)),
       risks: store.where('risk', (r) => r.inspection_id === inspectionId),
       actions: store.where('action', (a) => a.inspection_id === inspectionId),
@@ -245,7 +268,8 @@ export class DemoBackend implements Backend {
   async signAndIssue(p: SignInput): Promise<SignResult> {
     await wait(600);
     const r = p.store.get('report', p.reportId) as Report;
-    const company = p.store.get('company', DEMO.company) as Company;
+    const inspectionOf = p.store.get('inspection', r.inspection_id);
+    const company = p.store.get('company', inspectionOf?.client_account_id ?? DEMO.company) as Company;
     const eligible = company.file_eligibility === 'eligible';
     const at = new Date().toISOString();
     const next: Report = { ...r, status: 'issued', signed_by: p.signerName, signed_at: at, issued_at: at, file_link_status: eligible ? 'linked' : 'awaiting_eligibility' };

@@ -9,7 +9,7 @@ import type { PersonRole } from '@/lib/types';
 
 export default function PersonScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const { store, profile } = useMe();
+  const { store, companyId } = useMe();
   const existing = id ? store.get('person', id) : undefined;
   const [name, setName] = useState(existing?.full_name ?? '');
   const [roles, setRoles] = useState<PersonRole[]>(existing?.roles ?? []);
@@ -25,7 +25,7 @@ export default function PersonScreen() {
     if (appointed.trim() && !appointedOn) return setError('Give the appointment date as dd/mm/yyyy.');
     const rec = { full_name: name.trim(), roles, email: email.trim() || null, mobile: mobile.trim() || null, appointed_on: appointedOn };
     if (existing) await store.update('person', existing.id, rec);
-    else await store.create('person', { id: store.id(), client_account_id: profile?.companyId ?? '', ...rec });
+    else await store.create('person', { id: store.id(), client_account_id: companyId ?? '', ...rec });
     router.back();
   };
 

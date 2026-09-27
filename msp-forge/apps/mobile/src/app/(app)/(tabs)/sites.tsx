@@ -1,124 +1,100 @@
-// The sites tree: Company, Site, Department, Building or Zone, Room or Area.
-// Everything can be created offline; it syncs when there is signal.
+// Places: the active company's places of inspection as a tree of typed nodes
+// (site, office, farm, mine or quarry section, clinic or laboratory, retail
+// store, department, building, floor, room or area ...), the types its kernel
+// industry suits. Everything is made offline and synced later. Every place can
+// start an inspection.
 
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { BrandBar } from '@/components/brand-bar';
-import { SyncMark } from '@/components/evidence';
-import { Button, Card, EmptyState, Icon, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
-import { useRecords } from '@/data/hooks';
+import { PlaceRow } from '@/components/place-ui';
+import { Button, Card, Chip, ChipRow, EmptyState, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
 import { useMe } from '@/features/inspection';
+import { useOpenPlace, usePlaces, useStartHere } from '@/features/places';
 import { COMPANY_STATUS_LABEL } from '@/lib/gates';
-import { DEPARTMENTS } from '@/lib/constants';
+import { kernel, placeType } from '@/lib/kernel';
+import type { Place } from '@/lib/types';
 import { space } from '@/theme/tokens';
-import { usePalette } from '@/theme/use-palette';
 
-function Node({ depth, icon, title, subtitle, recordId, open, onToggle, children }: { depth: number; icon: Parameters<typeof Icon>[0]['name']; title: string; subtitle?: string; recordId: string; open?: boolean; onToggle?: () => void; children?: React.ReactNode }) {
-  const p = usePalette();
+function Branch({ place, depth, tree, open, toggle }: { place: Place; depth: number; tree: ReturnType<typeof usePlaces>; open: Record<string, boolean>; toggle: (id: string) => void }) {
+  const openPlace = useOpenPlace();
+  const startHere = useStartHere();
+  const kids = tree.childrenOf(place.id);
+  const isOpen = open[place.id] ?? depth < 1;
   return (
     <View>
-      <Pressable
-        onPress={onToggle}
-        accessibilityRole={onToggle ? 'button' : 'text'}
-        accessibilityState={onToggle ? { expanded: !!open } : undefined}
-        accessibilityLabel={`${title}${subtitle ? ', ' + subtitle : ''}`}
-        style={[styles.node, { paddingLeft: space.sm + depth * space.lg, borderBottomColor: p.border }]}>
-        {onToggle ? <Icon name={open ? 'chevron-down' : 'chevron-right'} size={20} color={p.textMuted} /> : <View style={{ width: 20 }} />}
-        <Icon name={icon} size={20} color={p.textMuted} />
-        <View style={{ flex: 1 }}>
-          <Txt variant="bodyStrong">{title}</Txt>
-          {subtitle ? (
-            <Txt variant="tiny" muted>
-              {subtitle}
-            </Txt>
-          ) : null}
-        </View>
-        <SyncMark recordId={recordId} />
-      </Pressable>
-      {open ? children : null}
+      <PlaceRow place={place} depth={depth} onPress={() => openPlace(place)} onStart={() => startHere(place)} expanded={isOpen} onToggle={kids.length ? () => toggle(place.id) : undefined} />
+      {isOpen ? kids.map((k) => <Branch key={k.id} place={k} depth={depth + 1} tree={tree} open={open} toggle={toggle} />) : null}
     </View>
   );
 }
 
-function AddLink({ depth, label, onPress }: { depth: number; label: string; onPress: () => void }) {
-  return (
-    <View style={{ paddingLeft: space.sm + depth * space.lg + 20 }}>
-      <Button title={label} icon="plus" kind="ghost" compact onPress={onPress} style={{ alignSelf: 'flex-start' }} />
-    </View>
-  );
-}
-
-export default function SitesScreen() {
-  const { company, profile } = useMe();
-  const sites = useRecords('site', (s) => s.client_account_id === profile?.companyId);
-  const departments = useRecords('department');
-  const buildings = useRecords('building');
-  const rooms = useRecords('room');
-  const equipment = useRecords('equipment');
-  const [openIds, setOpen] = useState<Record<string, boolean>>({});
-  const toggle = (id: string) => setOpen((o) => ({ ...o, [id]: !(o[id] ?? true) }));
-  const isOpen = (id: string) => openIds[id] ?? true;
-  const add = (kind: string, parentId?: string) => router.push({ pathname: '/site-new', params: { kind, parentId: parentId ?? '' } });
+export default function PlacesScreen() {
+  const { company, companyId, industry } = useMe();
+  const tree = usePlaces(companyId);
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const toggle = (id: string) => setOpen((o) => ({ ...o, [id]: !(o[id] ?? false) }));
+  const b = kernel();
+  const suggestions = (industry?.suggested_places ?? []).filter((s) => !tree.roots.some((r) => r.place_type === s.place_type));
 
   return (
     <View style={{ flex: 1 }}>
-      <BrandBar title="Sites" />
+      <BrandBar title="Places" />
       <Screen edges={[]}>
-        <Card>
-          <Txt variant="label" muted>
-            Company
-          </Txt>
-          <Txt variant="bodyStrong">{company?.legal_name ?? 'Your company'}</Txt>
-          {company ? <Pill label={COMPANY_STATUS_LABEL[company.onboarding_status]} tone={company.onboarding_status === 'active' ? 'success' : 'warning'} /> : null}
-        </Card>
-        <SectionTitle action={<Button title="Add site" icon="plus" compact kind="secondary" onPress={() => add('site')} />}>Sites tree</SectionTitle>
-        {sites.length === 0 ? <EmptyState icon="office-building-outline" title="No sites yet" body="Add the company's first site or factory. You can do this offline." /> : null}
-        {sites.map((s) => (
-          <Card key={s.id} style={{ padding: 0, gap: 0 }}>
-            <Node depth={0} icon="map-marker-outline" title={s.name} subtitle={s.address ?? 'Site'} recordId={s.id} open={isOpen(s.id)} onToggle={() => toggle(s.id)}>
-              {departments
-                .filter((d) => d.site_id === s.id)
-                .map((d) => (
-                  <Node key={d.id} depth={1} icon="account-group-outline" title={d.name} subtitle={`Department${d.department_code ? `, ${DEPARTMENTS.find((x) => x.code === d.department_code)?.name ?? d.department_code}` : ''}`} recordId={d.id} open={isOpen(d.id)} onToggle={() => toggle(d.id)}>
-                    {buildings
-                      .filter((b) => b.department_id === d.id)
-                      .map((b) => (
-                        <Node key={b.id} depth={2} icon={b.kind === 'zone' ? 'vector-square' : 'office-building-outline'} title={b.name} subtitle={b.kind === 'zone' ? 'Zone' : 'Building'} recordId={b.id} open={isOpen(b.id)} onToggle={() => toggle(b.id)}>
-                          {rooms
-                            .filter((r) => r.building_id === b.id)
-                            .map((r) => (
-                              <Node key={r.id} depth={3} icon={r.kind === 'area' ? 'texture-box' : 'door'} title={r.name} subtitle={r.kind === 'area' ? 'Area' : 'Room'} recordId={r.id} />
-                            ))}
-                          <AddLink depth={3} label="Add room or area" onPress={() => add('room', b.id)} />
-                        </Node>
-                      ))}
-                    <AddLink depth={2} label="Add building or zone" onPress={() => add('building', d.id)} />
-                  </Node>
-                ))}
-              <AddLink depth={1} label="Add department" onPress={() => add('department', s.id)} />
-              <View style={{ padding: space.md, gap: space.xs }}>
-                <Txt variant="label" muted>
-                  Tagged equipment
-                </Txt>
-                {equipment
-                  .filter((e) => e.site_id === s.id)
-                  .map((e) => (
-                    <Txt key={e.id} variant="small">
-                      {e.tag_code} · {e.kind}
-                    </Txt>
-                  ))}
-                <Button title="Add equipment" icon="barcode-scan" kind="ghost" compact onPress={() => add('equipment', s.id)} style={{ alignSelf: 'flex-start' }} />
-              </View>
-            </Node>
+        {company ? (
+          <Card>
+            <Txt variant="label" muted>
+              Company
+            </Txt>
+            <Txt variant="bodyStrong">{company.legal_name}</Txt>
+            <Txt variant="small" muted>
+              {industry ? `${industry.name}${company.subindustry_code ? ` · ${industry.subindustries.find((s) => s.code === company.subindustry_code)?.name ?? ''}` : ''}` : 'Industry not chosen yet'}
+            </Txt>
+            <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
+              <Pill label={COMPANY_STATUS_LABEL[company.onboarding_status]} tone={company.onboarding_status === 'active' ? 'success' : 'warning'} />
+              <Pill label={`${tree.places.length} places`} tone="neutral" />
+            </View>
           </Card>
-        ))}
+        ) : (
+          <EmptyState icon="domain" title="No company yet" body="Register the company first; its industry decides the kinds of places and the inspections offered." action={<Button title="Register a company" onPress={() => router.push('/register')} />} />
+        )}
+
+        {company ? (
+          <>
+            <SectionTitle action={<Button title="Add place" icon="plus" compact kind="secondary" onPress={() => router.push({ pathname: '/place/edit', params: { companyId: company.id } })} />}>Places of inspection</SectionTitle>
+            {tree.roots.length === 0 ? (
+              <EmptyState
+                icon="map-marker-plus-outline"
+                title="Add the first place"
+                body={`A place is anywhere you inspect: a site, an office, a ${industry ? (placeType(b, industry.suggested_places[0]?.place_type)?.label.toLowerCase() ?? 'site') : 'site'}. Add departments, buildings, floors and rooms under it. It works without signal.`}
+              />
+            ) : (
+              <Card style={{ padding: 0, gap: 0 }}>
+                {tree.roots.map((r) => (
+                  <Branch key={r.id} place={r} depth={0} tree={tree} open={open} toggle={toggle} />
+                ))}
+              </Card>
+            )}
+            {suggestions.length ? (
+              <Card>
+                <Txt variant="smallStrong">Suggested for {industry?.name.toLowerCase()}</Txt>
+                <Txt variant="tiny" muted>
+                  From the Care Net kernel for this industry. Tap to add one; skip the rest.
+                </Txt>
+                <ChipRow>
+                  {suggestions.map((s) => {
+                    const pt = placeType(b, s.place_type);
+                    return pt ? <Chip key={s.place_type} label={`+ ${pt.label}`} onPress={() => router.push({ pathname: '/place/edit', params: { companyId: company.id, type: pt.code } })} /> : null;
+                  })}
+                </ChipRow>
+              </Card>
+            ) : null}
+            <Button title="Add tagged equipment" icon="barcode-scan" kind="ghost" compact onPress={() => router.push({ pathname: '/site-new', params: { kind: 'equipment', parentId: tree.roots[0]?.id ?? '' } })} style={{ alignSelf: 'flex-start' }} />
+          </>
+        ) : null}
       </Screen>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  node: { flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: 52, paddingVertical: space.sm, paddingRight: space.md, borderBottomWidth: StyleSheet.hairlineWidth },
-});

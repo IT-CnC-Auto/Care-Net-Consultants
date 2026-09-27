@@ -41,14 +41,21 @@ export function PhotoCard({ photo, inspectorName, onChange }: { photo: Photo; in
   const [annotating, setAnnotating] = useState(false);
   const [box, setBox] = useState({ w: 1, h: 1 });
   const [label, setLabel] = useState('');
-  const annotations = photo.annotations ?? [];
+  // Markers are drafted here and saved together as one new version on Done:
+  // the photo shown before stays as it was.
+  const [draft, setDraft] = useState<Annotation[] | null>(null);
+  const annotations = draft ?? photo.annotations ?? [];
 
   const addMarker = (e: GestureResponderEvent) => {
     if (!annotating || !onChange) return;
     const { locationX, locationY } = e.nativeEvent;
-    const next: Annotation[] = [...annotations, { x: Math.min(1, Math.max(0, locationX / box.w)), y: Math.min(1, Math.max(0, locationY / box.h)), label: label.trim() || `Point ${annotations.length + 1}` }];
-    onChange({ annotations: next });
+    setDraft([...annotations, { x: Math.min(1, Math.max(0, locationX / box.w)), y: Math.min(1, Math.max(0, locationY / box.h)), label: label.trim() || `Point ${annotations.length + 1}` }]);
     setLabel('');
+  };
+  const finish = () => {
+    setAnnotating(false);
+    if (draft && onChange && JSON.stringify(draft) !== JSON.stringify(photo.annotations ?? [])) onChange({ annotations: draft });
+    setDraft(null);
   };
 
   return (
@@ -84,15 +91,18 @@ export function PhotoCard({ photo, inspectorName, onChange }: { photo: Photo; in
         <Txt variant="tiny">GPS {gpsText(photo.gps_lat, photo.gps_lng, photo.gps_accuracy_m)}</Txt>
         <Txt variant="tiny">Inspector {inspectorName}</Txt>
         <Txt variant="tiny">Fingerprint {shortHash(photo.sha256)} · Seal {photo._seal_local === 'demonstration' ? 'demonstration' : shortHash(photo._seal_local)}</Txt>
-        <SyncMark recordId={photo.id} />
+        <View style={styles.rowButtons}>
+          <SyncMark recordId={photo.id} />
+          {photo.evidence_version > 1 ? <Pill label={`Version ${photo.evidence_version}`} tone="info" /> : null}
+        </View>
       </View>
       {onChange ? (
         annotating ? (
           <View style={{ gap: space.sm }}>
-            <Field label="Marker label" hint="Type a label, then tap the photo where it belongs." value={label} onChangeText={setLabel} placeholder="For example: missing toe board" />
+            <Field label="Marker label" hint="Type a label, then tap the photo where it belongs." value={label} onChangeText={setLabel} placeholder="For example: missing guard" />
             <View style={styles.rowButtons}>
-              <Button title="Done" kind="secondary" compact onPress={() => setAnnotating(false)} />
-              {annotations.length ? <Button title="Remove last marker" kind="ghost" compact onPress={() => onChange({ annotations: annotations.slice(0, -1) })} /> : null}
+              <Button title="Done, save as a new version" kind="secondary" compact onPress={finish} />
+              {annotations.length ? <Button title="Remove last marker" kind="ghost" compact onPress={() => setDraft(annotations.slice(0, -1))} /> : null}
             </View>
           </View>
         ) : (
@@ -104,7 +114,7 @@ export function PhotoCard({ photo, inspectorName, onChange }: { photo: Photo; in
 }
 
 export function PhotoThumb({ photo, size = 72 }: { photo: Photo; size?: number }) {
-  return <Image source={photoSource(photo._local_uri)} style={{ width: size, height: size, borderRadius: radius.sm }} contentFit="cover" accessibilityLabel={photo.caption ?? 'Photo'} />;
+  return <Image source={photoSource(photo._thumb_uri ?? photo._local_uri)} style={{ width: size, height: size, borderRadius: radius.sm }} contentFit="cover" accessibilityLabel={photo.caption ?? 'Photo'} />;
 }
 
 function Player({ uri }: { uri: string }) {

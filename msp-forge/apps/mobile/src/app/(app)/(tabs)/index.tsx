@@ -1,12 +1,16 @@
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 import { BrandBar } from '@/components/brand-bar';
+import { PlaceRow } from '@/components/place-ui';
 import { Button, Card, EmptyState, Heading, Notice, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
 import { useInspection, useMe } from '@/features/inspection';
+import { useOpenPlace, useStartHere } from '@/features/places';
 import { formatDate, plural } from '@/lib/dates';
 import { canStartInspection, COMPANY_STATUS_LABEL, INSPECTOR_STATUS_LABEL } from '@/lib/gates';
-import type { Inspection, Report } from '@/lib/types';
+import { pathOf } from '@/lib/places';
+import type { Inspection, Place, Report } from '@/lib/types';
 import { space } from '@/theme/tokens';
 
 function greeting(): string {
@@ -47,16 +51,38 @@ function ReportRow({ report, title }: { report: Report; title: string }) {
 }
 
 export default function HomeScreen() {
-  const { app, store, profile, inspector, company } = useMe();
+  const { app, store, profile, inspector, company, companyId, industry } = useMe();
+  const openPlace = useOpenPlace();
+  const startHere = useStartHere();
   const gate = canStartInspection(company?.onboarding_status, inspector?.status);
-  const open = store.where('inspection', (i) => i.status === 'planned' || i.status === 'in_progress').sort((a, b) => (b.started_at ?? '').localeCompare(a.started_at ?? ''));
-  const issued = store.where('report', (r) => r.status === 'issued').sort((a, b) => (b.issued_at ?? '').localeCompare(a.issued_at ?? ''));
-  const awaiting = store.where('report', (r) => r.status === 'awaiting_signoff');
+  const inCompany = (inspectionId: string) => store.get('inspection', inspectionId)?.client_account_id === companyId;
+  const open = store.where('inspection', (i) => i.client_account_id === companyId && (i.status === 'planned' || i.status === 'in_progress')).sort((a, b) => (b.started_at ?? '').localeCompare(a.started_at ?? ''));
+  const elsewhere = store.where('inspection', (i) => i.client_account_id !== companyId && (i.status === 'planned' || i.status === 'in_progress')).length;
+  const issued = store.where('report', (r) => r.status === 'issued' && inCompany(r.inspection_id)).sort((a, b) => (b.issued_at ?? '').localeCompare(a.issued_at ?? ''));
+  const awaiting = store.where('report', (r) => r.status === 'awaiting_signoff' && inCompany(r.inspection_id));
   const firstName = (profile?.displayName ?? '').split(' ')[0];
+  const places = store.list('place');
+  const recent = app.recentPlaceIds.map((id) => store.get('place', id)).filter((p): p is Place => !!p && !p.archived_at).slice(0, 4);
+  const [resume, setResume] = useState<{ companyId: string; step: number } | null>(null);
+  useEffect(() => {
+    let live = true;
+    void store.kvGet('register.draft').then((raw) => {
+      try {
+        const d = raw ? (JSON.parse(raw) as { companyId: string | null; step: number }) : null;
+        if (live) setResume(d && d.companyId && d.step < 3 ? { companyId: d.companyId, step: d.step } : null);
+      } catch {
+        if (live) setResume(null);
+      }
+    });
+    return () => {
+      live = false;
+    };
+  }, [store]);
+  const resumeCompany = resume ? store.get('company', resume.companyId) : undefined;
 
   return (
     <View style={{ flex: 1 }}>
-      <BrandBar title={company?.trading_name ?? company?.legal_name ?? undefined} />
+      <BrandBar title="Home" />
       <Screen edges={[]}>
         <Heading level={1}>
           {greeting()}
@@ -80,7 +106,24 @@ export default function HomeScreen() {
           </Card>
         ) : null}
 
+        {resumeCompany ? (
+          <Card onPress={() => router.push('/register')} accessibilityLabel={`Carry on registering ${resumeCompany.legal_name}`}>
+            <Txt variant="label" muted>
+              Registration saved on this phone
+            </Txt>
+            <Txt variant="bodyStrong">{resumeCompany.legal_name}</Txt>
+            <Txt variant="small" muted>
+              {`Step ${(resume?.step ?? 0) + 1} of 4: ${['Company', 'Places', 'People', 'Done'][resume?.step ?? 0]}. Tap to carry on.`}
+            </Txt>
+          </Card>
+        ) : null}
+
         <Card>
+          {industry ? (
+            <Txt variant="small" muted>
+              {industry.name}
+            </Txt>
+          ) : null}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
             <Pill label={`Company ${company ? COMPANY_STATUS_LABEL[company.onboarding_status] : 'Not started'}`} tone={company?.onboarding_status === 'active' ? 'success' : 'warning'} />
             <Pill label={`Inspector ${inspector ? INSPECTOR_STATUS_LABEL[inspector.status] : 'Identity'}`} tone={inspector?.status === 'cleared' ? 'success' : 'warning'} />
@@ -98,8 +141,22 @@ export default function HomeScreen() {
           ) : null}
         </Card>
 
+        {recent.length ? (
+          <>
+            <SectionTitle action={<Button title="All places" kind="ghost" compact onPress={() => router.push('/switcher')} />}>Recent places</SectionTitle>
+            <Card style={{ padding: 0, gap: 0 }}>
+              {recent.map((pl) => (
+                <PlaceRow key={pl.id} place={pl} path={pathOf(places, pl.id).slice(0, -1).map((x) => x.name).join(' › ') || (store.get('company', pl.client_account_id)?.trading_name ?? '')} onPress={() => openPlace(pl)} onStart={() => startHere(pl)} />
+              ))}
+            </Card>
+          </>
+        ) : null}
+
         <SectionTitle>In progress</SectionTitle>
-        {open.length ? open.map((i) => <InspectionCard key={i.id} inspection={i} />) : <EmptyState icon="clipboard-text-outline" title="No inspections in progress" body="Start one when you are on site. It works without signal." />}
+        {open.length ? open.map((i) => <InspectionCard key={i.id} inspection={i} />) : <EmptyState icon="clipboard-text-outline" title="No inspections in progress here" body="Open a place and choose Start inspection here. It works without signal." />}
+        {elsewhere ? (
+          <Button title={`${elsewhere} more in progress at other companies`} kind="ghost" compact icon="swap-horizontal" onPress={() => router.push('/switcher')} style={{ alignSelf: 'flex-start' }} />
+        ) : null}
 
         {awaiting.length ? (
           <>
@@ -114,7 +171,9 @@ export default function HomeScreen() {
         ) : null}
 
         <SectionTitle>Issued reports</SectionTitle>
-        {issued.length ? issued.map((r) => <ReportRow key={r.id} report={r} title={store.get('inspection', r.inspection_id)?.title ?? 'Report'} />) : <Txt muted>No Issued reports yet.</Txt>}
+        {issued.length ? issued.map((r) => <ReportRow key={r.id} report={r} title={store.get('inspection', r.inspection_id)?.title ?? 'Report'} />) : <Txt muted>No Issued reports for this company yet.</Txt>}
+
+        <Button title="Register a company" icon="domain-plus" kind="secondary" onPress={() => router.push('/register')} />
       </Screen>
     </View>
   );

@@ -20,12 +20,13 @@ export function syncModeOf(kind: Kind): 'table' | 'upload' | 'append' | 'rpc' | 
 /** The records a record needs on the server first (its parents). */
 export function parentsOf(kind: Kind, r: Record<string, unknown>): string[] {
   const keys: Partial<Record<Kind, string[]>> = {
+    place: ['parent_id'],
     department: ['site_id'],
     building: ['department_id'],
     room: ['building_id'],
     equipment: ['site_id'],
-    inspection: ['site_id'],
-    area: ['inspection_id', 'room_id'],
+    inspection: ['site_id', 'place_id'],
+    area: ['inspection_id', 'room_id', 'place_id'],
     finding: ['area_id', 'equipment_id'],
     photo: ['inspection_id', 'area_id', 'finding_id', 'equipment_id'],
     voice_note: ['inspection_id', 'area_id', 'finding_id'],

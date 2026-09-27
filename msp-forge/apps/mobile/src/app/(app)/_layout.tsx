@@ -12,7 +12,12 @@ export default function AppLayout() {
       <Stack.Screen name="inspection/[id]/item" options={{ title: 'Checklist item' }} />
       <Stack.Screen name="inspection/[id]/draft" options={{ title: 'Report draft' }} />
       <Stack.Screen name="inspection/[id]/sign" options={{ title: 'Sign off' }} />
-      <Stack.Screen name="site-new" options={{ title: 'Add to sites', presentation: 'modal' }} />
+      <Stack.Screen name="site-new" options={{ title: 'Add tagged equipment', presentation: 'modal' }} />
+      <Stack.Screen name="register" options={{ title: 'Register a company' }} />
+      <Stack.Screen name="switcher" options={{ title: 'Switch company or place', presentation: 'modal' }} />
+      <Stack.Screen name="place/[id]" options={{ title: 'Place' }} />
+      <Stack.Screen name="place/edit" options={{ title: 'Place', presentation: 'modal' }} />
+      <Stack.Screen name="evidence/[id]" options={{ title: 'Evidence' }} />
       <Stack.Screen name="step-up" options={{ title: 'Confirm it is you', presentation: 'modal' }} />
       <Stack.Screen name="scan" options={{ title: 'Scan a tag', presentation: 'modal' }} />
       <Stack.Screen name="sync" options={{ title: 'Sync' }} />

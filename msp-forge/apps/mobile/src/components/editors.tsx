@@ -131,7 +131,7 @@ export function ActionEditor({ initial, onSave, onCancel }: { initial?: Correcti
     <Card>
       <Txt variant="bodyStrong">Corrective action</Txt>
       <Field label="What must be done" value={description} onChangeText={setDescription} multiline />
-      <Field label="Owner" value={owner} onChangeText={setOwner} placeholder="Name or role, for example site foreman" />
+      <Field label="Owner" value={owner} onChangeText={setOwner} placeholder="Name or role, for example the supervisor" />
       <Field label="Due date (dd/mm/yyyy)" value={due} onChangeText={setDue} keyboardType="numbers-and-punctuation" />
       <ChipRow>
         {[2, 7, 14, 30].map((n) => (

@@ -96,9 +96,9 @@ export default function SignInScreen() {
         )}
         <Gap size="sm" />
         <View style={{ gap: space.sm }}>
-          <Button title="Try the demo" icon="play-circle-outline" kind={app.liveAvailable ? 'ghost' : 'primary'} onPress={tryDemo} busy={busy === 'demo'} accessibilityHint="Opens Bee-Inspect with fictitious Rietvlei Civils and Building data. Nothing is sent anywhere." />
+          <Button title="Try the demo" icon="play-circle-outline" kind={app.liveAvailable ? 'ghost' : 'primary'} onPress={tryDemo} busy={busy === 'demo'} accessibilityHint="Opens Bee-Inspect with five fictitious companies from five industries. Nothing is sent anywhere." />
           <Txt variant="tiny" muted style={{ textAlign: 'center' }}>
-            The demo uses the fictitious Rietvlei Civils and Building company. Nothing is sent anywhere.
+            The demo holds five fictitious companies in construction, mining, healthcare, retail and agriculture. Nothing is sent anywhere.
           </Txt>
         </View>
         <Gap size="md" />

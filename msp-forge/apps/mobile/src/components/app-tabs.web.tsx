@@ -9,9 +9,10 @@ import { usePalette } from '@/theme/use-palette';
 
 import { Icon, type IconName } from './ui';
 
-const TABS: { name: string; href: '/' | '/sites' | '/wallet' | '/account'; label: string; icon: IconName }[] = [
+const TABS: { name: string; href: '/' | '/sites' | '/evidence' | '/wallet' | '/account'; label: string; icon: IconName }[] = [
   { name: 'index', href: '/', label: 'Home', icon: 'home-outline' },
-  { name: 'sites', href: '/sites', label: 'Sites', icon: 'file-tree-outline' },
+  { name: 'sites', href: '/sites', label: 'Places', icon: 'file-tree-outline' },
+  { name: 'evidence', href: '/evidence', label: 'Evidence', icon: 'folder-image' },
   { name: 'wallet', href: '/wallet', label: 'Wallet', icon: 'wallet-outline' },
   { name: 'account', href: '/account', label: 'Account', icon: 'account-circle-outline' },
 ];

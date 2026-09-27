@@ -16,7 +16,11 @@ export default function AppTabs() {
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="sites">
         <NativeTabs.Trigger.Icon sf="building.2" md="account_tree" />
-        <NativeTabs.Trigger.Label>Sites</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Places</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="evidence">
+        <NativeTabs.Trigger.Icon sf="photo.on.rectangle" md="photo_library" />
+        <NativeTabs.Trigger.Label>Evidence</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="wallet">
         <NativeTabs.Trigger.Icon sf="creditcard" md="account_balance_wallet" />

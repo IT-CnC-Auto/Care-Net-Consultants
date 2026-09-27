@@ -4,23 +4,32 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { useQueueSummary } from '@/data/hooks';
+import { useMe } from '@/features/inspection';
 import { useApp } from '@/state/app';
 import { brand, fonts, onInk, radius, space, type as t } from '@/theme/tokens';
 
+import { ContextBar } from './place-ui';
 import { Icon } from './ui';
 
 const noop = () => () => {};
 
-/** The ink bar at the top of each tab: the Bee-Inspect wordmark, the mode and the sync state. */
-export function BrandBar({ title }: { title?: string }) {
+/**
+ * The ink bar at the top of each tab: the Bee-Inspect wordmark, the mode, the
+ * sync and signal state, and the context bar (company and place) that opens
+ * the switcher.
+ */
+export function BrandBar({ title, context = true }: { title?: string; context?: boolean }) {
   const insets = useSafeAreaInsets();
-  const { mode, engine } = useApp();
+  const { mode, engine, recentPlaceIds } = useApp();
+  const { store, company, companyId } = useMe();
+  const recent = recentPlaceIds.map((id) => store.get('place', id)).find((pl) => pl && pl.client_account_id === companyId);
   const { summary } = useQueueSummary();
   const waiting = summary.pending + summary.waitingServer;
   const trouble = summary.conflicts + summary.failed;
   const syncState = useSyncExternalStore(engine ? engine.subscribe : noop, () => engine?.getState() ?? null, () => engine?.getState() ?? null);
   const paused = syncState?.paused;
-  const label = trouble > 0 ? `${trouble} to check` : waiting > 0 ? `${waiting} waiting` : 'All synced';
+  const offline = syncState ? !syncState.online : false;
+  const label = offline ? `Offline${waiting ? `, ${waiting} on phone` : ''}` : trouble > 0 ? `${trouble} to check` : waiting > 0 ? `${waiting} waiting` : 'All synced';
   return (
     <View style={[styles.bar, { paddingTop: insets.top + space.sm }]}>
       <View style={styles.row}>
@@ -40,10 +49,11 @@ export function BrandBar({ title }: { title?: string }) {
           accessibilityRole="button"
           accessibilityLabel={`Sync: ${label}${paused ? ', paused' : ''}`}
           style={styles.sync}>
-          <Icon name={trouble > 0 ? 'cloud-alert' : waiting > 0 || paused ? 'cloud-upload-outline' : 'cloud-check-outline'} size={20} color={trouble > 0 ? brand.gold : brand.white} />
+          <Icon name={offline ? 'cloud-off-outline' : trouble > 0 ? 'cloud-alert' : waiting > 0 || paused ? 'cloud-upload-outline' : 'cloud-check-outline'} size={20} color={trouble > 0 || offline ? brand.gold : brand.white} />
           <Text style={styles.syncText}>{paused ? 'Paused' : label}</Text>
         </Pressable>
       </View>
+      {context ? <ContextBar company={company ? company.trading_name || company.legal_name : null} place={recent?.name ?? null} /> : null}
       <View style={styles.stripe} />
     </View>
   );

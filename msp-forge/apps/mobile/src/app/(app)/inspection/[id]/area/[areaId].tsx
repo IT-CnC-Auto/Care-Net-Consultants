@@ -9,7 +9,7 @@ import { PhotoCard, VoiceNoteCard } from '@/components/evidence';
 import { RESULT_LABEL, ResultPicker } from '@/components/result-picker';
 import { VoiceRecorder } from '@/components/voice-recorder';
 import { Button, Card, Icon, Notice, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
-import { addTranscriptCorrection, capturePhoto, consentGiven, saveVoiceNote } from '@/features/capture';
+import { addTranscriptCorrection, capturePhoto, consentGiven, correctPhoto, saveVoiceNote } from '@/features/capture';
 import { currentFix } from '@/features/evidence';
 import { useInspection, useMe } from '@/features/inspection';
 import type { FindingResult } from '@/lib/types';
@@ -89,7 +89,7 @@ export default function AreaScreen() {
 
       <SectionTitle>Area photos</SectionTitle>
       {photos.filter((q) => q.area_id === area.id && !q.finding_id).map((q) => (
-        <PhotoCard key={q.id} photo={q} inspectorName={profile.displayName} onChange={readOnly ? undefined : (c) => store.update('photo', q.id, c)} />
+        <PhotoCard key={q.id} photo={q} inspectorName={profile.displayName} onChange={readOnly ? undefined : (c) => void correctPhoto(store, q, c)} />
       ))}
       {!readOnly ? (
         <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
@@ -100,7 +100,7 @@ export default function AreaScreen() {
 
       <SectionTitle>Section voice notes</SectionTitle>
       {voiceNotes.filter((v) => v.area_id === area.id && !v.finding_id).map((v) => (
-        <VoiceNoteCard key={v.id} note={v} transcripts={transcripts.filter((t) => t.voice_note_id === v.id)} onCorrect={(body) => addTranscriptCorrection(store, v.id, body, profile.appUserId)} />
+        <VoiceNoteCard key={v.id} note={v} transcripts={transcripts.filter((t) => t.voice_note_id === (v.root_evidence_id ?? v.id))} onCorrect={(body) => addTranscriptCorrection(store, v.root_evidence_id ?? v.id, body, profile.appUserId)} />
       ))}
       {!readOnly ? (
         <VoiceRecorder

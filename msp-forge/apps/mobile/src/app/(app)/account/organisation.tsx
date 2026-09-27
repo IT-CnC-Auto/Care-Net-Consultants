@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button, Card, Field, Heading, KeyValue, Notice, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
 import { useMe } from '@/features/inspection';
 import { COMPANY_STATUS_LABEL } from '@/lib/gates';
+import { industry as industryOf, kernel } from '@/lib/kernel';
 
 export default function OrganisationScreen() {
   const { store, company } = useMe();
@@ -25,6 +26,8 @@ export default function OrganisationScreen() {
         <KeyValue label="Onboarding" value={COMPANY_STATUS_LABEL[company.onboarding_status]} />
         <Pill label={company.onboarding_status === 'active' ? 'Start Inspection is open for this company' : 'Start Inspection opens once the company is Active'} tone={statusTone} />
         <KeyValue label="FICA pack" value={company.fica_status === 'accepted' ? 'Accepted' : company.fica_status === 'submitted' ? 'In review' : company.fica_status === 'rejected' ? 'Rejected' : 'Not submitted'} />
+        <KeyValue label="Industry" value={industryOf(kernel(), company.industry_code)?.name ?? 'Not chosen'} />
+        <KeyValue label="Subindustry" value={industryOf(kernel(), company.industry_code)?.subindustries.find((s) => s.code === company.subindustry_code)?.name ?? 'Not chosen'} />
         <KeyValue label="CIPC" value={company.cipc_status === 'in_business' ? 'In business' : company.cipc_status ? company.cipc_status.replace(/_/g, ' ') : 'Not checked'} />
       </Card>
       <SectionTitle>Details</SectionTitle>

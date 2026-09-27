@@ -5,8 +5,8 @@
 // NOT EXERCISED against a live project in P4: migrations 059 to 063 are not
 // applied anywhere but the local replay (contract 16.8). Every server piece the
 // app needs that P3 did not build is a labelled stub here and in
-// docs/bee-inspect/p4/index.md: step-up-record, evidence-upload-url,
-// account-update, report-request-signoff, report-sign, and the RevenueCat
+// docs/bee-inspect/p4/index.md: step-up-record, evidence-upload-session,
+// evidence-upload-chunk, evidence-upload-complete, account-update, report-request-signoff, report-sign, and the RevenueCat
 // products.
 
 import { FunctionsFetchError, FunctionsHttpError, FunctionsRelayError, type SupabaseClient } from '@supabase/supabase-js';
@@ -15,10 +15,12 @@ import * as Linking from 'expo-linking';
 import type { DataStore } from '@/data/data-store';
 import { readBytes } from '@/features/evidence';
 import { normaliseClaimCode } from '@/lib/claim-code';
+import { blobId } from '@/lib/evidence-store';
 import { voicePreviewLine } from '@/lib/report';
 import type { StepUpPurpose } from '@/lib/step-up';
 import { classifyMissedUpdate, stripLocal, type PushOutcome, type SyncItem } from '@/lib/sync-queue';
 import { TABLE_OF, type Kind, type KindMap, type Report, type ReportContent } from '@/lib/types';
+import { alreadyHeld, failAttempt, markChunkDone, newUpload, remainingChunks, verifyUpload, withSession } from '@/lib/upload-plan';
 import type { EstimateResult } from '@/lib/wallet';
 
 import { classifyPushError } from './pg-errors';
@@ -218,6 +220,8 @@ export class SupabaseBackend implements Backend {
         // Decision 1.1 eligibility is not a column yet (P5); unknown until the server says.
         file_eligibility: 'unknown',
         file_eligibility_note: null,
+        industry_code: (co.industry_code as string | null) ?? null,
+        subindustry_code: (co.subindustry_code as string | null) ?? null,
       });
     }
 
@@ -226,6 +230,20 @@ export class SupabaseBackend implements Backend {
     for (const d of await this.select('bi_department', live)) put('department', { id: String(d.id), row_version: d.row_version as number, site_id: String(d.site_id), department_code: (d.department_code as string | null) ?? null, name: String(d.name) });
     for (const b of await this.select('bi_building', live)) put('building', { id: String(b.id), row_version: b.row_version as number, site_id: String(b.site_id), department_id: String(b.department_id), name: String(b.name), kind: b.kind as 'building' | 'zone' });
     for (const r of await this.select('bi_room', live)) put('room', { id: String(r.id), row_version: r.row_version as number, site_id: String(r.site_id), building_id: String(r.building_id), name: String(r.name), kind: r.kind as 'room' | 'area' });
+    // The typed places tree (migration 065). Until 065 is applied the table is missing and the tree stays empty.
+    try {
+      for (const pl of await this.select('bi_place', live)) {
+        put('place', {
+          id: String(pl.id), row_version: pl.row_version as number, client_account_id: companyId, parent_id: (pl.parent_id as string | null) ?? null, place_type: String(pl.place_type),
+          custom_type_label: (pl.custom_type_label as string | null) ?? null, name: String(pl.name), address: (pl.address as string | null) ?? null,
+          gps_lat: pl.gps_lat === null ? null : Number(pl.gps_lat), gps_lng: pl.gps_lng === null ? null : Number(pl.gps_lng), responsible_person: (pl.responsible_person as string | null) ?? null,
+          headcount: pl.headcount === null || pl.headcount === undefined ? null : Number(pl.headcount), department_code: (pl.department_code as string | null) ?? null,
+          linked_department_ids: (pl.linked_department_ids as string[] | null) ?? [], archived_at: null,
+        });
+      }
+    } catch {
+      // bi_place is not on the server yet (065 not applied): places made on the phone wait in the queue.
+    }
     for (const e of await this.select('bi_equipment', (q) => q.select('*').eq('client_account_id', companyId))) {
       put('equipment', { id: String(e.id), row_version: e.row_version as number, client_account_id: companyId, site_id: (e.site_id as string | null) ?? null, tag_code: String(e.tag_code), kind: String(e.kind), description: (e.description as string | null) ?? null, serial_number: (e.serial_number as string | null) ?? null });
     }
@@ -261,11 +279,12 @@ export class SupabaseBackend implements Backend {
         id: String(i.id), row_version: i.row_version as number, tenant_id: tenantId, client_account_id: String(i.client_account_id), site_id: String(i.site_id), template_id: String(i.template_id),
         inspector_user_id: appUserId, title: String(i.title), status: i.status as KindMap['inspection']['status'], voice_note_policy: i.voice_note_policy as 'recommended' | 'strict',
         started_at: (i.started_at as string | null) ?? null, submitted_at: (i.submitted_at as string | null) ?? null, device_id: (i.device_id as string | null) ?? null,
+        place_id: (i.place_id as string | null) ?? null,
       });
     }
     const ids = inspections.map((i) => String(i.id));
     if (ids.length) {
-      for (const a of await this.select('bi_inspection_area', (q) => q.select('*').in('inspection_id', ids))) put('area', { id: String(a.id), row_version: a.row_version as number, inspection_id: String(a.inspection_id), room_id: (a.room_id as string | null) ?? null, label: String(a.label), ordinal: Number(a.ordinal) });
+      for (const a of await this.select('bi_inspection_area', (q) => q.select('*').in('inspection_id', ids))) put('area', { id: String(a.id), row_version: a.row_version as number, inspection_id: String(a.inspection_id), room_id: (a.room_id as string | null) ?? null, place_id: (a.place_id as string | null) ?? null, label: String(a.label), ordinal: Number(a.ordinal) });
       for (const f of await this.select('bi_finding', (q) => q.select('*').in('inspection_id', ids))) {
         put('finding', { id: String(f.id), row_version: f.row_version as number, inspection_id: String(f.inspection_id), area_id: String(f.area_id), template_item_id: (f.template_item_id as string | null) ?? null, equipment_id: (f.equipment_id as string | null) ?? null, result: f.result as KindMap['finding']['result'], note: (f.note as string | null) ?? null, severity: (f.severity as KindMap['finding']['severity']) ?? null, captured_by: String(f.captured_by ?? appUserId), captured_at: String(f.captured_at), gps_lat: (f.gps_lat as number | null) ?? null, gps_lng: (f.gps_lng as number | null) ?? null });
       }
@@ -304,21 +323,10 @@ export class SupabaseBackend implements Backend {
       if (item.op === 'upload') {
         const rec = store.get(kind, item.recordId) as (KindMap['photo'] | KindMap['voice_note']) | undefined;
         if (!rec) return { kind: 'rejected', error: 'The file is no longer on this phone.' };
-        const path = 'storage_path' in rec ? rec.storage_path : rec.audio_path;
-        // STUB until the evidence-upload-url Edge Function (signed upload URL into the private bi-evidence bucket) exists.
-        const { data, error } = await this.sb.functions.invoke('evidence-upload-url', {
-          body: { kind, inspection_id: rec.inspection_id, path, sha256: 'sha256' in rec ? rec.sha256 : rec.audio_sha256, size_bytes: rec.size_bytes, mime_type: rec.mime_type },
-        });
-        if (error) {
-          const e = await functionError(error);
-          return classifyPushError({ status: e.status, message: e.message }, 'upload');
-        }
-        const token = (data as Row | null)?.token;
-        if (typeof token !== 'string') return { kind: 'retry', error: 'The upload could not be prepared.' };
-        const bytes = await readBytes(rec._local_uri);
-        const up = await this.sb.storage.from('bi-evidence').uploadToSignedUrl(path, token, bytes, { contentType: rec.mime_type });
-        if (up.error && !/exists|duplicate/i.test(up.error.message)) return { kind: 'retry', error: up.error.message };
-        return this.insertRow(table, item);
+        const outcome = await this.uploadBlob(rec, store);
+        if (outcome.kind !== 'ok') return outcome;
+        const inserted = await this.insertRow(table, item);
+        return inserted.kind === 'ok' ? { ...inserted, patch: { ...(inserted.patch ?? {}), ...(outcome.patch ?? {}) } } : inserted;
       }
 
       if (item.op === 'insert') return this.insertRow(table, item);
@@ -337,6 +345,53 @@ export class SupabaseBackend implements Backend {
     } catch (e) {
       return { kind: 'retry', error: e instanceof Error ? e.message : 'No connection' };
     }
+  }
+
+  /**
+   * The resumable, chunked upload of one content addressed blob
+   * (docs/bee-inspect/p4/evidence-storage.md). STUB until the staging backend
+   * has the evidence-upload-session, evidence-upload-chunk and
+   * evidence-upload-complete functions: a 404 or 501 parks the item on the phone.
+   */
+  private async uploadBlob(rec: KindMap['photo'] | KindMap['voice_note'], store: DataStore): Promise<PushOutcome> {
+    const sha = 'sha256' in rec ? rec.sha256 : rec.audio_sha256;
+    let u = rec._upload && rec._upload.sha256 === sha ? rec._upload : newUpload(sha, rec.size_bytes);
+    if (u.verified) return { kind: 'ok', patch: { _upload: u } };
+    const start = await this.sb.functions.invoke('evidence-upload-session', {
+      body: { kind: 'sha256' in rec ? 'photo' : 'voice_note', inspection_id: rec.inspection_id, sha256: sha, size_bytes: rec.size_bytes, mime_type: rec.mime_type, chunk_bytes: u.chunk_bytes, session_id: u.session_id },
+    });
+    if (start.error) {
+      const e = await functionError(start.error);
+      return classifyPushError({ status: e.status, message: e.message }, 'upload');
+    }
+    const s0 = (start.data as Row | null) ?? {};
+    if (typeof s0.held_sha256 === 'string') return { kind: 'ok', patch: { _upload: alreadyHeld(u, s0.held_sha256) } };
+    if (typeof s0.session_id !== 'string') return { kind: 'retry', error: 'The upload could not be prepared.' };
+    u = withSession(u, s0.session_id, Array.isArray(s0.received) ? (s0.received as number[]) : []);
+    const bytes = await readBytes(rec._local_uri);
+    for (const c of remainingChunks(u)) {
+      const part = await this.sb.functions.invoke(`evidence-upload-chunk?session_id=${encodeURIComponent(u.session_id as string)}&index=${c.index}`, { body: bytes.slice(c.start, c.end), headers: { 'Content-Type': 'application/octet-stream' } });
+      if (part.error) {
+        const e = await functionError(part.error);
+        await store.patchLocal('sha256' in rec ? 'photo' : 'voice_note', rec.id, { _upload: failAttempt(u, e.message) } as never);
+        return classifyPushError({ status: e.status, message: e.message }, 'upload');
+      }
+      u = markChunkDone(u, c.index);
+    }
+    const done = await this.sb.functions.invoke('evidence-upload-complete', { body: { session_id: u.session_id } });
+    if (done.error) {
+      const e = await functionError(done.error);
+      return classifyPushError({ status: e.status, message: e.message }, 'upload');
+    }
+    const v = verifyUpload(u, String(((done.data as Row | null) ?? {}).sha256 ?? ''));
+    if (!v.ok) {
+      await store.patchLocal('sha256' in rec ? 'photo' : 'voice_note', rec.id, { _upload: v.state } as never);
+      return { kind: 'retry', error: v.state.last_error ?? 'The upload check failed.' };
+    }
+    const company = store.get('inspection', rec.inspection_id)?.client_account_id ?? '';
+    const blob = store.get('blob', blobId(company, sha));
+    if (blob) await store.putServer('blob', { ...blob, uploaded: true, verified_at: new Date().toISOString() });
+    return { kind: 'ok', patch: { _upload: v.state } };
   }
 
   private async insertRow(table: string, item: SyncItem): Promise<PushOutcome> {

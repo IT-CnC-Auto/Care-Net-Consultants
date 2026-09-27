@@ -38,8 +38,8 @@ drop table public.bi_zz_probe;
 select pg_temp.ok('every bi_ table and view carries a comment',
   not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
                where n.nspname = 'public' and c.relkind in ('r','v') and c.relname like 'bi\_%' and obj_description(c.oid, 'pg_class') is null));
-select pg_temp.ok('Bee-Inspect created 55 bi_ tables (47 in 059 to 063, 8 in 064) and one view',
-  (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' and c.relname like 'bi\_%') = 55
+select pg_temp.ok('Bee-Inspect created 62 bi_ tables (47 in 059 to 063, 8 in 064, 7 in 065) and one view',
+  (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' and c.relname like 'bi\_%') = 62
   and (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'v' and c.relname like 'bi\_%') = 1);
 select pg_temp.ok('the Bee-Inspect parameters are bi. prefixed and hold no secret value (3 in 059, 5 in 064)',
   (select count(*) from msp_env_parameter where key like 'bi.%') = 8

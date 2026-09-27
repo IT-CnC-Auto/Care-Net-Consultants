@@ -12,7 +12,7 @@ import { PhotoCard, VoiceNoteCard } from '@/components/evidence';
 import { ResultPicker } from '@/components/result-picker';
 import { Button, Card, Chip, ChipRow, Field, Icon, Notice, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
 import { VoiceRecorder } from '@/components/voice-recorder';
-import { addTranscriptCorrection, capturePhoto, consentGiven, saveVoiceNote } from '@/features/capture';
+import { addTranscriptCorrection, capturePhoto, consentGiven, correctPhoto, saveVoiceNote } from '@/features/capture';
 import { currentFix } from '@/features/evidence';
 import { useInspection, useMe } from '@/features/inspection';
 import { onScan } from '@/features/scan-bus';
@@ -173,7 +173,7 @@ export default function ItemScreen() {
 
           <SectionTitle>Photos</SectionTitle>
           {photos.map((ph) => (
-            <PhotoCard key={ph.id} photo={ph} inspectorName={profile.displayName} onChange={readOnly ? undefined : (c) => store.update('photo', ph.id, c)} />
+            <PhotoCard key={ph.id} photo={ph} inspectorName={profile.displayName} onChange={readOnly ? undefined : (c) => void correctPhoto(store, ph, c)} />
           ))}
           {!readOnly ? (
             <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
@@ -185,7 +185,7 @@ export default function ItemScreen() {
 
           <SectionTitle>Voice notes</SectionTitle>
           {notes.map((v) => (
-            <VoiceNoteCard key={v.id} note={v} transcripts={x.transcripts.filter((t) => t.voice_note_id === v.id)} onCorrect={(body) => addTranscriptCorrection(store, v.id, body, profile.appUserId)} />
+            <VoiceNoteCard key={v.id} note={v} transcripts={x.transcripts.filter((t) => t.voice_note_id === (v.root_evidence_id ?? v.id))} onCorrect={(body) => addTranscriptCorrection(store, v.root_evidence_id ?? v.id, body, profile.appUserId)} />
           ))}
           {!readOnly ? (
             <VoiceRecorder

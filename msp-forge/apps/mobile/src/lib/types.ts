@@ -35,9 +35,12 @@ export interface Company extends BaseRecord {
   /** Free digital Safety File entitlement (decision 1.1): decides whether an Issued report raises Section F. */
   file_eligibility: FileEligibility;
   file_eligibility_note: string | null;
+  /** Kernel industry and subindustry (msp_industry, msp_subindustry codes; migration 065 adds them to bi_company). */
+  industry_code: string | null;
+  subindustry_code: string | null;
 }
 
-export type PersonRole = 's16_1' | 's16_2' | 'she_manager' | 'she_officer' | 'she_rep' | 'first_aider' | 'fire_marshal' | 'construction_manager' | 'other';
+export type PersonRole = 's16_1' | 's16_2' | 'she_manager' | 'she_officer' | 'she_rep' | 'first_aider' | 'fire_marshal' | 'construction_manager' | 'inspector' | 'assistant' | 'other';
 
 export interface AuthorisedPerson extends BaseRecord {
   client_account_id: Id;
@@ -87,6 +90,31 @@ export interface InspectorProfile extends BaseRecord {
   fica_done: boolean;
 }
 
+/**
+ * A place of inspection: one typed node of the company's places tree (bi_place,
+ * migration 065). The type comes from the kernel bundle's place types; a root
+ * place is also the company's site (the server keeps a bi_site with the same id).
+ */
+export interface Place extends BaseRecord {
+  client_account_id: Id;
+  parent_id: Id | null;
+  place_type: string;
+  /** The person's own name for the type (for example "Pump station"), shown instead of the kernel label. */
+  custom_type_label: string | null;
+  name: string;
+  address: string | null;
+  gps_lat: number | null;
+  gps_lng: number | null;
+  responsible_person: string | null;
+  /** A whole number, as the File's generator takes it; no bands are invented. */
+  headcount: number | null;
+  /** File department code (hsf_department) for a department place. */
+  department_code: string | null;
+  /** Departments this place serves (ids of department places), for places shared between departments. */
+  linked_department_ids: Id[];
+  archived_at: string | null;
+}
+
 export interface Site extends BaseRecord {
   client_account_id: Id;
   name: string;
@@ -116,6 +144,10 @@ export interface Template extends BaseRecord {
   category: string;
   section_f_element_code: string | null;
   description: string | null;
+  /** Kernel templates: 'register' (a Section F register) or 'industry' (an industry walkthrough). */
+  template_kind?: 'register' | 'industry' | 'tenant';
+  industry_code?: string | null;
+  kernel_version?: string | null;
 }
 export interface TemplateItem extends BaseRecord {
   template_id: Id;
@@ -123,6 +155,8 @@ export interface TemplateItem extends BaseRecord {
   section_label: string | null;
   prompt: string;
   kernel_ref: string | null;
+  /** Where the line came from in the kernel (for example guidance:HSF-F-02#common_gaps[1]). */
+  source_ref?: string | null;
 }
 
 export interface Inspection extends BaseRecord {
@@ -137,11 +171,15 @@ export interface Inspection extends BaseRecord {
   started_at: string | null;
   submitted_at: string | null;
   device_id: string | null;
+  /** The exact place inspected (any node of the places tree); site_id is its root. */
+  place_id: Id | null;
 }
 
 export interface Area extends BaseRecord {
   inspection_id: Id;
   room_id: Id | null;
+  /** The place walked as this area (a child of the inspected place), or null for an ad hoc area. */
+  place_id: Id | null;
   label: string;
   ordinal: number;
 }
@@ -166,7 +204,65 @@ export interface Annotation {
   label: string;
 }
 
-export interface Photo extends BaseRecord {
+/**
+ * Evidence file management fields shared by photos and voice notes
+ * (docs/bee-inspect/p4/evidence-storage.md). The bytes are content addressed:
+ * the SHA 256 is the identity of the blob, a repeat of the same bytes is stored
+ * once. A correction never overwrites: it is a new version (a new record) that
+ * points at the one it supersedes and at the first version (the root).
+ */
+export interface EvidenceMeta {
+  evidence_version: number;
+  root_evidence_id: Id | null;
+  supersedes_id: Id | null;
+  /** tenant/company/place path/inspection/item/evidence id: the logical path people browse. */
+  canonical_path: string | null;
+  place_id: Id | null;
+  template_item_id: Id | null;
+  device_id: string | null;
+  tags: string[];
+  /** Retention class of the Section F element the inspection files into (SPEC B6.1.4), or null. */
+  retention_class: string | null;
+  /** Set only by Care Net or the company admin on the server; the phone respects it. */
+  legal_hold: boolean;
+  sidecar_sha256: string | null;
+  /** Local only: the derived copies on this phone and the upload state. */
+  _thumb_uri?: string | null;
+  _web_uri?: string | null;
+  _upload?: UploadState | null;
+}
+
+/** Resumable, chunked upload state of one blob (src/lib/upload-plan.ts). */
+export interface UploadState {
+  session_id: string | null;
+  sha256: string;
+  size_bytes: number;
+  chunk_bytes: number;
+  done: number[];
+  verified: boolean;
+  verified_sha256: string | null;
+  attempts: number;
+  last_error: string | null;
+}
+
+/** A content addressed blob on this phone (local only; the server keeps bi_evidence_blob). */
+export interface BlobRecord extends BaseRecord {
+  /** id is the SHA 256 of the bytes. */
+  sha256: string;
+  client_account_id: Id;
+  size_bytes: number;
+  mime_type: string;
+  local_uri: string;
+  /** How many evidence versions point at these bytes. */
+  refs: number;
+  variant: 'original' | 'thumb' | 'web';
+  derived_from: string | null;
+  exif_stripped: boolean;
+  uploaded: boolean;
+  verified_at: string | null;
+}
+
+export interface Photo extends BaseRecord, EvidenceMeta {
   inspection_id: Id;
   area_id: Id | null;
   finding_id: Id | null;
@@ -190,7 +286,7 @@ export interface Photo extends BaseRecord {
   _local_uri: string;
 }
 
-export interface VoiceNote extends BaseRecord {
+export interface VoiceNote extends BaseRecord, EvidenceMeta {
   inspection_id: Id;
   area_id: Id | null;
   finding_id: Id | null;
@@ -310,6 +406,8 @@ export interface Subsidy extends BaseRecord {
 /** Every kind the local store holds, with its record type. */
 export interface KindMap {
   company: Company;
+  place: Place;
+  blob: BlobRecord;
   person: AuthorisedPerson;
   registration: Registration;
   qualification: Qualification;
@@ -339,7 +437,7 @@ export interface KindMap {
 export type Kind = keyof KindMap;
 
 export const KINDS: readonly Kind[] = [
-  'company', 'person', 'registration', 'qualification', 'consent', 'inspector',
+  'company', 'place', 'blob', 'person', 'registration', 'qualification', 'consent', 'inspector',
   'site', 'department', 'building', 'room', 'template', 'template_item',
   'inspection', 'area', 'finding', 'photo', 'voice_note', 'transcript', 'risk', 'action', 'equipment',
   'report', 'wallet', 'ledger', 'subsidy',
@@ -347,6 +445,7 @@ export const KINDS: readonly Kind[] = [
 
 /** The bi_ table each synced kind is written to (capture rows go straight to PostgREST under RLS). */
 export const TABLE_OF: Partial<Record<Kind, string>> = {
+  place: 'bi_place',
   site: 'bi_site',
   department: 'bi_department',
   building: 'bi_building',

@@ -10,6 +10,7 @@ import { Button, Card, Field, KeyValue, ListRow, Notice, Pill, Screen, SectionTi
 import { useInspection } from '@/features/inspection';
 import { formatDate, formatDateTime, plural } from '@/lib/dates';
 import { missingText } from '@/lib/gates';
+import { pathOf } from '@/lib/places';
 import { riskScore } from '@/lib/risk';
 import { space } from '@/theme/tokens';
 
@@ -19,13 +20,13 @@ export default function InspectionScreen() {
   const [newArea, setNewArea] = useState('');
   if (!x.inspection) return <Screen><Notice tone="warning">This inspection is not on this phone.</Notice></Screen>;
   const { inspection, template, items, areas, findings, photos, voiceNotes, risks, actions, violations, report, store } = x;
-  const site = store.get('site', inspection.site_id);
+  const placePath = pathOf(store.list('place'), inspection.place_id ?? inspection.site_id).map((p) => p.name).join(' › ');
   const readOnly = inspection.status !== 'planned' && inspection.status !== 'in_progress';
   const itemById = new Map(items.map((i) => [i.id, i]));
 
   const addArea = async () => {
     if (!newArea.trim()) return;
-    await store.create('area', { id: store.id(), inspection_id: inspection.id, room_id: null, label: newArea.trim(), ordinal: areas.length + 1 });
+    await store.create('area', { id: store.id(), inspection_id: inspection.id, room_id: null, place_id: inspection.place_id, label: newArea.trim(), ordinal: areas.length + 1 });
     setNewArea('');
   };
 
@@ -38,10 +39,10 @@ export default function InspectionScreen() {
           onPress={() => router.push({ pathname: '/inspection/[id]/draft', params: { id: inspection.id } })}
         />
       }>
-      <Stack.Screen options={{ title: template?.code ?? 'Inspection' }} />
+      <Stack.Screen options={{ title: 'Inspection' }} />
       <Card>
         <Txt variant="bodyStrong">{inspection.title}</Txt>
-        <KeyValue label="Site" value={site?.name ?? ''} />
+        <KeyValue label="Place" value={placePath} />
         <KeyValue label="Template" value={template?.name ?? ''} />
         <KeyValue label="Section F register" value={template?.section_f_element_code ?? 'To be mapped'} />
         <KeyValue label="Started" value={formatDateTime(inspection.started_at)} />
@@ -88,7 +89,7 @@ export default function InspectionScreen() {
       </Card>
       {!readOnly ? (
         <View style={{ gap: space.sm }}>
-          <Field label="Add another area" value={newArea} onChangeText={setNewArea} placeholder="For example: scaffold bay 15" />
+          <Field label="Add another area" value={newArea} onChangeText={setNewArea} placeholder="For example: loading bay 2" />
           <Button title="Add area" icon="plus" kind="secondary" compact disabled={!newArea.trim()} onPress={addArea} />
         </View>
       ) : null}

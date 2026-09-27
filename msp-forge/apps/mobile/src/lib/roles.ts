@@ -10,6 +10,8 @@ export const PERSON_ROLE_LABEL: Record<PersonRole, string> = {
   first_aider: 'First aider',
   fire_marshal: 'Fire marshal',
   construction_manager: 'Construction manager',
+  inspector: 'Inspector',
+  assistant: 'Inspection assistant',
   other: 'Other role',
 };
 

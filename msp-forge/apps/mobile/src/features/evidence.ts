@@ -4,9 +4,11 @@
 
 import * as Crypto from 'expo-crypto';
 import { Directory, File, Paths } from 'expo-file-system';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import { Platform } from 'react-native';
 
+import { jpegHasMetadata, stripMetadata } from '@/lib/evidence-store';
 import { sealInput, type SealFields } from '@/lib/seal';
 
 const toHex = (buf: ArrayBuffer) => Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('');
@@ -40,6 +42,71 @@ export async function keepFile(uri: string, inspectionId: string, fileName: stri
   if (dest.exists) dest.delete();
   new File(uri).copySync(dest);
   return dest.uri;
+}
+
+/**
+ * Keeps the bytes in the phone's content addressed store:
+ * documents/cas/<ab>/<cd>/<sha256>.<ext>. The same bytes are kept once; a
+ * second capture of identical bytes reuses the file (dedupe).
+ */
+export async function keepBlob(uri: string, sha256: string, ext: string): Promise<{ uri: string; existed: boolean }> {
+  if (Platform.OS === 'web') return { uri, existed: false };
+  const dir = new Directory(Paths.document, 'cas', sha256.slice(0, 2), sha256.slice(2, 4));
+  if (!dir.exists) dir.create({ intermediates: true, idempotent: true });
+  const dest = new File(dir, `${sha256}.${ext}`);
+  if (dest.exists) return { uri: dest.uri, existed: true };
+  new File(uri).copySync(dest);
+  return { uri: dest.uri, existed: false };
+}
+
+export interface DerivedCopy {
+  variant: 'thumb' | 'web';
+  uri: string;
+  sha256: string;
+  size_bytes: number;
+  exif_stripped: boolean;
+}
+
+/** Widths of the derived copies: a list thumbnail and a copy fit for the web desk and shared links. */
+export const DERIVED_WIDTH = { thumb: 320, web: 1600 } as const;
+
+/**
+ * The thumbnail and the web optimised copy of a photo, re encoded as JPEG
+ * (which drops the camera metadata); each is checked and stripped again if a
+ * metadata segment survived. The original is never touched. Null when the
+ * phone cannot make them (they are made again later; the original is enough).
+ */
+export async function deriveCopies(uri: string): Promise<DerivedCopy[] | null> {
+  try {
+    const out: DerivedCopy[] = [];
+    for (const variant of ['thumb', 'web'] as const) {
+      const ref = await ImageManipulator.manipulate(uri).resize({ width: DERIVED_WIDTH[variant] }).renderAsync();
+      const saved = await ref.saveAsync({ compress: variant === 'thumb' ? 0.6 : 0.8, format: SaveFormat.JPEG });
+      let bytes = await readBytes(saved.uri);
+      let stripped = true;
+      if (jpegHasMetadata(bytes)) {
+        bytes = stripMetadata(bytes, 'image/jpeg') as Uint8Array<ArrayBuffer>;
+        stripped = !jpegHasMetadata(bytes);
+        if (Platform.OS !== 'web') new File(saved.uri).write(bytes);
+      }
+      const sha = await sha256Hex(bytes);
+      const kept = Platform.OS === 'web' ? { uri: saved.uri } : await keepBlob(saved.uri, sha, 'jpg');
+      out.push({ variant, uri: kept.uri, sha256: sha, size_bytes: bytes.length, exif_stripped: stripped });
+    }
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+/** Writes the metadata sidecar beside the evidence (documents/sidecars/<id>.json). The web preview keeps its hash only. */
+export async function writeSidecar(evidenceId: string, json: string): Promise<void> {
+  if (Platform.OS === 'web') return;
+  const dir = new Directory(Paths.document, 'sidecars');
+  if (!dir.exists) dir.create({ intermediates: true, idempotent: true });
+  const f = new File(dir, `${evidenceId}.json`);
+  if (f.exists) return; // a sidecar is written once per version, never changed
+  f.write(json);
 }
 
 export interface Fix {

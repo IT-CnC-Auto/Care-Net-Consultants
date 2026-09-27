@@ -5,14 +5,17 @@ import { View } from 'react-native';
 import { BrandBar } from '@/components/brand-bar';
 import { Button, Card, ListRow, Pill, Screen, SectionTitle, Txt } from '@/components/ui';
 import { useQueueSummary, useRecords } from '@/data/hooks';
+import { companyStorage } from '@/features/capture';
 import { useMe } from '@/features/inspection';
 import { LOCKED_FOOTER } from '@/lib/constants';
 import { COMPANY_STATUS_LABEL, expiryState, INSPECTOR_STATUS_LABEL } from '@/lib/gates';
 import { space } from '@/theme/tokens';
 
 export default function AccountScreen() {
-  const { app, profile, inspector, company, qualifications, today } = useMe();
-  const persons = useRecords('person');
+  const { app, store, profile, inspector, company, companyId, qualifications, today } = useMe();
+  const persons = useRecords('person', (p) => p.client_account_id === companyId);
+  const companies = store.list('company').length;
+  const meter = companyId ? companyStorage(store, companyId) : null;
   const consents = useRecords('consent');
   const { summary } = useQueueSummary();
   const alerts = qualifications.filter((q) => ['due_60', 'due_30', 'due_7', 'expired'].includes(expiryState(q.expires_on, today))).length;
@@ -37,6 +40,9 @@ export default function AccountScreen() {
         <Card style={{ paddingVertical: 0 }}>
           <ListRow icon="domain" title="Organisation profile" subtitle={company ? `${company.legal_name} · ${COMPANY_STATUS_LABEL[company.onboarding_status]}` : 'Not started'} onPress={() => router.push('/account/organisation')} />
           <ListRow icon="account-tie-outline" title="Authorised persons" subtitle={`${persons.length} people with 16(1), 16(2) and health and safety roles`} onPress={() => router.push('/account/persons')} />
+          <ListRow icon="swap-horizontal" title="Companies" subtitle={`${companies} on this phone · switch or search`} onPress={() => router.push('/switcher')} />
+          <ListRow icon="domain-plus" title="Register a company" subtitle="Company, then places, then people" onPress={() => router.push('/register')} />
+          <ListRow icon="folder-image" title="Evidence and storage" subtitle={meter ? meter.text : 'Photos and voice notes'} onPress={() => router.navigate('/evidence')} />
         </Card>
 
         <SectionTitle>You as inspector</SectionTitle>

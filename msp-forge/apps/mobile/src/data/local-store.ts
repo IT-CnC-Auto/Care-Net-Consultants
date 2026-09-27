@@ -5,7 +5,7 @@ import * as SQLite from 'expo-sqlite';
 
 import type { SyncItem } from '@/lib/sync-queue';
 
-import type { LocalStore } from './local-store.types';
+import type { LocalStore, StoreSearch } from './local-store.types';
 
 const SCHEMA = `
 PRAGMA journal_mode = WAL;
@@ -32,8 +32,32 @@ export async function openLocalStore(mode: 'demo' | 'live'): Promise<LocalStore>
   const db = await SQLite.openDatabaseAsync(name);
   await db.execAsync(SCHEMA);
 
+  // Full text search: FTS5 is compiled into expo-sqlite unless a build turns it
+  // off (app.json sets enableFTS). If the table cannot be made, the app falls
+  // back to its own in memory index (src/lib/search-index.ts).
+  let search: StoreSearch | undefined;
+  try {
+    await db.execAsync("CREATE VIRTUAL TABLE IF NOT EXISTS search_fts USING fts5(doc_id UNINDEXED, title, tags, body, tokenize = 'unicode61 remove_diacritics 2');");
+    search = {
+      engine: 'fts5',
+      async reindex(docs) {
+        await db.withTransactionAsync(async () => {
+          await db.runAsync('DELETE FROM search_fts');
+          for (const d of docs) await db.runAsync('INSERT INTO search_fts (doc_id, title, tags, body) VALUES (?, ?, ?, ?)', d.id, d.title, d.tags, d.body);
+        });
+      },
+      async query(match, limit) {
+        const rows = await db.getAllAsync<{ doc_id: string }>('SELECT doc_id FROM search_fts WHERE search_fts MATCH ? ORDER BY bm25(search_fts, 0.0, 3.0, 2.0, 1.0) LIMIT ?', match, limit);
+        return rows.map((r) => r.doc_id);
+      },
+    };
+  } catch {
+    search = undefined;
+  }
+
   return {
     name,
+    search,
     async loadAll() {
       const rows = await db.getAllAsync<{ kind: string; id: string; data: string }>('SELECT kind, id, data FROM records');
       return rows.map((r) => ({ kind: r.kind, id: r.id, data: JSON.parse(r.data) as Record<string, unknown> }));
@@ -72,6 +96,7 @@ export async function openLocalStore(mode: 'demo' | 'live'): Promise<LocalStore>
     },
     async wipe() {
       await db.execAsync('DELETE FROM records; DELETE FROM sync_queue; DELETE FROM kv;');
+      if (search) await db.execAsync('DELETE FROM search_fts;');
     },
   };
 }
