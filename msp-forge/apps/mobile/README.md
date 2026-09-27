@@ -1,56 +1,27 @@
-# Welcome to your Expo app 👋
+# Bee-Inspect phone app
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Care Net's health and safety inspection and risk assessment app for competent persons: walk the site room by room, capture findings, sealed photos, voice notes and 5 x 5 risks offline, draft the report (template or AI, paid in rand from the AI Wallet), sign after step up MFA, and Issue into Section F of the free Health and Safety File. Expo SDK 57, Expo Router, TypeScript. Phase P4; full notes, checks, stubs and screenshots in [docs/bee-inspect/p4/index.md](../../docs/bee-inspect/p4/index.md).
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run
 
 ```bash
-npm run reset-project
+npm install
+npx expo start      # Expo Go (SDK 57) or press w for the web preview; choose "Try the demo"
+npm test            # Jest unit tests (src/**/__tests__/*.spec.ts)
+npx tsc --noEmit    # type check
+npx expo lint       # lint
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The demo needs no backend: fictitious Rietvlei Civils and Building data, any six digit code passes MFA. For live mode copy `.env.example` to `.env.local` and set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (public values only; never a service role key).
 
-### Other setup steps
+Android preview build (APK, internal): `npx eas-cli build --profile preview --platform android`, with the two variables set in the EAS preview environment.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Layout
 
-## Learn more
+- `src/app/`: routes only (Expo Router). Sign in, MFA, unlock and problem screens at the top; everything after sign in under `(app)/`, with the tabs in `(app)/(tabs)/`.
+- `src/lib/`: pure rules shared with the server's arithmetic (rand, wallet, risk bands, gates, step up, sync queue, seal, report skeleton), unit tested.
+- `src/data/`: the offline store (SQLite on the phone, localStorage on the web preview), the data store and the sync engine.
+- `src/backend/`: the demo backend, the Supabase backend and the secure session storage.
+- `src/features/`, `src/components/`, `src/theme/`: capture helpers, UI building blocks and the design tokens (one file).
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Read `AGENTS.md` before changing Expo APIs: use the SDK 57 docs and `npx expo install` for dependencies.
