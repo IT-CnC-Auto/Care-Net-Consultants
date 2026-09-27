@@ -170,6 +170,9 @@ test('config: recruitmentPortalUrl is null and marked pending', () => {
   const c = ctx.window.CNC_CONFIG;
   assert.equal(c.recruitmentPortalUrl, null);
   assert.equal(c.pending.recruitmentPortalUrl, true);
+  // Contract 16.8, decision 1.8 (27/09/2026): the confirmed Bee-Matched address, held until the page is live.
+  assert.equal(c.recruitmentPortalFutureUrl, 'https://www.carenetconsultants.co.za/bee_matched_Recruitment');
+  assert.ok(!/carenetconsultants\.co\.za\/bee-matched\b/.test(read('vercel/js/cnc-config.js')), 'the superseded /bee-matched address is gone');
   const ctx2 = { window: { CNC_CONFIG_OVERRIDES: { recruitmentPortalUrl: 'https://portal.example.invalid/' } } };
   vm.runInNewContext(read('vercel/js/cnc-config.js'), ctx2);
   assert.equal(ctx2.window.CNC_CONFIG.recruitmentPortalUrl, 'https://portal.example.invalid/');
@@ -302,9 +305,14 @@ test('other pages: the recruitment call to action with the WhatsApp fallback', (
 });
 
 test('pages: no invented recruitment portal address', () => {
+  // The only address allowed is the one the Director confirmed (27/09/2026, contract 16.8),
+  // held once in cnc-config.js as recruitmentPortalFutureUrl; pages read it from there.
+  const CONFIRMED = "recruitmentPortalFutureUrl: 'https://www.carenetconsultants.co.za/bee_matched_Recruitment'";
+  const cfg = read('vercel/js/cnc-config.js');
+  assert.equal(cfg.split(CONFIRMED).length - 1, 1, 'the confirmed address is held once, as recruitmentPortalFutureUrl');
   for (const p of ['vercel/hsf-builder.html', 'vercel/hsf-sample.html', 'vercel/health-and-safety-file.html', 'vercel/hsf-staff.html', 'vercel/js/cnc-config.js']) {
-    const h = read(p);
+    const h = read(p).split(CONFIRMED).join('').replace(/https:\/\/www\.carenetconsultants\.co\.za\/bee_matched_Recruitment(?=\s*\n)/, '');
     assert.doesNotMatch(h, /https?:\/\/[^"'\s]*recruit/i, p);
-    assert.doesNotMatch(h, /https?:\/\/[^"'\s]*be-?matched/i, p);
+    assert.doesNotMatch(h, /https?:\/\/[^"'\s]*bee?-?_?matched/i, p);
   }
 });

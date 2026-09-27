@@ -1,14 +1,17 @@
-// CNC HSF FORGE | BI-EDGE-01 v1.0.0 | Bee-Inspect 5 x 5 risk matrix 26/09/2026
+// CNC HSF FORGE | BI-EDGE-01 v1.1.0 | Bee-Inspect 5 x 5 risk matrix 27/09/2026
 //
-// The same rules as migration 060 (bi_risk_score, bi_risk_band,
-// bi_risk_top_control and the bi_risk constraints). Plain ES module; Deno and
-// Node 22.
+// The same rules as migrations 060 and 064 (bi_risk_score, bi_risk_band,
+// bi_risk_band_label, bi_risk_band_colour, bi_risk_assess, bi_risk_top_control
+// and the bi_risk constraints). Plain ES module; Deno and Node 22.
 //
-// Score = likelihood x severity, each 1 to 5. Bands (Care Net's working bands,
-// to be confirmed against the Care Net methodology): 1 to 4 low, 5 to 9
-// medium, 10 to 15 high, 16 to 25 extreme. Controls sit on the hierarchy of
-// controls, highest first: elimination, substitution, engineering,
-// administrative, ppe. A residual score never exceeds the inherent score.
+// Score = likelihood x severity, each 1 to 5. Bands, locked by the Director on
+// 27/09/2026 (decision 1.2; never other cut points): 1 to 4 Low (green), 5 to 9
+// Medium (amber), 10 to 15 High (orange), 16 to 25 Extreme (red). The number
+// and the label are always shown together. BAND_TOKENS holds the colours for
+// the app and the site (the fills are the ones of the sample report). Controls
+// sit on the hierarchy of controls, highest first: elimination, substitution,
+// engineering, administrative, ppe. A residual score never exceeds the
+// inherent score.
 
 export const HIERARCHY = Object.freeze(['elimination', 'substitution', 'engineering', 'administrative', 'ppe']);
 export const BANDS = Object.freeze([
@@ -17,6 +20,18 @@ export const BANDS = Object.freeze([
   { band: 'high', from: 10, to: 15 },
   { band: 'extreme', from: 16, to: 25 },
 ]);
+
+// Colour tokens (decision 1.2). colour is the token name the database returns
+// (bi_risk_band_colour); fill is the cell or badge background, ink the text on
+// it, accent a stronger shade for a dot, border or text on white. Every accent
+// keeps at least 4.5:1 against white and ink at least 7:1 on its fill.
+const INK = '#1a1a1a';
+export const BAND_TOKENS = Object.freeze({
+  low: Object.freeze({ band: 'low', label: 'Low', colour: 'green', fill: '#dff1e5', accent: '#1e7a3c', ink: INK }),
+  medium: Object.freeze({ band: 'medium', label: 'Medium', colour: 'amber', fill: '#fbeccb', accent: '#9a6200', ink: INK }),
+  high: Object.freeze({ band: 'high', label: 'High', colour: 'orange', fill: '#f9d2b4', accent: '#b4470f', ink: INK }),
+  extreme: Object.freeze({ band: 'extreme', label: 'Extreme', colour: 'red', fill: '#f6c3c5', accent: '#b3261e', ink: INK }),
+});
 
 const inRange = (n) => Number.isInteger(n) && n >= 1 && n <= 5;
 
@@ -28,6 +43,29 @@ export function riskBand(score) {
   if (!Number.isInteger(score)) return null;
   const b = BANDS.find((x) => score >= x.from && score <= x.to);
   return b ? b.band : null;
+}
+
+export function riskBandLabel(score) {
+  const b = riskBand(score);
+  return b ? BAND_TOKENS[b].label : null;
+}
+
+export function riskBandColour(band) {
+  return BAND_TOKENS[band] ? BAND_TOKENS[band].colour : null;
+}
+
+// A rating with its score, band, label and colour together (bi_risk_assess).
+export function assessRisk(likelihood, severity) {
+  const score = riskScore(likelihood, severity);
+  if (score === null) return null;
+  const band = riskBand(score);
+  return { likelihood, severity, score, band, label: BAND_TOKENS[band].label, colour: BAND_TOKENS[band].colour };
+}
+
+// "4 x 4 = 16 Extreme": the number is never shown without its label.
+export function riskRatingText(likelihood, severity) {
+  const a = assessRisk(likelihood, severity);
+  return a ? `${likelihood} x ${severity} = ${a.score} ${a.label}` : null;
 }
 
 export function topControl(controls) {
@@ -69,11 +107,11 @@ export function validateRisk(r) {
 }
 
 export function describeRisk(r) {
-  const inherent = riskScore(r.inherent_likelihood, r.inherent_severity);
-  const residual = riskScore(r.residual_likelihood, r.residual_severity);
+  const inherent = assessRisk(r.inherent_likelihood, r.inherent_severity);
+  const residual = assessRisk(r.residual_likelihood, r.residual_severity);
   return {
-    inherent: { likelihood: r.inherent_likelihood, severity: r.inherent_severity, score: inherent, band: riskBand(inherent) },
-    residual: residual === null ? null : { likelihood: r.residual_likelihood, severity: r.residual_severity, score: residual, band: riskBand(residual) },
+    inherent: inherent || { likelihood: r.inherent_likelihood, severity: r.inherent_severity, score: null, band: null, label: null, colour: null },
+    residual,
     top_control: topControl(r.controls),
   };
 }

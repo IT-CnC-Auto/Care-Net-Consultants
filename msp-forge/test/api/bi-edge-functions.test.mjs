@@ -220,6 +220,25 @@ test('wallet-estimate passes the checked input to bi_wallet_estimate and answers
   assert.ok(!('tokens' in body), 'tokens are never shown');
 });
 
+test('wallet-estimate shows the remaining balance before the run and warns when the estimate exceeds it (decision 1.3)', async () => {
+  const f = fakeFetch([authOk, rpc('bi_wallet_estimate', () => ({ usage_event_id: 'ue2', estimate_cents: 5994, available_cents: 4006,
+    remaining_balance_cents: 4006, balance_after_cents: 0, estimate_exceeds_balance: true, allowed: false, reason: 'wallet_empty',
+    free_photos: 0, vat_mode: 'to_be_confirmed' }))]);
+  const input = { wallet_id: WALLET, kind: 'ai_draft', tokens_in: 540000, idempotency_key: 'est:warn:0001' };
+  const { status, body } = await read(await (await handler('wallet-estimate'))(post('e', input, asUser), deps(f)));
+  assert.equal(status, 200);
+  assert.equal(body.remaining_balance, 'R40,06');
+  assert.equal(body.balance_after, 'R0,00');
+  assert.equal(body.estimate, 'R59,94');
+  assert.equal(body.estimate_exceeds_balance, true);
+  assert.equal(body.reason, 'wallet_empty');
+  // An older database answer without the new fields still formats safely.
+  const old = fakeFetch([authOk, rpc('bi_wallet_estimate', () => ({ usage_event_id: 'ue3', estimate_cents: 0, available_cents: 100, allowed: true }))]);
+  const r2 = await read(await (await handler('wallet-estimate'))(post('e', { ...input, idempotency_key: 'est:warn:0002' }, asUser), deps(old)));
+  assert.equal(r2.status, 200);
+  assert.equal(r2.body.remaining_balance, undefined);
+});
+
 test('wallet-estimate refuses a bad kind, a short key or negative tokens before the database', async () => {
   const f = fakeFetch([authOk]);
   const res = await read(await (await handler('wallet-estimate'))(post('e', { wallet_id: WALLET, kind: 'gold', tokens_in: -1, idempotency_key: 'x' }, asUser), deps(f)));

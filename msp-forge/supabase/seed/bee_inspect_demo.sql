@@ -10,7 +10,7 @@
 -- the demonstration kernel chunks (which are NOT legal text). Every name carries
 -- "(fictitious)" or DEMO so it can never be mistaken for a real record.
 --
--- Needs migrations 001 to 063. Run it in one transaction:
+-- Needs migrations 001 to 064. Run it in one transaction:
 --   psql --single-transaction -v ON_ERROR_STOP=1 -f supabase/seed/bee_inspect_demo.sql
 -- It is idempotent: fixed ids with "on conflict do nothing", and the flow in
 -- step 9 runs only while the demonstration report does not exist yet.
@@ -28,6 +28,10 @@
 --   demonstration kernel, the company's free File, one inspection with
 --   findings, photos, voice notes, risks and corrective actions, a signed and
 --   Issued report filed into Section F, and a wallet with ledger entries.
+--   Contract 16.8 (migration 064): the company is a verified Care Net client
+--   (hsf_client_verification) with a verified count of 64 medicals in the
+--   rolling 12 months (bi_medicals_volume, above the threshold of 50), recorded
+--   before the report is Issued, so the report files into Section F.
 
 -- 1. People (fictitious) ----------------------------------------------------------------------
 
@@ -45,6 +49,12 @@ values ('b1a00000-0000-4000-8000-000000000002', 'Rietvlei Civils and Building (P
         'b1a00000-0000-4000-8000-000000000013')
 on conflict (id) do nothing;
 
+-- The File's own Care Net client flag (migration 052), as a sales executive records it.
+insert into hsf_client_verification (client_account_id, status, method, evidence_ref, requested_at, verified_by, verified_at)
+values ('b1a00000-0000-4000-8000-000000000002', 'verified', 'sales_executive', 'DEMO-CLIENT-REGISTER-0001 (fictitious)', now(),
+        'seed (fictitious sales executive)', now())
+on conflict (client_account_id) do nothing;
+
 insert into bi_tenant (id, name, voice_note_policy)
 values ('b1a00000-0000-4000-8000-000000000001', 'Rietvlei Civils and Building (fictitious demonstration tenant)', 'strict')
 on conflict (id) do nothing;
@@ -55,6 +65,24 @@ values ('b1a00000-0000-4000-8000-000000000002', 'Rietvlei Civils and Building (P
         'DEMO/0000/000000/07', 'in_business', 'Sipho Nkosi, Managing Director (fictitious)', 'Naledi Dlamini, SHE Manager (fictitious)',
         'Naledi Dlamini (fictitious)', true, 'active', now(), 'seed')
 on conflict (client_account_id) do nothing;
+
+-- Authorised persons (migration 064): the section 16(1) and 16(2) persons and a
+-- construction H&S officer with a professional registration on file.
+insert into bi_authorised_person (id, client_account_id, full_name, role, role_title, email, appointed_on, created_by) values
+  ('b1a00000-0000-4000-8000-00000000003a', 'b1a00000-0000-4000-8000-000000000002', 'Sipho Nkosi (fictitious)', 's16_1',
+   'Managing Director', null, current_date - 700, 'seed'),
+  ('b1a00000-0000-4000-8000-00000000003b', 'b1a00000-0000-4000-8000-000000000002', 'Naledi Dlamini (fictitious)', 's16_2',
+   'SHE Manager', 'naledi.admin.demo@example.invalid', current_date - 400, 'seed'),
+  ('b1a00000-0000-4000-8000-00000000003c', 'b1a00000-0000-4000-8000-000000000002', 'Lerato Mahlangu (fictitious)', 'construction_hs_officer',
+   'Construction Health and Safety Officer', null, current_date - 200, 'seed')
+on conflict (id) do nothing;
+insert into bi_person_credential (id, authorised_person_id, client_account_id, credential_kind, title, issuer, number, issued_on, expires_on,
+                                  certificate_path, status, verified_by, verified_at, created_by) values
+  ('b1a00000-0000-4000-8000-00000000003d', 'b1a00000-0000-4000-8000-00000000003c', 'b1a00000-0000-4000-8000-000000000002',
+   'professional_registration', 'Construction Health and Safety Officer (fictitious)', 'SACPCMP (demonstration record)', 'DEMO-CHSO-0001',
+   current_date - 200, current_date + 530,
+   'b1a00000-0000-4000-8000-000000000002/credentials/b1a00000-0000-4000-8000-00000000003d/demo-chso.pdf', 'verified', 'seed', now(), 'seed')
+on conflict (id) do nothing;
 
 insert into bi_company_subscription (id, tenant_id, client_account_id, plan_code, status, price_cents, wallet_monthly_cents, storage_bytes,
                                      source, external_ref, current_period_start, current_period_end)
@@ -304,6 +332,13 @@ begin
 
   -- Submitted: the Fail rule (photo, corrective action, and voice note under the strict policy) holds.
   update bi_inspection set status = 'submitted' where id = k_insp;
+
+  -- Contract 16.8: a verified rolling 12 month count (64 medicals, more than
+  -- the 50 of rule A), recorded by the service role for a sales executive.
+  perform bi_medicals_volume_record(null, jsonb_build_object(
+    'client_account_id', k_company, 'volume_12m', 64, 'source', 'sales_executive_verified',
+    'evidence_ref', 'DEMO-VOLUME-0001 (fictitious occupational health register extract)',
+    'verified_by', 'Sales executive (fictitious demonstration)'));
 
   -- 8. The report: an assistive draft citing the demonstration kernel, then sign off.
   v_report := bi_report_save_draft(k_insp_auth, k_insp, jsonb_build_object(

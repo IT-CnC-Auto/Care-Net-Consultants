@@ -19,10 +19,11 @@
      2. mcoPortalUrl  MyClinicOnline portal and single sign on address.
                       Pending the MCO interface contract (HSF-3).
      3. recruitmentPortalUrl
-                      Care Net's Bee-Matched recruitment portal address (contract 12.5).
-                      Not known. While it is null, the "Onboard a registered
-                      Health and Safety practitioner" call to action asks a
-                      sales executive on WhatsApp instead.
+                      Care Net's Bee-Matched recruitment portal (contract 12.5).
+                      The address is confirmed (recruitmentPortalFutureUrl) but
+                      the page is not live yet. While it is null, the "Onboard a
+                      registered Health and Safety practitioner" call to action
+                      asks a sales executive on WhatsApp instead.
    ===================================================================== */
 (function (w) {
   'use strict';
@@ -54,15 +55,16 @@
     /* PENDING (HSF-3): MyClinicOnline portal and single sign on address. */
     mcoPortalUrl: null,
 
-    /* Care Net's Bee-Matched recruitment portal (contract 12.5 and 14.3).
-       The Director confirmed the address on 24/09/2026:
-         https://www.carenetconsultants.co.za/bee-matched
-       It is a future page, so the buttons keep the WhatsApp fallback until it
-       is live. TO GO LIVE: set recruitmentPortalUrl to the address below
-       (copy recruitmentPortalFutureUrl). The call to action then opens it with
-       ?source=hsf&need=<signatory|appointment|auditor>&industry=<code>. */
+    /* Care Net's Bee-Matched recruitment portal (contract 12.5, 14.3 and 16.8).
+       The Director confirmed the address on 27/09/2026 (Bee-Inspect P3
+       decision 1.8; it replaces the /bee-matched address of 24/09/2026):
+         https://www.carenetconsultants.co.za/bee_matched_Recruitment
+       It is a future page, so the buttons keep the WhatsApp fallback until the
+       Director says it is live. TO GO LIVE: set recruitmentPortalUrl to the
+       address below (copy recruitmentPortalFutureUrl). The call to action then
+       opens it with ?source=hsf&need=<signatory|appointment|auditor>&industry=<code>. */
     recruitmentPortalUrl: null,
-    recruitmentPortalFutureUrl: 'https://www.carenetconsultants.co.za/bee-matched',
+    recruitmentPortalFutureUrl: 'https://www.carenetconsultants.co.za/bee_matched_Recruitment',
 
     /* Prefix for /api/... calls. Empty means the same origin as the page,
        which is what keeps the pages portable into MCO hosting. */

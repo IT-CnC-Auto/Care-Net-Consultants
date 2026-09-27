@@ -1,5 +1,7 @@
--- CNC HSF FORGE | BI-WAL-01, Bee-Inspect AI Wallet and pricing checks | local test harness only.
--- Proves migration 062 (hsf/BUILD-CONTRACT.md 16, P3; hsf/BEE-INSPECT-BUILD-PROMPT.md B8)
+-- CNC HSF FORGE | BI-WAL-01, BI-DEC-01, Bee-Inspect AI Wallet, pricing and margin checks | local test harness only.
+-- Proves migrations 062 and 064 (hsf/BUILD-CONTRACT.md 16 and 16.8; hsf/BEE-INSPECT-BUILD-PROMPT.md B8;
+-- decisions 1.3 and 1.4: the subsidy ledger, top ups never blocked, the remaining
+-- balance and its warning before every run, and the 20% minimum margin)
 -- with worked numbers in rand: the price formula and its rounding, the charge rule
 -- (actual unless more than the estimate plus 25%), estimate refusals (rates not
 -- confirmed, wallet empty, spend cap), spending oldest expiry first, idempotency,
@@ -110,6 +112,8 @@ insert into bi_rate_card (code, kind, label, usd_zar, status, effective_from, no
 select bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'wallet', 'kind', 'ai_draft', 'tokens_in', 150000, 'tokens_out', 8000,
          'report_id', (select id from bi_report limit 1), 'idempotency_key', 'est:draft:0001')) as e1 \gset
 select pg_temp.ok('estimate: the quality draft of W2 previews R21,09 and is allowed', :'e1'::jsonb @> '{"estimate_cents": 2109, "allowed": true}');
+select pg_temp.ok('decision 1.3: the estimate always shows the remaining balance (R398,20), the balance after the run (R377,11) and no warning',
+  :'e1'::jsonb @> '{"remaining_balance_cents": 39820, "balance_after_cents": 37711, "estimate_exceeds_balance": false}');
 select pg_temp.ok('the same estimate key returns the same usage event',
   bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'wallet', 'kind', 'ai_draft', 'tokens_in', 1, 'idempotency_key', 'est:draft:0001')) ->> 'usage_event_id'
     = :'e1'::jsonb ->> 'usage_event_id');
@@ -135,11 +139,19 @@ select bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'wallet', 
 select pg_temp.ok('estimate: 1 000 000 fast tokens in preview R11,10', (:'e2'::jsonb ->> 'estimate_cents')::int = 1110);
 select pg_temp.ok('an actual of 2 000 000 tokens (R22,20, more than 25% above) charges only the estimate R11,10',
   bi_wallet_charge((:'e2'::jsonb ->> 'usage_event_id')::uuid, '{"idempotency_key":"chg:over:0001","tokens_in":2000000}')
-    @> '{"actual_cents": 2220, "charged_cents": 1110}');
+    @> '{"actual_cents": 2220, "charged_cents": 1110, "subsidy_cents": 1110}');
+select pg_temp.ok('the estimate cap difference (R11,10) is in the subsidy ledger as estimate_cap, carried by Care Net',
+  (select count(*) from bi_subsidy_ledger where job_id = (:'e2'::jsonb ->> 'usage_event_id')::uuid) = 1
+  and (select reason = 'estimate_cap' and estimate_cents = 1110 and actual_cents = 2220 and billable_cents = 1110 and charged_cents = 1110
+              and shortfall_cents = 1110 and user_id = 'b1a00000-0000-4000-8000-000000000011'
+         from bi_subsidy_ledger where job_id = (:'e2'::jsonb ->> 'usage_event_id')::uuid));
 
-select pg_temp.ok('an estimate above the balance is refused as wallet_empty',
+select pg_temp.ok('an estimate above the balance is refused as wallet_empty, with the warning and the remaining balance',
   bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'wallet', 'kind', 'ai_draft', 'tokens_in', 100000000, 'idempotency_key', 'est:empty:0001'))
-    @> '{"allowed": false, "reason": "wallet_empty"}');
+    @> '{"allowed": false, "reason": "wallet_empty", "estimate_exceeds_balance": true, "remaining_balance_cents": 36434, "balance_after_cents": 0}');
+select pg_temp.ok('the same key again repeats the warning and the balance',
+  bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'wallet', 'kind', 'ai_draft', 'idempotency_key', 'est:empty:0001'))
+    @> '{"repeat": true, "estimate_exceeds_balance": true, "remaining_balance_cents": 36434}');
 select pg_temp.refuses('a refused estimate is never charged',
   $q$select bi_wallet_charge((select id from bi_usage_event where estimate_key = 'est:empty:0001'), '{"idempotency_key":"chg:empty:0001"}')$q$, 'never charged');
 select pg_temp.refuses('only the company admin sets the spend cap',
@@ -180,6 +192,22 @@ select pg_temp.ok('the second finds R40,06 left: R40,06 is charged and R19,88 re
   bi_wallet_charge(:'sf2', '{"idempotency_key":"chg:sf:0002","tokens_in":540000}') @> '{"charged_cents": 5994, "shortfall_cents": 1988, "available_cents": 0}');
 select pg_temp.ok('the ledger never goes below zero', bi_wallet_available_cents(:'w2') = 0
   and (select sum(amount_cents) from bi_wallet_ledger where wallet_id = :'w2') = 0);
+select pg_temp.ok('decision 1.3: one subsidy row: balance_exhausted, estimate R59,94, actual R59,94, wallet paid R40,06, Care Net carries R19,88; job, user and company recorded',
+  (select count(*) from bi_subsidy_ledger where wallet_id = :'w2') = 1
+  and (select reason = 'balance_exhausted' and job_id = :'sf2' and job_kind = 'ai_draft' and estimate_cents = 5994 and actual_cents = 5994
+              and billable_cents = 5994 and charged_cents = 4006 and shortfall_cents = 1988
+              and user_id = 'b1a00000-0000-4000-8000-000000000011' and client_account_id = 'b5a00000-0000-4000-8000-000000000002'
+              and tenant_id = 'b1a00000-0000-4000-8000-000000000001' and created_at is not null
+         from bi_subsidy_ledger where wallet_id = :'w2'));
+select pg_temp.ok('the first charge (which fitted the balance) wrote no subsidy', not exists (select 1 from bi_subsidy_ledger where job_id = :'sf1'));
+select pg_temp.ok('a repeated charge returns the same subsidy and writes no second row',
+  bi_wallet_charge(:'sf2', '{"idempotency_key":"chg:sf:0002"}') @> '{"repeat": true, "subsidy_cents": 1988}'
+  and (select count(*) from bi_subsidy_ledger where job_id = :'sf2') = 1);
+select pg_temp.refuses('the subsidy ledger is append only', $q$update bi_subsidy_ledger set shortfall_cents = 1$q$, 'append only');
+select pg_temp.refuses('and never deleted', $q$delete from bi_subsidy_ledger$q$, 'append only');
+select pg_temp.ok('the wallet at R0,00 warns before the next run: remaining balance R0,00, estimate exceeds balance',
+  bi_wallet_estimate(:inspauth, jsonb_build_object('wallet_id', :'w2', 'kind', 'ai_draft', 'tokens_in', 540000, 'idempotency_key', 'est:sf:0003'))
+    @> '{"allowed": false, "reason": "wallet_empty", "remaining_balance_cents": 0, "estimate_exceeds_balance": true}');
 
 -- 6. Automatic top up ------------------------------------------------------------------------------------------------
 
@@ -192,6 +220,13 @@ select pg_temp.ok('at most one attempt per wallet per hour', (select count(*) fr
 select pg_temp.ok('the gateway''s success credits R99,00 for 12 months (automatic top up credit)',
   (bi_wallet_topup_apply(:'w2', 'auto_topup', 'auto:check:0001') ->> 'value_cents')::int = 9900);
 select pg_temp.ok('the small wallet now holds R99,00', bi_wallet_available_cents(:'w2') = 9900);
+select pg_temp.ok('decision 1.3: a prior subsidy never blocks a top up: a R99,00 top up lands in the subsidised wallet',
+  exists (select 1 from bi_subsidy_ledger where wallet_id = :'w2')
+  and (bi_wallet_topup_apply(:'w2', 'topup_99', 'topup:after:subsidy:0001') ->> 'value_cents')::int = 9900);
+select pg_temp.ok('and so does an Ozow top up of R249,00 (R260,00 value) through the receipt path',
+  bi_iap_apply(jsonb_build_object('provider', 'ozow', 'event_id', 'oz-after-subsidy-0001', 'event_type', 'payment',
+    'auth_user_id', :inspauth, 'product_code', 'topup_249', 'client_account_id', 'b5a00000-0000-4000-8000-000000000002')) ->> 'status' = 'applied');
+select pg_temp.ok('the subsidised wallet now holds R99,00 + R99,00 + R260,00 = R458,00', bi_wallet_available_cents(:'w2') = 45800);
 
 -- 7. Receipts, top ups, plans ---------------------------------------------------------------------------------------
 
@@ -262,6 +297,78 @@ select pg_temp.ok('the offline photo is stored', exists (select 1 from bi_photo 
 select pg_temp.ok('the storage meter run reports the line''s level',
   exists (select 1 from jsonb_array_elements(bi_storage_meter_run() -> 'warnings') w where w ->> 'client_account_id' = 'b5a00000-0000-4000-8000-000000000002')
   or (select level from bi_storage_meter where client_account_id = 'b5a00000-0000-4000-8000-000000000002') = 'full');
+
+
+-- 11. Minimum margin 20% (decision 1.4) --------------------------------------------------------------------------------
+
+select pg_temp.ok('worked numbers: a landed cost of R80,00 needs a sell price excluding VAT of at least R100,00 (R80,00 / 0,80)',
+  bi_margin_floor_cents(8000) = 10000 and bi_margin_ok(10000, 8000) and not bi_margin_ok(9999, 8000));
+select pg_temp.ok('the floor rounds up to the cent: landed R80,01 needs R100,02; landed R239,20 needs R299,00',
+  bi_margin_floor_cents(8001) = 10002 and bi_margin_floor_cents(23920) = 29900 and bi_margin_ok(29900, 23920) and not bi_margin_ok(29900, 23921));
+select pg_temp.ok('the minimum is a parameter (20) that cannot be set below 20, and the markup cannot go below 1,25',
+  msp_env_get_int('bi.margin.minimum_pct') = 20
+  and (select min_value from msp_env_parameter where key = 'bi.margin.minimum_pct') = 20
+  and (select min_value from msp_env_parameter where key = 'bi.markup_default') = 1.25);
+select pg_temp.ok('the rate card seed is placeholders: every landed cost to_be_confirmed, so nothing fails spuriously',
+  (select bool_and(landed_cost_status = 'to_be_confirmed' and landed_cost_cents = 0) from bi_rate_card)
+  and not exists (select 1 from bi_margin_check() where result = 'below_floor'));
+select pg_temp.ok('every plan, top up and storage pack has Ozow web, Apple and Google channel rows, and automatic top up a saved card row, all to_be_confirmed',
+  (select count(*) from bi_rate_card_channel) = 22 and (select bool_and(status = 'to_be_confirmed') from bi_rate_card_channel)
+  and (select count(*) from bi_rate_card_channel where code = 'auto_topup' and channel = 'saved_card') = 1);
+select pg_temp.ok('the Ozow web row of every top up carries the Director''s preference note',
+  (select bool_and(note like 'Preferred for top ups%') from bi_rate_card_channel where channel = 'ozow_web' and code like 'topup\_%'));
+select pg_temp.ok('the AI markup (3,0) leaves 66,7%: ok',
+  exists (select 1 from bi_margin_check() where kind = 'ai_markup' and result = 'ok' and margin_pct = 66.7));
+select pg_temp.refuses('a landed cost is not confirmed without components',
+  $q$insert into bi_rate_card (code, kind, label, price_cents, landed_cost_status, status, effective_from) values ('storage_pack', 'storage_pack', 'TEST pack', 10000, 'confirmed', 'confirmed', current_date)$q$,
+  'landed cost components');
+select pg_temp.refuses('landed cost components are whole cents under the known keys only',
+  $q$insert into bi_rate_card (code, kind, label, price_cents, landed_cost_components, status, effective_from) values ('storage_pack', 'storage_pack', 'TEST pack', 10000, '{"lunch": 100}', 'confirmed', current_date)$q$,
+  'bi_rate_card_landed_components_shape');
+select pg_temp.refuses('the guard refuses activating a price below the floor: R99,99 against a landed cost of R80,00',
+  $q$insert into bi_rate_card (code, kind, label, price_cents, landed_cost_components, landed_cost_status, status, effective_from, notes)
+     values ('storage_pack', 'storage_pack', 'TEST pack', 9999, '{"storage": 7500, "gateway_fee": 500}', 'confirmed', 'confirmed', current_date, 'TEST NUMBERS ONLY')$q$,
+  'Below the margin floor: storage_pack sells at R99,99 excluding VAT against a landed cost of R80,00; the lowest price is R100,00');
+insert into bi_rate_card (code, kind, label, price_cents, landed_cost_components, landed_cost_status, status, effective_from, notes)
+values ('storage_pack', 'storage_pack', 'TEST pack', 10000, '{"storage": 7500, "gateway_fee": 500}', 'confirmed', 'confirmed', current_date, 'TEST NUMBERS ONLY');
+select pg_temp.ok('R100,00 against R80,00 is exactly the floor and is accepted: the landed cost is the sum of its components (R80,00)',
+  (select landed_cost_cents from bi_rate_card_current('storage_pack')) = 8000
+  and exists (select 1 from bi_margin_check() where code = 'storage_pack' and channel is null and result = 'ok'
+                and sell_ex_vat_cents = 10000 and landed_cost_cents = 8000 and floor_cents = 10000 and margin_pct = 20.0));
+
+-- Top up channels: a R99,00 top up whose value costs R60,00 of model tokens.
+update bi_rate_card set landed_cost_components = '{"model_tokens": 6000}', landed_cost_status = 'confirmed' where code = 'topup_99';
+select pg_temp.ok('topup_99 with a landed cost of R60,00 keeps the floor on its own (R75,00 needed, R99,00 asked)',
+  exists (select 1 from bi_margin_check() where code = 'topup_99' and channel is null and result = 'ok' and floor_cents = 7500));
+select pg_temp.refuses('a 30% app store cut breaks the floor (R60,00 + R29,70 = R89,70 landed needs R112,13): the Apple channel is refused, naming Ozow web',
+  $q$update bi_rate_card_channel set store_cut_bps = 3000, status = 'confirmed' where code = 'topup_99' and channel = 'apple_app_store'$q$,
+  'Below the margin floor on apple_app_store.*R89,70.*R112,13.*Ozow web');
+update bi_rate_card_channel set gateway_fee_bps = 250, gateway_fee_fixed_cents = 200, status = 'confirmed' where code = 'topup_99' and channel = 'ozow_web';
+update bi_rate_card_channel set store_cut_bps = 1500, status = 'confirmed' where code = 'topup_99' and channel = 'apple_app_store';
+select pg_temp.ok('Ozow web (2,5% + R2,00: R64,48 landed) and a 15% store cut (R74,85 landed) both keep the floor',
+  (select array_agg(channel || ':' || landed_cost_cents || ':' || result order by channel) from bi_margin_check() where code = 'topup_99' and channel in ('ozow_web','apple_app_store'))
+    = array['apple_app_store:7485:ok','ozow_web:6448:ok']);
+update msp_env_parameter set value = '30' where key = 'bi.margin.minimum_pct';
+select pg_temp.ok('bi_margin_check flags a price that falls below a raised floor (30%): the Apple channel is below_floor and the advice is Ozow web',
+  exists (select 1 from bi_margin_check() where code = 'topup_99' and channel = 'apple_app_store' and result = 'below_floor'
+            and advice like 'Sell this top up through Ozow web%')
+  and exists (select 1 from bi_margin_check() where code = 'topup_99' and channel = 'ozow_web' and result = 'ok'));
+select pg_temp.ok('the top up screen offers Ozow web as preferred and withholds the Apple channel',
+  bi_topup_channels('topup_99') @> '[{"channel": "ozow_web", "offer": true, "preferred": true}, {"channel": "apple_app_store", "offer": false, "preferred": false}]');
+update msp_env_parameter set value = '20' where key = 'bi.margin.minimum_pct';
+select pg_temp.refuses('confirming a landed cost that breaks the floor through a confirmed channel is refused',
+  $q$update bi_rate_card set landed_cost_components = '{"model_tokens": 7000}' where code = 'topup_99'$q$, 'Below the margin floor on apple_app_store');
+
+-- A subscription price below the plan's confirmed floor is refused.
+update bi_rate_card set landed_cost_components = '{"model_tokens": 12000, "storage": 3000}', landed_cost_status = 'confirmed' where code = 'extra_company';
+select pg_temp.ok('extra_company at R199,00 against R150,00 landed keeps the floor (R187,50)',
+  exists (select 1 from bi_margin_check() where code = 'extra_company' and channel is null and result = 'ok' and floor_cents = 18750));
+select pg_temp.refuses('a line activated at R150,00 for that plan is refused',
+  $q$insert into bi_company_subscription (tenant_id, client_account_id, plan_code, price_cents, wallet_monthly_cents, storage_bytes)
+     values ('b1a00000-0000-4000-8000-000000000001', 'b6a00000-0000-4000-8000-000000000002', 'extra_company', 15000, 10000, 10737418240)$q$,
+  'Below the margin floor: the extra_company line at R150,00');
+select pg_temp.refuses('clients never read the landed cost columns of the rate card',
+  $q$do $d$ begin perform set_config('role', 'authenticated', true); perform landed_cost_cents from bi_rate_card limit 1; end $d$$q$, 'permission denied');
 
 do $$ begin raise notice 'bi_wallet_checks: all checks passed. Rolling back the test data.'; end $$;
 rollback;

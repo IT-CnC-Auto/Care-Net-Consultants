@@ -1,8 +1,16 @@
-// CNC HSF FORGE | BI-EDGE-01 v1.0.0 | Bee-Inspect pricing maths 26/09/2026
+// CNC HSF FORGE | BI-EDGE-01 v1.1.0 | Bee-Inspect pricing maths 27/09/2026
 //
-// The same arithmetic as migration 062 (bi_price_cents, bi_charge_rule_cents,
-// bi_storage_level), so the app's cost preview and the database always agree to
-// the cent. Plain ES module, no dependencies; Deno and Node 22.
+// The same arithmetic as migrations 062 and 064 (bi_price_cents,
+// bi_charge_rule_cents, bi_storage_level, bi_margin_floor_cents, bi_margin_ok,
+// bi_channel_landed_cents), so the app's cost preview and the database always
+// agree to the cent. Plain ES module, no dependencies; Deno and Node 22.
+//
+// Minimum margin (decision 1.4, 27/09/2026): on every product and service,
+// sell price excluding VAT >= total landed cost / 0,80, after all costs (model
+// tokens, voice minutes, storage, SMS, gateway fee, app store cut, KYC,
+// transcription). Landed R80,00 needs at least R100,00. For wallet top ups,
+// Ozow web is preferred wherever the Apple or Google cut would break the floor.
+// The database holds the percentage as bi.margin.minimum_pct (20, never lower).
 //
 // Prompt B8, all amounts in cents of a rand, excluding VAT (VAT mode
 // 'to_be_confirmed' until Chantelle confirms {{vat_inclusive}}):
@@ -39,6 +47,9 @@ export const AUTO_TOPUP = Object.freeze({ price_cents: 9900, value_cents: 9900, 
 export const INCLUDED_ROLLS_MONTHS = 1; // included value expires two months after its period starts
 export const PURCHASED_LASTS_MONTHS = 12;
 export const STEP_UP_TOPUP_ABOVE_CENTS = 49900; // top ups over R499,00 need step up MFA (B3)
+export const MARGIN_MIN_PCT = 20; // decision 1.4; bi.margin.minimum_pct in the database
+export const LANDED_COST_COMPONENTS = Object.freeze(['model_tokens', 'voice_minutes', 'storage', 'sms', 'gateway_fee', 'app_store_cut', 'kyc', 'transcription']);
+export const CHANNELS = Object.freeze(['ozow_web', 'apple_app_store', 'google_play', 'saved_card', 'manual_invoice']);
 
 const SCALE_DIGITS = 12;
 const SCALE = 10n ** BigInt(SCALE_DIGITS);
@@ -82,6 +93,58 @@ export function chargeRuleCents(estimateCents, actualCents) {
     throw new RangeError('cents must be whole numbers of zero or more');
   }
   return actualCents * OVERRUN_ALLOWANCE_DEN > estimateCents * OVERRUN_ALLOWANCE_NUM ? estimateCents : actualCents;
+}
+
+function wholeCents(x, name) {
+  if (!Number.isSafeInteger(x) || x < 0) throw new RangeError(`${name} must be whole cents of zero or more`);
+  return x;
+}
+
+function marginPct(minPct) {
+  const p = minPct === undefined ? MARGIN_MIN_PCT : minPct;
+  if (!Number.isInteger(p) || p < MARGIN_MIN_PCT || p > 90) throw new RangeError(`the minimum margin is a whole percentage from ${MARGIN_MIN_PCT} to 90`);
+  return p;
+}
+
+// Total landed cost of one unit from its components (bi_landed_cost_sum).
+export function landedCostCents(components) {
+  let total = 0;
+  for (const [k, v] of Object.entries(components || {})) {
+    if (!LANDED_COST_COMPONENTS.includes(k)) throw new RangeError(`unknown landed cost component: ${k}`);
+    total += wholeCents(v, k);
+  }
+  return total;
+}
+
+// The lowest sell price excluding VAT that keeps the margin: landed / 0,80, rounded up to the cent.
+export function marginFloorCents(landedCents, minPct) {
+  const p = marginPct(minPct);
+  const landed = wholeCents(landedCents, 'landedCents');
+  return Math.floor((landed * 100 + (100 - p) - 1) / (100 - p));
+}
+
+// sell excluding VAT >= landed / 0,80, in whole cents with no rounding (sell x 80 >= landed x 100).
+export function meetsMarginFloor(sellExVatCents, landedCents, minPct) {
+  const p = marginPct(minPct);
+  return wholeCents(sellExVatCents, 'sellExVatCents') * (100 - p) >= wholeCents(landedCents, 'landedCents') * 100;
+}
+
+// Landed cost through a channel: plus the store cut and gateway fee (basis points of the price, rounded up) and a fixed fee.
+export function channelLandedCents(landedCents, priceCents, fees = {}) {
+  const bps = (fees.storeCutBps || 0) + (fees.gatewayFeeBps || 0);
+  if (!Number.isInteger(bps) || bps < 0 || bps > 20000) throw new RangeError('fees are whole basis points');
+  return wholeCents(landedCents, 'landedCents') + Math.floor((wholeCents(priceCents, 'priceCents') * bps + 9999) / 10000)
+    + wholeCents(fees.gatewayFeeFixedCents || 0, 'gatewayFeeFixedCents');
+}
+
+// Which channels may sell a top up, and whether Ozow web is preferred (an app store cut breaks the floor).
+export function topupChannelAdvice(priceCents, landedCents, channels, minPct) {
+  const out = Object.entries(channels || {}).map(([channel, fees]) => {
+    const landed = channelLandedCents(landedCents, priceCents, fees);
+    return { channel, landed_cents: landed, floor_cents: marginFloorCents(landed, minPct), offer: meetsMarginFloor(priceCents, landed, minPct) };
+  });
+  const storeBreaks = out.some((c) => (c.channel === 'apple_app_store' || c.channel === 'google_play') && !c.offer);
+  return out.map((c) => ({ ...c, preferred: c.channel === 'ozow_web' && c.offer && storeBreaks }));
 }
 
 // Photo tagging: free for the first 50 photos of a report.

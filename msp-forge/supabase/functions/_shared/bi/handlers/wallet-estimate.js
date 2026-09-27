@@ -1,11 +1,15 @@
-// CNC HSF FORGE | BI-EDGE-01 v1.0.0 | wallet-estimate 26/09/2026
+// CNC HSF FORGE | BI-EDGE-01 v1.1.0 | wallet-estimate 27/09/2026
 // POST (signed in inspector or company admin) {wallet_id, kind, model_code?, tokens_in?, tokens_out?,
 //   audio_seconds?, photos?, report_id?, inspection_id?, idempotency_key}
-//   -> 200 {usage_event_id, estimate_cents, estimate, available_cents, available, allowed, reason, free_photos, vat_mode}
+//   -> 200 {usage_event_id, estimate_cents, estimate, available_cents, available, remaining_balance_cents,
+//           remaining_balance, balance_after_cents, balance_after, estimate_exceeds_balance, allowed, reason,
+//           free_photos, vat_mode}
 // The cost preview before each AI action (prompt B8), always in rand, never
-// tokens: bi_wallet_estimate (062) prices it, checks the spend cap and the
-// balance and records it. Refusal reasons: rate_card_pending, wallet_empty,
-// spend_cap, wallet_frozen. Idempotent on the key.
+// tokens: bi_wallet_estimate (062, replaced in 064) prices it, checks the spend
+// cap and the balance and records it. Decision 1.3: the remaining balance is
+// always shown before a run and estimate_exceeds_balance is the warning.
+// Refusal reasons: rate_card_pending, wallet_empty, spend_cap, wallet_frozen.
+// Idempotent on the key.
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY.
 
 import { v, IDEMPOTENCY_KEY_RE } from '../validate.js';
@@ -32,10 +36,13 @@ export const handle = guarded(async (req, deps) => {
   const user = await requireUser(req, sb);
   const body = Body.parse(await readJson(req, 2048));
   const r = await createDb(sb).rpc('bi_wallet_estimate', { p_auth_user: user.id, p: body });
+  const rand = (c) => (Number.isSafeInteger(c) ? formatRand(c) : undefined);
   return json({
     ...r,
     estimate: formatRand(r.estimate_cents),
     available: formatRand(r.available_cents),
+    remaining_balance: rand(r.remaining_balance_cents),
+    balance_after: rand(r.balance_after_cents),
     vat_mode: r.vat_mode || VAT_MODE,
   });
 });

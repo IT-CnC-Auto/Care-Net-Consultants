@@ -89,6 +89,18 @@ export function decodeJwtPayload(token) {
   }
 }
 
+// Step up windows (decision 1.5, 27/09/2026): 10 minutes in the app, 24 hours
+// for DocuSeal. The database decides with its parameters
+// (bi.step_up_window_minutes and bi.step_up_docuseal_window_minutes); these are
+// the same defaults, for the app to ask for a fresh second factor in time.
+export const STEP_UP_WINDOW_MINUTES = Object.freeze({ in_app: 10, docuseal: 1440 });
+
+export function stepUpFresh(assertedEpoch, channel = 'in_app', nowEpoch = Date.now() / 1000) {
+  if (!Number.isFinite(assertedEpoch) || !Number.isFinite(nowEpoch)) return false;
+  const minutes = channel === 'docuseal' ? STEP_UP_WINDOW_MINUTES.docuseal : STEP_UP_WINDOW_MINUTES.in_app;
+  return assertedEpoch <= nowEpoch + 60 && assertedEpoch >= nowEpoch - minutes * 60;
+}
+
 // Step up MFA (prompt B3) from the claims of a token Supabase Auth accepted:
 // aal2 and an amr entry for a second factor (totp or phone). Returns the input
 // of bi_step_up_record, or null when the session has no second factor.

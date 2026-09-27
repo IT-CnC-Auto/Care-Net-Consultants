@@ -18,12 +18,16 @@ import { fileURLToPath } from 'node:url';
 import {
   priceCents, chargeRuleCents, photoTagSplit, storageLevel, formatRand, statementCsv, toScaled, includedExpiry,
   PLANS, TOPUPS, AUTO_TOPUP, DEFAULT_MARKUP, VAT_MODE, STORAGE_BYTES_PER_LINE,
+  MARGIN_MIN_PCT, LANDED_COST_COMPONENTS, CHANNELS, landedCostCents, marginFloorCents, meetsMarginFloor, channelLandedCents, topupChannelAdvice,
 } from '../../supabase/functions/_shared/bi/pricing.js';
-import { riskScore, riskBand, topControl, heatMap, validateRisk, describeRisk, HIERARCHY } from '../../supabase/functions/_shared/bi/risk.js';
+import {
+  riskScore, riskBand, topControl, heatMap, validateRisk, describeRisk, HIERARCHY,
+  BANDS, BAND_TOKENS, riskBandLabel, riskBandColour, assessRisk, riskRatingText,
+} from '../../supabase/functions/_shared/bi/risk.js';
 import { generateCode, normaliseCode, hashCode, ALPHABET, CODE_LENGTH, SHAPE_RE, claimPath } from '../../supabase/functions/_shared/bi/claim-code.js';
 import { v, ValidationError } from '../../supabase/functions/_shared/bi/validate.js';
 import { buildDraftSkeleton, enforceCitations, claimProblems, voiceCounts, voicePreviewLine, DRAFT_LABEL, LOCKED_FOOTER } from '../../supabase/functions/_shared/bi/report.js';
-import { decodeJwtPayload, stepUpFromClaims, sameText, createDb, HttpError } from '../../supabase/functions/_shared/bi/http.js';
+import { decodeJwtPayload, stepUpFromClaims, sameText, createDb, HttpError, STEP_UP_WINDOW_MINUTES, stepUpFresh } from '../../supabase/functions/_shared/bi/http.js';
 
 const root = (p) => fileURLToPath(new URL('../../' + p, import.meta.url));
 const TEST_RATES = { rateIn: 0.2, rateOut: 0.5, rateMinute: 0.006, usdZar: 18.5, markup: 3.0 };
@@ -148,7 +152,8 @@ test('risk validation matches the database constraints', () => {
   assert.match(validateRisk({ hazard: 'Edge', inherent_likelihood: 2, inherent_severity: 2, residual_likelihood: 1 }).join(' '), /both residual/);
   assert.match(validateRisk({ hazard: 'Edge', inherent_likelihood: 2, inherent_severity: 2, controls: [{ level: 'luck' }] }).join(' '), /hierarchy of controls/);
   assert.deepEqual(describeRisk({ inherent_likelihood: 4, inherent_severity: 4, residual_likelihood: 2, residual_severity: 4, controls: [{ level: 'engineering' }] }),
-    { inherent: { likelihood: 4, severity: 4, score: 16, band: 'extreme' }, residual: { likelihood: 2, severity: 4, score: 8, band: 'medium' }, top_control: 'engineering' });
+    { inherent: { likelihood: 4, severity: 4, score: 16, band: 'extreme', label: 'Extreme', colour: 'red' },
+      residual: { likelihood: 2, severity: 4, score: 8, band: 'medium', label: 'Medium', colour: 'amber' }, top_control: 'engineering' });
 });
 
 test('heat map counts risks by likelihood and severity', () => {
@@ -156,6 +161,110 @@ test('heat map counts risks by likelihood and severity', () => {
   assert.equal(g[3][3], 2);
   assert.equal(g[0][4], 1);
   assert.equal(g.flat().reduce((a, b) => a + b, 0), 3);
+});
+
+
+// 2b. Locked decisions of 27/09/2026 (contract 16.8, migration 064) -----------------------------------------
+
+test('decision 1.2: bands with the label and colour always beside the score, at 4, 5, 9, 10, 15 and 16', () => {
+  assert.deepEqual([4, 5, 9, 10, 15, 16].map((n) => `${n} ${riskBandLabel(n)} ${riskBandColour(riskBand(n))}`),
+    ['4 Low green', '5 Medium amber', '9 Medium amber', '10 High orange', '15 High orange', '16 Extreme red']);
+  assert.deepEqual(assessRisk(3, 5), { likelihood: 3, severity: 5, score: 15, band: 'high', label: 'High', colour: 'orange' });
+  assert.deepEqual(assessRisk(4, 4), { likelihood: 4, severity: 4, score: 16, band: 'extreme', label: 'Extreme', colour: 'red' });
+  assert.equal(assessRisk(0, 4), null);
+  assert.equal(riskRatingText(4, 4), '4 x 4 = 16 Extreme', 'the number is never shown without its label');
+  assert.equal(riskBandLabel(26), null);
+  // Exactly four bands, contiguous over 1 to 25: no other cut points.
+  assert.deepEqual(BANDS.map((b) => [b.from, b.to]), [[1, 4], [5, 9], [10, 15], [16, 25]]);
+  assert.deepEqual(Object.values(BAND_TOKENS).map((t) => t.label + ':' + t.colour), ['Low:green', 'Medium:amber', 'High:orange', 'Extreme:red']);
+});
+
+// WCAG relative luminance and contrast of two #rrggbb colours.
+const lum = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+
+test('decision 1.2: the colour tokens are readable: ink on every fill at least 7:1, every accent on white at least 4.5:1', () => {
+  for (const t of Object.values(BAND_TOKENS)) {
+    assert.match(t.fill, /^#[0-9a-f]{6}$/);
+    assert.ok(contrast(t.ink, t.fill) >= 7, `${t.label} ink on fill ${contrast(t.ink, t.fill).toFixed(2)}`);
+    assert.ok(contrast(t.accent, '#ffffff') >= 4.5, `${t.label} accent on white ${contrast(t.accent, '#ffffff').toFixed(2)}`);
+  }
+  assert.ok(Object.isFrozen(BAND_TOKENS) && Object.isFrozen(BAND_TOKENS.extreme));
+});
+
+test('decision 1.2: the database returns the same labels and colours (migration 064) and the site sample report uses the locked bands', () => {
+  const sql = readFileSync(root('supabase/migrations/064_bi_p3_decisions.sql'), 'utf8');
+  assert.match(sql, /when 'low' then 'Low' when 'medium' then 'Medium'\s+when 'high' then 'High' when 'extreme' then 'Extreme'/);
+  assert.match(sql, /when 'low' then 'green' when 'medium' then 'amber' when 'high' then 'orange' when 'extreme' then 'red'/);
+  const sample = readFileSync(root('vercel/bee-inspect/sample-report.html'), 'utf8');
+  assert.ok(sample.includes('Bands: 1 to 4 low, 5 to 9 medium, 10 to 15 high, 16 to 25 extreme.'));
+  assert.ok(!/very high|10 to 14|15 to 25/i.test(sample), 'no other cut points or labels on the site');
+  for (const [, cls, l, sv, label] of sample.matchAll(/<span class="rb (hm-[a-z]+)">(\d) &times; (\d) = \d+<\/span><span class="sub">([A-Za-z]+)<\/span>/g)) {
+    assert.equal(label, riskBandLabel(Number(l) * Number(sv)), `${l} x ${sv}`);
+    assert.equal(cls, { low: 'hm-low', medium: 'hm-med', high: 'hm-high', extreme: 'hm-ext' }[riskBand(Number(l) * Number(sv))]);
+  }
+  for (const [band, cls] of [['low', 'hm-low'], ['medium', 'hm-med'], ['high', 'hm-high'], ['extreme', 'hm-ext']]) {
+    assert.ok(sample.includes(`.${cls} { background: ${BAND_TOKENS[band].fill}; }`), `${cls} uses the ${band} fill`);
+  }
+});
+
+test('decision 1.4: 20% minimum margin with worked numbers: landed R80,00 needs a sell price excluding VAT of at least R100,00', () => {
+  assert.equal(MARGIN_MIN_PCT, 20);
+  assert.equal(marginFloorCents(8000), 10000);
+  assert.equal(formatRand(marginFloorCents(8000)), 'R100,00');
+  assert.equal(meetsMarginFloor(10000, 8000), true, 'R100,00 is exactly the floor');
+  assert.equal(meetsMarginFloor(9999, 8000), false, 'R99,99 is below it');
+  assert.equal(marginFloorCents(8001), 10002, 'R80,01 / 0,80 = R100,0125, rounded up to R100,02');
+  assert.equal(marginFloorCents(23920), 29900, 'R299,00 carries at most R239,20 of landed cost');
+  assert.equal(meetsMarginFloor(29900, 23921), false);
+  assert.equal(marginFloorCents(7000, 30), 10000, 'a raised floor (30%): landed R70,00 needs R100,00');
+  assert.throws(() => marginFloorCents(8000, 10), RangeError, 'the floor is never below 20%');
+  assert.throws(() => marginFloorCents(-1), RangeError);
+});
+
+test('decision 1.4: landed cost components and channels; Ozow web preferred where an app store cut breaks the floor', () => {
+  assert.deepEqual(LANDED_COST_COMPONENTS, ['model_tokens', 'voice_minutes', 'storage', 'sms', 'gateway_fee', 'app_store_cut', 'kyc', 'transcription']);
+  assert.equal(landedCostCents({ storage: 7500, gateway_fee: 500 }), 8000);
+  assert.throws(() => landedCostCents({ lunch: 100 }), RangeError);
+  assert.ok(CHANNELS.includes('ozow_web') && CHANNELS.includes('apple_app_store') && CHANNELS.includes('google_play'));
+  // topup_99 (R99,00) whose value costs R60,00: 30% store cut = R29,70; Ozow 2,5% (R2,475 rounded up) + R2,00.
+  assert.equal(channelLandedCents(6000, 9900, { storeCutBps: 3000 }), 8970);
+  assert.equal(channelLandedCents(6000, 9900, { gatewayFeeBps: 250, gatewayFeeFixedCents: 200 }), 6448);
+  const advice = topupChannelAdvice(9900, 6000, { ozow_web: { gatewayFeeBps: 250, gatewayFeeFixedCents: 200 }, apple_app_store: { storeCutBps: 3000 }, google_play: { storeCutBps: 1500 } });
+  assert.deepEqual(advice.map((a) => [a.channel, a.landed_cents, a.floor_cents, a.offer, a.preferred]),
+    [['ozow_web', 6448, 8060, true, true], ['apple_app_store', 8970, 11213, false, false], ['google_play', 7485, 9357, true, false]]);
+  assert.ok(topupChannelAdvice(9900, 6000, { ozow_web: {}, google_play: { storeCutBps: 1500 } }).every((a) => !a.preferred), 'no preference while every channel keeps the floor');
+  // The database uses the same arithmetic and the same parameter.
+  const sql = readFileSync(root('supabase/migrations/064_bi_p3_decisions.sql'), 'utf8');
+  assert.match(sql, /\('bi\.margin\.minimum_pct', '20', 'integer', null, 20, 90,/);
+  assert.match(sql, /\(p_landed_cents \* 100 \+ \(100 - x\.pct\) - 1\) \/ \(100 - x\.pct\)/);
+});
+
+test('decision 1.5: step up is valid 10 minutes in the app and 24 hours for DocuSeal', () => {
+  assert.deepEqual(STEP_UP_WINDOW_MINUTES, { in_app: 10, docuseal: 1440 });
+  const now = 1_790_000_000;
+  assert.equal(stepUpFresh(now - 9 * 60, 'in_app', now), true);
+  assert.equal(stepUpFresh(now - 11 * 60, 'in_app', now), false);
+  assert.equal(stepUpFresh(now - 20 * 3600, 'docuseal', now), true);
+  assert.equal(stepUpFresh(now - 25 * 3600, 'docuseal', now), false);
+  assert.equal(stepUpFresh(now + 3600, 'in_app', now), false, 'a factor from the future is refused');
+  assert.equal(stepUpFresh(NaN, 'in_app', now), false);
+  const sql = readFileSync(root('supabase/migrations/064_bi_p3_decisions.sql'), 'utf8');
+  assert.match(sql, /\('bi\.step_up_docuseal_window_minutes', '1440', 'integer'/);
+  assert.ok(!/case when v_(sig\.)?channel = 'docuseal' then 1440/.test(sql), 'the 24 hours are a parameter, not a literal in the guard');
+});
+
+test('contract 16.8: the free digital Safety File thresholds are parameters (50 and 500), separate from the sign off tiers of 15.2 (100 and 500)', () => {
+  const sql = readFileSync(root('supabase/migrations/064_bi_p3_decisions.sql'), 'utf8');
+  assert.match(sql, /\('bi\.free_file\.client_medicals_threshold', '50', 'integer'/);
+  assert.match(sql, /\('bi\.free_file\.site_medicals_threshold', '500', 'integer'/);
+  assert.ok(!/volume_12m, 0\) > 50|volume_12m, 0\) > 500/.test(sql), 'no literal threshold in the rule');
+  const pricing = readFileSync(root('vercel/hsf/pricing.js'), 'utf8');
+  assert.match(pricing, /"?free_medicals_threshold"?:\s*100\b/);
+  assert.match(pricing, /"?site_and_subcontractors_threshold"?:\s*500\b/);
 });
 
 // 3. Claim codes --------------------------------------------------------------------------------------

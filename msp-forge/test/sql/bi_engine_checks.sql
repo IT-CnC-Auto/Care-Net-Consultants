@@ -1,10 +1,16 @@
--- CNC HSF FORGE | BI-ENG-01, BI-RPT-01, BI-OPS-01 checks | local test harness only.
--- Proves the Bee-Inspect engine of migrations 060, 061 and 063 (hsf/BUILD-CONTRACT.md
--- 16, P3) against a replayed database: the Fail rule (recommended and strict),
--- the Issued guard (signature, cleared scope, step up MFA, device, kernel
--- references, voice notes, PDF), append only tables, sealed evidence and legal
--- hold, template immutability, Section F filing (linked, section only, no File
--- then filed on retry, idempotent, withdrawal), the MCO package and nodes, and
+-- CNC HSF FORGE | BI-ENG-01, BI-RPT-01, BI-OPS-01, BI-DEC-01 checks | local test harness only.
+-- Proves the Bee-Inspect engine of migrations 060, 061, 063 and 064 (hsf/BUILD-CONTRACT.md
+-- 16, P3, and the decisions locked in 16.8) against a replayed database: the Fail
+-- rule (recommended and strict), the Issued guard (signature, cleared scope, the
+-- dual gate of FICA and KYC and a current qualification, step up MFA with its
+-- two windows as parameters: 10 minutes in the app and 24 hours for DocuSeal,
+-- device, kernel references, voice notes, PDF), append only tables, sealed
+-- evidence and legal hold, template immutability, the free digital Safety File
+-- eligibility (rule A: a verified Care Net client with more than 50 verified
+-- medicals; rule B: a site with more than 500; a subcontractor registered on an
+-- eligible site; not eligible, awaiting and then filed), Section F filing
+-- (linked, section only, no File then filed on retry, idempotent, withdrawal),
+-- the risk bands with their labels and colours, the MCO package and nodes, and
 -- the scheduled runs (reminders and recurrence, NCR escalation, qualification
 -- expiry). Loads the fictitious demonstration seed inside the transaction.
 -- Never applied to Supabase. Everything runs in one transaction that is rolled back.
@@ -109,6 +115,13 @@ select pg_temp.ok('seed: the File item HSF-F-01 is uploaded and carries engine_g
   exists (select 1 from hsf_file_item fi join hsf_element e on e.id = fi.element_id join hsf_evidence ev on ev.file_item_id = fi.id
            where e.code = 'HSF-F-01' and fi.status = 'uploaded' and ev.source = 'engine_generated'
              and ev.supplied_by = 'Bee-Inspect report signed by Thandi Mokoena (fictitious)' and ev.storage_path is null));
+select pg_temp.ok('seed: the demonstration company is eligible for the free digital Safety File (rule A: a verified Care Net client with 64 verified medicals), and the link records why',
+  (select eligibility_reason from bi_report_file_link) = 'care_net_client_over_50'
+  and bi_free_file_eligible(:company, 'b1a00000-0000-4000-8000-000000000041') @> '{"eligible": true, "reason": "care_net_client_over_50", "client_verified": true}'
+  and (bi_free_file_eligible(:company) -> 'counts' -> 'company' ->> 'volume_12m')::int = 64
+  and (bi_free_file_eligible(:company) -> 'thresholds') @> '{"client_medicals_more_than": 50, "site_medicals_more_than": 500}');
+select pg_temp.ok('the thresholds are parameters, not literals: 50 and 500',
+  msp_env_get_int('bi.free_file.client_medicals_threshold') = 50 and msp_env_get_int('bi.free_file.site_medicals_threshold') = 500);
 select pg_temp.ok('seed: the filing is audited against the File in msp_audit',
   exists (select 1 from msp_audit where event_type = 'bi_report_filed_section_f' and hsf_file_id is not null));
 select pg_temp.ok('seed: the MCO package is stored (supabase_stored) and the company nodes registered locally',
@@ -211,6 +224,22 @@ update bi_inspector_profile set status = 'cleared', restricted_reason = null, co
 select pg_temp.refuses('a cleared inspector whose scope does not cover ladders cannot sign a ladder report',
   $q$select bi_report_sign('b1a00000-0000-4000-8000-000000000011', '$q$ || :'rid' || $q$', jsonb_build_object('step_up_id', pg_temp.step_up('b1a00000-0000-4000-8000-000000000011'), 'device_integrity', 'ok', 'confirm_photos', true, 'confirm_voice_notes', true))$q$, 'not cleared to sign ladders');
 update bi_inspector_profile set competence_scope = array['scaffolds','ladders','fire','ppe','chemicals'] where app_user_id = 'b1a00000-0000-4000-8000-000000000021';
+-- The dual gate (decision section 2): FICA and KYC cleared and a qualification cleared.
+select pg_temp.ok('dual gate: the seed inspector has FICA and KYC and a current qualification cleared',
+  bi_signer_gate('b1a00000-0000-4000-8000-000000000021', :company, 'ladders') @> '{"ok": true, "fica_kyc_cleared": true, "qualification_cleared": true, "missing": []}');
+update bi_fica_record set status = 'rejected', review_note = 'Check: document unreadable' where id = 'b1a00000-0000-4000-8000-000000000029';
+select pg_temp.refuses('dual gate: an inspector whose own FICA record is not accepted cannot sign',
+  $q$select bi_report_sign('b1a00000-0000-4000-8000-000000000011', '$q$ || :'rid' || $q$', jsonb_build_object('step_up_id', pg_temp.step_up('b1a00000-0000-4000-8000-000000000011'), 'device_integrity', 'ok', 'confirm_photos', true, 'confirm_voice_notes', true))$q$, 'FICA and KYC.*fica_record');
+update bi_fica_record set status = 'accepted' where id = 'b1a00000-0000-4000-8000-000000000029';
+update bi_inspector_qualification set status = 'pending', verified_by = null, verified_at = null where id = 'b1a00000-0000-4000-8000-000000000027';
+select pg_temp.ok('dual gate: without a verified qualification in date, FICA and KYC stay cleared but the qualification does not',
+  bi_signer_gate('b1a00000-0000-4000-8000-000000000021', :company, 'ladders') @> '{"ok": false, "fica_kyc_cleared": true, "qualification_cleared": false, "missing": ["current_qualification"]}');
+select pg_temp.refuses('dual gate: and the inspector cannot sign',
+  $q$select bi_report_sign('b1a00000-0000-4000-8000-000000000011', '$q$ || :'rid' || $q$', jsonb_build_object('step_up_id', pg_temp.step_up('b1a00000-0000-4000-8000-000000000011'), 'device_integrity', 'ok', 'confirm_photos', true, 'confirm_voice_notes', true))$q$, 'current_qualification');
+update bi_inspector_qualification set status = 'verified', verified_by = 'check', verified_at = now() where id = 'b1a00000-0000-4000-8000-000000000027';
+select pg_temp.ok('step up windows are parameters: 10 minutes in the app, 1 440 minutes (24 hours) for DocuSeal',
+  msp_env_get_int('bi.step_up_window_minutes') = 10 and msp_env_get_int('bi.step_up_docuseal_window_minutes') = 1440
+  and bi_step_up_window_minutes('in_app') = 10 and bi_step_up_window_minutes('docuseal') = 1440);
 select pg_temp.step_up(:inspauth) as sid \gset
 select pg_temp.ok('a cleared inspector with the scope, a fresh step up, a sound device and both confirmations signs',
   bi_report_sign(:inspauth, :'rid', jsonb_build_object('step_up_id', :'sid', 'device_integrity', 'ok', 'confirm_photos', true, 'confirm_voice_notes', true)) ? 'signature_id');
@@ -225,6 +254,10 @@ update bi_inspector_profile set status = 'restricted', restricted_reason = 'Laps
 select pg_temp.refuses('the guard checks the signer again at issue: restricted since signing means no Issued',
   $q$select bi_report_issue('$q$ || :'rid' || $q$', 'p.pdf', repeat('a', 64), 'p.json')$q$, 'not a cleared competent person');
 update bi_inspector_profile set status = 'cleared', restricted_reason = null where app_user_id = 'b1a00000-0000-4000-8000-000000000021';
+update bi_fica_record set status = 'rejected', review_note = 'Check: lapsed between signing and issue' where id = 'b1a00000-0000-4000-8000-000000000029';
+select pg_temp.refuses('the Issued guard checks the dual gate again at issue (FICA rejected since signing means no Issued)',
+  $q$select bi_report_issue('$q$ || :'rid' || $q$', 'p.pdf', repeat('a', 64), 'p.json')$q$, 'FICA and KYC and a current qualification must both be cleared');
+update bi_fica_record set status = 'accepted' where id = 'b1a00000-0000-4000-8000-000000000029';
 select pg_temp.ok('with a valid signature and the PDF the report is Issued and filed into Section F (HSF-F-02, linked)',
   bi_report_issue(:'rid', 'x/ladder.pdf', repeat('e', 64), 'x/ladder.json') -> 'section_f' ->> 'status' = 'linked');
 select pg_temp.ok('the link names HSF-F-02', (select element_code from bi_report_file_link where report_id = :'rid') = 'HSF-F-02');
@@ -259,11 +292,29 @@ insert into bi_inspection (id, tenant_id, client_account_id, site_id, template_i
 values ('b1a00000-0000-4000-8000-0000000000f6', :tenant, :company, 'b1a00000-0000-4000-8000-000000000041',
         'b1a00000-0000-4000-8000-0000000000f5', 'b1a00000-0000-4000-8000-000000000021', 'Asbestos walk', 'in_progress');
 update bi_inspection set status = 'submitted' where id = 'b1a00000-0000-4000-8000-0000000000f6';
-select pg_temp.issue_flow('b1a00000-0000-4000-8000-0000000000f6', :inspauth) as rid2 \gset
+select (bi_report_save_draft(:inspauth, 'b1a00000-0000-4000-8000-0000000000f6', pg_temp.content('{}'), 'ai_assistive') ->> 'report_id') as rid2 \gset
+select bi_report_request_signoff(:inspauth, :'rid2') ->> 'status' as rq2 \gset
+-- Decision 1.5: DocuSeal signing allows a step up recorded up to 24 hours before (the signer verified in the app first).
+insert into bi_step_up (id, auth_user_id, purpose, method, aal, asserted_at, session_ref, created_at) values
+  ('b1a00000-0000-4000-8000-0000000000f7', :inspauth, 'signoff', 'totp', 'aal2', now() - interval '20 hours', repeat('7', 64), now() - interval '20 hours'),
+  ('b1a00000-0000-4000-8000-0000000000f8', :inspauth, 'signoff', 'totp', 'aal2', now() - interval '25 hours', repeat('8', 64), now() - interval '25 hours');
+select pg_temp.refuses('a step up verified 20 hours ago is too old for an in app signature (10 minutes)',
+  $q$select bi_report_sign('b1a00000-0000-4000-8000-000000000011', '$q$ || :'rid2' || $q$', '{"step_up_id":"b1a00000-0000-4000-8000-0000000000f7","channel":"in_app","device_integrity":"ok","confirm_photos":true,"confirm_voice_notes":true}')$q$, 'second factor');
+select pg_temp.refuses('a step up verified 25 hours ago is too old for DocuSeal (24 hours)',
+  $q$select bi_report_sign('b1a00000-0000-4000-8000-000000000011', '$q$ || :'rid2' || $q$', '{"step_up_id":"b1a00000-0000-4000-8000-0000000000f8","channel":"docuseal","docuseal_submission_ref":"DS-CHECK-0001","device_integrity":"unknown","confirm_photos":true,"confirm_voice_notes":true}')$q$, 'second factor');
+select pg_temp.ok('a step up verified 20 hours ago signs through DocuSeal (within 24 hours)',
+  bi_report_sign(:inspauth, :'rid2', '{"step_up_id":"b1a00000-0000-4000-8000-0000000000f7","channel":"docuseal","docuseal_submission_ref":"DS-CHECK-0002","device_integrity":"unknown","confirm_photos":true,"confirm_voice_notes":true}') ? 'signature_id');
+select pg_temp.ok('and the Issued guard accepts the DocuSeal window at issue',
+  bi_report_issue(:'rid2', 'x/asbestos.pdf', repeat('f', 64), 'x/asbestos.json') ->> 'status' = 'issued');
+update msp_env_parameter set value = '60' where key = 'bi.step_up_docuseal_window_minutes';
+select pg_temp.ok('the DocuSeal window follows its parameter (60 minutes while set so)', bi_step_up_window_minutes('docuseal') = 60);
+update msp_env_parameter set value = '1440' where key = 'bi.step_up_docuseal_window_minutes';
 select pg_temp.ok('an element not on the File: the report is listed in Section F without an element (section_only)',
   (select status from bi_report_file_link where report_id = :'rid2') = 'section_only');
 
--- no_file: a company without a File yet, filed on retry once the File exists.
+-- Contract 16.8: a company not eligible for the free digital Safety File. Its
+-- Issued report waits as awaiting_eligibility (no evidence, no compliance
+-- change) and is filed once a verified count makes it eligible (rule A).
 insert into auth.users (id, email, email_confirmed_at) values ('b4a00000-0000-4000-8000-000000000013', 'nofile.contact.check@example.invalid', now());
 insert into msp_client_account (id, company_name, contact_name, contact_email, auth_user_id)
 values ('b4a00000-0000-4000-8000-000000000002', 'No File Yet Works (fictitious)', 'Contact', 'nofile.contact.check@example.invalid', 'b4a00000-0000-4000-8000-000000000013');
@@ -274,15 +325,124 @@ values (:tenant, 'b4a00000-0000-4000-8000-000000000002', 'extra_company', 19900,
 insert into bi_site (id, client_account_id, name) values ('b4a00000-0000-4000-8000-000000000041', 'b4a00000-0000-4000-8000-000000000002', 'No File Site');
 insert into bi_inspection (id, tenant_id, client_account_id, site_id, template_id, inspector_user_id, title, status)
 values ('b4a00000-0000-4000-8000-000000000081', :tenant, 'b4a00000-0000-4000-8000-000000000002', 'b4a00000-0000-4000-8000-000000000041',
-        'b1a00000-0000-4000-8000-000000000062', 'b1a00000-0000-4000-8000-000000000021', 'Ladders at a company with no File', 'in_progress');
+        'b1a00000-0000-4000-8000-000000000062', 'b1a00000-0000-4000-8000-000000000021', 'Ladders at a company not yet eligible', 'in_progress');
 update bi_inspection set status = 'submitted' where id = 'b4a00000-0000-4000-8000-000000000081';
+select pg_temp.ok('not a verified client and no verified count: not eligible',
+  bi_free_file_eligible('b4a00000-0000-4000-8000-000000000002', 'b4a00000-0000-4000-8000-000000000041') @> '{"eligible": false, "reason": "not_eligible", "client_verified": false}');
 select pg_temp.issue_flow('b4a00000-0000-4000-8000-000000000081', :inspauth) as rid3 \gset
-select pg_temp.ok('no File yet: the report is Issued and its link waits as no_file',
-  (select status from bi_report where id = :'rid3') = 'issued' and (select status from bi_report_file_link where report_id = :'rid3') = 'no_file');
+select pg_temp.ok('not eligible: the report is Issued and its link waits as awaiting_eligibility, with no evidence',
+  (select status from bi_report where id = :'rid3') = 'issued'
+  and (select status = 'awaiting_eligibility' and evidence_id is null and eligibility_reason = 'not_eligible' from bi_report_file_link where report_id = :'rid3'));
 select pg_temp.ok('the company builds its free File',
   hsf_generate_file('b4a00000-0000-4000-8000-000000000013', '{"industry_code":"CONSTR","triggers":["T-LADDERS"],"scope":{"sites":[{"name":"No File Site"}]}}') ? 'file_id');
-select pg_temp.ok('the retry run processes the waiting report', (bi_hsf_section_f_sync_pending(10) ->> 'processed')::int = 1);
-select pg_temp.ok('and files it (linked, attempt 2)', (select status = 'linked' and attempts = 2 from bi_report_file_link where report_id = :'rid3'));
+select id as nf_file, coalesce(compliance_pct, -1) as nf_pct_before from hsf_file where client_account_id = 'b4a00000-0000-4000-8000-000000000002' \gset
+select pg_temp.ok('while it is not eligible the retry run files nothing and counts the report as still waiting',
+  bi_hsf_section_f_sync_pending(10) @> '{"processed": 0}' and (bi_hsf_section_f_sync_pending(10) ->> 'awaiting_eligibility')::int >= 1);
+select pg_temp.ok('a direct sync of the waiting report answers awaiting_eligibility again',
+  bi_hsf_section_f_sync(:'rid3') @> '{"status": "awaiting_eligibility"}');
+select pg_temp.ok('and links it to the new File''s Section F item without evidence',
+  (select file_id = :'nf_file' and file_item_id is not null and evidence_id is null from bi_report_file_link where report_id = :'rid3'));
+select pg_temp.ok('awaiting eligibility changes nothing in the File: no evidence, the ladder item outstanding, the compliance figure unchanged',
+  not exists (select 1 from hsf_evidence ev join hsf_file_item fi on fi.id = ev.file_item_id where fi.file_id = :'nf_file')
+  and (select fi.status from hsf_file_item fi join hsf_element e on e.id = fi.element_id where fi.file_id = :'nf_file' and e.code = 'HSF-F-02') = 'outstanding'
+  and (select coalesce(compliance_pct, -1) from hsf_file where id = :'nf_file') = :nf_pct_before);
+select pg_temp.ok('the File lists the report in Section F as awaiting eligibility',
+  (select x ->> 'filing' from jsonb_array_elements(bi_section_f_reports('b4a00000-0000-4000-8000-000000000013', :'nf_file')) x) = 'awaiting_eligibility');
+select pg_temp.ok('the File audit notes the waiting report once', (select count(*) from msp_audit where event_type = 'bi_report_awaiting_eligibility' and hsf_file_id = :'nf_file') = 1);
+
+-- Rule A: the File's own Care Net client flag (052) and MORE THAN 50 verified medicals.
+insert into hsf_client_verification (client_account_id, status, method, evidence_ref, requested_at, verified_by, verified_at)
+values ('b4a00000-0000-4000-8000-000000000002', 'verified', 'sales_executive', 'CHECK-REGISTER-0002', now(), 'check', now());
+select pg_temp.ok('verified as a Care Net client but with no verified count: still not eligible',
+  bi_free_file_eligible('b4a00000-0000-4000-8000-000000000002', 'b4a00000-0000-4000-8000-000000000041') @> '{"eligible": false, "client_verified": true}');
+select pg_temp.refuses('only Care Net records a verified count: the company contact''s own declaration is refused',
+  $q$select bi_medicals_volume_record('b4a00000-0000-4000-8000-000000000013', '{"client_account_id":"b4a00000-0000-4000-8000-000000000002","volume_12m":400,"source":"sales_executive_verified","evidence_ref":"self declared"}')$q$, 'Only Care Net');
+select pg_temp.refuses('a count needs its evidence reference',
+  $q$select bi_medicals_volume_record(null, '{"client_account_id":"b4a00000-0000-4000-8000-000000000002","volume_12m":51,"source":"mco","evidence_ref":"","verified_by":"MCO feed"}')$q$, 'Record what the count rests on');
+select pg_temp.refuses('a count comes from a known source only',
+  $q$select bi_medicals_volume_record(null, '{"client_account_id":"b4a00000-0000-4000-8000-000000000002","volume_12m":51,"source":"self_declared","evidence_ref":"form","verified_by":"x"}')$q$, 'source must be');
+select pg_temp.ok('exactly 50 verified medicals is not eligible (more than 50 is needed)',
+  bi_medicals_volume_record(null, jsonb_build_object('client_account_id', 'b4a00000-0000-4000-8000-000000000002', 'volume_12m', 50, 'source', 'mco',
+    'evidence_ref', 'MCO-CHECK-0050', 'verified_by', 'MCO feed (check)', 'counted_to', current_date - 1)) -> 'eligibility' @> '{"eligible": false, "reason": "not_eligible"}');
+select pg_temp.ok('and the retry run still files nothing', bi_hsf_section_f_sync_pending(10) @> '{"processed": 0}');
+select pg_temp.ok('51 verified medicals make the verified client eligible (rule A: care_net_client_over_50)',
+  bi_medicals_volume_record(null, jsonb_build_object('client_account_id', 'b4a00000-0000-4000-8000-000000000002', 'volume_12m', 51,
+    'source', 'occupational_health', 'evidence_ref', 'OH-CHECK-0051', 'verified_by', 'Occupational health register (check)'))
+    -> 'eligibility' @> '{"eligible": true, "reason": "care_net_client_over_50"}');
+select pg_temp.ok('every verified count is audited in bi_audit_log and points at its audit row',
+  (select count(*) from bi_medicals_volume m join bi_audit_log a on a.id = m.audit_log_id and a.event = 'medicals_volume_verified' and a.object_id = m.id
+    where m.client_account_id = 'b4a00000-0000-4000-8000-000000000002') = 2);
+select pg_temp.refuses('verified counts are append only', $q$update bi_medicals_volume set volume_12m = 999$q$, 'append only');
+select pg_temp.ok('the retry run files the waiting report once eligibility is confirmed', (bi_hsf_section_f_sync_pending(10) ->> 'processed')::int = 1);
+select pg_temp.ok('filed: linked with evidence, the ladder item uploaded, the compliance figure raised, the eligibility kept (attempt 3)',
+  (select status = 'linked' and evidence_id is not null and eligibility_reason = 'care_net_client_over_50' and attempts = 3 from bi_report_file_link where report_id = :'rid3')
+  and (select fi.status from hsf_file_item fi join hsf_element e on e.id = fi.element_id where fi.file_id = :'nf_file' and e.code = 'HSF-F-02') = 'uploaded'
+  and (select coalesce(compliance_pct, -1) from hsf_file where id = :'nf_file') > :nf_pct_before);
+select pg_temp.ok('a count counted to more than 92 days before (bi.free_file.count_max_age_days) is no longer current',
+  bi_free_file_eligible('b4a00000-0000-4000-8000-000000000002', null, current_date + 100) @> '{"eligible": false}'
+  and msp_env_get_int('bi.free_file.count_max_age_days') = 92);
+
+-- Rule B and the subcontractor route: a big site and a subcontractor registered on it.
+insert into auth.users (id, email, email_confirmed_at) values
+  ('b7a00000-0000-4000-8000-000000000013', 'principal.contact.check@example.invalid', now()),
+  ('b8a00000-0000-4000-8000-000000000013', 'subcontractor.contact.check@example.invalid', now());
+insert into msp_client_account (id, company_name, contact_name, contact_email, auth_user_id) values
+  ('b7a00000-0000-4000-8000-000000000002', 'Big Site Principal (fictitious)', 'Contact', 'principal.contact.check@example.invalid', 'b7a00000-0000-4000-8000-000000000013'),
+  ('b8a00000-0000-4000-8000-000000000002', 'Scaffold Subcontractor (fictitious)', 'Contact', 'subcontractor.contact.check@example.invalid', 'b8a00000-0000-4000-8000-000000000013');
+insert into bi_site (id, client_account_id, name) values
+  ('b7a00000-0000-4000-8000-000000000041', 'b7a00000-0000-4000-8000-000000000002', 'Big Site (fictitious)'),
+  ('b7a00000-0000-4000-8000-000000000042', 'b7a00000-0000-4000-8000-000000000002', 'Small Depot (fictitious)'),
+  ('b8a00000-0000-4000-8000-000000000041', 'b8a00000-0000-4000-8000-000000000002', 'Scaffold crew at the Big Site (fictitious)'),
+  ('b8a00000-0000-4000-8000-000000000042', 'b8a00000-0000-4000-8000-000000000002', 'Scaffold yard (fictitious)');
+select pg_temp.refuses('a site count must be for a site of that company',
+  $q$select bi_medicals_volume_record(null, '{"client_account_id":"b7a00000-0000-4000-8000-000000000002","site_id":"b8a00000-0000-4000-8000-000000000041","volume_12m":900,"source":"mco","evidence_ref":"MCO-X","verified_by":"MCO feed"}')$q$, 'not a site of this company');
+select pg_temp.ok('a site with exactly 500 verified medicals is not a big site',
+  bi_medicals_volume_record(null, jsonb_build_object('client_account_id', 'b7a00000-0000-4000-8000-000000000002', 'site_id', 'b7a00000-0000-4000-8000-000000000041',
+    'volume_12m', 500, 'source', 'mco', 'evidence_ref', 'MCO-SITE-0500', 'verified_by', 'MCO feed (check)', 'counted_to', current_date - 1))
+    -> 'eligibility' @> '{"eligible": false}');
+select pg_temp.ok('612 verified medicals at the site: eligible for that site (rule B: big_site_over_500), though the principal is not a verified client',
+  bi_medicals_volume_record(null, jsonb_build_object('client_account_id', 'b7a00000-0000-4000-8000-000000000002', 'site_id', 'b7a00000-0000-4000-8000-000000000041',
+    'volume_12m', 612, 'source', 'mco', 'evidence_ref', 'MCO-SITE-0612', 'verified_by', 'MCO feed (check)'))
+    -> 'eligibility' @> '{"eligible": true, "reason": "big_site_over_500", "client_verified": false}');
+select pg_temp.ok('rule B is for that site only: the principal''s other site and the company as a whole are not eligible',
+  bi_free_file_eligible('b7a00000-0000-4000-8000-000000000002', 'b7a00000-0000-4000-8000-000000000042') @> '{"eligible": false}'
+  and bi_free_file_eligible('b7a00000-0000-4000-8000-000000000002') @> '{"eligible": false}');
+select pg_temp.refuses('only Care Net registers a subcontractor on a site (an inspector is refused)',
+  $q$select bi_site_subcontractor_register('b1a00000-0000-4000-8000-000000000011', '{"site_id":"b7a00000-0000-4000-8000-000000000041","subcontractor_account_id":"b8a00000-0000-4000-8000-000000000002","evidence_ref":"x register"}')$q$, 'Only Care Net');
+select pg_temp.ok('before registration the subcontractor is not eligible',
+  bi_free_file_eligible('b8a00000-0000-4000-8000-000000000002', 'b8a00000-0000-4000-8000-000000000041') @> '{"eligible": false}');
+select pg_temp.ok('Care Net registers the subcontractor on the big site, and it is eligible there (subcontractor_of_eligible_site)',
+  bi_site_subcontractor_register(null, '{"site_id":"b7a00000-0000-4000-8000-000000000041","subcontractor_account_id":"b8a00000-0000-4000-8000-000000000002","subcontractor_site_id":"b8a00000-0000-4000-8000-000000000041","evidence_ref":"PRINCIPAL-CONTRACTOR-REGISTER-07"}')
+    -> 'eligibility' @> '{"eligible": true, "reason": "subcontractor_of_eligible_site"}');
+select pg_temp.ok('for that site only: its other site and the company as a whole are not eligible',
+  bi_free_file_eligible('b8a00000-0000-4000-8000-000000000002', 'b8a00000-0000-4000-8000-000000000042') @> '{"eligible": false}'
+  and bi_free_file_eligible('b8a00000-0000-4000-8000-000000000002') @> '{"eligible": false}');
+select pg_temp.ok('the answer names the principal''s site, its rule and its count',
+  (bi_free_file_eligible('b8a00000-0000-4000-8000-000000000002', 'b8a00000-0000-4000-8000-000000000041') -> 'counts' -> 'subcontractor') @>
+    '{"principal_site_id": "b7a00000-0000-4000-8000-000000000041", "principal_reason": "big_site_over_500", "principal_site": {"volume_12m": 612}}');
+select pg_temp.refuses('a subcontractor is registered once per site', $q$select bi_site_subcontractor_register(null, '{"site_id":"b7a00000-0000-4000-8000-000000000041","subcontractor_account_id":"b8a00000-0000-4000-8000-000000000002","evidence_ref":"again register"}')$q$, 'duplicate|unique');
+insert into bi_company (client_account_id, legal_name, onboarding_status, activated_at, activated_by)
+values ('b8a00000-0000-4000-8000-000000000002', 'Scaffold Subcontractor (fictitious)', 'active', now(), 'check');
+insert into bi_company_subscription (tenant_id, client_account_id, plan_code, price_cents, wallet_monthly_cents, storage_bytes)
+values (:tenant, 'b8a00000-0000-4000-8000-000000000002', 'extra_company', 19900, 10000, 10737418240);
+insert into bi_inspection (id, tenant_id, client_account_id, site_id, template_id, inspector_user_id, title, status)
+values ('b8a00000-0000-4000-8000-000000000081', :tenant, 'b8a00000-0000-4000-8000-000000000002', 'b8a00000-0000-4000-8000-000000000041',
+        'b1a00000-0000-4000-8000-000000000061', 'b1a00000-0000-4000-8000-000000000021', 'Scaffold check at the big site', 'in_progress');
+update bi_inspection set status = 'submitted' where id = 'b8a00000-0000-4000-8000-000000000081';
+select pg_temp.issue_flow('b8a00000-0000-4000-8000-000000000081', :inspauth) as rid4 \gset
+select pg_temp.ok('the subcontractor''s Issued report: eligible, but no File yet (no_file)',
+  (select status = 'no_file' and eligibility_reason = 'subcontractor_of_eligible_site' from bi_report_file_link where report_id = :'rid4'));
+select pg_temp.ok('the subcontractor builds its free File',
+  hsf_generate_file('b8a00000-0000-4000-8000-000000000013', '{"industry_code":"CONSTR","triggers":["T-SCAFFOLD"],"scope":{"sites":[{"name":"Scaffold crew at the Big Site"}]}}') ? 'file_id');
+select pg_temp.ok('the retry run processes it', (bi_hsf_section_f_sync_pending(10) ->> 'processed')::int = 1);
+select pg_temp.ok('and files it into the subcontractor''s scaffold register HSF-F-01 (linked, with evidence)',
+  (select status = 'linked' and element_code = 'HSF-F-01' and evidence_id is not null from bi_report_file_link where report_id = :'rid4'));
+select pg_temp.ok('Care Net ends the registration',
+  bi_site_subcontractor_end(null, (select id from bi_site_subcontractor where subcontractor_account_id = 'b8a00000-0000-4000-8000-000000000002'), 'Contract ended (check)') ->> 'ended' = 'true');
+select pg_temp.ok('which ends the eligibility for later reports, while the filed report stays filed',
+  bi_free_file_eligible('b8a00000-0000-4000-8000-000000000002', 'b8a00000-0000-4000-8000-000000000041') @> '{"eligible": false}'
+  and (select status from bi_report_file_link where report_id = :'rid4') = 'linked');
+select pg_temp.refuses('a registration is ended, never deleted', $q$delete from bi_site_subcontractor$q$, 'never deleted');
 
 -- Withdrawal revokes the Section F evidence.
 select pg_temp.refuses('only Care Net withdraws an Issued report',
@@ -339,6 +499,18 @@ select pg_temp.refuses('controls are named on the hierarchy of controls only',
 select pg_temp.ok('5 x 5 bands: 4 low, 5 medium, 9 medium, 10 high, 15 high, 16 extreme, 25 extreme',
   bi_risk_band(4) = 'low' and bi_risk_band(5) = 'medium' and bi_risk_band(9) = 'medium' and bi_risk_band(10) = 'high'
   and bi_risk_band(15) = 'high' and bi_risk_band(16) = 'extreme' and bi_risk_band(25) = 'extreme' and bi_risk_band(26) is null);
+select pg_temp.ok('decision 1.2: the label and colour always beside the score: 4 Low green, 5 Medium amber, 9 Medium amber, 10 High orange, 15 High orange, 16 Extreme red',
+  (select array_agg(n || ' ' || bi_risk_band_label(n) || ' ' || bi_risk_band_colour(bi_risk_band(n)) order by n) from unnest(array[4,5,9,10,15,16]) n)
+    = array['4 Low green','5 Medium amber','9 Medium amber','10 High orange','15 High orange','16 Extreme red']);
+select pg_temp.ok('bi_risk_assess returns the number and the label together (3 x 5 = 15 High orange, 4 x 4 = 16 Extreme red)',
+  bi_risk_assess(3, 5) @> '{"score": 15, "band": "high", "label": "High", "colour": "orange"}'
+  and bi_risk_assess(4, 4) @> '{"score": 16, "band": "extreme", "label": "Extreme", "colour": "red"}' and bi_risk_assess(0, 3) is null);
+select pg_temp.ok('every cell of the 5 x 5 matrix has exactly one of the four labels, and there are no other cut points',
+  (select count(*) from generate_series(1, 5) l, generate_series(1, 5) sv where bi_risk_band_label(l * sv) is null) = 0
+  and (select array_agg(distinct bi_risk_band_label(n) order by bi_risk_band_label(n)) from generate_series(1, 25) n) = array['Extreme','High','Low','Medium']);
+select pg_temp.ok('the risk register carries the labels and colours: inherent 16 Extreme red, residual 8 Medium amber',
+  exists (select 1 from bi_risk_register where id = 'b1a00000-0000-4000-8000-0000000000c1' and inherent_band_label = 'Extreme' and inherent_band_colour = 'red'
+            and residual_band_label = 'Medium' and residual_band_colour = 'amber'));
 
 -- 5. Scheduled runs ---------------------------------------------------------------------------------------------------
 
