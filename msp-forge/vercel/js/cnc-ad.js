@@ -1,4 +1,4 @@
-/* cnc-ad.js v1.2 25/09/2026 Bee-Inspect banners (bee: official gold image) (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
+/* cnc-ad.js v1.3 27/09/2026 Bee-Inspect banners (mark: the red Bee-Inspect app icon, first party, contract 16.11) (contract 16.3, BUILD-STATE.md); copy in /hsf/ads.js */
 (function (w, d) {
 'use strict';
 var A = w.HSF_ADS, KEY = 'cnc_bee_ads_v1', DAY = 864e5;
@@ -48,7 +48,7 @@ function variant(e) {
 }
 function fillN(t, n) { return String(t || '').replace('{n}', String(n)); }
 function bee(s) {
-  return '<img class="cnc-ad-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="' + s + '" height="' + s + '" decoding="async">';
+  return '<img class="cnc-ad-bee" src="/assets/bee-inspect/icon-96.webp" alt="" width="' + s + '" height="' + s + '" decoding="async">';
 }
 function link(e, cls, q) {
   var ad = A.ads[e.id], p = q || (S.sub ? A.links.open_app : ad.primary), v = variant(e);

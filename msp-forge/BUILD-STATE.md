@@ -205,3 +205,6 @@ apps/mobile (Expo SDK 57, Expo Router, TypeScript): sign in (email and password,
 
 ### Bee-Inspect app rebuilt for 17 industries | 27/09/2026
 Kernel bundle 1.1.0: 17 industries, 56 subindustries, 44 triggers, 18 place types, 39 templates (22 Section F registers, 17 industry walkthroughs), 346 checklist lines each traced to its source (51 medical lines left out). Guided registration (company, places, people), place switcher, industry template picker, Evidence library with content addressed storage, five fictitious demo companies across industries, the supplied icon and splash. Checks: tsc and lint clean, 163 app tests, node --test 608 of 608, replay 001 to 065 and all SQL checks green. Not yet on a device; migration 065 not applied.
+
+### Web Bee-Inspect mark switched | 27/09/2026
+On the Director's "YES": the banners (AD-01 to AD-08), the /bee-inspect hero and /get-app show the red Bee-Inspect icon (first party files in vercel/assets/bee-inspect/), replacing the AutoHive gold bee there; the four Bee-Inspect pages use it as favicon and home screen icon. The AutoHive credit stamp in footers is unchanged (contract 16.11). node --test 608 of 608; banner and page browser checks and the File link crawl pass.

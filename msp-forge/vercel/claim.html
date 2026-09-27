@@ -25,10 +25,12 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
-<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" data-asset="cl-favicon">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/bee-inspect/favicon-48.png" data-asset="cl-favicon">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/bee-inspect/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/bee-inspect/icon-180.png">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
-<link rel="stylesheet" href="/css/cnc-bee.css?v=20260925b">
+<link rel="stylesheet" href="/css/cnc-bee.css?v=20260927a">
 <script src="/js/cnc-config.js" defer></script>
 <script src="/js/cnc-tracking.js" defer></script>
 <script src="/js/flags.js"></script>
@@ -99,7 +101,7 @@
  "version": "1.0",
  "date": "25/09/2026",
  "assets": [
-  {"id": "cl-favicon", "block": "Head: browser tab icon", "purpose": "The browser tab icon, shared with every Care Net page.", "type": "logo", "formats": ["svg", "png", "ico"], "width": 512, "height": 512, "ratio": "1:1", "max_kb": 20, "colour": "Care Net red #ED1B24 on white", "alt": "Decorative", "file_name": "cnc-favicon-512x512.png", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png", "status": "needed", "notes": "The same set as hsf-favicon."},
+  {"id": "cl-favicon", "block": "Head: browser tab icon and home screen icon", "purpose": "The Bee-Inspect app icon as the browser tab icon (48 and 192) and the apple-touch-icon (180), on the four Bee-Inspect pages only; the File pages keep the Care Net icon.", "type": "icon", "formats": ["png"], "width": 48, "height": 48, "ratio": "1:1", "max_kb": 40, "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied", "alt": "Decorative", "file_name": "favicon-48.png", "delivery": "/assets/bee-inspect/favicon-48.png", "status": "existing", "notes": "Exported from the app icon master in apps/mobile/assets/brand/bee-inspect-icon (contract 16.11). When the designer supplies the master with the BI letters as outlines, replace favicon-48.png, icon-180.png and icon-192.png in /assets/bee-inspect/ in place, same names and sizes."},
   {"id": "cl-logo", "block": "Site header: logo", "purpose": "The Care Net Consultants logo, linking to the Health and Safety File.", "type": "logo", "formats": ["webp", "png", "svg"], "width": 445, "height": 160, "ratio": "2.78:1", "max_kb": 30, "colour": "Brand master as supplied", "alt": "Care Net Consultants, Occupational Health Medical Specialists", "file_name": "New-Site_Care_Net_Logo.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp", "status": "existing", "notes": "Shared by every page."},
   {"id": "cl-pattern", "block": "Faded Africa pattern page break under the header", "purpose": "The faded Africa pattern page break used across www.carenetconsultants.co.za.", "type": "pattern", "formats": ["webp", "png"], "width": 2400, "height": 120, "ratio": "20:1", "max_kb": 60, "colour": "The Africa pattern, faded, on a white ground; shown at 90 percent opacity", "alt": "Decorative, no alternative text", "file_name": "cnc-africa-pattern-faded-2400x120.webp", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-africa-pattern-faded-2400x120.webp", "status": "existing", "notes": "Live today at https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp (2000 x 100), shown at the content width with its height auto, never stretched. The same file as msp-faq-divider. Deliver the 2400 x 120 copy to the address given, then point the page at it."}
  ]

@@ -115,37 +115,69 @@ for (const page of NEW_PAGES) {
 
 /* ------------------------------------------------------------ brand art */
 // The Director, 25/09/2026: "Get the bee Icon right and use the same theme as
-// on www.carenetconsultants.co.za to get the pattern right."
-const BEE_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+// on www.carenetconsultants.co.za to get the pattern right." The Director,
+// 27/09/2026 (contract 16.11): the Bee-Inspect mark on these pages is the red
+// Bee-Inspect app icon, first party in /assets/bee-inspect/; the AutoHive gold
+// bee stays only in the footer credit stamp (class ah-bee).
+const GOLD_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const MARK_DIR = '/assets/bee-inspect/';
 const FADED_SRC = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp';
-test('brand art: every bee is the official gold bee image, and the faded Africa page break replaces the pattern strip', () => {
+test('brand art: the Bee-Inspect mark is the red app icon, first party; the gold bee is only the AutoHive credit; the faded Africa page break replaces the pattern strip', () => {
   for (const page of NEW_PAGES) {
     const h = read(page);
     assert.doesNotMatch(h, /<svg[^>]*class="[^"]*bee|rotate\(-?28 /, page + ': no hand drawn bee');
     assert.doesNotMatch(h, /class="pattern-strip"|cnc-pattern\.css/, page + ': no pattern strip');
     for (const img of h.match(/<img\b[^>]*Bee_Icon[^>]*>/g) || []) {
-      assert.ok(img.includes('src="' + BEE_SRC + '"') && / alt=""/.test(img) && /decoding="async"/.test(img), page + ': ' + img);
+      assert.ok(/class="ah-bee"/.test(img) && img.includes('src="' + GOLD_SRC + '"'), page + ': the gold bee appears only as the AutoHive credit stamp: ' + img);
+    }
+    for (const img of h.match(/<img\b[^>]*\/assets\/bee-inspect\/[^>]*>/g) || []) {
+      assert.match(img, / src="\/assets\/bee-inspect\/icon-(96|192|512)\.(webp|png)"/, page + ': ' + img);
+      assert.ok(/ alt=""/.test(img) && /decoding="async"/.test(img), page + ': ' + img);
       const w = img.match(/ width="(\d+)"/), hh = img.match(/ height="(\d+)"/);
-      assert.ok(w && hh && w[1] === hh[1], page + ': the bee is square, sized by width and height: ' + img);
+      assert.ok(w && hh && w[1] === hh[1], page + ': the mark is square, sized by width and height: ' + img);
+      assert.ok(fs.existsSync(path.join(VERCEL, img.match(/ src="\/([^"]+)"/)[1])), page + ': the file is in the site: ' + img);
+    }
+    // favicon and apple-touch-icon: the Bee-Inspect icon, first party
+    const head = h.slice(0, h.indexOf('</head>'));
+    assert.ok(head.includes('<link rel="icon" type="image/png" sizes="48x48" href="/assets/bee-inspect/favicon-48.png"'), page + ': favicon');
+    assert.ok(head.includes('<link rel="icon" type="image/png" sizes="192x192" href="/assets/bee-inspect/icon-192.png">'), page + ': 192 icon');
+    assert.ok(head.includes('<link rel="apple-touch-icon" sizes="180x180" href="/assets/bee-inspect/icon-180.png">'), page + ': apple-touch-icon');
+    assert.doesNotMatch(head, /rel="icon" href="https:\/\//, page + ': no off site favicon');
+  }
+  // the File pages keep their own icon: the Bee-Inspect icon is for the four Bee-Inspect pages only
+  for (const p of sep.FILE_PAGES.filter((x) => !NEW_PAGES.includes(x))) {
+    if (fs.existsSync(path.join(VERCEL, p))) assert.doesNotMatch(read(p), /\/assets\/bee-inspect\/(favicon|icon)-/, p + ': no Bee-Inspect favicon on a File page');
+  }
+  // every web file is small, square and present as PNG and WebP
+  for (const n of ['icon-96', 'icon-192', 'icon-512']) {
+    for (const ext of ['png', 'webp']) {
+      const f = path.join(VERCEL, 'assets', 'bee-inspect', n + '.' + ext);
+      assert.ok(fs.existsSync(f) && fs.statSync(f).size < 40 * 1024, n + '.' + ext + ' is present and under 40 KB');
     }
   }
+  for (const n of ['favicon-48.png', 'icon-180.png']) assert.ok(fs.statSync(path.join(VERCEL, 'assets', 'bee-inspect', n)).size < 40 * 1024, n);
   const divider = (id, lazy) => '<div class="cnc-divider"><img data-asset="' + id + '" decoding="async" width="2000" height="100" class="divider" src="' + FADED_SRC + '" alt="" aria-hidden="true"' + (lazy ? ' loading="lazy"' : '') + '></div>';
   assert.ok(read('bee-inspect.html').includes(divider('bi-pattern', true)), 'bee-inspect.html: the faded page break under the hero');
   assert.ok(read('get-app.html').includes(divider('ga-pattern', false)), 'get-app.html: the faded page break under the header');
   assert.ok(read('claim.html').includes(divider('cl-pattern', false)), 'claim.html: the faded page break under the header');
-  assert.match(read('bee-inspect.html'), /<img class="hero-bee" data-asset="bi-bee" src="[^"]+" alt="" width="84" height="84" decoding="async"/, 'the hero bee is the official image');
-  assert.match(read('get-app.html'), /<img class="bee-mark" data-asset="ga-bee" src="[^"]+" alt="" width="56" height="56" decoding="async">/, 'the Get the app bee is the official image');
+  assert.match(read('bee-inspect.html'), /<img class="hero-bee" data-asset="bi-bee" src="\/assets\/bee-inspect\/icon-192\.webp" alt="" width="84" height="84" decoding="async"/, 'the hero mark is the red Bee-Inspect icon');
+  assert.match(read('get-app.html'), /<img class="bee-mark" data-asset="ga-bee" src="\/assets\/bee-inspect\/icon-192\.webp" alt="" width="56" height="56" decoding="async">/, 'the Get the app mark is the red Bee-Inspect icon');
+  assert.match(read('bee-inspect.html'), /<img class="ah-bee" data-asset="bi-autohive-bee" src="https:\/\/img\.carenetcdn\.com\/medical-surveillance\/New-Site_Bee_Icon_Gold\.webp"/, 'the AutoHive credit stamp keeps the gold bee');
   const css = read('css/cnc-bee.css');
+  assert.match(css, /\.cnc-hero \.hero-bee \{[^}]*border-radius: 22%/, 'the hero mark keeps the rounded square of the app icon');
+  assert.match(css, /\.bee-mark \{[^}]*border-radius: 22%/, 'the Get the app mark keeps the rounded square of the app icon');
   assert.ok(css.includes('.divider { width: 100%; height: auto; display: block; margin: 8px 0 0; opacity: .9;'), 'styled as .divider on medical-surveillance-plans.html');
   assert.match(read('medical-surveillance-plans.html'), /\.divider\{width:100%;height:auto;display:block;margin:8px 0 0;opacity:\.9\}/, 'the source rule is unchanged');
-  // the asset specification points at the official files, status existing
-  for (const [page, ids] of [['bee-inspect.html', ['bi-pattern', 'bi-bee', 'bi-autohive-bee']], ['get-app.html', ['ga-pattern', 'ga-bee']], ['claim.html', ['cl-pattern']]]) {
+  // the asset specification points at the files in use, status existing
+  for (const [page, ids] of [['bee-inspect.html', ['bi-pattern', 'bi-bee', 'bi-autohive-bee', 'bi-favicon']], ['get-app.html', ['ga-pattern', 'ga-bee', 'ga-favicon']], ['claim.html', ['cl-pattern', 'cl-favicon']], ['bee-inspect/sample-report.html', ['sr-favicon']]]) {
     const spec = JSON.parse(read(page).match(/<script type="application\/json" id="cnc-asset-spec">([\s\S]*?)<\/script>/)[1]);
     for (const id of ids) {
       const a = spec.assets.find((x) => x.id === id);
       assert.ok(a && a.status === 'existing', page + ': ' + id + ' is existing');
       if (/pattern/.test(id)) assert.ok(a.notes.includes(FADED_SRC) && a.type === 'pattern', page + ': ' + id + ' names the faded page break');
-      else assert.equal(a.file_name, 'New-Site_Bee_Icon_Gold.webp', page + ': ' + id);
+      else if (/autohive/.test(id)) assert.equal(a.file_name, 'New-Site_Bee_Icon_Gold.webp', page + ': ' + id);
+      else if (/favicon/.test(id)) assert.ok(a.delivery === MARK_DIR + 'favicon-48.png' && /in place/.test(a.notes), page + ': ' + id);
+      else assert.ok(a.delivery === MARK_DIR + 'icon-192.webp' && a.file_name === 'icon-192.webp' && /outlines/.test(a.notes) && /in place/.test(a.notes), page + ': ' + id);
     }
   }
 });

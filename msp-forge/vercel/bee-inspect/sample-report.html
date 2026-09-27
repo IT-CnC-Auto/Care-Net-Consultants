@@ -29,11 +29,13 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
-<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" data-asset="sr-favicon">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/bee-inspect/favicon-48.png" data-asset="sr-favicon">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/bee-inspect/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/bee-inspect/icon-180.png">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
 <link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
-<link rel="stylesheet" href="/css/cnc-bee.css?v=20260925b">
+<link rel="stylesheet" href="/css/cnc-bee.css?v=20260927a">
 <style>
   body { -webkit-user-select: none; user-select: none; }
   .sbar { background: #0F0F0F; color: #fff; }
@@ -176,7 +178,7 @@ document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
  "version": "1.0",
  "date": "25/09/2026",
  "assets": [
-  {"id": "sr-favicon", "block": "Head: browser tab icon", "purpose": "The browser tab icon, shared with every Care Net page.", "type": "logo", "formats": ["svg", "png", "ico"], "width": 512, "height": 512, "ratio": "1:1", "max_kb": 20, "colour": "Care Net red #ED1B24 on white", "alt": "Decorative", "file_name": "cnc-favicon-512x512.png", "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png", "status": "needed", "notes": "The same set as hsf-favicon."},
+  {"id": "sr-favicon", "block": "Head: browser tab icon and home screen icon", "purpose": "The Bee-Inspect app icon as the browser tab icon (48 and 192) and the apple-touch-icon (180), on the four Bee-Inspect pages only; the File pages keep the Care Net icon.", "type": "icon", "formats": ["png"], "width": 48, "height": 48, "ratio": "1:1", "max_kb": 40, "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied", "alt": "Decorative", "file_name": "favicon-48.png", "delivery": "/assets/bee-inspect/favicon-48.png", "status": "existing", "notes": "Exported from the app icon master in apps/mobile/assets/brand/bee-inspect-icon (contract 16.11). When the designer supplies the master with the BI letters as outlines, replace favicon-48.png, icon-180.png and icon-192.png in /assets/bee-inspect/ in place, same names and sizes."},
   {"id": "sr-logo", "block": "Site header logo and the locked report footer", "purpose": "The Care Net Consultants logo in the header and in the locked footer of every report page.", "type": "logo", "formats": ["webp", "png", "svg"], "width": 445, "height": 160, "ratio": "2.78:1", "max_kb": 30, "colour": "Brand master as supplied", "alt": "Care Net Consultants", "file_name": "New-Site_Care_Net_Logo.webp", "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp", "status": "existing", "notes": "The report footer is locked: tenants cannot remove or replace it."}
  ]
 }

@@ -6,8 +6,8 @@
     "pages": 20,
     "pages_with_spec": 20,
     "assets": 231,
-    "needed": 98,
-    "existing": 133,
+    "needed": 95,
+    "existing": 136,
     "warnings": 81
   },
   "pages": [
@@ -218,24 +218,22 @@
         {
           "n": 2,
           "id": "bi-favicon",
-          "block": "Head: browser tab icon",
-          "purpose": "The browser tab icon, shared with every Care Net page.",
-          "type": "logo",
+          "block": "Head: browser tab icon and home screen icon",
+          "purpose": "The Bee-Inspect app icon as the browser tab icon (48 and 192) and the apple-touch-icon (180), on the four Bee-Inspect pages only; the File pages keep the Care Net icon.",
+          "type": "icon",
           "formats": [
-            "svg",
-            "png",
-            "ico"
+            "png"
           ],
-          "width": 512,
-          "height": 512,
+          "width": 48,
+          "height": 48,
           "ratio": "1:1",
-          "max_kb": 20,
-          "colour": "Care Net red #ED1B24 on white",
+          "max_kb": 40,
+          "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied",
           "alt": "Decorative",
-          "file_name": "cnc-favicon-512x512.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
-          "status": "needed",
-          "notes": "The same set as hsf-favicon on health-and-safety-file.html.",
+          "file_name": "favicon-48.png",
+          "delivery": "/assets/bee-inspect/favicon-48.png",
+          "status": "existing",
+          "notes": "Exported from the app icon master in apps/mobile/assets/brand/bee-inspect-icon (contract 16.11). When the designer supplies the master with the BI letters as outlines, replace favicon-48.png, icon-180.png and icon-192.png in /assets/bee-inspect/ in place, same names and sizes.",
           "slot_count": 1
         },
         {
@@ -265,7 +263,7 @@
           "n": 4,
           "id": "bi-hero-illustration",
           "block": "Hero: illustration (right)",
-          "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the gold bee. The phone is drawn inline today; the bee is the official gold bee image laid over it (bi-bee).",
+          "purpose": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the Bee-Inspect mark. The phone is drawn inline today; the mark is the red Bee-Inspect app icon laid over it (bi-bee).",
           "type": "illustration",
           "formats": [
             "svg"
@@ -274,8 +272,8 @@
           "height": 600,
           "ratio": "6:5",
           "max_kb": 30,
-          "colour": "Ink #0F0F0F phone, gold #F0A32B accents, pass green, fail red, observe amber on white",
-          "alt": "A phone showing an inspection checklist with a pass, a fail and a photo, beside a gold bee",
+          "colour": "Ink #0F0F0F phone, gold #F0A32B accents, pass green, fail red, observe amber on white; the red Bee-Inspect icon beside it",
+          "alt": "A phone showing an inspection checklist with a pass, a fail and a photo, beside the Bee-Inspect mark",
           "file_name": "bee-inspect-hero-phone.svg",
           "delivery": "img.carenetcdn.com/bee-inspect/bee-inspect-hero-phone.svg",
           "status": "needed",
@@ -307,22 +305,23 @@
         {
           "n": 6,
           "id": "bi-bee",
-          "block": "Hero: the gold bee beside the phone",
-          "purpose": "The official Care Net gold bee beside the drawn phone in the hero.",
+          "block": "Hero: the Bee-Inspect mark beside the phone",
+          "purpose": "The red Bee-Inspect app icon beside the drawn phone in the hero.",
           "type": "icon",
           "formats": [
-            "webp"
+            "webp",
+            "png"
           ],
-          "width": 168,
-          "height": 168,
+          "width": 192,
+          "height": 192,
           "ratio": "1:1",
-          "max_kb": 6,
-          "colour": "Gold, as supplied; never recoloured or redrawn",
+          "max_kb": 40,
+          "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied; never recoloured or redrawn",
           "alt": "Decorative, no alternative text",
-          "file_name": "New-Site_Bee_Icon_Gold.webp",
-          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "file_name": "icon-192.webp",
+          "delivery": "/assets/bee-inspect/icon-192.webp",
           "status": "existing",
-          "notes": "The official Care Net gold bee, the same file as the AutoHive footer credit on www.carenetconsultants.co.za.",
+          "notes": "The red Bee-Inspect app icon (contract 16.11, 27/09/2026), first party in /assets/bee-inspect/ (icon-96, icon-192, icon-512, each as PNG and WebP), shown as a rounded square. The master's BI letters are a system font today; when the designer supplies the master with the letters as outlines, export the same names and sizes and replace the files in place. The AutoHive gold bee stays only in the footer credit stamp.",
           "slot_count": 1
         },
         {
@@ -359,24 +358,22 @@
         {
           "n": 1,
           "id": "cl-favicon",
-          "block": "Head: browser tab icon",
-          "purpose": "The browser tab icon, shared with every Care Net page.",
-          "type": "logo",
+          "block": "Head: browser tab icon and home screen icon",
+          "purpose": "The Bee-Inspect app icon as the browser tab icon (48 and 192) and the apple-touch-icon (180), on the four Bee-Inspect pages only; the File pages keep the Care Net icon.",
+          "type": "icon",
           "formats": [
-            "svg",
-            "png",
-            "ico"
+            "png"
           ],
-          "width": 512,
-          "height": 512,
+          "width": 48,
+          "height": 48,
           "ratio": "1:1",
-          "max_kb": 20,
-          "colour": "Care Net red #ED1B24 on white",
+          "max_kb": 40,
+          "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied",
           "alt": "Decorative",
-          "file_name": "cnc-favicon-512x512.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
-          "status": "needed",
-          "notes": "The same set as hsf-favicon.",
+          "file_name": "favicon-48.png",
+          "delivery": "/assets/bee-inspect/favicon-48.png",
+          "status": "existing",
+          "notes": "Exported from the app icon master in apps/mobile/assets/brand/bee-inspect-icon (contract 16.11). When the designer supplies the master with the BI letters as outlines, replace favicon-48.png, icon-180.png and icon-192.png in /assets/bee-inspect/ in place, same names and sizes.",
           "slot_count": 1
         },
         {
@@ -436,24 +433,22 @@
         {
           "n": 1,
           "id": "ga-favicon",
-          "block": "Head: browser tab icon",
-          "purpose": "The browser tab icon, shared with every Care Net page.",
-          "type": "logo",
+          "block": "Head: browser tab icon and home screen icon",
+          "purpose": "The Bee-Inspect app icon as the browser tab icon (48 and 192) and the apple-touch-icon (180), on the four Bee-Inspect pages only; the File pages keep the Care Net icon.",
+          "type": "icon",
           "formats": [
-            "svg",
-            "png",
-            "ico"
+            "png"
           ],
-          "width": 512,
-          "height": 512,
+          "width": 48,
+          "height": 48,
           "ratio": "1:1",
-          "max_kb": 20,
-          "colour": "Care Net red #ED1B24 on white",
+          "max_kb": 40,
+          "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied",
           "alt": "Decorative",
-          "file_name": "cnc-favicon-512x512.png",
-          "delivery": "img.carenetcdn.com/medical-surveillance/cnc-favicon-512x512.png",
-          "status": "needed",
-          "notes": "The same set as hsf-favicon.",
+          "file_name": "favicon-48.png",
+          "delivery": "/assets/bee-inspect/favicon-48.png",
+          "status": "existing",
+          "notes": "Exported from the app icon master in apps/mobile/assets/brand/bee-inspect-icon (contract 16.11). When the designer supplies the master with the BI letters as outlines, replace favicon-48.png, icon-180.png and icon-192.png in /assets/bee-inspect/ in place, same names and sizes.",
           "slot_count": 1
         },
         {
@@ -504,22 +499,23 @@
         {
           "n": 4,
           "id": "ga-bee",
-          "block": "Panel: the gold bee above the heading",
-          "purpose": "The official Care Net gold bee that opens the Get the app card.",
+          "block": "Panel: the Bee-Inspect mark above the heading",
+          "purpose": "The red Bee-Inspect app icon that opens the Get the app card; the eyebrow beside it names it, so it has no alternative text.",
           "type": "icon",
           "formats": [
-            "webp"
+            "webp",
+            "png"
           ],
-          "width": 112,
-          "height": 112,
+          "width": 192,
+          "height": 192,
           "ratio": "1:1",
-          "max_kb": 6,
-          "colour": "Gold, as supplied; never recoloured or redrawn",
+          "max_kb": 40,
+          "colour": "The red Bee-Inspect app icon, white bee and BI letters on red #DC2626, as supplied; never recoloured or redrawn",
           "alt": "Decorative, no alternative text",
-          "file_name": "New-Site_Bee_Icon_Gold.webp",
-          "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+          "file_name": "icon-192.webp",
+          "delivery": "/assets/bee-inspect/icon-192.webp",
           "status": "existing",
-          "notes": "The official Care Net gold bee, the same file as the AutoHive footer credit on www.carenetconsultants.co.za.",
+          "notes": "The red Bee-Inspect app icon (contract 16.11, 27/09/2026), first party in /assets/bee-inspect/ (icon-96, icon-192, icon-512, each as PNG and WebP), shown as a rounded square. The master's BI letters are a system font today; when the designer supplies the master with the letters as outlines, export the same names and sizes and replace the files in place. The AutoHive gold bee stays only in the footer credit stamp.",
           "slot_count": 1
         },
         {

@@ -57,10 +57,11 @@ footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
 .cnc-hero .heroart { position: relative; display: flex; justify-content: center; }
 .cnc-hero .heroart-in { position: relative; width: 100%; max-width: 360px; }
 .cnc-hero .heroart svg { width: 100%; max-width: 360px; height: auto; display: block; }
-/* The official gold bee (New-Site_Bee_Icon_Gold.webp), laid over the drawn
-   phone where the old drawn bee sat: its box scales with the drawing (84 of
-   360 by 300 units) and its square is set by width and height, so nothing moves. */
-.cnc-hero .hero-bee { position: absolute; left: 71.67%; top: 14%; width: 23.33%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; display: block; }
+/* The Bee-Inspect mark (the red app icon, /assets/bee-inspect/, contract 16.11),
+   laid over the drawn phone where the old drawn bee sat: its box scales with the
+   drawing (84 of 360 by 300 units) and its square is set by width and height, so
+   nothing moves. Rounded like the app icon on a phone. */
+.cnc-hero .hero-bee { position: absolute; left: 71.67%; top: 14%; width: 23.33%; height: auto; aspect-ratio: 1 / 1; object-fit: contain; display: block; border-radius: 22%; }
 .cnc-hero .chip:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 .cnc-hero .price-line { margin: 14px 0 0; color: var(--gold); font-weight: 700; font-size: 14.5px; }
 /* The price line is written from /hsf/ads.js as the hero is parsed: its room is
@@ -108,7 +109,7 @@ footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
 .panel .device { font-size: 14px; font-weight: 600; margin: 10px 0 0; line-height: 1.5; min-height: 3em; }
 @media (max-width: 640px) { .panel .device { min-height: 4.5em; } }
 @media (max-width: 359px) { .panel .device { min-height: 6em; } }
-.bee-mark { display: block; width: 56px; height: 56px; margin-bottom: 10px; object-fit: contain; }
+.bee-mark { display: block; width: 56px; height: 56px; margin-bottom: 10px; object-fit: contain; border-radius: 22%; }
 
 /* The faded Africa pattern page break, the same file and the same rule as
    .divider on medical-surveillance-plans.html (www.carenetconsultants.co.za):

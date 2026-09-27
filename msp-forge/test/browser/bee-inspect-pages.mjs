@@ -29,8 +29,12 @@
    keyboard focus visible on every tab stop reached, layout shift near 0 while
    loading and scrolling, and no link to a Medical Surveillance Plan page.
    On /bee-inspect, /get-app and /claim (and no drawn bee on the sample
-   report): every bee is the official gold bee image, and the faded Africa
-   page break of www.carenetconsultants.co.za replaces the pattern strip.
+   report): the Bee-Inspect mark is the red app icon, first party in
+   /assets/bee-inspect/ (contract 16.11), loaded, square with rounded corners;
+   the gold bee appears only as the AutoHive credit stamp (ah-bee); the
+   favicon and apple-touch-icon are the Bee-Inspect icon and load; and the
+   faded Africa page break of www.carenetconsultants.co.za replaces the
+   pattern strip.
 
    Run:  node test/browser/bee-inspect-pages.mjs           (checks)
          node test/browser/bee-inspect-pages.mjs --shots   (and writes the
@@ -92,37 +96,51 @@ function logoSvg() {
     : '<svg xmlns="http://www.w3.org/2000/svg" width="445" height="160"><rect width="445" height="160" fill="#fff"/><text x="20" y="95" font-family="Arial" font-size="48" font-weight="700" fill="#ED1B24">CARE NET</text></svg>';
   return LOGO_SVG;
 }
-/* Stand ins for the two files the Director named (25/09/2026), at their real
-   shape: the faded Africa page break (2000 x 100) and the square gold bee.
-   Both say "stand in" so no screenshot passes for the real artwork. */
+/* Stand ins, at their real shape, for the files on other hosts: the faded
+   Africa page break (2000 x 100) and the square gold bee of the AutoHive
+   credit stamp. Both say "stand in" so no screenshot passes for the real
+   artwork. The Bee-Inspect mark is first party (contract 16.11), so it is the
+   real icon in every screenshot. */
 const FADED_STAND_IN = '<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="100" viewBox="0 0 2000 100"><rect width="2000" height="100" fill="#fff"/>'
   + '<path d="' + Array.from({ length: 50 }, (_, i) => 'M' + (i * 40) + ' 70l20-40 20 40').join('') + '" stroke="#e7b8ba" stroke-width="6" fill="none"/>'
   + '<text x="1000" y="62" font-family="Arial" font-size="26" fill="#9a9a9a" text-anchor="middle">stand in: CNC Website Page break Africa Pattern faded 2000 x 100</text></svg>';
 const BEE_STAND_IN = '<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><circle cx="128" cy="128" r="120" fill="#F0A32B"/>'
   + '<text x="128" y="146" font-family="Arial" font-size="56" font-weight="700" fill="#0F0F0F" text-anchor="middle">BEE</text>'
   + '<text x="128" y="190" font-family="Arial" font-size="26" fill="#0F0F0F" text-anchor="middle">stand in</text></svg>';
-const BEE_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const GOLD_SRC = 'https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp';
+const MARK_SRC = '/assets/bee-inspect/icon-192.webp';
+const BANNER_MARK_SRC = '/assets/bee-inspect/icon-96.webp';
 const FADED_SRC = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/wp-content/uploads/2025/05/CNC-Website-Page-break-Africa-Pattern-faded-2000x100px-1.1.webp';
 
-/* The Director's brand fixes (25/09/2026): every bee is the official gold bee
-   image (square, loaded, never a drawing) and, where asked, the pattern is
+/* The Director's brand fixes (25/09/2026, 27/09/2026): the Bee-Inspect mark
+   is the red app icon, first party (square, rounded, loaded, never a
+   drawing), the gold bee is only the AutoHive credit stamp, the tab and home
+   screen icons are the Bee-Inspect icon, and, where asked, the pattern is
    the faded page break of www.carenetconsultants.co.za at the content width,
    its 20:1 shape kept (no stretching), never the old pattern strip. */
 async function brandArt(run, tag, o) {
   const d = await run.page.evaluate(() => {
     const box = (el) => { const r = el.getBoundingClientRect(); return { w: r.width, h: r.height }; };
     const drawn = Array.from(document.querySelectorAll('svg')).filter((s) => /rotate\(-?28/.test(s.innerHTML) || s.matches('.bee-mark, .cnc-ad-bee')).length;
-    const bees = Array.from(document.querySelectorAll('img[src*="Bee_Icon"]')).map((i) => Object.assign({ src: i.getAttribute('src'), nw: i.naturalWidth, alt: i.getAttribute('alt'), aw: i.getAttribute('width'), ah: i.getAttribute('height') }, box(i)));
+    const bees = Array.from(document.querySelectorAll('img[src^="/assets/bee-inspect/"]')).map((i) => Object.assign({ src: i.getAttribute('src'), cls: i.className, nw: i.naturalWidth, alt: i.getAttribute('alt'), aw: i.getAttribute('width'), ah: i.getAttribute('height'), radius: getComputedStyle(i).borderTopLeftRadius }, box(i)));
+    const gold = Array.from(document.querySelectorAll('img[src*="Bee_Icon"]')).map((i) => ({ cls: i.className, src: i.getAttribute('src') }));
+    const icons = Array.from(document.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]')).map((l) => ({ rel: l.rel, sizes: l.getAttribute('sizes'), href: l.getAttribute('href') }));
     const div = Array.from(document.querySelectorAll('img.divider')).map((i) => {
       const cs = getComputedStyle(i.parentElement);
       return Object.assign({ src: i.getAttribute('src'), nw: i.naturalWidth, aw: i.getAttribute('width'), ah: i.getAttribute('height'), alt: i.getAttribute('alt'), hidden: i.getAttribute('aria-hidden'),
         cw: i.parentElement.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) }, box(i));
     });
-    return { drawn, bees, div, strips: document.querySelectorAll('.pattern-strip').length };
+    return { drawn, bees, gold, icons, div, strips: document.querySelectorAll('.pattern-strip').length };
   });
   check(tag('no hand drawn bee'), d.drawn === 0, d.drawn);
-  if (o && o.bee) check(tag('the bee is the official gold bee image, loaded, square, sized by width and height'), d.bees.length >= o.bee
-    && d.bees.every((b) => b.src === BEE_SRC && b.nw > 0 && b.alt === '' && b.aw === b.ah && Math.abs(b.w - b.h) < 0.6 && b.w > 0), d.bees);
+  if (o && o.bee) check(tag('the Bee-Inspect mark is the red app icon, first party, loaded, square with rounded corners, sized by width and height'), d.bees.length >= o.bee
+    && d.bees.some((b) => b.src === MARK_SRC)
+    && d.bees.every((b) => (b.src === MARK_SRC || (b.src === BANNER_MARK_SRC && b.cls === 'cnc-ad-bee')) && b.nw > 0 && b.alt === '' && b.aw === b.ah && Math.abs(b.w - b.h) < 0.6 && b.w > 0 && b.radius === '22%'), d.bees);
+  check(tag('the gold bee appears only as the AutoHive credit stamp'), d.gold.every((g) => g.cls === 'ah-bee' && g.src === GOLD_SRC), d.gold);
+  const want = [['icon', '48x48', '/assets/bee-inspect/favicon-48.png'], ['icon', '192x192', '/assets/bee-inspect/icon-192.png'], ['apple-touch-icon', '180x180', '/assets/bee-inspect/icon-180.png']];
+  const ok = await Promise.all(d.icons.map((i) => run.page.evaluate((h) => fetch(h).then((r) => r.ok && /image\/png/.test(r.headers.get('content-type') || '')).catch(() => false), i.href)));
+  check(tag('favicon and apple-touch-icon are the Bee-Inspect icon, first party, and load'), d.icons.length === 3
+    && want.every(([rel, sizes, href]) => d.icons.some((i) => i.rel === rel && i.sizes === sizes && i.href === href)) && ok.every(Boolean), { icons: d.icons, ok });
   if (o && o.divider) {
     check(tag('the faded Africa page break replaces the pattern strip'), d.strips === 0 && d.div.length === 1, d);
     const v = d.div[0] || {};
@@ -136,7 +154,7 @@ function standIn(u) {
   if (/Care_Net_Logo/i.test(p)) return logoSvg();
   if (/pattern-strip/i.test(p)) return '<svg xmlns="http://www.w3.org/2000/svg" width="96" height="48"><rect width="96" height="48" fill="#fff"/><path d="M0 24l12-12 12 12 12-12 12 12 12-12 12 12 12-12 12 12" stroke="#ED1B24" stroke-width="3" fill="none"/><path d="M0 40h96" stroke="#F0A32B" stroke-width="4"/></svg>';
   if (/Page-break-Africa-Pattern-faded/i.test(p)) return FADED_STAND_IN;
-  if (/Bee_Icon/i.test(p)) return BEE_STAND_IN;
+  if (/Bee_Icon/i.test(p)) return BEE_STAND_IN; /* the AutoHive credit stamp only */
   return '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" rx="8" fill="#e9e6e6"/></svg>';
 }
 
@@ -384,7 +402,7 @@ async function productPage(browser, origin, vp, o) {
   await shot(page, 'bee-inspect-pricing', vp, o, { sel: '#pricing', max: 1500 });
   await shot(page, 'bee-inspect-faq', vp, o, { sel: '#app', max: 1500 });
   await common(run, origin, tag);
-  await brandArt(run, tag, { bee: 2, divider: true });
+  await brandArt(run, tag, { bee: 1, divider: true });
   await run.context.close();
 
   const off = await open(browser, origin, vp, { path: '/bee-inspect?flags=bee_inspect_ads:0' });

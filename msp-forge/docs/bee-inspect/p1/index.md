@@ -22,4 +22,6 @@ Not shown, by design: no banner on the loading, sign in, registration, consent o
 
 Brand fix, 25/09/2026: the banner bee is now the official Care Net gold bee image, `https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp` (the file of the footer credit on www.carenetconsultants.co.za), in place of the hand drawn one; every banner screenshot was refreshed. **Stand in:** the image host is not reachable from the build environment, so in these screenshots the bee is a gold disc marked "BEE stand in" of the same square size; on staging and live the real bee loads in the same box. AD-04-hidden-on-phone-390.png shows no banner and is unchanged.
 
+Bee-Inspect mark, 27/09/2026 (hsf/BUILD-CONTRACT.md 16.11): the banner bee is now the real red Bee-Inspect app icon, first party at `/assets/bee-inspect/icon-96.webp` (from apps/mobile/assets/brand/bee-inspect-icon), shown as a rounded square, in place of the AutoHive gold bee. Because it is served by this site, these screenshots show the real icon, not a stand in; every banner screenshot was refreshed. The designer will supply the master with the BI letters as outlines; the files in /assets/bee-inspect/ are replaced in place. AD-04-hidden-on-phone-390.png shows no banner and is unchanged.
+
 All 19 images are under 300 KB (the largest about 75 KB).

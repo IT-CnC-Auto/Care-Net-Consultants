@@ -60,6 +60,8 @@ Brand fix, 25/09/2026 (the Director: "Get the bee Icon right and use the same th
 
 **Stand ins:** neither image host is reachable from the build environment, so in these screenshots the bee is a gold disc marked "BEE stand in" and the page break is a pale zigzag marked "stand in", both drawn locally at the real shape (square; 2000 x 100). On staging and live the real files load in the same boxes.
 
+Bee-Inspect mark, 27/09/2026 (hsf/BUILD-CONTRACT.md 16.11): the bee on these pages and in the banners is now the real red Bee-Inspect app icon, first party in `/assets/bee-inspect/` (icon-96, icon-192, icon-512 as PNG and WebP, from apps/mobile/assets/brand/bee-inspect-icon), shown as a rounded square: the /bee-inspect hero and the Get the app card use icon-192.webp, the banners icon-96.webp. It is also the favicon (favicon-48.png, icon-192.png) and apple-touch-icon (icon-180.png) of /bee-inspect, /bee-inspect/sample-report, /get-app and /claim; the File pages keep their icon. The AutoHive gold bee stays only in the footer credit stamp (`ah-bee`), which is still a stand in here. Because the mark is served by this site, bee-inspect-top, get-app and section-f-inspection-reports (both widths) were refreshed and show the real icon, not a stand in; the others do not show the mark and were left as they were. The designer will supply the master with the BI letters as outlines; the files are replaced in place.
+
 ## Stubs and open inputs
 
 - Store accounts, {{store_publisher}}, {{apple_team_id}}, {{android_sha256}}: no badges, store links, smart app banner or association files until they exist (HSF_ADS.app all null).
