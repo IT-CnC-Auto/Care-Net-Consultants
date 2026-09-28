@@ -1,0 +1,1378 @@
+{
+ "by_appointment": {
+  "Asbestos work supervisor": "Asbestos Abatement Regulations, 2020",
+  "Assistant construction manager": "Construction Regulations, 2014",
+  "Confined space supervisor": "General Safety Regulations, 1986",
+  "Construction electrical appointee": "Construction Regulations, 2014",
+  "Construction health and safety officer": "Construction Regulations, 2014",
+  "Construction manager": "Construction Regulations, 2014",
+  "Construction supervisor": "Construction Regulations, 2014",
+  "Construction vehicle and mobile plant operator": "Construction Regulations, 2014",
+  "Construction vehicle and mobile plant supervisor": "Construction Regulations, 2014",
+  "Demolition supervisor": "Construction Regulations, 2014",
+  "Driver and professional driving permit holder": "NRTA PrDP medical",
+  "Electrical installation supervisor": "Electrical Machinery and Installation Regulations",
+  "Emergency coordinator": "OHS Act",
+  "Evacuation wardens": "OHS Act",
+  "Excavation supervisor": "Construction Regulations, 2014",
+  "Explosive powered tool issuer": "Explosive powered tools regulations",
+  "Explosive powered tool operator": "Explosive powered tools regulations",
+  "Fall protection planner": "Construction Regulations, 2014",
+  "Fire equipment inspector": "SANS 10400 T part",
+  "Fire team": "Fire Brigade Services Act",
+  "First aiders in the statutory ratio": "General Safety Regulations, 1986",
+  "Food safety and hygiene supervisor": "Food Premises Hygiene Regulations, R638 of 2018",
+  "General machinery supervisor": "General Machinery Regulations, 1988",
+  "Hazardous chemical agent controller": "HCA Regulations, 2021",
+  "Hot work supervisor": "General Safety Regulations, 1986",
+  "Incident investigator": "General Administrative Regulations, 2003",
+  "Ladder inspector": "General Safety Regulations, 1986",
+  "Lead work supervisor": "Lead Regulations, 2001",
+  "Lifting machine and lifting tackle inspector": "Driven Machinery Regulations",
+  "Lifting machine operator": "Driven Machinery Regulations",
+  "Mine manager and MHSA statutory appointees": "MHSA",
+  "Noise zone controller": "Noise Exposure Regulations, 2024",
+  "Pressure equipment supervisor": "Pressure Equipment Regulations, 2009",
+  "Radiation protection officer": "Hazardous Substances Act (radiation control)",
+  "Risk assessor": "Construction Regulations, 2014",
+  "Scaffold inspector": "Construction Regulations, 2014",
+  "Scaffold supervisor": "Construction Regulations, 2014",
+  "Section 16(2) assignee": "OHS Act",
+  "Stacking and storage supervisor": "General Safety Regulations, 1986",
+  "Temporary works designer": "Construction Regulations, 2014",
+  "Temporary works supervisor": "Construction Regulations, 2014"
+ },
+ "by_element": {
+  "HSF-A-01": [
+   "OHS Act"
+  ],
+  "HSF-A-02": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-A-03": [
+   "COIDA"
+  ],
+  "HSF-A-04": [
+   "MHSA",
+   "OHS Act"
+  ],
+  "HSF-A-05": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-A-06": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-A-07": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-A-08": [
+   "OHS Act"
+  ],
+  "HSF-A-09": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-A-10": [
+   "OHS Act"
+  ],
+  "HSF-A-11": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-B-01": [
+   "OHS Act"
+  ],
+  "HSF-B-02": [
+   "OHS Act"
+  ],
+  "HSF-B-03": [
+   "OHS Act"
+  ],
+  "HSF-B-04": [
+   "General Administrative Regulations, 2003",
+   "OHS Act"
+  ],
+  "HSF-B-05": [
+   "General Administrative Regulations, 2003",
+   "OHS Act"
+  ],
+  "HSF-B-06": [
+   "Asbestos Abatement Regulations, 2020",
+   "Construction Regulations, 2014",
+   "Driven Machinery Regulations",
+   "Electrical Machinery and Installation Regulations",
+   "Explosive powered tools regulations",
+   "Fire Brigade Services Act",
+   "Food Premises Hygiene Regulations, R638 of 2018",
+   "General Administrative Regulations, 2003",
+   "General Machinery Regulations, 1988",
+   "General Safety Regulations, 1986",
+   "HCA Regulations, 2021",
+   "Hazardous Substances Act (radiation control)",
+   "Lead Regulations, 2001",
+   "Local fire by laws",
+   "MHSA",
+   "NRTA PrDP medical",
+   "National Road Traffic Act",
+   "Noise Exposure Regulations, 2024",
+   "OHS Act",
+   "Pressure Equipment Regulations, 2009",
+   "SANS 10400 T part"
+  ],
+  "HSF-B-07": [
+   "OHS Act"
+  ],
+  "HSF-B-08": [
+   "OHS Act"
+  ],
+  "HSF-C-01": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-C-02": [
+   "OHS Act"
+  ],
+  "HSF-C-03": [
+   "OHS Act"
+  ],
+  "HSF-C-04": [
+   "OHS Act"
+  ],
+  "HSF-C-05": [
+   "HCA Regulations, 2021",
+   "OHS Act"
+  ],
+  "HSF-C-06": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-C-07": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-C-08": [
+   "Construction Regulations, 2014",
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-C-09": [
+   "Driven Machinery Regulations"
+  ],
+  "HSF-C-10": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-C-11": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-C-12": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-C-13": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-C-14": [
+   "Ergonomics Regulations, 2019"
+  ],
+  "HSF-C-15": [
+   "Noise Exposure Regulations, 2024"
+  ],
+  "HSF-C-16": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-C-17": [
+   "Asbestos Abatement Regulations, 2020"
+  ],
+  "HSF-C-18": [
+   "Lead Regulations, 2001"
+  ],
+  "HSF-C-19": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-C-20": [
+   "BCEA",
+   "BCEA night work Code"
+  ],
+  "HSF-C-21": [
+   "MHI Regulations, 2022"
+  ],
+  "HSF-C-22": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-D-01": [
+   "OHS Act",
+   "Skills Development Act"
+  ],
+  "HSF-D-02": [
+   "OHS Act"
+  ],
+  "HSF-D-03": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-D-04": [
+   "SETA unit standards",
+   "Skills Development Act"
+  ],
+  "HSF-D-05": [
+   "Driven Machinery Regulations",
+   "Electrical Installation Regulations, 2009",
+   "Explosives Regulations",
+   "Firearms Control Act",
+   "NRTA PrDP medical",
+   "Pressure Equipment Regulations, 2009",
+   "Private Security Industry Regulation Act"
+  ],
+  "HSF-D-06": [
+   "OHS Act"
+  ],
+  "HSF-D-07": [
+   "Skills Development Act"
+  ],
+  "HSF-E-02": [
+   "Ergonomics Regulations, 2019",
+   "HBA Regulations, 2022",
+   "HCA Regulations, 2021",
+   "Lead Regulations, 2001",
+   "Noise Exposure Regulations, 2024"
+  ],
+  "HSF-E-03": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-E-04": [
+   "NRTA PrDP medical"
+  ],
+  "HSF-E-05": [
+   "Fitness to Perform Work Guideline (MHSA)",
+   "MHSA"
+  ],
+  "HSF-E-06": [
+   "Asbestos Abatement Regulations, 2020",
+   "BCEA night work Code",
+   "Construction Regulations, 2014",
+   "Food Premises Hygiene Regulations, R638 of 2018",
+   "General Safety Regulations, 1986",
+   "HBA Regulations, 2022",
+   "HCA Regulations, 2021",
+   "Hazardous Substances Act (radiation control)",
+   "Lead Regulations, 2001",
+   "Noise Exposure Regulations, 2024"
+  ],
+  "HSF-E-07": [
+   "Code of Good Practice on Employment of Persons with Disabilities",
+   "EEA section 7"
+  ],
+  "HSF-E-08": [
+   "COIDA",
+   "ODMWA"
+  ],
+  "HSF-E-09": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-E-10": [
+   "HPCSA Booklet 1",
+   "POPIA"
+  ],
+  "HSF-F-01": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-F-02": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-F-03": [
+   "Driven Machinery Regulations"
+  ],
+  "HSF-F-04": [
+   "Construction Regulations, 2014",
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-F-05": [
+   "Electrical Installation Regulations, 2009",
+   "Electrical Machinery and Installation Regulations",
+   "SANS 10142"
+  ],
+  "HSF-F-06": [
+   "Local fire by laws",
+   "SANS 10400 T part"
+  ],
+  "HSF-F-07": [
+   "SANS 10400"
+  ],
+  "HSF-F-08": [
+   "Pressure Equipment Regulations, 2009"
+  ],
+  "HSF-F-09": [
+   "Construction Regulations, 2014",
+   "Driven Machinery Regulations"
+  ],
+  "HSF-F-10": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-F-11": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-F-12": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-F-13": [
+   "Asbestos Abatement Regulations, 2020"
+  ],
+  "HSF-F-14": [
+   "General Machinery Regulations, 1988"
+  ],
+  "HSF-F-15": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-F-16": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-F-17": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-F-18": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-F-19": [
+   "Explosive powered tools regulations"
+  ],
+  "HSF-F-20": [
+   "Facilities Regulations, 2004"
+  ],
+  "HSF-F-21": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-F-22": [
+   "NEM Waste Act"
+  ],
+  "HSF-G-01": [
+   "OHS Act"
+  ],
+  "HSF-G-02": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-G-03": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-G-04": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-G-05": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-G-06": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-G-07": [
+   "Driven Machinery Regulations"
+  ],
+  "HSF-G-08": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-G-09": [
+   "National Road Traffic Act"
+  ],
+  "HSF-G-10": [
+   "Hazardous Substances Act (radiation control)"
+  ],
+  "HSF-H-01": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-H-02": [
+   "OHS Act"
+  ],
+  "HSF-H-03": [
+   "Fire Brigade Services Act",
+   "Local fire by laws",
+   "SANS 10400 T part"
+  ],
+  "HSF-H-04": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-H-05": [
+   "HCA Regulations, 2021",
+   "NEMA and its instruments"
+  ],
+  "HSF-H-06": [
+   "MHI Regulations, 2022"
+  ],
+  "HSF-H-07": [
+   "Private Security Industry Regulation Act"
+  ],
+  "HSF-H-08": [
+   "Disaster Management Act"
+  ],
+  "HSF-I-01": [
+   "General Administrative Regulations, 2003"
+  ],
+  "HSF-I-02": [
+   "General Administrative Regulations, 2003"
+  ],
+  "HSF-I-03": [
+   "General Administrative Regulations, 2003",
+   "OHS Act"
+  ],
+  "HSF-I-04": [
+   "General Administrative Regulations, 2003"
+  ],
+  "HSF-I-05": [
+   "COIDA"
+  ],
+  "HSF-I-06": [
+   "COIDA",
+   "ODMWA"
+  ],
+  "HSF-I-07": [
+   "OHS Act"
+  ],
+  "HSF-J-01": [
+   "HCA Regulations, 2021",
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-J-02": [
+   "Noise Exposure Regulations, 2024"
+  ],
+  "HSF-J-03": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-J-04": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-J-05": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-J-06": [
+   "Asbestos Abatement Regulations, 2020"
+  ],
+  "HSF-J-07": [
+   "Lead Regulations, 2001"
+  ],
+  "HSF-J-08": [
+   "HCA Regulations, 2021",
+   "Lead Regulations, 2001"
+  ],
+  "HSF-K-01": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-K-02": [
+   "OHS Act"
+  ],
+  "HSF-K-03": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-K-04": [
+   "OHS Act"
+  ],
+  "HSF-K-05": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-L-01": [
+   "OHS Act"
+  ],
+  "HSF-L-02": [
+   "OHS Act"
+  ],
+  "HSF-L-03": [
+   "OHS Act"
+  ],
+  "HSF-L-04": [
+   "General Administrative Regulations, 2003",
+   "OHS Act"
+  ],
+  "HSF-L-05": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-M-01": [
+   "Facilities Regulations, 2004"
+  ],
+  "HSF-M-02": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-M-03": [
+   "NEM Waste Act",
+   "NEMA and its instruments"
+  ],
+  "HSF-M-04": [
+   "NEM Waste Act"
+  ],
+  "HSF-M-05": [
+   "Tobacco Products Control Act"
+  ],
+  "HSF-N-01": [
+   "Construction Regulations, 2014",
+   "OHS Act"
+  ],
+  "HSF-N-02": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-N-03": [
+   "OHS Act"
+  ],
+  "HSF-N-04": [
+   "OHS Act"
+  ],
+  "HSF-N-05": [
+   "OHS Act"
+  ],
+  "HSF-O-01": [
+   "Asbestos Abatement Regulations, 2020",
+   "HBA Regulations, 2022",
+   "HCA Regulations, 2021",
+   "Lead Regulations, 2001"
+  ],
+  "HSF-O-02": [
+   "POPIA"
+  ],
+  "HSF-O-03": [
+   "POPIA"
+  ],
+  "HSF-OV-AGRI-01": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-AGRI-02": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-AGRI-03": [
+   "General Machinery Regulations, 1988"
+  ],
+  "HSF-OV-AGRI-04": [
+   "Skills Development Act"
+  ],
+  "HSF-OV-AGRI-05": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-AGRI-06": [
+   "Regulations on Hazardous Work by Children, 2010"
+  ],
+  "HSF-OV-AGRI-07": [
+   "OHS Act"
+  ],
+  "HSF-OV-AGRI-08": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-OV-AGRI-09": [
+   "OHS Act"
+  ],
+  "HSF-OV-CLEAN-01": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-CLEAN-02": [
+   "Construction Regulations, 2014",
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-CLEAN-03": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-CLEAN-04": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-CLEAN-05": [
+   "BCEA night work Code"
+  ],
+  "HSF-OV-CLEAN-06": [
+   "OHS Act"
+  ],
+  "HSF-OV-CONSTR-01": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-02": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-03": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-04": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-05": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-06": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-07": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-08": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-CONSTR-09": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-EDU-01": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-EDU-02": [
+   "OHS Act"
+  ],
+  "HSF-OV-EDU-03": [
+   "NRTA PrDP medical"
+  ],
+  "HSF-OV-EDU-04": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-EDU-05": [
+   "OHS Act"
+  ],
+  "HSF-OV-GOV-01": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-GOV-02": [
+   "EEA section 7"
+  ],
+  "HSF-OV-GOV-03": [
+   "National Road Traffic Act"
+  ],
+  "HSF-OV-GOV-04": [
+   "SANS 10400 T part"
+  ],
+  "HSF-OV-GOV-05": [
+   "OHS Act"
+  ],
+  "HSF-OV-GOV-06": [
+   "OHS Act"
+  ],
+  "HSF-OV-HEALTH-01": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-HEALTH-02": [
+   "Health Care Waste regulations",
+   "NEM Waste Act",
+   "National Health Act"
+  ],
+  "HSF-OV-HEALTH-03": [
+   "Hazardous Substances Act (radiation control)"
+  ],
+  "HSF-OV-HEALTH-04": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-HEALTH-05": [
+   "Ergonomics Regulations, 2019"
+  ],
+  "HSF-OV-HEALTH-06": [
+   "OHS Act"
+  ],
+  "HSF-OV-HEALTH-07": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-HEALTH-08": [
+   "Health Professions Act",
+   "Nursing Act",
+   "SAHPRA provisions"
+  ],
+  "HSF-OV-HOSP-01": [
+   "Food Premises Hygiene Regulations, R638 of 2018",
+   "Foodstuffs, Cosmetics and Disinfectants Act"
+  ],
+  "HSF-OV-HOSP-02": [
+   "Food Premises Hygiene Regulations, R638 of 2018"
+  ],
+  "HSF-OV-HOSP-03": [
+   "Pressure Equipment Regulations, 2009"
+  ],
+  "HSF-OV-HOSP-04": [
+   "OHS Act"
+  ],
+  "HSF-OV-HOSP-05": [
+   "Local by laws"
+  ],
+  "HSF-OV-HOSP-06": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-MANU-01": [
+   "General Machinery Regulations, 1988"
+  ],
+  "HSF-OV-MANU-02": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-MANU-03": [
+   "Ergonomics Regulations, 2019"
+  ],
+  "HSF-OV-MANU-04": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-MANU-05": [
+   "Driven Machinery Regulations"
+  ],
+  "HSF-OV-MANU-06": [
+   "National Road Traffic Act",
+   "SANS 10231",
+   "SANS 10232"
+  ],
+  "HSF-OV-MINING-01": [
+   "MHSA"
+  ],
+  "HSF-OV-MINING-02": [
+   "Fitness to Perform Work Guideline (MHSA)"
+  ],
+  "HSF-OV-MINING-03": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-04": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-05": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-06": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-07": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-08": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-09": [
+   "DMRE mandatory Code guidelines"
+  ],
+  "HSF-OV-MINING-10": [
+   "MHSA"
+  ],
+  "HSF-OV-MINING-11": [
+   "ODMWA"
+  ],
+  "HSF-OV-MINING-12": [
+   "MHSA"
+  ],
+  "HSF-OV-MINING-13": [
+   "Explosives Regulations"
+  ],
+  "HSF-OV-MINING-14": [
+   "MHSA regulations"
+  ],
+  "HSF-OV-MINING-15": [
+   "MHSA regulations"
+  ],
+  "HSF-OV-MINING-16": [
+   "MHSA"
+  ],
+  "HSF-OV-OFFICE-01": [
+   "Ergonomics Regulations, 2019"
+  ],
+  "HSF-OV-OFFICE-02": [
+   "BCEA night work Code",
+   "Noise Exposure Regulations, 2024"
+  ],
+  "HSF-OV-OFFICE-03": [
+   "OHS Act"
+  ],
+  "HSF-OV-OFFICE-04": [
+   "OHS Act"
+  ],
+  "HSF-OV-PETRO-01": [
+   "MHI Regulations, 2022"
+  ],
+  "HSF-OV-PETRO-02": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-OV-PETRO-03": [
+   "National Road Traffic Act",
+   "SANS 10231",
+   "SANS 10232"
+  ],
+  "HSF-OV-PETRO-04": [
+   "MHI Regulations, 2022"
+  ],
+  "HSF-OV-PETRO-05": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-OV-PETRO-06": [
+   "NEMA and its instruments"
+  ],
+  "HSF-OV-RETAIL-01": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-RETAIL-02": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-RETAIL-03": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-OV-RETAIL-04": [
+   "OHS Act"
+  ],
+  "HSF-OV-RETAIL-05": [
+   "SANS 10400 T part"
+  ],
+  "HSF-OV-SEC-01": [
+   "PSIRA training regulations",
+   "Private Security Industry Regulation Act"
+  ],
+  "HSF-OV-SEC-02": [
+   "Firearms Control Act"
+  ],
+  "HSF-OV-SEC-03": [
+   "Firearms Control Act",
+   "National Road Traffic Act"
+  ],
+  "HSF-OV-SEC-04": [
+   "OHS Act"
+  ],
+  "HSF-OV-SEC-05": [
+   "OHS Act"
+  ],
+  "HSF-OV-SEC-06": [
+   "Ergonomics Regulations, 2019"
+  ],
+  "HSF-OV-SEC-07": [
+   "OHS Act"
+  ],
+  "HSF-OV-TEL-01": [
+   "Construction Regulations, 2014"
+  ],
+  "HSF-OV-TEL-02": [
+   "Physical Agents Regulations, 2024"
+  ],
+  "HSF-OV-TEL-03": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-TEL-04": [
+   "OHS Act"
+  ],
+  "HSF-OV-TRANS-01": [
+   "National Road Traffic Act"
+  ],
+  "HSF-OV-TRANS-02": [
+   "National Road Traffic Act",
+   "SANS 10231",
+   "SANS 10232"
+  ],
+  "HSF-OV-TRANS-03": [
+   "BCEA"
+  ],
+  "HSF-OV-TRANS-04": [
+   "Railway Safety Regulator Act",
+   "SANS 3000 series",
+   "SANS 3000-4 (RSR)"
+  ],
+  "HSF-OV-TRANS-05": [
+   "Merchant Shipping Act",
+   "Ports Act"
+  ],
+  "HSF-OV-TRANS-06": [
+   "Civil Aviation Act",
+   "Civil Aviation Regulations"
+  ],
+  "HSF-OV-TRANS-07": [
+   "National Road Traffic Act"
+  ],
+  "HSF-OV-UTIL-01": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-OV-UTIL-02": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-OV-UTIL-03": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-UTIL-04": [
+   "Electrical Machinery and Installation Regulations"
+  ],
+  "HSF-OV-UTIL-05": [
+   "OHS Act"
+  ],
+  "HSF-OV-UTIL-06": [
+   "NEMA and its instruments"
+  ],
+  "HSF-OV-WASTE-01": [
+   "NEM Waste Act"
+  ],
+  "HSF-OV-WASTE-02": [
+   "Health Care Waste regulations",
+   "NEM Waste Act"
+  ],
+  "HSF-OV-WASTE-03": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-WASTE-04": [
+   "General Safety Regulations, 1986",
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-WASTE-05": [
+   "General Safety Regulations, 1986"
+  ],
+  "HSF-OV-WASTE-06": [
+   "HBA Regulations, 2022"
+  ],
+  "HSF-OV-WASTE-07": [
+   "HCA Regulations, 2021"
+  ],
+  "HSF-OV-WASTE-08": [
+   "NEMA and its instruments"
+  ]
+ },
+ "instruments": [
+  {
+   "held": "The amendment notice number conflicts: GN R.2092 against GN R.11435. Held from citation until the amendment reference is verified (register HSF-9).",
+   "scope": "medical",
+   "short_name": "Asbestos Abatement Regulations, 2020",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "BCEA",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "BCEA night work Code",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "COIDA",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Civil Aviation Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Civil Aviation Regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Code of Good Practice on Employment of Persons with Disabilities",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Construction Regulations, 2014",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "DMRE mandatory Code guidelines",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Disaster Management Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Driven Machinery Regulations",
+   "status": "verified",
+   "verified_on": "2026-09-23"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "EEA section 7",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Electrical Installation Regulations, 2009",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Electrical Machinery and Installation Regulations",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Ergonomics Regulations, 2019",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Explosive powered tools regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Explosives Regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Facilities Regulations, 2004",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Fire Brigade Services Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Firearms Control Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Fitness to Perform Work Guideline (MHSA)",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Food Premises Hygiene Regulations, R638 of 2018",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Foodstuffs, Cosmetics and Disinfectants Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "General Administrative Regulations, 2003",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "General Machinery Regulations, 1988",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "General Safety Regulations, 1986",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "HBA Regulations, 2022",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "HCA Regulations, 2021",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "HPCSA Booklet 1",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Hazardous Substances Act (radiation control)",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Health Care Waste regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Health Professions Act",
+   "status": "verified",
+   "verified_on": "2026-09-23"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Lead Regulations, 2001",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Local by laws",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Local fire by laws",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "MHI Regulations, 2022",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "MHSA",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "MHSA regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Merchant Shipping Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "NEM Waste Act",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "NEMA and its instruments",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "NRTA PrDP medical",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "National Health Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "National Road Traffic Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Noise Exposure Regulations, 2024",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Nursing Act",
+   "status": "verified",
+   "verified_on": "2026-09-23"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "ODMWA",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "OHS Act",
+   "status": "verified",
+   "verified_on": "2026-08-12"
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "POPIA",
+   "status": "verified",
+   "verified_on": "2026-09-23"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "PSIRA training regulations",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "Physical Agents Regulations, 2024",
+   "status": "verified",
+   "verified_on": "2026-09-23"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Ports Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Pressure Equipment Regulations, 2009",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Private Security Industry Regulation Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Railway Safety Regulator Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Regulations on Hazardous Work by Children, 2010",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SAHPRA provisions",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 10142",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 10231",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 10232",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 10400",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 10400 T part",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SANS 3000 series",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "medical",
+   "short_name": "SANS 3000-4 (RSR)",
+   "status": "verified",
+   "verified_on": "2026-08-13"
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "SETA unit standards",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Skills Development Act",
+   "status": "pending",
+   "verified_on": null
+  },
+  {
+   "held": null,
+   "scope": "safety",
+   "short_name": "Tobacco Products Control Act",
+   "status": "pending",
+   "verified_on": null
+  }
+ ]
+}

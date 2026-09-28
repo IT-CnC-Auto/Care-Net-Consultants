@@ -1,0 +1,1024 @@
+{
+  "sections": {
+    "C": {
+      "intro": "This section shows how you find out what can hurt people in your business and what you do about it. It starts with your baseline risk assessment and hazard register, then adds the plans and procedures for the higher risk work you actually do. Almost every other section of your File follows from what you record here.",
+      "what_goes_here": [
+        "Your signed baseline risk assessment for each site and activity",
+        "Issue based and task based risk assessments",
+        "Your hazard register and evidence of how you chose controls",
+        "Safe work procedures and method statements",
+        "Activity plans such as fall protection, lifting, excavation, confined space and hot work plans",
+        "Specialist assessments for noise, chemicals, biological agents, ergonomics and physical agents where they apply"
+      ],
+      "who_usually_holds": [
+        "SHE",
+        "OPS",
+        "ENG"
+      ],
+      "first_file_tips": [
+        "Start with one honest baseline risk assessment walked on the floor with your supervisors and a health and safety representative; the other items build on it.",
+        "Only switch on the activity plans for work you really do, and mark the rest not applicable with a short written reason.",
+        "Every assessment needs a named, competent assessor and a signature. No competent person in house to sign your risk assessments? Care Net's Bee-Matched recruitment portal places and onboards one, with the appointment and engagement letters your File needs; use the recruitment button on Section B or on the File header, which puts you in touch with a sales executive until the portal address is live.",
+        "Keep the last superseded version of each assessment when you revise it, so you can show how your controls improved."
+      ]
+    }
+  },
+  "elements": {
+    "HSF-C-01": {
+      "what_to_submit": [
+        "Signed baseline risk assessment for each site and activity",
+        "Risk assessor's appointment letter and proof of competence",
+        "Attendance list of the people consulted, including health and safety representatives",
+        "Next review date written on the cover page"
+      ],
+      "why": "The baseline risk assessment is the foundation of your whole File: it records every significant hazard at each site and how you control it. An inspector or client will usually ask for it first, and your medical surveillance, training and PPE choices must all trace back to it. Review it every year and whenever something significant changes.",
+      "example": "Example: Dlamini Steel Works in Germiston keeps a baseline risk assessment for its workshop and its yard, signed by its appointed risk assessor Sipho Zulu on 12 February 2026, with the next review set for February 2027.",
+      "common_gaps": [
+        "Buying a generic template and never walking the actual site",
+        "One assessment covering several very different sites",
+        "No signature, no assessor name or no review date"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-02": {
+      "what_to_submit": [
+        "Issue based risk assessment for each change, incident, new task or new substance",
+        "Short note of what triggered it (change request, incident number, new product)",
+        "Updated controls and who must act by when",
+        "Signature of the risk assessor"
+      ],
+      "why": "Your baseline goes out of date the moment something changes. An issue based assessment shows that you looked at the new risk before people were exposed, and that you learnt from incidents. Do one for each event rather than waiting for the yearly review.",
+      "example": "Example: After a forklift struck a racking upright, Steyn Cold Storage completed an issue based risk assessment on 4 May 2026 that led to floor markings and a pedestrian walkway, signed by its risk assessor Lerato Mokoena.",
+      "common_gaps": [
+        "Changing equipment or chemicals without any assessment",
+        "Investigating an incident but never updating the risk assessment",
+        "Not linking the assessment back to the baseline"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-03": {
+      "what_to_submit": [
+        "Completed daily or shift pre task assessment forms (for example a take five or safe task card)",
+        "Supervisor's signed log or register of the forms",
+        "Sample of forms showing hazards raised and actions taken"
+      ],
+      "why": "Conditions on the floor change every day. A short pre task assessment done by the team before starting makes people stop and think about today's hazards, and the supervisor's log proves it actually happens. Complete it every day or shift where this work applies.",
+      "example": "Example: Cele Glass Fitters in Umhlanga asks each team to complete a pre task card before every installation; supervisor Ayanda Cele signs the daily log and files the cards weekly.",
+      "common_gaps": [
+        "Forms filled in at the end of the shift or all ticked the same",
+        "Supervisor never reviews or signs the forms",
+        "No action taken on hazards the team wrote down"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-C-04": {
+      "what_to_submit": [
+        "Hazard register listing hazards per job role",
+        "Job role list matched to the hazard register",
+        "Date and signature of the last update"
+      ],
+      "why": "A hazard register per job role lets you see at a glance what each person is exposed to, which drives training, PPE and medical surveillance for that role. Update it whenever roles, tasks or hazards change.",
+      "example": "Example: Qwabe Packaging keeps a hazard register showing that its machine operators face noise, moving parts and manual handling, while its dispatch clerks face vehicle traffic in the loading bay; last updated 20 March 2026.",
+      "common_gaps": [
+        "A register by department instead of by job role",
+        "Roles in the register that no longer exist, or new roles missing",
+        "Hazards listed with no link to the controls"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-05": {
+      "what_to_submit": [
+        "Report showing, for each major hazard, whether you eliminated, substituted, engineered, administered or protected against it",
+        "Photographs or records of engineering controls installed",
+        "Reasons where a higher level of control was not reasonably practicable"
+      ],
+      "why": "The law expects you to remove or reduce a hazard at source before relying on rules and PPE. This report proves you considered the stronger options first, which is one of the first things an inspector tests. Review it every year.",
+      "example": "Example: Masilela Furniture Makers replaced a solvent based glue with a water based one and fitted extraction on its sanders, then recorded in its 2026 control report why dust masks are still worn as a last line of defence.",
+      "common_gaps": [
+        "Going straight to PPE for every hazard",
+        "No written reason why a better control was not used",
+        "Controls listed but never checked to see if they work"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-06": {
+      "what_to_submit": [
+        "Safe work procedures for routine tasks",
+        "Method statements for high risk tasks",
+        "Signed record that workers were trained on each procedure",
+        "Document control list with revision dates"
+      ],
+      "why": "Written procedures turn your risk assessment into clear steps that workers can follow, and they show a client or inspector that high risk work is planned, not improvised. Update a procedure whenever the task, equipment or risk assessment changes.",
+      "example": "Example: Molefe Borehole Services in Mahikeng has a method statement for pump pulling, approved by its section 16(2) assignee Kagiso Molefe and signed by every crew member after training on 9 April 2026.",
+      "common_gaps": [
+        "Procedures copied from another company that do not match your equipment",
+        "Workers never trained on or shown the procedure",
+        "Old versions still in use on site"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-C-07": {
+      "what_to_submit": [
+        "Fall protection plan for the project or site",
+        "Appointment letter and proof of competence of the fall protection planner",
+        "Rescue plan for a person suspended in a harness",
+        "Inspection records of harnesses and anchor points"
+      ],
+      "why": "Falls from height are among the most common causes of serious injury and death at work. The Construction Regulations, 2014 require a fall protection plan by a competent person where there is a risk of falling, and most clients will not let you onto site without one. Prepare one for each project.",
+      "example": "Example: Nkosi Roofing prepared a fall protection plan for a warehouse roof in Pietermaritzburg, drawn up by its appointed fall protection planner Themba Khumalo and approved on 2 June 2026, including a rescue plan using a rescue kit kept on site.",
+      "common_gaps": [
+        "A generic plan that ignores the actual roof or structure",
+        "No rescue plan for a worker left hanging in a harness",
+        "Planner not appointed in writing or not competent"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-08": {
+      "what_to_submit": [
+        "Traffic management plan with a site layout drawing",
+        "Signage, speed limit and pedestrian route records",
+        "Briefing record for drivers and pedestrians"
+      ],
+      "why": "Where vehicles, forklifts and people share space, collisions can kill. A traffic management plan separates them with routes, barriers and rules, and it is often requested by clients for warehouses and sites. Update it whenever the layout or traffic pattern changes.",
+      "example": "Example: Masiphile Logistics in Pinetown has a traffic management plan showing one way truck routes, a fenced walkway and a no go zone around reversing trucks, approved by its section 16(2) assignee on 15 January 2026.",
+      "common_gaps": [
+        "A plan that no longer matches the yard after a layout change",
+        "Pedestrian routes painted but blocked by stock",
+        "Visiting drivers never briefed"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-C-09": {
+      "what_to_submit": [
+        "Lifting plan for each lift that needs one",
+        "Load chart and details of the crane or lifting machine",
+        "Certificates of the lifting tackle used",
+        "Names of the operator, rigger and signaller"
+      ],
+      "why": "A dropped or toppled load can kill people nearby. A lifting plan checks the load, the machine, the ground and the people before the lift happens, and it is the record the lifting machine inspector and the client will ask for. Prepare one for each lift that requires it.",
+      "example": "Example: Vaal Mechanical Erectors prepared a lifting plan for placing a chiller on a factory roof in Vanderbijlpark on 18 August 2026, drawn up by its lifting supervisor Pieter van Wyk and backed by current inspection certificates for the crane and slings.",
+      "common_gaps": [
+        "Lifting without a plan because the crane hire company is \"handling it\"",
+        "Using tackle whose inspection has lapsed",
+        "No exclusion zone under the load"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-C-10": {
+      "what_to_submit": [
+        "Excavation plan for the project",
+        "Appointment letter of the excavation supervisor",
+        "Record of services located (cables, pipes) before digging",
+        "Daily excavation inspection records"
+      ],
+      "why": "Trench collapses bury workers quickly and are often fatal. The Construction Regulations, 2014 expect excavation work to be planned and supervised by a competent person, with shoring and inspections in place. Prepare a plan for each project.",
+      "example": "Example: Mogale Pipelines prepared an excavation plan for a sewer upgrade in Krugersdorp, with shoring details and a service locating report, signed by its excavation supervisor Johannes Maseko on 6 July 2026.",
+      "common_gaps": [
+        "Digging before locating underground services",
+        "No shoring or battering because the trench is \"only for a day\"",
+        "Inspections done but not written down"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-C-11": {
+      "what_to_submit": [
+        "Demolition plan and method statement",
+        "Appointment letter of the demolition supervisor",
+        "Engineering or structural survey where required",
+        "Asbestos and hazardous materials check before work starts"
+      ],
+      "why": "Demolition can cause sudden collapse, flying debris and exposure to asbestos or lead. A demolition plan sets the sequence and controls, and the Construction Regulations, 2014 expect it to be done under a competent supervisor. Prepare a plan for each project.",
+      "example": "Example: Ntshona Wreckers prepared a demolition plan for an old workshop in East London, with an asbestos survey and a sequence drawing, signed by its demolition supervisor Luvuyo Ntshona on 11 March 2026.",
+      "common_gaps": [
+        "Starting demolition without checking for asbestos",
+        "No plan for the order in which walls and roofs come down",
+        "Public and neighbours not protected from falling debris"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-C-12": {
+      "what_to_submit": [
+        "Confined space plan for each entry",
+        "Entry permit with gas test results",
+        "Appointment letter of the confined space supervisor",
+        "Standby person and rescue arrangements"
+      ],
+      "why": "Tanks, pits, manholes and silos can hold toxic gas or too little oxygen, and would be rescuers often die too. The plan and permit prove the space was tested, ventilated and watched before anyone went in. Prepare one for each entry.",
+      "example": "Example: Mokone Tank Cleaning completes a confined space plan and entry permit for every tank it enters; on 23 April 2026 its confined space supervisor Nomsa Radebe signed the permit after a gas test at a client's plant in Secunda.",
+      "common_gaps": [
+        "Gas testing not recorded, or done with an uncalibrated meter",
+        "No trained standby person at the entrance",
+        "Rescue plan that relies on calling the fire brigade only"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-13": {
+      "what_to_submit": [
+        "Hot work plan or permit for each job",
+        "Fire watch record after the work ends",
+        "Appointment letter of the hot work supervisor",
+        "Proof that fire extinguishers were available and inspected"
+      ],
+      "why": "Welding, cutting and grinding cause fires, burns and fume exposure. A hot work permit shows the area was cleared of flammables, a fire watch was in place and the work was supervised. Prepare one for each hot work job.",
+      "example": "Example: Adams Engineering Services in Kimberley issues a hot work permit for every welding job outside its workshop; on 30 May 2026 hot work supervisor Grant Adams signed off a permit that included a fire watch after the welding stopped.",
+      "common_gaps": [
+        "Permits signed after the work is done",
+        "No fire watch once the welder leaves",
+        "Hot work permits not used for contractors"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-C-14": {
+      "what_to_submit": [
+        "Ergonomic risk assessment covering manual handling, repetitive work and workstations",
+        "Action plan with changes made (lifting aids, workstation adjustments)",
+        "Risk assessor's signature and date"
+      ],
+      "why": "Back, neck and upper limb injuries from lifting, awkward postures and repetitive work are a leading cause of lost time. An ergonomic risk assessment identifies the tasks that strain people and records what you changed. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Jacobs Fruit Packers assessed its packing line on 14 January 2026, raised the packing tables and introduced job rotation; the assessment is signed by its risk assessor Marlize Jacobs.",
+      "common_gaps": [
+        "Only looking at office chairs and ignoring manual handling",
+        "No follow up to check the changes helped",
+        "Workers not asked where it hurts"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-15": {
+      "what_to_submit": [
+        "Noise survey and noise risk assessment by a competent person or approved inspection authority, as your practitioner confirms",
+        "Noise zone map with signage",
+        "Appointment letter of the noise zone controller",
+        "Hearing protection issue records"
+      ],
+      "why": "Noise damage to hearing is permanent and builds up slowly. The survey shows where noise is high enough to need zoning and hearing protection, and it decides who needs hearing tests through your medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Dube Steel Fabricators in Newcastle had a noise survey done on 8 February 2026, marked the press shop as a noise zone with signs at every entrance, and appointed foreman Bongani Dube as noise zone controller.",
+      "common_gaps": [
+        "Relying on an old survey after new machinery was installed",
+        "Noise zones marked on paper but not signposted",
+        "Hearing protection issued without any fit or training"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-16": {
+      "what_to_submit": [
+        "Hazardous chemical agent risk and exposure assessment",
+        "Chemical inventory with current safety data sheets",
+        "Air monitoring results where required",
+        "Appointment letter of the person who controls hazardous chemical agents"
+      ],
+      "why": "The Hazardous Chemical Agents Regulations require you to assess how workers are exposed to the chemicals you use, store or produce and to control that exposure. The assessment also decides who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Aloe Coatings in Pietermaritzburg keeps a chemical exposure assessment for its spray booth, backed by air monitoring results from 19 March 2026 and a chemical inventory with safety data sheets for every product.",
+      "common_gaps": [
+        "Safety data sheets missing or older than the product on the shelf",
+        "Assessing only the chemicals in the store and not those made in the process",
+        "No link between the assessment and medical surveillance"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-17": {
+      "what_to_submit": [
+        "Asbestos inventory and survey report",
+        "Asbestos risk assessment and management plan",
+        "Appointment letter of the asbestos work supervisor",
+        "Records of any asbestos removal by a registered contractor"
+      ],
+      "why": "Asbestos fibres cause fatal lung disease decades after exposure, and old roofs, ceilings, pipes and floor tiles often contain it. The inventory and management plan show you know where it is and that nobody will disturb it without controls. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Venter Mill Holdings in Bloemfontein keeps an asbestos inventory showing asbestos cement roof sheets on two old sheds, with a management plan dated 5 February 2026 that forbids drilling or cutting without its asbestos work supervisor's approval.",
+      "common_gaps": [
+        "Assuming a building is asbestos free because nobody has checked",
+        "Maintenance contractors not told where asbestos is",
+        "Removal done by a contractor who is not registered for asbestos work"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-C-18": {
+      "what_to_submit": [
+        "Lead risk assessment",
+        "Air monitoring or exposure measurement results",
+        "Appointment letter of the lead work supervisor",
+        "Hygiene facilities and clothing arrangements"
+      ],
+      "why": "The Lead Regulations require you to assess exposure where people work with lead, for example in battery work, soldering, some paints and smelting. Lead builds up in the body, so the assessment decides the controls and who needs medical surveillance. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Ngema Battery Recyclers in Benoni completed a lead risk assessment on 17 June 2026 covering its breaking and smelting areas, with air monitoring results and a separate clean change room for workers.",
+      "common_gaps": [
+        "Workers eating or smoking in lead areas",
+        "Work clothing taken home and washed with family laundry",
+        "No air monitoring to back up the assessment"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-19": {
+      "what_to_submit": [
+        "Hazardous biological agent risk assessment",
+        "List of biological agents and the tasks that expose people",
+        "Control measures such as vaccination offers, PPE and cleaning procedures",
+        "Risk assessor's signature and date"
+      ],
+      "why": "The Hazardous Biological Agents Regulations require you to assess exposure to germs such as bacteria, viruses and fungi, for example in healthcare, sewage, waste and animal work, and the assessment decides the controls and any medical surveillance. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Mthethwa Waste Services assessed its refuse collection teams on 21 January 2026 for exposure to sewage and sharps, and recorded controls including gloves, wash stations and an offer of hepatitis B vaccination.",
+      "common_gaps": [
+        "Treating biological risk as only a healthcare problem",
+        "No assessment for cleaners who handle waste or sanitary bins",
+        "Medical results filed in the File instead of with the practitioner"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-20": {
+      "what_to_submit": [
+        "Psychosocial and fatigue risk assessment",
+        "Shift rosters and overtime records reviewed in the assessment",
+        "Records of support measures (debriefing after violent incidents, access to counselling)",
+        "Risk assessor's signature and date"
+      ],
+      "why": "Long shifts, night work and exposure to violence or aggression cause fatigue, errors and lasting harm to wellbeing. This assessment looks at rosters, rest and support so that tired or traumatised people are not put at risk. Review it every year.",
+      "example": "Example: Sentinel Night Retail, a fictitious chain of all night convenience stores in Durban, assessed fatigue and robbery risk on 3 March 2026 and changed its rosters so that no cashier works more than a set number of night shifts in a row, with trauma debriefing after any robbery.",
+      "common_gaps": [
+        "Looking only at physical hazards",
+        "No review of rosters and overtime",
+        "No support offered after a violent incident"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-C-21": {
+      "what_to_submit": [
+        "Major hazard installation risk assessment, done by the approved inspection authority or competent person the governing regulations require",
+        "Inventory of listed substances and quantities held",
+        "On site emergency plan linked to the assessment",
+        "Proof of the notifications the governing regulations require, including to the local emergency services"
+      ],
+      "why": "Where you hold large quantities of dangerous substances, a fire, explosion or toxic release can harm your workers and the community around you. The major hazard installation risk assessment sets out what could happen and how you will prevent and respond to it. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Indlovu Gas Storage in Richards Bay commissioned a major hazard installation risk assessment on 10 April 2026 for its LPG storage, and shared the emergency plan with the local fire services.",
+      "common_gaps": [
+        "Not checking whether stock levels reach the major hazard installation thresholds",
+        "Assessment done but the community and emergency services never informed",
+        "Stock levels increased without updating the assessment"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-C-22": {
+      "what_to_submit": [
+        "Physical agents exposure risk assessment",
+        "Measurement results for heat, cold, lighting, indoor air, vibration or non ionising radiation where they apply",
+        "Control measures and who is affected",
+        "Assessor's signature and date"
+      ],
+      "why": "Heat, cold, poor lighting, stale indoor air, vibrating tools and sources such as lasers or welding arcs can all harm health over time. This assessment shows you looked at each one that applies to your workplace. Review it at the interval your risk assessment or the practitioner sets; the File library shows a legal interval only once Care Net has verified one.",
+      "example": "Example: Ramaano Brickworks in Polokwane assessed kiln heat, dust in indoor air and hand arm vibration from jackhammers on 25 February 2026, and introduced water stations, rest cycles and anti vibration gloves.",
+      "common_gaps": [
+        "Only assessing noise and ignoring other physical agents",
+        "No measurements, only guesses",
+        "Office lighting and ventilation never checked"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-AGRI-01": {
+      "what_to_submit": [
+        "Written procedure for mixing, spraying and storing pesticides",
+        "Pesticide register (product, quantity, date, field, sprayer)",
+        "Current safety data sheets for each product",
+        "Training records of the sprayers"
+      ],
+      "why": "Organophosphates and other pesticides can poison workers through the skin and lungs. The Hazardous Chemical Agents Regulations expect you to control this exposure, and your register shows who used what, where and when. Review it every year.",
+      "example": "Example: Louw Table Grapes keeps a spray register at its chemical store in De Doorns and a written mixing procedure signed by farm manager Gerrit Louw on 7 August 2026.",
+      "common_gaps": [
+        "Pesticides decanted into cooldrink bottles",
+        "No record of who sprayed which block",
+        "Sprayers without the right gloves, respirators or wash facilities"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-AGRI-03": {
+      "what_to_submit": [
+        "Inspection checklist for tractors and implements, including power take off guards",
+        "Defect register and repair records",
+        "Operator authorisation list"
+      ],
+      "why": "Unguarded power take off shafts and implements cause entanglement and amputations on farms. Regular guarding inspections prove your machinery is safe before it goes out. Review the inspection programme every year.",
+      "example": "Example: Sondela Farming in Bethlehem inspects every tractor and implement at the start of the season; the checklist dated 1 September 2026 shows a missing shaft guard was replaced before ploughing started.",
+      "common_gaps": [
+        "Guards removed for maintenance and never refitted",
+        "Inspections done but not written down",
+        "Untrained or unauthorised people driving tractors"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-OV-AGRI-05": {
+      "what_to_submit": [
+        "Zoonosis risk controls for livestock and game work",
+        "Procedure for handling sick or dead animals",
+        "PPE and hygiene facilities provided",
+        "Record of health education given to workers"
+      ],
+      "why": "Diseases passed from animals to people, such as brucellosis, anthrax and Q fever, can seriously harm farm and abattoir workers, and the Hazardous Biological Agents Regulations expect you to assess and control this exposure. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it every year.",
+      "example": "Example: Botha Merino Farms has a zoonosis procedure for lambing season that requires gloves and face protection when handling aborted foetuses, signed by owner Hannes Botha on 12 July 2026.",
+      "common_gaps": [
+        "Handling dead animals without gloves",
+        "No hand washing facilities in the field",
+        "Workers not told the early signs of disease"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-AGRI-06": {
+      "what_to_submit": [
+        "Policy prohibiting children from doing hazardous work",
+        "Age verification records for seasonal and casual workers",
+        "Record of the tasks that are closed to young workers"
+      ],
+      "why": "Children must not be exposed to dangerous work such as spraying, operating machinery or heavy lifting. A clear policy and age checks protect children and show a client or inspector that you control who is on your farm. Review it every year.",
+      "example": "Example: Mopani Sun Citrus checks the ID of every picker at recruitment and keeps a signed policy dated 15 March 2026 that no person under the legal working age works on its farm, and no young worker handles chemicals or machinery.",
+      "common_gaps": [
+        "No age check for workers brought by a labour broker",
+        "Children of workers helping in the orchards",
+        "Policy exists but supervisors do not know it"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-AGRI-07": {
+      "what_to_submit": [
+        "Seasonal worker induction programme",
+        "Signed induction attendance records for each season",
+        "Induction content in the languages your workers understand"
+      ],
+      "why": "Seasonal workers arrive quickly and in large numbers, often unfamiliar with your farm. A proper induction tells them about the hazards, the rules and what to do in an emergency, and the signed record proves it happened. Review it every year before the season starts.",
+      "example": "Example: Koue Berg Orchards in Ceres inducted its seasonal pickers in isiXhosa and Afrikaans in the week of 2 February 2026, and each worker signed the attendance register.",
+      "common_gaps": [
+        "Workers start picking before induction",
+        "Induction only in English",
+        "No record of who attended"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-AGRI-08": {
+      "what_to_submit": [
+        "Heat exposure control plan",
+        "Records of water, shade and rest breaks provided",
+        "Weather monitoring and work schedule changes on hot days",
+        "Training on the signs of heat stress"
+      ],
+      "why": "Working outdoors in South African summers can lead to heat exhaustion and heat stroke, which can kill. The plan shows you provide water, shade and rest and change the work on hot days. Review it every year before summer.",
+      "example": "Example: Gariep Sun Vineyards starts harvesting at dawn during heatwaves, keeps shaded water stations at every block and trained supervisors on 1 December 2025 to spot heat stress.",
+      "common_gaps": [
+        "Water only at the farmyard, far from the work",
+        "Piece rate pay that discourages breaks",
+        "No plan for new workers who are not used to the heat"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-AGRI-09": {
+      "what_to_submit": [
+        "Remote site emergency response plan",
+        "Communication arrangements (radio, cellphone coverage map)",
+        "First aid kits and first aider positions in the field",
+        "Transport plan to the nearest hospital"
+      ],
+      "why": "Farms and forests are often far from help, and delays can turn an injury into a death. This plan shows how you will raise the alarm, give first aid and get an injured person to care. Review it every year.",
+      "example": "Example: Bosrand Timber has an emergency plan listing radio channels, the nearest helicopter landing area and the route to the hospital in Knysna, updated on 18 January 2026.",
+      "common_gaps": [
+        "No way to call for help where there is no signal",
+        "First aider not with the team in the field",
+        "Nobody knows the route to the nearest hospital"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-CLEAN-01": {
+      "what_to_submit": [
+        "Current safety data sheet for every cleaning product at each client site",
+        "Site chemical list matched to the safety data sheets",
+        "Signed site checklist confirming the file is present"
+      ],
+      "why": "Cleaners use chemicals at many sites, and if someone is splashed or poisoned the safety data sheet tells first aiders and doctors what to do. The Hazardous Chemical Agents Regulations expect this information to be available where the chemicals are used. Review it every year.",
+      "example": "Example: Zungu Office Cleaning keeps a safety data sheet folder in the cleaners' store at each of its client offices in Sandton, checked by area supervisor Zanele Mthembu on 10 June 2026.",
+      "common_gaps": [
+        "Safety data sheets only at head office",
+        "New products introduced without a safety data sheet",
+        "Folder present but outdated"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-CLEAN-02": {
+      "what_to_submit": [
+        "Method statement for facade and high level cleaning",
+        "Fall protection plan and equipment inspection records",
+        "Rope access or suspended platform competence records"
+      ],
+      "why": "Window and facade cleaning at height is high risk work, and where it counts as construction the Construction Regulations, 2014 apply. The method statement shows the equipment, anchor points and rescue arrangements were planned before anyone went over the edge. Review it every year.",
+      "example": "Example: Van Rooyen Window Cleaning keeps a method statement for the glass facade of a client building in Cape Town, approved on 22 April 2026, with rope access certificates for both of its technicians.",
+      "common_gaps": [
+        "Anchor points on the roof never tested",
+        "No rescue plan for a technician stuck on a rope",
+        "Using ladders where a platform is needed"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-CLEAN-03": {
+      "what_to_submit": [
+        "Confined space entry procedure for tanks and ducts",
+        "Entry permits with gas test results",
+        "Training records of entrants and standby persons"
+      ],
+      "why": "Cleaning inside tanks, ducts and sumps can expose workers to toxic fumes or lack of oxygen. A permit and gas test before entry prevent deaths, and they are what a client will check before letting you work. Review the procedure every year.",
+      "example": "Example: Chetty Duct Hygiene completes a confined space entry permit for every kitchen extraction duct clean; the permit dated 14 May 2026 at a hotel in Umhlanga records the gas test and the standby person.",
+      "common_gaps": [
+        "Entering because the space \"looks fine\"",
+        "Using cleaning chemicals that give off fumes inside the space",
+        "Standby person leaving to do other work"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-CLEAN-04": {
+      "what_to_submit": [
+        "Biological agent risk assessment for healthcare and sanitation cleaning",
+        "Procedures for blood spills, sharps and body fluids",
+        "Records of vaccination offers and PPE issue"
+      ],
+      "why": "Cleaners in clinics, hospitals and ablution facilities can be exposed to blood, body fluids and sharps, and the Hazardous Biological Agents Regulations expect you to assess and control this risk. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it every year.",
+      "example": "Example: Moeng Hygiene Cleaning, which cleans a private clinic in Bloemfontein, has a blood spill procedure and a record that every cleaner was offered hepatitis B vaccination in January 2026.",
+      "common_gaps": [
+        "No sharps procedure for cleaners",
+        "Using the same mop for clinical and general areas",
+        "Vaccination offers not recorded"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-CLEAN-05": {
+      "what_to_submit": [
+        "Lone worker and night work procedure",
+        "Check in or call back records",
+        "Night work risk assessment and roster",
+        "Transport arrangements for night shift workers"
+      ],
+      "why": "Cleaners often work alone or at night, when help is far away and the risk of crime and fatigue is higher. This procedure shows how you keep in touch with them and get them home safely. Review it every year.",
+      "example": "Example: Maake Cleaning requires every lone cleaner in its Pretoria office contracts to check in by phone at set times during the shift; supervisor Kabelo Sithole reviews the call log each morning.",
+      "common_gaps": [
+        "No way to know if a lone worker is hurt",
+        "No safe transport after late shifts",
+        "Night workers not considered in the fatigue assessment"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-CLEAN-06": {
+      "what_to_submit": [
+        "Client site induction record for each cleaner at each site",
+        "Site specific hazard and emergency information sheet",
+        "Register showing which cleaners are cleared for which sites"
+      ],
+      "why": "Each client site has its own hazards, alarms and exits. A site induction record proves your cleaner knows them before starting, and clients usually ask for it. Review the register every year and when you add a site.",
+      "example": "Example: Shezi Cleaning Services keeps a register showing that cleaner Palesa Ndlovu completed the site induction at a client's warehouse in Midrand on 3 August 2026.",
+      "common_gaps": [
+        "Relief cleaners sent to a site without induction",
+        "Inductions not repeated when the client's rules change",
+        "No record held by your company, only by the client"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-CONSTR-01": {
+      "what_to_submit": [
+        "Construction work permit issued for the project",
+        "Copy of the permit application",
+        "Proof that the permit number is displayed on site"
+      ],
+      "why": "Larger or higher risk construction projects need a construction work permit before work starts, under the Construction Regulations, 2014. The thresholds are being confirmed by Care Net; your client or practitioner can tell you whether your project needs one. Review it every year and for each new project.",
+      "example": "Example: Selepe Builders obtained a construction work permit for a new shopping centre in Vereeniging before breaking ground on 1 April 2026 and displays the permit number at the site gate.",
+      "common_gaps": [
+        "Starting work while the application is still pending",
+        "Assuming the permit is only the client's concern",
+        "Permit number not displayed on site"
+      ],
+      "suggested_department": "EXEC"
+    },
+    "HSF-OV-CONSTR-02": {
+      "what_to_submit": [
+        "Designer's report on the hazards of the design",
+        "Record of the design risk information given to the client and contractor",
+        "Designer's sign off on changes"
+      ],
+      "why": "The Construction Regulations, 2014 place duties on designers to consider safety during building and later maintenance. The designer's record shows the hazards were thought about before anything was built. Review it every year and when the design changes.",
+      "example": "Example: Naicker Structural Engineers gave the client a design risk report for a steel canopy in Durban on 19 February 2026, highlighting safe anchor points for later roof maintenance.",
+      "common_gaps": [
+        "Designer never asked for design risk information",
+        "Design changes made on site without the designer",
+        "Maintenance hazards ignored"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-OV-CONSTR-03": {
+      "what_to_submit": [
+        "Structures inspection records",
+        "Engineer's inspection reports for temporary and permanent structures",
+        "Defect register and corrective action close out"
+      ],
+      "why": "Collapsing structures kill workers and the public. Inspections by a competent person show that formwork, support work and structures were checked before and during use. Review the inspection programme every year and for each project.",
+      "example": "Example: Tshikovhi Concrete keeps weekly structures inspection reports for a parking deck in Centurion, signed by its engineer Rudzani Tshikovhi, with the last report dated 12 September 2026.",
+      "common_gaps": [
+        "Formwork loaded before inspection",
+        "Inspection reports kept by the engineer only",
+        "Defects noted but not fixed"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-OV-CONSTR-04": {
+      "what_to_submit": [
+        "Register of suspended platforms on site",
+        "Inspection records before use and periodic inspections",
+        "Operator competence records",
+        "Manufacturer's documentation for each platform"
+      ],
+      "why": "Suspended platforms (cradles) used on facades can fall if not installed, inspected and operated correctly. The register and inspections show each platform is safe to use. Review it every year and for each installation.",
+      "example": "Example: Kekana Facades keeps a register of the two suspended platforms on a Sandton office block, inspected on 4 June 2026 by its competent inspector before the glazing work started.",
+      "common_gaps": [
+        "Platforms moved to a new drop without reinspection",
+        "Untrained operators",
+        "No secondary safety line"
+      ],
+      "suggested_department": "ENG"
+    },
+    "HSF-OV-CONSTR-05": {
+      "what_to_submit": [
+        "Flammable liquid and gas storage plan for the site",
+        "Inventory of flammables on site",
+        "Fire extinguisher inspection records at the store",
+        "Signage and no smoking controls"
+      ],
+      "why": "Petrol, diesel, thinners and gas stored on construction sites can start fires and explosions. This record shows flammables are stored away from ignition sources, in the right quantities and with fire equipment nearby. Review it every year and for each site.",
+      "example": "Example: Karee Road Construction keeps a flammables store at its road project near Kroonstad, with an inventory updated on 8 May 2026 and two inspected extinguishers at the door.",
+      "common_gaps": [
+        "Fuel kept inside the site office",
+        "No inventory of what is stored",
+        "Smoking near the store"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-CONSTR-06": {
+      "what_to_submit": [
+        "Plan for work on, over or next to water",
+        "Life jackets and rescue equipment inspection records",
+        "Rescue team and training records"
+      ],
+      "why": "Work near rivers, dams or the sea carries the risk of drowning. The plan shows you provide life jackets, rescue equipment and a trained rescue team. Review it every year and for each site.",
+      "example": "Example: Tugela Bridge Contractors keeps a water safety plan for a bridge repair, with life jackets checked on 20 March 2026 and a rescue boat crewed by trained workers during all work over the river.",
+      "common_gaps": [
+        "Life jackets available but not worn",
+        "No plan for a sudden rise in water level",
+        "Rescue equipment kept far from the work"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-CONSTR-07": {
+      "what_to_submit": [
+        "Fire precautions plan for the construction site",
+        "Fire equipment inspection records",
+        "Hot work permits and fire watch records",
+        "Emergency evacuation plan and drill records"
+      ],
+      "why": "Construction sites have many ignition sources and flammable materials, and escape routes change as the building grows. This plan shows how you prevent fires and get people out safely. Review it every year and for each site.",
+      "example": "Example: Lwandle Developments updated its site fire plan for a block of flats in Gqeberha on 14 July 2026 after the stairwells were closed in, and held an evacuation drill the following week.",
+      "common_gaps": [
+        "Escape routes not updated as the structure changes",
+        "Extinguishers missing or not inspected",
+        "No fire watch after hot work"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-CONSTR-08": {
+      "what_to_submit": [
+        "Signed handover record of the health and safety file to the client",
+        "Index of the handed over file",
+        "As built drawings and maintenance hazard information"
+      ],
+      "why": "When the project ends, the Construction Regulations, 2014 expect the health and safety file to be handed to the client so that future maintenance and alterations can be done safely. The signed handover proves you completed this duty. Review the process every year and on each project close out.",
+      "example": "Example: Ridgeback Building Contractors handed over the health and safety file for a school hall in Mahikeng on 29 August 2026, with a handover letter signed by the client's representative.",
+      "common_gaps": [
+        "File put together in a rush at the end, with missing records",
+        "No signed handover record",
+        "Maintenance hazard information left out"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-EDU-01": {
+      "what_to_submit": [
+        "Chemical register for laboratories and workshops",
+        "Safety data sheets for every chemical held",
+        "Laboratory and workshop rules signed by staff",
+        "Storage and disposal records"
+      ],
+      "why": "School and college laboratories and workshops hold chemicals that can burn, poison or explode. The Hazardous Chemical Agents Regulations expect you to control exposure for staff, and learners need the same protection. Review it every year.",
+      "example": "Example: The fictitious Hillview Technical College keeps a chemical register for its science laboratory, updated on 30 January 2026 by laboratory head Priya Naidoo, with expired chemicals removed by a registered waste contractor.",
+      "common_gaps": [
+        "Old chemicals left in storerooms for years",
+        "No safety data sheets",
+        "Learners handling chemicals without supervision or eye protection"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-EDU-02": {
+      "what_to_submit": [
+        "Playground and sports equipment inspection checklist",
+        "Defect and repair records",
+        "List of equipment taken out of use"
+      ],
+      "why": "Broken swings, loose goalposts and worn climbing frames injure learners. Regular inspections show you check equipment and remove anything unsafe. Review the inspection programme every year.",
+      "example": "Example: The fictitious Sunflower Primary School inspects its playground every term; the checklist dated 13 April 2026 shows a cracked slide was closed off and replaced.",
+      "common_gaps": [
+        "Goalposts not anchored",
+        "Inspections done but not written down",
+        "Damaged equipment left in use"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-EDU-03": {
+      "what_to_submit": [
+        "Driver list with licence and professional driving permit copies and expiry dates",
+        "Vehicle roadworthy and maintenance records",
+        "Learner transport route and passenger lists"
+      ],
+      "why": "Learners depend on safe vehicles and qualified drivers, and holding each driver's professional driving permit and vehicle records shows you check who drives and what they drive. The permit medical stays with the practitioner who did it; only the fitness outcome goes in your File. Review it every year.",
+      "example": "Example: The fictitious Lesedi Light Academy keeps a transport file with its two bus drivers' professional driving permits, both valid and in date, and service records for each bus dated March 2026.",
+      "common_gaps": [
+        "Permits expired without anyone noticing",
+        "Relief drivers without a permit",
+        "No passenger list per trip"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-EDU-04": {
+      "what_to_submit": [
+        "Biological agent risk assessment for the early childhood setting",
+        "Nappy changing, hand washing and cleaning procedures",
+        "Record of immunisation information offered to staff",
+        "Illness exclusion policy"
+      ],
+      "why": "Young children spread infections easily and staff are exposed through nappies, body fluids and close contact, so the Hazardous Biological Agents Regulations expect this exposure to be assessed and controlled. Clinical and immunisation records stay with the occupational health practitioner; only the outcome goes in your File. Review it every year.",
+      "example": "Example: The fictitious Little Acorns Day Care in Polokwane assessed its biological risks on 10 February 2026 and keeps nappy changing and cleaning procedures on the wall of each room.",
+      "common_gaps": [
+        "No gloves at the changing station",
+        "Staff immunisation records kept in the File instead of with the practitioner",
+        "No exclusion policy for sick children"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-EDU-05": {
+      "what_to_submit": [
+        "Emergency plan that accounts for every learner",
+        "Class registers used at assembly points",
+        "Evacuation drill records with times and problems found",
+        "Plan for learners with disabilities"
+      ],
+      "why": "In an emergency you must know that every learner is out safely. The plan and drill records show how teachers account for learners and help those who need assistance. Review it every year.",
+      "example": "Example: The fictitious Riverside High School held an evacuation drill on 6 May 2026, and every class teacher checked the register at the assembly point within the time set in the plan.",
+      "common_gaps": [
+        "No plan for learners in toilets or away from class",
+        "Drills held without a record",
+        "No named helper for learners with disabilities"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-EDU-06": {
+      "what_to_submit": [
+        "Reference to the school's child protection policy",
+        "Name of the designated child protection person",
+        "Record that staff were told how to report concerns"
+      ],
+      "why": "Child protection is handled under its own policies and authorities; your File only points to it so the two systems connect. Care Net does not assess or decide child protection matters. Review the reference every year.",
+      "example": "Example: The fictitious Mountain View Primary's File refers to its child protection policy of January 2026 and names deputy principal Thandeka Mabaso as the designated child protection person.",
+      "common_gaps": [
+        "Placing confidential child protection case details in the File",
+        "No named contact person",
+        "Staff unaware of how to report"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-GOV-01": {
+      "what_to_submit": [
+        "Confined space procedure for water and wastewater works",
+        "Entry permits with gas test results",
+        "Standby and rescue arrangements",
+        "Training records of entrants"
+      ],
+      "why": "Sewers, pump stations and reservoirs can contain toxic gases such as hydrogen sulphide, and many deaths happen when colleagues rush in to help. Permits, gas tests and rescue plans prevent this. Review the procedure every year.",
+      "example": "Example: Tlou Water Services requires a gas test and entry permit for every manhole entry; the permit dated 19 August 2026 at a pump station in Makhanda lists the standby person and the rescue tripod.",
+      "common_gaps": [
+        "Gas meter not calibrated",
+        "No rescue equipment at the manhole",
+        "Entering to clear blockages without a permit"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-GOV-03": {
+      "what_to_submit": [
+        "Fleet register with every vehicle, its roadworthiness and service dates",
+        "Authorised driver list with licence and permit expiry dates",
+        "Vehicle inspection checklists and accident records"
+      ],
+      "why": "Road crashes are a leading cause of death at work for departments that run fleets. The register shows each vehicle is safe and each driver is authorised. Review it every year.",
+      "example": "Example: The fictitious Mountainview District Roads Unit keeps a fleet register of all its vehicles, updated on 1 July 2026, with licence and permit expiry dates for every driver.",
+      "common_gaps": [
+        "Vehicles used with lapsed service or licence discs",
+        "Drivers not checked for valid licences",
+        "Accidents not linked back to driver or vehicle records"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-GOV-04": {
+      "what_to_submit": [
+        "Fire and evacuation plan for each public facility",
+        "Fire equipment inspection records",
+        "Evacuation drill records",
+        "Occupancy and escape route drawings"
+      ],
+      "why": "Public facilities such as clinics, libraries and halls hold many members of the public who do not know the building. A tested evacuation plan helps get everyone out safely. Review it every year.",
+      "example": "Example: The fictitious Riverbend Civic Library held an evacuation drill on 11 March 2026 with visitors present, and updated its escape route drawings after a new wing opened.",
+      "common_gaps": [
+        "Escape doors locked during opening hours",
+        "No plan for visitors with disabilities",
+        "Drills never held while the public is present"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-GOV-05": {
+      "what_to_submit": [
+        "Organogram of health and safety appointments across departments",
+        "Signed section 16(2) assignments for each department head",
+        "Accounting officer's signed acceptance of overall responsibility"
+      ],
+      "why": "In government the head of the organisation, often the accounting officer, carries the chief executive's responsibility under the OHS Act, and duties are usually assigned to department heads under section 16(2). A clear structure shows who is responsible for what in each department. Review it every year and when people change.",
+      "example": "Example: The fictitious Imbali Valley District Municipality keeps an appointment organogram signed by the municipal manager on 1 February 2026, with section 16(2) assignments for each of its five directors.",
+      "common_gaps": [
+        "Assignments not updated when a director leaves",
+        "Gaps where no one is assigned for a department",
+        "Assignee not given the authority or budget to act"
+      ],
+      "suggested_department": "EXEC"
+    },
+    "HSF-OV-GOV-06": {
+      "what_to_submit": [
+        "Section 37(2) written agreements with each contractor",
+        "Contractor health and safety file review checklist",
+        "Procurement specification with health and safety requirements"
+      ],
+      "why": "A written agreement under section 37(2) of the OHS Act records that the contractor accepts its own health and safety duties, and it can limit your liability for the contractor's acts. Without it, you may carry the contractor's failures as your own. Review your contracts every year.",
+      "example": "Example: The fictitious Blue Hills Public Works office signs a section 37(2) agreement with every maintenance contractor; the agreement with Selati Electrical is dated 14 January 2026.",
+      "common_gaps": [
+        "Contracts signed without a section 37(2) agreement",
+        "Agreement signed but the contractor's file never reviewed",
+        "No health and safety requirements in the tender"
+      ],
+      "suggested_department": "PROC"
+    },
+    "HSF-OV-HEALTH-02": {
+      "what_to_submit": [
+        "Sharps and healthcare risk waste procedure",
+        "Waste manifests or collection certificates from the licensed waste contractor",
+        "Needlestick injury register showing the date, the place and that each injury was reported, with follow up records kept by the occupational health practitioner",
+        "Container supply and placement records"
+      ],
+      "why": "Needlestick injuries can transmit HIV and hepatitis, and poorly handled healthcare waste harms staff, waste workers and the public; this record shows waste is separated, contained and removed safely. Clinical follow up records stay with the occupational health practitioner; only the fitness outcome (fit, fit with restrictions or unfit) goes in your File. Review it every year.",
+      "example": "Example: The fictitious Ikhaya Care Clinic in Soweto keeps monthly collection certificates from its healthcare waste contractor and a needlestick register, with the last incident reported on 9 July 2026 and the follow up left to its practitioner.",
+      "common_gaps": [
+        "Sharps containers overfilled",
+        "No collection certificates to prove proper disposal",
+        "Needlestick injuries not reported"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-HEALTH-03": {
+      "what_to_submit": [
+        "Radiation protection officer appointment letter",
+        "Radiation licence for each source or unit",
+        "Personal dose monitoring summaries per worker",
+        "Radiation area signage and rules"
+      ],
+      "why": "Ionising radiation from X ray and similar equipment can cause cancer and other harm, so a radiation protection officer and dose records show exposure is monitored and kept as low as possible. Dose records are sensitive: keep the detail with the radiation protection officer and the practitioner and put only summaries in your File. Review it every year.",
+      "example": "Example: Pillai Imaging Centre in Port Shepstone appointed radiographer Nadia Khan as its radiation protection officer on 1 March 2026 and files quarterly dose summaries for its staff.",
+      "common_gaps": [
+        "Dose badges not worn or not returned",
+        "Licence lapsed when equipment was replaced",
+        "No appointed radiation protection officer"
+      ],
+      "suggested_department": "OH"
+    },
+    "HSF-OV-HEALTH-04": {
+      "what_to_submit": [
+        "Risk assessment for cytotoxic drugs and anaesthetic gases",
+        "Handling and spill procedures",
+        "Ventilation and scavenging system test records",
+        "Training records of staff who handle these agents"
+      ],
+      "why": "Cytotoxic drugs and waste anaesthetic gases can harm staff who prepare or are exposed to them, including pregnant workers. The Hazardous Chemical Agents Regulations expect you to assess and control this exposure. Review it every year.",
+      "example": "Example: Masakhane Private Hospital, a fictitious hospital in Pietermaritzburg, keeps a cytotoxic handling procedure and scavenging system test reports for its theatres dated 20 April 2026.",
+      "common_gaps": [
+        "No spill kit where cytotoxic drugs are prepared",
+        "Scavenging systems never tested",
+        "Pregnant staff not told about the risk"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-HEALTH-05": {
+      "what_to_submit": [
+        "Patient handling risk assessment",
+        "Hoist and transfer equipment inspection records",
+        "Patient handling training records"
+      ],
+      "why": "Lifting and moving patients is one of the biggest causes of back injury among nurses and carers. The assessment and equipment records show you provide hoists, training and enough staff for safe transfers. Review it every year.",
+      "example": "Example: Du Toit Frail Care in George assessed patient transfers on 5 May 2026, bought two ceiling hoists and trained all carers in their use.",
+      "common_gaps": [
+        "Hoists available but not used because slings are missing",
+        "Carers lifting patients alone",
+        "Training given once and never refreshed"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-HEALTH-06": {
+      "what_to_submit": [
+        "Workplace violence risk assessment",
+        "Incident reporting procedure and register for aggression and assault",
+        "Controls such as panic buttons and security escorts",
+        "Debriefing and support records"
+      ],
+      "why": "Healthcare staff face abuse and assault from patients and visitors, which causes injury and long term stress. This record shows you identify where violence happens and put protection and support in place. Review it every year.",
+      "example": "Example: Sunrise Community Health Centre, a fictitious facility, installed panic buttons in its emergency unit after an assessment on 2 February 2026 and offers debriefing after every reported assault.",
+      "common_gaps": [
+        "Staff told that abuse is \"part of the job\"",
+        "Incidents not reported or recorded",
+        "No support after an assault"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-HEALTH-07": {
+      "what_to_submit": [
+        "Laboratory biosafety risk assessment",
+        "Biosafety cabinet certification records",
+        "Laboratory procedures for handling and disposing of specimens",
+        "Training records of laboratory staff"
+      ],
+      "why": "Laboratories that handle infectious specimens must match their controls to the danger of the agents, and the Hazardous Biological Agents Regulations expect this to be assessed and controlled. Clinical records stay with the occupational health practitioner; only the outcome (fit, fit with restrictions, unfit) goes in your File. Review it every year.",
+      "example": "Example: Olivier Pathology Laboratory in Upington keeps biosafety cabinet certificates dated 16 March 2026 and a signed specimen handling procedure for all staff.",
+      "common_gaps": [
+        "Biosafety cabinets not certified",
+        "Specimens opened on an open bench",
+        "No spill procedure"
+      ],
+      "suggested_department": "SHE"
+    },
+    "HSF-OV-HEALTH-08": {
+      "what_to_submit": [
+        "Register of clinical staff with their professional registration body and expiry date",
+        "Reference to your process for checking registrations",
+        "Name of the person who keeps the register"
+      ],
+      "why": "Clinical staff must be registered with their professional council, and this register shows you check that. Your File only refers to this process; Care Net does not verify or decide professional registration matters. Review it every year.",
+      "example": "Example: Nhlapo Wellness Clinic keeps a register of its nurses and doctors with their registration expiry dates, checked by practice manager Liesl Fourie on 1 April 2026.",
+      "common_gaps": [
+        "Registrations lapsed without anyone noticing",
+        "Locum staff not checked",
+        "Register kept but never updated"
+      ],
+      "suggested_department": "HR"
+    },
+    "HSF-OV-HOSP-01": {
+      "what_to_submit": [
+        "Certificate of acceptability for each food premises",
+        "Food safety and hygiene procedures",
+        "Cleaning schedules and pest control records",
+        "Food handler training records"
+      ],
+      "why": "Poor food hygiene can make customers and staff seriously ill and can close your business. The food hygiene rules are enforced by your municipality's environmental health practitioners, who will inspect your records. Review them every year.",
+      "example": "Example: Oosthuizen's Kitchen restaurant in Cradock keeps its certificate of acceptability on the wall, with pest control reports from its contractor and cleaning schedules signed daily, last checked by manager Andile Mkhize on 2 September 2026.",
+      "common_gaps": [
+        "Certificate not updated after a change of owner or premises",
+        "Cleaning schedules not signed",
+        "Food handlers never trained"
+      ],
+      "suggested_department": "OPS"
+    },
+    "HSF-OV-HOSP-03": {
+      "what_to_submit": [
+        "Gas installation certificate of conformity for kitchen appliances",
+        "Fire suppression system service records for extraction canopies",
+        "Fire extinguisher and fire blanket inspection records"
+      ],
+      "why": "Kitchen gas leaks and fat fires can cause explosions and serious burns. Gas installation certificates and fire system records show the installation was done and is maintained by competent people. Review them every year.",
+      "example": "Example: Fortuin Seafood in Hermanus keeps a gas certificate of conformity issued on 18 February 2026 and service records for the canopy fire suppression system.",
+      "common_gaps": [
+        "New gas appliances connected without a certificate",
+        "Canopy filters full of grease",
+        "Extinguishers not suited to fat fires"
+      ],
+      "suggested_department": "FAC"
+    },
+    "HSF-OV-HOSP-04": {
+      "what_to_submit": [
+        "Slips and burns risk assessment for kitchens and service areas",
+        "Floor cleaning schedules and non slip footwear policy",
+        "Burns incident records and first aid arrangements"
+      ],
+      "why": "Slips on wet floors and burns from hot oil, water and surfaces are the most common injuries in kitchens. This record shows you control floors, footwear and hot work practices. Review it every year.",
+      "example": "Example: Mokgadi's Grill House in Braamfontein assessed slips and burns on 7 March 2026, introduced non slip matting at the fryers and made non slip shoes part of the uniform.",
+      "common_gaps": [
+        "Spills left until the end of the shift",
+        "Staff wearing open or smooth soled shoes",
+        "No burns kit near the fryers"
+      ],
+      "suggested_department": "OPS"
+    }
+  }
+}

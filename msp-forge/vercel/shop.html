@@ -3,247 +3,742 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Care Net Plan Shop</title>
-<!-- Care Net house faces and the shared site header. Both are front end only:
-     no endpoints, no data handling, nothing that touches the app's plumbing. -->
+<title>Build your Medical Surveillance Plan | Care Net Consultants</title>
+<meta name="description" content="Build your Medical Surveillance Plan at no charge, see exactly what is in it, tick the job categories you carry, work out the practitioner review for your headcount, and read the legislation register every Plan is drafted from.">
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/shop-og-1200x630.jpg" data-asset="shop-og">
+<!--
+=====================================================================
+ shop.html, served at /shop and /build-your-plan :: Version 3.0
+ Rebuilt 22 September 2026 on the shared Care Net shell (cnc-header,
+ cnc-hero, cnc-pattern, cnc-secnav, cnc-footer), so the page changes its
+ banner, hero and footer in one place with every other page here.
+
+ COMMERCIAL MODEL (MD ruling, 11/09/2026): the Plan is free to build and
+ arrives watermarked. The only charge is the practitioner review, worked out
+ per person on the report from bands held in the parameter store through
+ msp_public_review_fee, which returns only the answer for the headcount
+ entered. NO AMOUNT IS PUBLISHED ON THIS PAGE.
+
+ THE LAW BEHIND YOUR PLAN (section 5): the industries covered and every
+ verified instrument, with full citation, gazette reference, verification
+ date and next review, read live from msp_public_instrument_register and
+ msp_public_industry_profile. Download: the register as CSV, built from the
+ live view when clicked, never from a file on disk. The static release 1.0.0
+ PDF and CSV are no longer offered: they show the NIHL Regulations, 2003 and
+ the Environmental Regulations for Workplaces, 1987, repealed from 06/09/2026,
+ as current. A new dated release follows the kernel update (HSF-7).
+
+ HARD RULES: SA British English, ZAR as R4 250,00, no dashes or hyphens in
+ copy, staff are sales executives, only the verified WhatsApp number
+ 27600702723, numbering starts at 1.
+=====================================================================
+-->
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/record-submission.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="preconnect" href="https://pboebfnujzffgwctsplw.supabase.co" crossorigin>
 <link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
 <link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"Service",
+ "serviceType":"Medical Surveillance Plan",
+ "name":"Build your Medical Surveillance Plan",
+ "description":"A Medical Surveillance Plan drafted against verified South African occupational health law for your industry, free to build and delivered watermarked. Review and signature by a registered Occupational Medical Practitioner is charged per person on the report.",
+ "provider":{"@type":"Organization","name":"Care Net Consultants (Pty) Ltd","url":"https://www.carenetconsultants.co.za/"},
+ "areaServed":{"@type":"Country","name":"South Africa"}
+}
+</script>
 <style>
-  :root { --red: #ED1B24; --charcoal: #1A1A1A; }
+  :root { --red: #ED1B24; --red-ink: #C5141B; --charcoal: #1A1A1A; --ink-2: #4d4d4d; --line: #e5e5e5; --green: #2A7D4E; }
   * { box-sizing: border-box; }
-  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; }
   main { max-width: 960px; margin: 0 auto; padding: 26px 16px 70px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  section { scroll-margin-top: 130px; margin-bottom: 22px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
   @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
   .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 18px; }
-  .card h2 { color: var(--red); font-size: 17px; margin-top: 0; }
-  .card p, .card li { font-size: 14px; line-height: 1.5; }
-  .price-line { font-size: 15px; font-weight: bold; margin: 8px 0 0; }
-  .tag { display: inline-block; background: #eef3fb; border: 1px solid #4a6fb5; border-radius: 4px; font-size: 11px; padding: 2px 7px; margin-left: 6px; vertical-align: middle; }
-  label { display: block; font-size: 13px; font-weight: bold; margin: 10px 0 4px; }
-  input, select { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 14px; }
-  button, a.btn { display: block; text-align: center; text-decoration: none; background: var(--red); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; width: 100%; font-size: 14px; }
-  a.secondary { background: #fff; color: var(--red); border: 2px solid var(--red); }
-  .muted { font-size: 13px; color: #555; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid #eee; }
-  th { color: #555; font-weight: bold; }
-  footer { text-align: center; font-size: 12px; color: #777; padding: 26px; }
-
-  /* Page title block, in the site's own heading style now that the banner
-     carries only the logo and the menu. */
-  .pagehead { margin: 0 0 22px; }
-  .pagehead .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--cnc-red); }
-  .pagehead h1 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(30px, 4.6vw, 46px); line-height: .99; margin: 8px 0 0; color: var(--charcoal); text-transform: uppercase; }
-  .pagehead h1 .r { color: var(--cnc-red); }
+  .grid .card { margin-bottom: 0; height: 100%; }
+  .card h2, section > h2 { color: var(--red-ink); font-size: 17px; margin: 0 0 10px; }
+  .card h3 { font-size: 15px; margin: 18px 0 6px; }
+  .card p, .card li { font-size: 14px; line-height: 1.55; }
+  .card p { margin: 0 0 10px; }
+  .muted { font-size: 13px; color: var(--ink-2); }
+  .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red-ink); margin-bottom: 6px; }
+  .sechead { margin: 6px 0 14px; }
+  .sechead h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(26px, 3.6vw, 36px); line-height: 1; margin: 0; color: var(--charcoal); text-transform: uppercase; }
+  .sechead h2 .r { color: var(--red); }
+  .sechead p { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 10px 0 0; max-width: 70ch; }
+  /* Tags on the two cards */
+  .tag { display: inline-block; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: 3px 9px; margin-bottom: 10px; }
+  .tag.free { background: #e8f7ec; color: #1B6E45; border: 1px solid var(--green); }
+  .tag.signed { background: #eef3fb; color: #2B4C8C; border: 1px solid #4a6fb5; }
+  .card.featured { border: 2px solid var(--red); }
+  /* Tick box lists: what you get */
+  .ticks2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 26px; }
+  @media (max-width: 760px) { .ticks2 { grid-template-columns: 1fr; } }
+  .tick { list-style: none; margin: 8px 0 0; padding: 0; }
+  .tick li { position: relative; padding-left: 28px; margin-bottom: 9px; }
+  .tick li::before { content: ""; position: absolute; left: 0; top: 2px; width: 16px; height: 16px; border: 2px solid var(--green); border-radius: 3px; background: #fff; }
+  .tick li::after { content: ""; position: absolute; left: 5px; top: 5px; width: 6px; height: 10px; border: solid var(--green); border-width: 0 2px 2px 0; transform: rotate(42deg); }
+  /* Buttons */
+  .btn, button.btn { display: block; text-align: center; text-decoration: none; background: var(--red-ink); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; width: 100%; font-size: 14px; font-family: inherit; }
+  .btn.ghost { background: #fff; color: var(--red-ink); border: 2px solid var(--red); }
+  .btn:hover, .btn:focus-visible { background: #B7141A; color: #fff; }
+  .btn:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  a.inline { color: var(--red-ink); font-weight: bold; }
+  /* Forms */
+  label { display: block; font-size: 13px; font-weight: bold; margin: 12px 0 4px; }
+  input, select { width: 100%; padding: 10px 11px; border: 1px solid #bdbdbd; border-radius: 5px; font-family: inherit; font-size: 14px; background: #fff; color: var(--charcoal); }
+  input:focus-visible, select:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+  .help { font-size: 12.5px; color: var(--ink-2); margin: 0 0 6px; }
+  .jobs { border: 1px solid var(--line); border-radius: 6px; padding: 4px 14px 12px; margin-top: 4px; max-height: 340px; overflow-y: auto; background: #fff; }
+  .jobs .sub { font-family: 'Montserrat', Arial, sans-serif; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--red-ink); margin: 14px 0 6px; }
+  .jobs label.job { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; font-weight: 400; margin: 0 0 7px; cursor: pointer; }
+  .jobs input[type=checkbox] { width: 18px; height: 18px; min-width: 18px; margin: 1px 0 0; accent-color: var(--red-ink); }
+  .jobs .otherline { margin: 4px 0 0 28px; }
+  .jobs .otherline label { margin: 0 0 4px; font-size: 12px; }
+  .count { font-size: 13px; font-weight: bold; margin: 10px 0 0; color: var(--ink-2); }
+  .honey { position: absolute; left: -9999px; }
+  .result { display: none; margin-top: 14px; padding: 14px 16px; border-radius: 6px; font-size: 14px; background: #f7f7f9; border: 1px solid #e2e2e6; border-left: 5px solid var(--red-ink); }
+  .result .big { font-family: 'Montserrat', Arial, sans-serif; font-size: clamp(26px, 4vw, 34px); font-weight: 800; margin: 6px 0 4px; }
+  .result p { margin: 0 0 8px; }
+  .result p:last-child { margin-bottom: 0; }
+  .straight { background: #f7f7f9; border: 1px solid #e2e2e6; border-radius: 6px; padding: 12px 14px; }
+  .straight b { display: block; margin-bottom: 4px; }
+  /* Framework figures */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 0 22px; }
+  @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } }
+  .stat { background: #fff; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); border-top: 4px solid var(--red); }
+  .stat b { display: block; font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; font-size: 36px; line-height: 1; color: var(--charcoal); }
+  .stat span { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; display: block; margin-top: 4px; }
+  /* The law behind your Plan */
+  .dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 6px; }
+  @media (max-width: 760px) { .dl { grid-template-columns: 1fr; } }
+  .dl a { display: flex; align-items: flex-start; gap: 12px; text-decoration: none; color: var(--charcoal); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; background: #fff; min-height: 48px; }
+  .dl a:hover, .dl a:focus-visible { border-color: var(--red); }
+  .dl a b { flex: none; background: var(--red-ink); color: #fff; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; letter-spacing: .08em; padding: 5px 8px; border-radius: 4px; margin-top: 2px; }
+  .dl a span { font-size: 14px; font-weight: bold; line-height: 1.35; }
+  .dl a small { display: block; font-weight: 400; font-size: 12.5px; color: var(--ink-2); margin-top: 3px; }
+  .indgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 6px; }
+  @media (max-width: 860px) { .indgrid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .indgrid { grid-template-columns: 1fr; } }
+  .indgrid a { display: block; text-decoration: none; color: var(--charcoal); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fafafa; }
+  .indgrid a:hover, .indgrid a:focus-visible { border-color: var(--red); background: #fff; }
+  .indgrid b { display: block; font-size: 14.5px; margin-bottom: 3px; }
+  .indgrid span { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+  .regwrap { overflow-x: auto; }
+  table.reg { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 12px; }
+  .reg th { text-align: left; font-family: 'Montserrat', Arial, sans-serif; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 10px 8px; border-bottom: 2px solid var(--line); }
+  .reg td { padding: 12px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .reg td b { display: block; font-size: 14.5px; margin-bottom: 3px; }
+  .reg td .cite { color: var(--ink-2); font-size: 13px; line-height: 1.5; }
+  .reg td .meta, .reg td .ap { color: var(--ink-2); font-size: 12.5px; margin-top: 5px; }
+  .reg td.dates { white-space: nowrap; font-size: 13px; color: var(--ink-2); }
+  .regnote { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
+  /* Demo table */
+  table.demo { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+  .demo th, .demo td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .demo th { color: var(--ink-2); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
   /* The header is sticky, so anything linked to sits clear of it. */
   :target { scroll-margin-top: 130px; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <a class="cnc-skip" href="#main">Skip to main content</a>
 
 <!-- ============ Site header, matching carenetconsultants.co.za ============
-     Red band, the Care Net logo from R2, and the page menu. Styling lives in
-     /css/cnc-header.css, menu behaviour in /js/cnc-header.js. Both are
-     presentation only. Every page in this app shares those two files, so the
-     banner is changed in one place, never page by page.
+     Styling lives in /css/cnc-header.css, menu behaviour in /js/cnc-header.js.
      ======================================================================= -->
 <header class="cnc-sitehead">
   <div class="band"></div>
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="shop-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
         <li><a href="/pilot.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
-        <li class="active"><a href="/shop.html" aria-current="page">Packages and pricing</a></li>
+        <li class="active"><a href="/shop.html" aria-current="page">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
     </div>
   </nav>
 </header>
-<!-- ============ C1 :: Hero, matching the band on carenetconsultants.co.za ============
-     Copy is this page's own heading and meta description, nothing newly
-     written. Styling lives in /css/cnc-hero.css, shared by every page here.
-     ================================================================== -->
+
+<!-- ============ Hero, the two column band from carenetconsultants.co.za ============ -->
 <section class="cnc-hero">
   <div class="hwrap">
     <div>
-      <span class="eyebrow">Packages and pricing</span>
-      <h1>Medical Surveillance Plan <span class="r">packages, pricing, and samples</span></h1>
+      <span class="eyebrow">Build your Plan</span>
+      <h1>Build your Plan free. <span class="r">Pay only for the signature.</span></h1>
+      <p class="lede">Your Medical Surveillance Plan, drafted against the verified law for your industry, is yours to build at no charge. If you need it in front of an auditor or an inspector, a registered practitioner reads it line by line and signs it, and that is the only thing you pay for.</p>
       <div class="chips">
-        <a class="chip" href="/pilot.html">How it works</a>
-        <a class="chip" href="/method.html">The Care Net Method</a>
-        <a class="chip" href="/sample.html">Sample Plan</a>
+        <a class="chip" href="#law" id="chip-industries" data-cta="chip_industries">17 industries covered</a>
+        <a class="chip" href="#law" id="chip-instruments" data-cta="chip_instruments">31 verified instruments</a>
+        <a class="chip" href="#inside" data-cta="chip_practitioner_signed">Practitioner signed</a>
+        <a class="chip" href="#inside" data-cta="chip_popia">Records handled under POPIA</a>
       </div>
     </div>
     <div class="heroimg">
-      <img src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A completed Medical Surveillance Plan record being submitted" width="1920" height="1080" fetchpriority="high" decoding="async">
+      <img data-asset="shop-hero" src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A completed Medical Surveillance Plan record being submitted" width="1920" height="1080" fetchpriority="high" decoding="async">
     </div>
   </div>
 </section>
 
 <!-- Africa pattern strip, closing the hero off, as on the landing page. -->
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="shop-pattern"></div>
 
 <main id="main">
-  <div class="grid">
-    <div class="card" id="working-draft">
-      <h2>Working draft</h2>
-      <p>The full structured assessment and an engine drafted Plan against the verified regulatory kernel for your industry, delivered as a watermarked working draft for internal planning.</p>
-      <ul>
-        <li>Complete smart assessment across your sites, job categories, and hazards</li>
-        <li>Plan drafted against the verified South African regulatory framework for your industry</li>
-        <li>Watermarked draft: no OMP signature, not a released clinical document</li>
-      </ul>
-      <p class="price-line">From the industry rate card <span class="tag">indicative pricing</span></p>
-      <p class="muted">Free for clients under an active service level agreement or doing 100 or more occupational medicals a year with Care Net.</p>
+
+  <!-- Framework figures, read live from msp_public_framework_stats. -->
+  <div class="stats" aria-label="What the framework holds">
+    <div class="stat"><b id="s-industries">17</b><span>industries mapped end to end</span></div>
+    <div class="stat"><b id="s-instruments">31</b><span>Acts, regulations and codes verified</span></div>
+    <div class="stat"><b id="s-roles">316</b><span>job roles with their own risk profile</span></div>
+    <div class="stat"><b id="s-protocols">30</b><span>medical assessments, each with a legal basis</span></div>
+  </div>
+
+  <!-- 1 :: TWO WAYS TO TAKE IT -->
+  <section id="two-ways" aria-labelledby="ways-title">
+    <div class="sechead">
+      <span class="eyebrow">Two ways to take it</span>
+      <h2 id="ways-title">The Plan is free. <span class="r">The signature is what you pay for.</span></h2>
     </div>
-    <div class="card" id="omp-signed">
-      <h2>OMP reviewed and signed</h2>
-      <p>Everything in the working draft, plus review by a registered Occupational Medical Practitioner: clinical recommendations, ratification of the surveillance battery, and signature. The released, board ready Plan, hosted with revision control.</p>
-      <ul>
-        <li>Clinical review, recommendations, and sign off by the designated OMP</li>
-        <li>Released document with revision numbers and secure hosting</li>
-        <li>Updates follow the same clinical review as your operations change</li>
-      </ul>
-      <p class="price-line">Rate card plus OMP review fee <span class="tag">fee confirmed on your invoice</span></p>
-      <p class="muted">The OMP review fee applies to every signed Plan, including free qualifying accounts: the clinical review is a professional service in its own right.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="tag free">Free to build</span>
+        <h2>Your Plan, at no charge</h2>
+        <p>Work through the assessment and your Medical Surveillance Plan is drafted for you against the verified law for your industry. It arrives watermarked. That is your working copy and it is yours to keep, plan from and budget from.</p>
+        <ul class="tick">
+          <li>The full guided assessment</li>
+          <li>Your Plan drafted against the verified law for your industry</li>
+          <li>Every section of the sample Plan, from the regulatory framework to the surveillance calendar</li>
+          <li>The watermark lifts for Care Net clients, or the day you book your medicals with us</li>
+        </ul>
+        <a class="btn ghost" href="#inside" data-cta="see_what_is_in_plan">See what is in the Plan</a>
+      </div>
+      <div class="card featured">
+        <span class="tag signed">Defensible</span>
+        <h2>Reviewed and signed by the practitioner</h2>
+        <p>A registered Occupational Medical Practitioner reads your Plan line by line, records clinical recommendations, and signs it with their name and HPCSA number. That signature is what makes the Plan defensible in front of an auditor, an inspector or a client.</p>
+        <ul class="tick">
+          <li>Covers the legislative requirements that apply to your operation</li>
+          <li>Clinical recommendations recorded against your Plan</li>
+          <li>Signed with practitioner name and HPCSA registration number</li>
+          <li>Released with revision numbers and secure hosting</li>
+          <li>Charged per person on the report, worked out for your headcount below</li>
+        </ul>
+        <a class="btn" href="#calc" data-cta="work_out_review_fee">Work out my review fee</a>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <div class="card" id="quotation">
-    <h2>Get your quotation</h2>
-    <p class="muted">The quotation prices your chosen package from the industry rate card, applies the free tool qualification automatically, and routes unknown industries to a consultant rather than guessing.</p>
-    <form id="quote">
-      <input style="position:absolute;left:-9999px" type="text" name="website" tabindex="-1" autocomplete="off">
-      <label>Package</label>
-      <select name="package_code">
-        <option value="SIGNED_PLAN">OMP reviewed and signed (recommended)</option>
-        <option value="DRAFT_PLAN">Working draft only</option>
-      </select>
-      <label>Company name</label><input name="company_name" required>
-      <label>Contact person</label><input name="contact_name" required>
-      <label>Email</label><input name="contact_email" type="email" required>
-      <label>Industry</label>
-      <select name="industry_code">
-        <option value="CONSTR">Construction</option>
-        <option value="MANU">Manufacturing</option>
-        <option value="MINING">Mining and quarrying</option>
-        <option value="TRANS">Transport and logistics</option>
-        <option value="AGRI">Agriculture and forestry</option>
-        <option value="HEALTH">Healthcare and laboratories</option>
-        <option value="UTIL">Utilities and energy</option>
-        <option value="SEC">Security services</option>
-        <option value="CLEAN">Cleaning and hygiene services</option>
-        <option value="RETAIL">Retail and wholesale</option>
-        <option value="HOSP">Hospitality and food service</option>
-        <option value="WASTE">Waste management</option>
-        <option value="TEL">Telecommunications and tower work</option>
-        <option value="PETRO">Petrochemical and fuel retail</option>
-        <option value="GOV">Government and municipal</option>
-        <option value="EDU">Education</option>
-        <option value="OFFICE">Office and professional services</option>
-        <option value="OTHER">Other (a consultant will contact you)</option>
-      </select>
-      <label>Number of employees to be covered</label><input name="employee_count" type="number" min="1" required>
-      <label>Number of distinct job descriptions</label><input name="job_category_count" type="number" min="1" required>
-      <label>Occupational medicals per year with Care Net (0 if none yet)</label><input name="annual_medicals_estimate" type="number" min="0" value="0">
-      <button type="submit">Get my quotation</button>
-      <div class="muted" id="quote-result" style="margin-top:12px"></div>
-    </form>
-    <p class="muted">Already a client? <a href="/" style="color:var(--red);font-weight:bold">Sign in</a> and your service level agreement or medicals volume applies automatically. Payment is by invoice while the payment gateway is being connected; your secure assessment link is issued on payment confirmation.</p>
-  </div>
+  <!-- 2 :: WHAT IS INSIDE -->
+  <section id="inside" aria-labelledby="inside-title">
+    <div class="sechead">
+      <span class="eyebrow">What you get in the Plan</span>
+      <h2 id="inside-title">Everything below is in your Plan, <span class="r">signed or not.</span></h2>
+      <p>This is the same structure you will find in the <a class="inline" href="/sample.html" data-cta="sample_plan_link">sample Plan</a>, drafted from fictitious company data so you can read a real one before you decide.</p>
+    </div>
+    <div class="card">
+      <div class="ticks2">
+        <ul class="tick">
+          <li>Introduction and purpose of your Plan</li>
+          <li>Business overview, sites and workforce covered</li>
+          <li>Basis of the Plan and the source of every risk figure used</li>
+          <li>The regulatory framework that applies to your industry, with gazette references</li>
+          <li>Job descriptions and the Occupational Risk Exposure Profile, per job category</li>
+          <li>The Worker Allocated Surveillance Programme: which test, for whom, how often</li>
+        </ul>
+        <ul class="tick">
+          <li>Roles and responsibilities across your organisation</li>
+          <li>Confidentiality and protection of personal information under POPIA</li>
+          <li>Review and validity, with the date your Plan is next checked</li>
+          <li>The practitioner sign off page</li>
+          <li>Annexures: employee register, twelve month surveillance calendar, source list</li>
+          <li>Your company branding alongside the Care Net band on every page</li>
+        </ul>
+      </div>
+      <h3>What the signature adds</h3>
+      <ul class="tick">
+        <li>Covers the legislative requirements that apply to your operation</li>
+        <li>Clinical recommendations recorded by the practitioner against your Plan</li>
+        <li>Signed with practitioner name and HPCSA registration number</li>
+        <li>Released with revision numbers, so an auditor can see which version they hold</li>
+        <li>Revisions follow the same clinical review when your operations change</li>
+      </ul>
+    </div>
+  </section>
 
-  <div class="card" id="samples">
-    <h2>See what you get: sample Plans with fictitious data</h2>
-    <p class="muted">Every sample is produced by the Care Net Method from entirely fictitious company data, drafted against the real verified regulatory framework for the industry, and watermarked on every page. Your own Plan carries your branding alongside the Care Net band on every page.</p>
-    <table>
-      <tr><th>Industry</th><th>Sample</th></tr>
-      <tr><td>All 17 industries</td><td><a href="/sample.html" style="color:var(--red);font-weight:bold">View the sample Plan for your industry</a></td></tr>
-    </table>
-    <p class="muted">Samples are demonstration documents. They are watermarked, unsigned, and viewable on screen only, so what you see is what the method produces rather than a template to fill in.</p>
-  </div>
+  <!-- 3 :: THE CALCULATOR -->
+  <section id="calc" aria-labelledby="calc-title">
+    <div class="sechead">
+      <span class="eyebrow">The calculator</span>
+      <h2 id="calc-title">Work out your <span class="r">practitioner review.</span></h2>
+      <p>The Plan costs nothing. This works out only the practitioner review, which is charged per person on the report. Pick your industry, tick the job categories you carry, and enter your headcount.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <form id="calc-form">
+          <input class="honey" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" aria-label="Leave this field empty">
+          <label for="industry" style="margin-top:0">Your industry</label>
+          <select id="industry" name="industry_code"><option value="">Choose your industry</option></select>
 
-  <div class="card" id="journey">
-    <h2>How your journey works</h2>
-    <ol class="muted" style="padding-left:18px">
-      <li><a href="/" style="color:var(--red)">Sign in or create your company</a>: your service level agreement or medicals volume is checked automatically.</li>
-      <li>Choose your package here and receive your quotation; free qualifying accounts skip payment.</li>
-      <li>Complete the smart assessment through your secure single use link (roughly 30 to 45 minutes with your risk assessment at hand).</li>
-      <li>The engine drafts your Plan against the verified regulatory kernel; the OMP reviews, recommends, and signs on the signed package.</li>
-      <li>Delivery for download, with secure hosting and revision numbers; updates follow the same clinical review.</li>
-    </ol>
-  </div>
+          <p id="jobs-label" style="font-size:13px;font-weight:bold;margin:14px 0 4px">Job categories you carry</p>
+          <p class="help">These are the job categories the framework already holds for your industry. Tick the ones you have. If a job is not listed, tick Other and name it.</p>
+          <div class="jobs" id="jobs-box" role="group" aria-labelledby="jobs-label"><p class="help" style="margin:10px 0">Choose your industry first and the job categories load here.</p></div>
+          <p class="count" id="job-count">Job categories selected: 0</p>
+
+          <label for="people">Number of people to be covered on the report</label>
+          <input id="people" name="employee_count" type="number" min="1" max="100000" inputmode="numeric" required>
+
+          <label for="medicals">Occupational medicals a year with Care Net</label>
+          <input id="medicals" name="annual_medicals_estimate" type="number" min="0" value="0" inputmode="numeric">
+
+          <button type="submit" class="btn" data-cta="calculate_review_fee">Work out my review fee</button>
+        </form>
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+      <div class="card">
+        <h2>Why the signature is charged and the Plan is not</h2>
+        <p class="straight"><b>We would rather tell you than let you find out later.</b>Your Plan is drafted by a trained language model working from a framework we maintain, updated every month for new legislation and again for job roles and risk. That framework is strong and we stand behind how it is built. It is still not a person. We will not put a practitioner's name on a document that no person has read, so the practitioner goes through your Plan line by line before signing it. That review is charged per person on the report.</p>
+        <p>What it comes to depends on your industry and how complex your operation is, so the figure the calculator gives you is confirmed by a sales executive before anything starts.</p>
+        <p class="muted">Care Net screens fitness for work; we do not diagnose. Findings and referrals rest with the reviewing Occupational Medical Practitioner, and the employer is always the payer, in line with HPCSA guidance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 :: SEND IT TO A SALES EXECUTIVE -->
+  <section id="send" aria-labelledby="send-title">
+    <div class="sechead">
+      <span class="eyebrow">Next</span>
+      <h2 id="send-title">Send it to <span class="r">a sales executive.</span></h2>
+      <p>Complexity differs by industry and by operation, so a sales executive confirms your figure and sends the quotation before anything begins. Fill this in once you have your number above.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <form id="lead">
+          <label for="company" style="margin-top:0">Company name</label><input id="company" name="company_name" required autocomplete="organization">
+          <label for="contact">Contact person</label><input id="contact" name="contact_name" required autocomplete="name">
+          <label for="email">Email</label><input id="email" name="contact_email" type="email" required autocomplete="email">
+          <button type="submit" class="btn" data-cta="send_to_sales_executive">Send this to a sales executive</button>
+        </form>
+        <div class="result" id="lead-result" aria-live="polite"></div>
+      </div>
+      <div class="card">
+        <h2>Already a Care Net client?</h2>
+        <p><a class="inline" href="/portal.html" data-cta="sign_in">Sign in</a> and your service level agreement or medicals volume applies automatically, so your Plan is released without a watermark.</p>
+        <p class="muted">Care Net uses these details to prepare your quotation and to contact you about it. They are processed in line with POPIA and are not used for anything else.</p>
+        <p class="muted">Prefer to talk? WhatsApp <a class="inline" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">27 60 070 2723</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 :: THE LAW BEHIND YOUR PLAN -->
+  <section id="law" aria-labelledby="law-title">
+    <div class="sechead">
+      <span class="eyebrow">The law behind your Plan</span>
+      <h2 id="law-title">Seventeen industries. <span class="r">Thirty one verified instruments.</span> Here they are.</h2>
+      <p>Every Plan is drafted against this register. Each instrument is verified three ways before it may be cited: against the primary text, an independent corroborating source, and a currency check that confirms it is still in force. Anything that fails a check is left out rather than guessed at. The register is reviewed every month.</p>
+    </div>
+    <div class="card">
+      <h2>Downloads</h2>
+      <div class="dl">
+        <a href="#law" id="dl-csv" data-cta="download_register_csv"><b>CSV</b><span>Register as a spreadsheet<small>Built from the live framework the moment you click</small></span></a>
+        <a href="/sample.html" data-cta="view_sample_plan"><b>PLAN</b><span>Sample Plan<small>See how the register is applied in a finished Plan, for your own industry</small></span></a>
+      </div>
+      <p class="regnote">The table below is read live from the framework. The Noise Exposure Regulations, 2024 and the Physical Agents Regulations, 2024 replaced the Noise Induced Hearing Loss Regulations, 2003 and the Environmental Regulations for Workplaces, 1987 from 6 September 2026. The Plan engine is being updated to cite the new Regulations, and every Plan is reviewed by our Occupational Medical Practitioner before release. A new dated release of the register will follow that update.</p>
+    </div>
+    <div class="card">
+      <h2>The industries covered</h2>
+      <p class="muted">Each one opens its own page with the instruments, job categories, hazards and assessments the framework holds for it.</p>
+      <div class="indgrid" id="ind-grid"><p class="regnote">Loading the industries from the framework.</p></div>
+    </div>
+    <div class="card">
+      <h2>The register</h2>
+      <div class="regwrap">
+        <table class="reg" id="reg-table">
+          <thead><tr><th>Instrument and citation</th><th>Verified</th><th>Next review</th></tr></thead>
+          <tbody id="reg-rows"><tr><td colspan="3" class="regnote">Loading the register from the framework.</td></tr></tbody>
+        </table>
+      </div>
+      <p class="regnote">Verified means the instrument passed all three checks on that date. Next review is when the currency check is repeated, or sooner if the law moves first. Pending instruments are never shown here and never reach a Plan.</p>
+    </div>
+  </section>
+
+  <!-- 6 :: SEE IT BEFORE YOU BUILD IT -->
+  <section id="demo" aria-labelledby="demo-title">
+    <div class="sechead">
+      <span class="eyebrow">See it before you build it</span>
+      <h2 id="demo-title">Read a sample Plan, <span class="r">start to finish.</span></h2>
+      <p>Every sample is produced by the same method from entirely fictitious company data, drafted against the real verified framework for the industry, and watermarked on every page.</p>
+    </div>
+    <div class="card">
+      <table class="demo">
+        <tr><th>Industry</th><th>Sample Plan</th></tr>
+        <tr><td>All 17 industries</td><td><a class="inline" href="/sample.html" data-cta="view_sample_plan">View the sample Plan for your industry</a></td></tr>
+        <tr><td>Health and Safety File</td><td><a class="inline" href="/hsf-sample.html" data-cta="view_sample_file">View a sample File, with its compliance and training matrix</a></td></tr>
+      </table>
+      <p class="muted" style="margin-top:12px">Samples are demonstration documents. They are watermarked, unsigned, and viewable on screen only, so what you see is what the method produces rather than a template to fill in.</p>
+    </div>
+  </section>
+
+  <!-- 7 :: READY -->
+  <section id="ready" aria-labelledby="ready-title">
+    <div class="card" style="border-top:5px solid var(--red)">
+      <h2 id="ready-title">Ready to build your Plan?</h2>
+      <p>Start with your work email. Your assessment is ready the moment you arrive, and a sales executive confirms your review figure the same working day.</p>
+      <div class="grid">
+        <a class="btn" href="/" data-cta="build_my_plan">Build my Plan</a>
+        <a class="btn ghost" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+      </div>
+    </div>
+  </section>
+
 </main>
 <footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.</footer>
 <!-- ============ AutoHive brand stamp ============
-     The credit strip that closes every page on the main Care Net site.
      Styling lives in /css/cnc-footer.css and is shared by every page here.
      ============================================== -->
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="shop-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
 </div>
 
 <script>
-const fmtZAR = n => 'R' + Number(n).toLocaleString('en-ZA', { maximumFractionDigits: 0 }).replace(/ /g, ',').replace(/ /g, ',');
-document.getElementById('quote').onsubmit = async ev => {
-  ev.preventDefault();
-  const f = ev.target, out = document.getElementById('quote-result');
-  const data = Object.fromEntries(new FormData(f));
-  data.employee_count = parseInt(data.employee_count, 10);
-  data.job_category_count = parseInt(data.job_category_count, 10);
-  data.annual_medicals_estimate = parseInt(data.annual_medicals_estimate || '0', 10);
-  const r = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(x => x.json()).catch(() => null);
-  if (r && r.reference) {
-    const parts = [];
-    parts.push('Quotation <strong>' + r.reference + '</strong> for the ' + r.package_name.toLowerCase() + '.');
-    parts.push('Assessment and Plan: ' + (r.tool_free ? '<strong>FREE</strong> under the Care Net client benefit' : '<strong>' + fmtZAR(r.base_zar) + '</strong>') + '.');
-    if (r.omp_review_fee_zar > 0) parts.push('OMP review and sign off: <strong>' + fmtZAR(r.omp_review_fee_zar) + '</strong> (confirmed on your invoice).');
-    parts.push('Total: <strong>' + fmtZAR(r.price_zar) + '</strong>' + (r.price_status === 'indicative' ? ' (indicative, confirmed with your invoice)' : '') + '. Valid until ' + r.valid_until + '.');
-    parts.push('A Care Net consultant will send your invoice and payment instructions to <strong>' + data.contact_email + '</strong>; your secure assessment link is issued on confirmation.');
-    out.innerHTML = parts.join('<br>');
-    f.querySelectorAll('input,select,button').forEach(el => el.disabled = true);
-  } else if (r && r.status === 'consultant') {
-    out.textContent = r.message;
-  } else {
-    out.textContent = (r && r.error) || 'The quotation could not be prepared. Please try again.';
+(function () {
+  var API = 'https://pboebfnujzffgwctsplw.supabase.co/rest/v1';
+  var KEY = 'sb_publishable_E6ebjt_HJy5RN6MzM6fsdg_I1VbB1aj';
+  var H = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
+  /* House style: R4 250,00. A space for thousands, a comma for cents. */
+  var zar = function (n) { var v = Number(n).toFixed(2).split('.'); return 'R' + v[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ',' + v[1]; };
+  var el = function (id) { return document.getElementById(id); };
+  var dmy = function (d) { if (!d) return ''; var p = String(d).slice(0, 10).split('-'); return p[2] + '/' + p[1] + '/' + p[0]; };
+  var words = { 17: 'Seventeen', 31: 'Thirty one' };
+  var kinds = { act: 'Act', regulation: 'Regulation', code: 'Code of good practice', guideline: 'Guideline', hpcsa: 'HPCSA ethical guideline', sans: 'National standard', notice: 'Government notice' };
+
+  /* ---- Framework figures: the chips and the stats row follow the live count. */
+  fetch(API + '/msp_public_framework_stats?select=*', { headers: H })
+    .then(function (r) { return r.json(); })
+    .then(function (rows) {
+      var s = rows && rows[0]; if (!s) return;
+      el('s-industries').textContent = s.industries; el('s-instruments').textContent = s.instruments;
+      el('s-roles').textContent = s.roles; el('s-protocols').textContent = s.protocols;
+      el('chip-industries').textContent = s.industries + ' industries covered';
+      el('chip-instruments').textContent = s.instruments + ' verified instruments';
+      var t = el('law-title');
+      t.innerHTML = esc(words[s.industries] || s.industries) + ' industries. <span class="r">' + esc(words[s.instruments] || s.instruments) + ' verified instruments.</span> Here they are.';
+    }).catch(function () {});
+
+  /* ---- Industry list for the calculator and the industries grid, one read. */
+  fetch(API + '/msp_public_industry_profile?select=code,name,regime,subindustry_count,role_count&order=name', { headers: H })
+    .then(function (r) { return r.json(); })
+    .then(function (list) {
+      var sel = el('industry');
+      (list || []).forEach(function (r) {
+        var o = document.createElement('option'); o.value = r.code; o.textContent = r.name; sel.appendChild(o);
+      });
+      var other = document.createElement('option'); other.value = 'OTHER'; other.textContent = 'Other, not listed here'; sel.appendChild(other);
+      var g = el('ind-grid');
+      if (!list || !list.length) { g.innerHTML = '<p class="regnote">The industry list could not be reached. Please try again shortly.</p>'; return; }
+      g.innerHTML = list.map(function (i) {
+        return '<a href="/industry.html?code=' + encodeURIComponent(i.code) + '" data-cta="industry_card:' + esc(i.code) + '"><b>' + esc(i.name) + '</b><span>' + i.subindustry_count + (i.subindustry_count === 1 ? ' area of work, ' : ' areas of work, ') + i.role_count + ' job roles, ' + (i.regime === 'MHSA' ? 'Mine Health and Safety Act' : 'Occupational Health and Safety Act') + '</span></a>';
+      }).join('');
+    })
+    .catch(function () {
+      el('industry').insertAdjacentHTML('beforeend', '<option value="OTHER">Other, not listed here</option>');
+      el('ind-grid').innerHTML = '<p class="regnote">The industry list could not be reached. Please try again shortly.</p>';
+    });
+
+  /* ---- The register, live, and the CSV built from the same rows. */
+  var rows = null;
+  fetch(API + '/msp_public_instrument_register?select=*&order=short_name', { headers: H })
+    .then(function (r) { return r.json(); })
+    .then(function (list) {
+      var tb = el('reg-rows');
+      if (!list || !list.length) { tb.innerHTML = '<tr><td colspan="3" class="regnote">The register could not be reached. Please try again shortly.</td></tr>'; return; }
+      rows = list;
+      var total = parseInt(el('s-industries').textContent, 10) || 17;
+      tb.innerHTML = list.map(function (r, n) {
+        var inds = (r.industries || []);
+        var ap = inds.length >= total ? 'Applies to every industry covered.' : 'Applies to: ' + inds.map(function (i) { return i.name; }).join(', ') + '.';
+        var meta = [kinds[r.instrument_type] || r.instrument_type];
+        if (r.gazette_reference) meta.push('Gazette: ' + r.gazette_reference);
+        if (r.effective_date) meta.push('Effective ' + dmy(r.effective_date));
+        return '<tr><td><b>' + (n + 1) + '. ' + esc(r.short_name) + '</b><div class="cite">' + esc(r.full_citation) + '</div><div class="meta">' + esc(meta.join('  |  ')) + '</div><div class="ap">' + esc(ap) + '</div></td>'
+          + '<td class="dates">' + dmy(r.verified_on) + '</td><td class="dates">' + dmy(r.review_due) + '</td></tr>';
+      }).join('');
+    }).catch(function () {
+      el('reg-rows').innerHTML = '<tr><td colspan="3" class="regnote">The register could not be reached. Please try again shortly.</td></tr>';
+    });
+
+  var csvNote = el('dl-csv').querySelector('small'), csvNoteText = csvNote ? csvNote.textContent : '';
+  el('dl-csv').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    if (!rows) { /* the live view is not here yet; never fall back to a stale file */
+      if (csvNote) csvNote.textContent = 'The live register has not loaded yet. Please try again shortly.';
+      return;
+    }
+    if (csvNote) csvNote.textContent = csvNoteText;
+    var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+    var head = ['Instrument', 'Full citation', 'Type', 'Gazette reference', 'Effective', 'Verified on', 'Next review', 'Currency note', 'Applies to industries'];
+    var lines = [head.map(q).join(',')].concat(rows.map(function (r) {
+      return [r.short_name, r.full_citation, kinds[r.instrument_type] || r.instrument_type, r.gazette_reference, r.effective_date, r.verified_on, r.review_due, r.amendment_history, (r.industries || []).map(function (i) { return i.name; }).join('; ')].map(q).join(',');
+    }));
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'CNC-Legislation-Register-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  });
+
+  /* ---- Job categories for the chosen industry, with an Other line. */
+  function countJobs() {
+    var n = document.querySelectorAll('#jobs-box input[type=checkbox]:checked').length;
+    el('job-count').textContent = 'Job categories selected: ' + n;
+    return n;
   }
-};
+  function wireOther() {
+    var cb = el('job-other'), line = el('job-other-line');
+    if (!cb || !line) return;
+    cb.addEventListener('change', function () {
+      line.style.display = cb.checked ? 'block' : 'none';
+      if (cb.checked) line.querySelector('input').focus();
+    });
+  }
+  function renderJobs(profile) {
+    var box = el('jobs-box'), html = '';
+    (profile && profile.subindustries ? profile.subindustries : []).forEach(function (s, si) {
+      html += '<p class="sub">' + esc(s.name) + '</p>';
+      (s.roles || []).forEach(function (role, ri) {
+        var id = 'job-' + si + '-' + ri;
+        html += '<label class="job" for="' + id + '"><input type="checkbox" id="' + id + '" value="' + esc(role) + '"><span>' + esc(role) + '</span></label>';
+      });
+    });
+    html += '<p class="sub">Not on the list</p>';
+    html += '<label class="job" for="job-other"><input type="checkbox" id="job-other"><span>Other, a job category we have not listed</span></label>';
+    html += '<div class="otherline" id="job-other-line" style="display:none"><label for="job-other-name">Name the job category</label><input type="text" id="job-other-name" placeholder="For example, Boilermaker"></div>';
+    box.innerHTML = html;
+    box.querySelectorAll('input[type=checkbox]').forEach(function (c) { c.addEventListener('change', countJobs); });
+    wireOther();
+    countJobs();
+  }
+  el('industry').addEventListener('change', function () {
+    var code = this.value, box = el('jobs-box');
+    if (!code) { box.innerHTML = '<p class="help" style="margin:10px 0">Choose your industry first and the job categories load here.</p>'; countJobs(); return; }
+    if (code === 'OTHER') { renderJobs({ subindustries: [] }); return; }
+    box.innerHTML = '<p class="help" style="margin:10px 0">Loading the job categories for this industry.</p>';
+    fetch(API + '/msp_public_industry_profile?code=eq.' + encodeURIComponent(code) + '&select=subindustries', { headers: H })
+      .then(function (r) { return r.json(); })
+      .then(function (rows) { renderJobs(rows && rows[0] ? rows[0] : { subindustries: [] }); })
+      .catch(function () { renderJobs({ subindustries: [] }); });
+  });
+
+  /* ---- The calculator: one headcount in, one answer out. */
+  el('calc-form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var out = el('result');
+    var people = parseInt(el('people').value, 10);
+    var jobs = countJobs();
+    var medicals = parseInt(el('medicals').value || '0', 10);
+    out.style.display = 'block';
+    if (!people || people < 1) { out.innerHTML = '<p>Enter how many people the report covers.</p>'; return; }
+    out.innerHTML = '<p class="muted">Working it out.</p>';
+    fetch(API + '/rpc/msp_public_review_fee', { method: 'POST', headers: H, body: JSON.stringify({ p_people: people }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || d.ok !== true) { out.innerHTML = '<p>That headcount could not be worked out. Please check it and try again.</p>'; return; }
+        var free = medicals >= 100;
+        var parts = [];
+        parts.push('<p class="muted">Practitioner review, for a report covering ' + people + (people === 1 ? ' person' : ' people') + (jobs ? ' across ' + jobs + (jobs === 1 ? ' job category' : ' job categories') : '') + '.</p>');
+        parts.push('<p class="big">' + zar(d.fee_zar) + '</p>');
+        parts.push('<p class="muted">Your Plan itself remains free to build and yours to keep.</p>');
+        if (free) parts.push('<p><strong>Your watermark lifts automatically.</strong> At ' + medicals + ' medicals a year with Care Net you are inside the client benefit, so your Plan is released unwatermarked.</p>');
+        parts.push('<p class="muted">This is the calculation for the headcount you entered. A sales executive confirms it against your industry and how complex your operation is before anything begins.</p>');
+        out.innerHTML = parts.join('');
+        window.__cncCalc = { people: people, jobs: jobs, medicals: medicals, fee: d.fee_zar, industry: el('industry').value };
+      })
+      .catch(function () { out.innerHTML = '<p>The calculator could not be reached. Please try again shortly.</p>'; });
+  });
+
+  /* ---- Send it through: the quotation is recorded and a sales executive picks it up. */
+  el('lead').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var out = el('lead-result');
+    out.style.display = 'block';
+    var c = window.__cncCalc;
+    if (!c) { out.innerHTML = '<p>Work out your review figure above first, then send it through.</p>'; return; }
+    out.innerHTML = '<p class="muted">Sending.</p>';
+    var payload = {
+      package_code: 'SIGNED_PLAN',
+      company_name: el('company').value.trim(), contact_name: el('contact').value.trim(), contact_email: el('email').value.trim(),
+      industry_code: c.industry || 'OTHER', employee_count: c.people, job_category_count: c.jobs || 1, annual_medicals_estimate: c.medicals
+    };
+    var fallback = '<p>This could not be sent from the site just yet.</p><p class="muted">WhatsApp your figure to <a class="inline" href="https://wa.me/27600702723" data-cta="whatsapp_sales_executive">27 60 070 2723</a> and a sales executive will pick it up.</p>';
+    fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (r && r.reference) {
+          out.innerHTML = '<p>Sent. Your reference is <strong>' + esc(r.reference) + '</strong>.</p>'
+            + '<p class="muted">A sales executive confirms the figure and sends your quotation to ' + esc(payload.contact_email) + '. Your secure assessment link follows on confirmation.</p>';
+          ev.target.querySelectorAll('input,button').forEach(function (x) { x.disabled = true; });
+        } else { out.innerHTML = fallback; }
+      })
+      .catch(function () { out.innerHTML = fallback; });
+  });
+})();
 </script>
 <!-- ============ Right-side navigator band ============
-     The band from the right edge of carenetconsultants.co.za. Its items are
-     this page's own section headings, and each one scrolls to that section.
-     Styling in /css/cnc-secnav.css, behaviour in /js/cnc-secnav.js.
-     ================================================== -->
+     Its items are this page's own sections, numbered from 1. -->
 <nav class="cnc-secnav" aria-label="Jump to a section on this page">
-  <a href="#working-draft"><span>Working draft</span></a>
-  <a href="#omp-signed"><span>OMP reviewed and signed</span></a>
-  <a href="#quotation"><span>Get your quotation</span></a>
-  <a href="#samples"><span>Sample Plans</span></a>
-  <a href="#journey"><span>How your journey works</span></a>
+  <a href="#two-ways"><i aria-hidden="true">1</i><span>Two ways to take it</span></a>
+  <a href="#inside"><i aria-hidden="true">2</i><span>What you get</span></a>
+  <a href="#calc"><i aria-hidden="true">3</i><span>The calculator</span></a>
+  <a href="#send"><i aria-hidden="true">4</i><span>Send it through</span></a>
+  <a href="#law"><i aria-hidden="true">5</i><span>The law behind your Plan</span></a>
+  <a href="#demo"><i aria-hidden="true">6</i><span>Sample Plan</span></a>
 </nav>
 <script src="/js/cnc-header.js?v=20260915a" defer></script>
 <script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/shop.html",
+ "title": "Build your Plan",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "shop-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when this page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"Build your Plan free. Pay only for the signature.\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Build your Medical Surveillance Plan free with Care Net Consultants",
+   "file_name": "shop-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/shop-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before."
+  },
+  {
+   "id": "shop-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "shop-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "The hero photograph for Build your Plan: a completed Medical Surveillance Plan record being submitted.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 250,
+   "colour": "Natural light; the card sits on the charcoal hero, so a mid to dark photograph with a touch of Care Net red (a lanyard, a folder, a hard hat) reads best",
+   "alt": "A completed Medical Surveillance Plan record being submitted",
+   "file_name": "record-submission.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/record-submission.webp",
+   "status": "existing",
+   "notes": "Shows in the rounded 16:9 hero card: about 465 px wide on desktop and up to 836 px wide on tablets below 880 px, so 1920 x 1080 covers 2x on every layout, and the current file (1920 x 1080 declared in the markup) meets it. Preloaded with high fetch priority, so keep it under 250 KB. To refresh the photograph, replace it in place at the same address. Model release needed for anyone identifiable. Any document or screen in shot must show fictitious company data only, with no readable personal or health information."
+  },
+  {
+   "id": "shop-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "shop-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>
