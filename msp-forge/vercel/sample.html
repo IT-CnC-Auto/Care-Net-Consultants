@@ -53,13 +53,15 @@
   .icongrid a:hover, .icongrid a:focus-visible { border-color: var(--red);
                 box-shadow: 0 3px 10px rgba(0,0,0,.10); transform: translateY(-2px); }
   .icongrid a:focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .icongrid .ic { width: 72px; height: 72px; display: grid; place-items: center;
+                  overflow: hidden; }
   .icongrid img { width: 72px; height: 72px; object-fit: contain; object-position: center;
-                  display: block; pointer-events: none; }
+                  display: block; pointer-events: none; transform-origin: 50% 50%; }
   .icongrid span { font-size: 13px; font-weight: 600; line-height: 1.32; align-self: start; }
   @media (max-width: 420px) {
     .icongrid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
     .icongrid a { grid-template-rows: 60px 1fr; padding: 12px 8px; }
-    .icongrid img { width: 56px; height: 56px; }
+    .icongrid .ic, .icongrid img { width: 56px; height: 56px; }
   }
 
   /* ---- Viewing one sample ---- */
@@ -220,8 +222,108 @@
     ["utilities-and-energy","UTIL","Utilities and energy"],
     ["waste-management","WASTE","Waste management"]
   ];
-  var ICONS = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
-  function iconFor(slug) { return ICONS + 'cnc-medical-surveillance-' + slug + '-icon.svg'; }
+  /* The icons come from the custom domain, not the r2.dev address. Cloudflare
+     documents r2.dev as non production and rate limited, and a CORS policy
+     only applies on a custom domain, which the measuring below needs. Same
+     bucket, same path, so the object names are unchanged. If the custom domain
+     ever fails to serve one, the image falls back to the r2.dev address and
+     the icon still appears. */
+  var ICONS = 'https://img.carenetcdn.com/medical-surveillance/Icons/';
+  var ICONS_FALLBACK = 'https://pub-05e130c201dd463a8accbcd12eb02d77.r2.dev/medical-surveillance/Icons/';
+  function iconName(slug) { return 'cnc-medical-surveillance-' + slug + '-icon.svg'; }
+  function iconFor(slug) { return ICONS + iconName(slug); }
+
+  /* ---- Making every icon read at the same size ----
+     The icons do not all carry the same amount of space around their artwork,
+     so drawing each one into the same 72px box leaves some circles visibly
+     smaller than others. Nothing in CSS can correct that, because the padding
+     is inside the file and the browser fits the whole canvas into the box.
+
+     So the browser measures each one: fetch the file, put it off screen, ask
+     for the bounding box of what is actually drawn, and scale the image by the
+     difference so the artwork itself fills the box. Measurements are kept in
+     this browser so it is a one time cost per visitor.
+
+     Every step is wrapped. If the fetch is refused, if the file will not parse,
+     if storage is blocked, the icon is left exactly as it arrived and the page
+     looks as it does now. Nothing here can break the grid. */
+  var FITKEY = 'cnc_icon_fit_v1';
+
+  function readFits() {
+    try { return JSON.parse(localStorage.getItem(FITKEY) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function writeFits(f) {
+    try { localStorage.setItem(FITKEY, JSON.stringify(f)); } catch (e) {}
+  }
+
+  /* scale, and the shift needed to bring the artwork's centre to the box's
+     centre, both as numbers that do not depend on the rendered size. */
+  function measure(text) {
+    var holder = document.createElement('div');
+    holder.setAttribute('aria-hidden', 'true');
+    holder.style.cssText = 'position:absolute;left:-10000px;top:0;width:300px;height:300px;'
+                         + 'opacity:0;pointer-events:none';
+    holder.innerHTML = text;
+    var svg = holder.querySelector('svg');
+    if (!svg) return null;
+    document.body.appendChild(holder);
+    var fit = null;
+    try {
+      var vb = svg.viewBox && svg.viewBox.baseVal;
+      var box = svg.getBBox();
+      if (vb && vb.width && vb.height && box.width > 0 && box.height > 0) {
+        var span = Math.max(box.width / vb.width, box.height / vb.height);
+        var s = span > 0 ? 1 / span : 1;
+        if (s > 1.001 && s < 3) {
+          fit = {
+            s: Math.round(s * 1000) / 1000,
+            x: Math.round(-(((box.x + box.width / 2) - (vb.x + vb.width / 2)) / vb.width) * 100 * s * 100) / 100,
+            y: Math.round(-(((box.y + box.height / 2) - (vb.y + vb.height / 2)) / vb.height) * 100 * s * 100) / 100,
+          };
+        } else {
+          fit = { s: 1, x: 0, y: 0 };    /* already fills its canvas */
+        }
+      }
+    } catch (e) { fit = null; }
+    holder.parentNode.removeChild(holder);
+    return fit;
+  }
+
+  function applyFit(img, fit) {
+    if (!fit || fit.s === 1) return;
+    img.style.transform = 'translate(' + fit.x + '%, ' + fit.y + '%) scale(' + fit.s + ')';
+  }
+
+  function evenUpIcons(grid) {
+    var imgs = Array.prototype.slice.call(grid.querySelectorAll('img[data-slug]'));
+    if (!imgs.length || typeof fetch !== 'function') return;
+    /* Measuring reads each file a second time on a first visit. Somebody on a
+       metered connection keeps the icons as they are rather than paying for
+       that. */
+    try {
+      var c = navigator.connection;
+      if (c && c.saveData) return;
+    } catch (e) {}
+    var fits = readFits();
+    var pending = 0, dirty = false;
+
+    imgs.forEach(function (img) {
+      var slug = img.getAttribute('data-slug');
+      if (fits[slug]) { applyFit(img, fits[slug]); return; }
+      pending++;
+      fetch(iconFor(slug), { mode: 'cors', credentials: 'omit' })
+        .then(function (r) { return r.ok ? r.text() : null; })
+        .then(function (text) {
+          if (!text) return;
+          var fit = measure(text);
+          if (!fit) return;
+          fits[slug] = fit; dirty = true;
+          applyFit(img, fit);
+        })
+        .catch(function () { /* blocked or offline: the icon stays as it is */ })
+        .then(function () { if (--pending === 0 && dirty) writeFits(fits); });
+    });
+  }
 
   var q = new URLSearchParams(location.search);
   var want = (q.get('industry') || '').toLowerCase();
@@ -244,10 +346,13 @@
     var grid = document.getElementById('icongrid');
     grid.innerHTML = INDUSTRIES.map(function (i) {
       return '<li><a href="?industry=' + encodeURIComponent(i[0]) + '">'
-           + '<img src="' + iconFor(i[0]) + '" alt="" width="68" height="68" loading="lazy" decoding="async">'
+           + '<span class="ic"><img src="' + iconFor(i[0]) + '" alt="" data-slug="' + i[0]
+           + '" width="72" height="72" loading="lazy" decoding="async"'
+           + ' onerror="this.onerror=null;this.src=\'' + ICONS_FALLBACK + iconName(i[0]) + '\'"></span>'
            + '<span>' + i[2] + '</span></a></li>';
     }).join('');
     elChooser.hidden = false;
+    evenUpIcons(grid);
     return;
   }
 
