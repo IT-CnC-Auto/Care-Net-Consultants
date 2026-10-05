@@ -62,6 +62,9 @@
   .fld label { margin: 0 0 4px; }
   .hint { font-size: 12px; color: #6b6b6b; margin: 5px 0 0; }
   .opt { font-weight: normal; color: #6b6b6b; font-size: 12px; }
+  .ready { font-size: 13.5px; line-height: 1.5; color: #3d3335; margin: 0 0 12px;
+           background: #fdf3f3; border-left: 3px solid var(--red);
+           border-radius: 0 5px 5px 0; padding: 11px 14px; }
   .privacy { font-size: 12px; color: #6b6b6b; margin: 14px 0 0; }
   /* The panel that replaces the form once the link is on its way. */
   .inbox { text-align: center; padding: 8px 0 4px; }
@@ -145,21 +148,23 @@
 <div class="titleband">
   <div class="pagehead">
     <span class="eyebrow">Your partner in workplace health</span>
-    <h1>Medical Surveillance Plan <span class="r">Assessment</span></h1>
+    <h1>Build your Medical Surveillance <span class="r">Plan</span></h1>
   </div>
 </div>
 
 <main id="main">
-  <p>A Medical Surveillance Plan sets out, per job category, exactly which occupational medical assessments your employees need, how often, and on what legal basis. Care Net designs yours from a structured assessment of your operations, correct to South African occupational health legislation for your industry, and reviewed by a registered Occupational Medical Practitioner before anything is released. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
+  <p>A Medical Surveillance Plan sets out, per job category, which occupational medical assessments your employees need, how often, and on what legal basis. Care Net builds yours from a structured assessment of your operations, checks it against the Occupational Health and Safety Act 85 of 1993 and the regulations that apply to your industry, and has a registered Occupational Medical Practitioner sign it off before release. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
   <div class="twoways">
   <div class="card" id="signin-card">
-    <h2>Start your journey</h2>
-    <p class="muted">Tell us who you are and we will email you a secure sign in link. No password to remember, and the same journey whether you are a Care Net client already or new to us.</p>
+    <h2>Start a new assessment</h2>
+    <p class="ready"><b>Before you start:</b> have your risk assessment (HIRA) and your list of job categories to hand.
+      About 20 minutes for a single site, closer to 45 with several sites or hazardous substances.</p>
+    <p class="muted">Tell us who you are and we will email you a secure sign in link. There is no password to remember. The process is the same whether you are already a Care Net client or new to us.</p>
 
     <div class="fld">
-      <label for="email">Work email</label>
+      <label for="email">Email address</label>
       <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@yourcompany.co.za">
-      <p class="hint">Your secure sign in link goes here.</p>
+      <p class="hint">We will send your sign in link to this address.</p>
     </div>
     <div class="fld">
       <label for="company">Company name</label>
@@ -170,7 +175,7 @@
       <input id="contact" type="text" autocomplete="name">
     </div>
     <div class="fld">
-      <label for="phone">Contact number <span class="opt">optional</span></label>
+      <label for="phone">Contact number <span class="opt">(optional)</span></label>
       <input id="phone" type="tel" autocomplete="tel" placeholder="+27 ...">
       <p class="hint">Only so a consultant can reach you if there is a question about your Plan.</p>
     </div>
@@ -185,8 +190,8 @@
     <div class="inbox">
       <div class="tick" aria-hidden="true">&#10003;</div>
       <b id="inbox-email">&nbsp;</b>
-      <p>Your secure sign in link is on its way. Open it on this device and your assessment is ready and waiting, with your details already filled in.</p>
-      <p class="hint" style="margin-top:10px">Nothing after a minute or two? Check your spam folder, or send it again.</p>
+      <p><b>Open the link on the computer you will do the assessment on.</b> Your answers save to that browser only, so starting on your phone means finishing on your phone.</p>
+      <p class="hint" style="margin-top:10px">Your details are already filled in when you arrive. Nothing after a minute or two? Check your spam folder, or send it again.</p>
       <button class="again" id="inbox-again">Use a different email address</button>
     </div>
   </div>
@@ -198,11 +203,11 @@
       <p class="muted">Your email is verified. Add your company and your assessment opens immediately.</p>
       <div class="fld"><label for="reg-company">Company name</label><input id="reg-company" type="text" autocomplete="organization"></div>
       <div class="fld"><label for="reg-contact">Your name</label><input id="reg-contact" type="text" autocomplete="name"></div>
-      <div class="fld"><label for="reg-phone">Contact number <span class="opt">optional</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
+      <div class="fld"><label for="reg-phone">Contact number <span class="opt">(optional)</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
       <button id="register">Register my company and start</button>
     </div>
     <div id="start-body" style="display:none">
-      <p>Your Medical Surveillance Plan assessment is ready. It takes about twenty minutes, and you can add sites, job categories and substances as you go. Have your risk assessment to hand if you have one.</p>
+      <p>Your Medical Surveillance Plan assessment is ready. About 20 minutes for a single site, closer to 45 with several sites or hazardous substances. Have your risk assessment (HIRA) and your job categories to hand.</p>
       <a class="button big" id="start-link" href="#">Start your assessment</a>
       <p class="hint" style="margin-top:10px">This link is yours alone and opens one assessment. If you close the page, sign in again and it will be waiting here.</p>
     </div>
@@ -214,8 +219,8 @@
   </div>
 
   <div class="card resume" id="resume-card">
-    <h2>Pick up where you left off</h2>
-    <p class="muted">An assessment already under way? Carry on from where you stopped.</p>
+    <h2 id="resume-head">Pick up where you left off</h2>
+    <p class="muted" id="resume-sub">An assessment already under way? Carry on from where you stopped.</p>
     <div id="resume-found" style="display:none">
       <div class="draftbox">
         <b id="resume-company">Your assessment</b>
@@ -226,8 +231,7 @@
       <button type="button" class="discard" id="resume-discard">Discard this saved draft</button>
     </div>
     <div id="resume-none">
-      <p class="nodraft">Nothing saved in this browser. Your answers are kept on the device you started on, so use that same computer, or sign in on the left and start again.</p>
-      <p class="hint" style="margin-top:10px">A saved draft never leaves your own device, which is why it cannot follow you to another one.</p>
+      <p class="nodraft">Drafts stay in the browser they were started in. If you began on another computer, open this page there. Otherwise sign in on the left to start fresh.</p>
     </div>
   </div>
 
@@ -237,7 +241,7 @@
     <h2>How it works</h2>
     <ol class="steps">
       <li>Enter your details above and follow the secure sign in link we email you. Your assessment is ready the moment you arrive.</li>
-      <li>Receive your secure, single use assessment link and complete the structured assessment (roughly 30 to 45 minutes with your risk assessment at hand).</li>
+      <li>Receive your secure, single use assessment link and complete the structured assessment. About 20 minutes for a single site, closer to 45 with several sites or hazardous substances.</li>
       <li>Care Net's engine drafts your Plan against the verified regulatory framework for your industry, and a registered Occupational Medical Practitioner reviews, recommends, and signs.</li>
       <li>Your approved Plan is delivered for download and hosted securely with revision numbers; updates and revisions follow the same review whenever your operations change.</li>
     </ol>
@@ -453,9 +457,16 @@ $('register').onclick = async () => {
    that is sitting on their own machine. */
 (function () {
   const found = $('resume-found'), none = $('resume-none');
+  const head = $('resume-head'), sub = $('resume-sub');
+  /* Nothing saved here: say so in the heading, instead of promising a
+     resumption that the body then has to take back. */
+  const empty = () => {
+    if (head) head.textContent = 'No saved assessment on this device';
+    if (sub) sub.style.display = 'none';
+  };
   if (!J || !found) return;
   const d = J.latestDraft();
-  if (!d) return;
+  if (!d) { empty(); return; }
   $('resume-company').textContent = d.company || 'Your assessment';
   $('resume-when').textContent = 'Last saved ' + J.ago(d.savedAt)
     + (d.filled ? ', ' + d.filled + ' answer' + (d.filled === 1 ? '' : 's') + ' so far' : '');
@@ -467,6 +478,7 @@ $('register').onclick = async () => {
     J.clearDraft(d.token);
     found.style.display = 'none';
     none.style.display = 'block';
+    empty();
   };
 })();
 
