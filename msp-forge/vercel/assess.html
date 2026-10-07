@@ -65,6 +65,13 @@
   .hp { position: absolute; left: -9999px; }
   footer { text-align: center; font-size: 12px; color: #777; padding: 24px; }
 
+  /* A question that only applies once its own yes is ticked. Hidden by a
+     class the script adds, so with no script every question stays visible and
+     the form is exactly what it was. */
+  .field.ifno { display: none; }
+  .depends { border-left: 2px solid #e8e0e1; padding-left: 14px; margin-left: 2px; }
+  .depends.ifno { display: none; }
+
   .warnfile { font-size: 13px; line-height: 1.5; color: #4a3c3e; margin: 12px 0 0;
               background: #fdf3f3; border-left: 3px solid var(--red);
               border-radius: 0 5px 5px 0; padding: 10px 13px; }
@@ -588,6 +595,87 @@
         notice.textContent = 'A network error occurred. Please try again.';
       });
   });
+
+  /* ============ Questions that only appear when they apply ============
+     Seven places in this form ask something, then ask three or four follow
+     ups that only make sense if the answer was yes. They are hidden until
+     the yes is ticked.
+
+     Two things this has to get right, and both are easy to get wrong.
+
+     A hidden answer is still part of the form, so anything typed and then
+     hidden would still be submitted. Hiding a group therefore clears it,
+     and says so, rather than sending an answer nobody can see.
+
+     Restoring a saved draft has to re-open the groups whose yes is ticked,
+     or somebody comes back to a form that appears to have swallowed their
+     work. The draft restore runs first, then this.
+     ==================================================================== */
+  var DEPENDS = [
+    ['ra_exists',               ['ra_date', 'ra_conducted_by', 'ra_assessor_accreditation',
+                                 'ra_next_review_date', 'ra_file']],
+    ['hygiene_results_exist',   ['hygiene_date', 'hygiene_conducted_by', 'hygiene_file']],
+    ['process_change_since_ra', ['process_change_detail']],
+    ['enforcement_notice_3yr',  ['enforcement_notice_detail']],
+    ['third_party_cert_required', ['third_party_cert_detail']],
+    ['shift_night_work',        ['shift_pattern_detail']],
+    ['chronic_flag_present',    ['chronic_flag_categories']],
+  ];
+
+  function fieldOf(name) {
+    var el = document.querySelector('[name="' + name + '"]');
+    return el && el.closest ? el.closest('.field') : null;
+  }
+
+  function clearField(el) {
+    if (!el) return false;
+    if (el.type === 'checkbox') { if (!el.checked) return false; el.checked = false; return true; }
+    if (el.type === 'file') { if (!el.value) return false; try { el.value = ''; } catch (e) {} return true; }
+    if (!el.value) return false;
+    el.value = '';
+    return true;
+  }
+
+  (function () {
+    DEPENDS.forEach(function (pair) {
+      var ctrl = document.getElementById(pair[0]);
+      if (!ctrl) return;
+      var fields = pair[1].map(fieldOf).filter(Boolean);
+      if (!fields.length) return;
+
+      fields.forEach(function (f) { f.classList.add('depends'); });
+
+      /* One line under the controlling question, so somebody who unticks it
+         knows what just happened rather than wondering where it went. */
+      var note = document.createElement('p');
+      note.className = 'why';
+      note.style.cssText = 'display:none;color:#6b6b6b;font-weight:500';
+      var ctrlField = ctrl.closest ? ctrl.closest('.field') : null;
+      if (ctrlField) ctrlField.appendChild(note);
+
+      function apply(wipe) {
+        var on = ctrl.checked;
+        fields.forEach(function (f) { f.classList.toggle('ifno', !on); });
+        if (on || !wipe) { note.style.display = 'none'; return; }
+        /* Going from yes to no: nothing hidden may still be submitted. */
+        var cleared = 0;
+        pair[1].forEach(function (n) {
+          var el = document.querySelector('[name="' + n + '"]');
+          if (clearField(el)) cleared++;
+        });
+        if (cleared) {
+          note.textContent = 'The follow up questions below have been cleared, because they only apply when this is ticked.';
+          note.style.display = 'block';
+          if (typeof queueSave === 'function') queueSave();
+        } else {
+          note.style.display = 'none';
+        }
+      }
+
+      ctrl.addEventListener('change', function () { apply(true); });
+      apply(false);            /* set the opening state without wiping a restored draft */
+    });
+  })();
 
   /* ================= Section by section =================
      One <form>, submitted exactly as before. All this does is show one
