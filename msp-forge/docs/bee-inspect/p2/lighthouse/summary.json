@@ -1,0 +1,117 @@
+[
+ {
+  "page": "/bee-inspect",
+  "ff": "desktop",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "0.5 s",
+  "cls": "0.006",
+  "tbt": "0 ms",
+  "failing": [],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/bee-inspect",
+  "ff": "mobile",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "1.9 s",
+  "cls": "0",
+  "tbt": "0 ms",
+  "failing": [
+   "performance:largest-contentful-paint=0.98"
+  ],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/bee-inspect/sample-report",
+  "ff": "desktop",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "0.4 s",
+  "cls": "0",
+  "tbt": "0 ms",
+  "failing": [],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/bee-inspect/sample-report",
+  "ff": "mobile",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "1.7 s",
+  "cls": "0",
+  "tbt": "0 ms",
+  "failing": [
+   "performance:largest-contentful-paint=0.99"
+  ],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/get-app",
+  "ff": "desktop",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "0.5 s",
+  "cls": "0",
+  "tbt": "0 ms",
+  "failing": [],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/get-app",
+  "ff": "mobile",
+  "perf": 99,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "2.0 s",
+  "cls": "0",
+  "tbt": "0 ms",
+  "failing": [
+   "performance:largest-contentful-paint=0.97",
+   "performance:speed-index=0.99"
+  ],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/health-and-safety-file",
+  "ff": "desktop",
+  "perf": 100,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "0.5 s",
+  "cls": "0.009",
+  "tbt": "0 ms",
+  "failing": [],
+  "version": "12.8.2"
+ },
+ {
+  "page": "/health-and-safety-file",
+  "ff": "mobile",
+  "perf": 98,
+  "a11y": 100,
+  "bp": 100,
+  "seo": 100,
+  "lcp": "2.1 s",
+  "cls": "0.04",
+  "tbt": "0 ms",
+  "failing": [
+   "performance:first-contentful-paint=0.97",
+   "performance:largest-contentful-paint=0.96",
+   "performance:cumulative-layout-shift=0.99"
+  ],
+  "version": "12.8.2"
+ }
+]

@@ -86,7 +86,9 @@
   font-family:'Montserrat',Arial,Helvetica,sans-serif;font-weight:700;font-size:13px;letter-spacing:.02em;
   text-transform:uppercase;color:var(--cnc-ink);text-decoration:none;white-space:nowrap;transition:color .15s}
 .cnc-mainnav > .mwrap > ul > li > a:hover,
-.cnc-mainnav > .mwrap > ul > li.active > a{color:var(--cnc-red)}
+/* The current page's link is text on white, so it takes the deeper ink (5.9:1);
+   the red underline beneath it stays the brand red. */
+.cnc-mainnav > .mwrap > ul > li.active > a{color:var(--cnc-red-deep)}
 .cnc-mainnav > .mwrap > ul > li > a:focus-visible{outline:3px solid var(--cnc-red);outline-offset:-3px;border-radius:4px}
 /* The current page keeps a red underline, so people always know where they are */
 .cnc-mainnav > .mwrap > ul > li.active > a::after{content:"";position:absolute;left:13px;right:13px;bottom:8px;
@@ -148,3 +150,12 @@
   .cnc-sitehead .btn:hover,.cnc-sitehead .btn:focus-visible,.cnc-sitehead .btn:active{transform:none}
   .cnc-burger span{transition:none}
 }
+
+/* Bee-Inspect P2: menu items behind a feature flag. js/flags.js sets
+   html.cnc-ads-on while bee_inspect_ads is on; until then they take no room
+   and are not in the reading order. */
+html:not(.cnc-ads-on) [data-flag="bee_inspect_ads"]{display:none!important}
+/* The footer's Bee-Inspect links (File pages, flag on) */
+.cnc-footlinks{display:flex;justify-content:center;flex-wrap:wrap;gap:4px 10px;margin-top:8px}
+.cnc-footlinks a{display:inline-block;padding:4px 8px;min-height:24px;color:#B7141A;font-weight:700;text-decoration:underline}
+.cnc-footlinks a:focus-visible{outline:3px solid #ED1B24;outline-offset:2px;border-radius:3px}

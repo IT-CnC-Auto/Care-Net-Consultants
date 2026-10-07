@@ -1,0 +1,1705 @@
+{
+ "meta": {
+  "as_at": "24/09/2026",
+  "method": "Desk research on 24/09/2026 by web search. Page fetches to payscale.com, sacpcmp.org.za and safetycloud.co.za were blocked by the network proxy, so every figure comes from search engine snippets of the cited page (read = snippet); none were read directly. A few figures are carried over from PRICING-RESEARCH.md (retrieved 23/09/2026). Salaries are employee pay, not consultancy charge out. Monthly figures are converted to annual by x12 and hourly to daily by x8 where shown. Course fees are per delegate. Where a role is a duty added to an existing employee, a course fee is given instead of a salary. Proxies are labelled in 'working'. Regulation references are leads to confirm.",
+  "status": "indicative, desk research, to be confirmed by Care Net"
+ },
+ "appointments": {
+  "APP-00": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Assigned by the CEO to a senior manager or director. Not a hire; the cost is the manager's time plus a short legal liability briefing."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 575,
+     "high": 595,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/health-safety-training/16-2-workshop/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "2 hour 16.2 workshop: R595 ex VAT in person, R575 ex VAT online, per delegate."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Legal liability or 16.2 workshop (short course, not a registration)",
+     "critical": false,
+     "body": "Accredited training provider (no statutory registration)",
+     "source": "https://absolutehealth.co.za/health-safety-training/16-2-workshop/"
+    },
+    {
+     "name": "Seniority and authority to act for the CEO",
+     "critical": true,
+     "body": "Employer (internal appointment)",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "No salary benchmark applies because the role is always a delegated duty. Section 16(2) of the OHS Act is the lead; confirm wording."
+  },
+  "APP-01": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "fixed term contract",
+     "per site or per project"
+    ],
+    "note": "Principal contractors usually employ construction managers permanently and deploy them per project; smaller contractors use the owner or a contracts manager."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 34399,
+     "high": 34399,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/construction-manager/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed national average R34,399 per month; x12 = R412,788 per year. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "annual cost to company",
+     "low": 180757,
+     "high": 1056231,
+     "currency": "ZAR",
+     "source": "https://www.payscale.com/research/ZA/Job=Construction_Manager/Salary",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "PayScale average R363,785 per year; entry level average R180,757 (low); a snippet also gave senior level R1,056,231, but that senior figure may come from SalaryExpert, so confirm. Salary, not full cost to company."
+    },
+    {
+     "basis": "annual cost to company",
+     "low": 919522,
+     "high": 919522,
+     "currency": "ZAR",
+     "source": "https://www.salaryexpert.com/salary/job/construction-manager/south-africa",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "SalaryExpert (ERI) average R919,522 per year. Modelled estimate, much higher than Indeed and PayScale."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Registration as Professional Construction Manager (PrCM) or Construction Manager candidate",
+     "critical": true,
+     "body": "SACPCMP",
+     "source": "https://mychs.sacpcmp.org.za/Register-Categories"
+    },
+    {
+     "name": "Construction management degree or diploma (NQF 6 to 7)",
+     "critical": false,
+     "body": "Higher education institution; SAQA recognised",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "The published salary figures vary widely by source (R363k to R920k per year). Treat Indeed and PayScale as mid market and SalaryExpert as a modelled upper figure."
+  },
+  "APP-02": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "per site or per project",
+     "duty added to an existing employee"
+    ],
+    "note": "Usually a site agent or senior foreman appointed in writing for the project."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 27387,
+     "high": 39615,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/site-agent/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Proxy: Indeed site agent national average R36,115 per month (x12 = R433,380). Range shown: R27,387 (one employer) to R39,615 (Cape Town). Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "SACPCMP Construction Manager candidate or Construction Health and Safety registration (lead)",
+     "critical": false,
+     "body": "SACPCMP",
+     "source": "https://mychs.sacpcmp.org.za/Register-Categories"
+    }
+   ],
+   "notes": "No salary data is published under the title assistant construction manager; site agent is used as the closest proxy."
+  },
+  "APP-03": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "fixed term contract",
+     "per site or per project",
+     "outsourced service"
+    ],
+    "note": "Principal contractors hire CHSOs on project contracts; smaller contractors outsource to consultancies that bill per visit or per month."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 17252,
+     "high": 17252,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/safety-officer/salaries",
+     "as_at": "Feb 2026",
+     "read": "snippet",
+     "working": "Indeed safety officer (not construction specific) R17,252 per month; x12 = R207,024 per year. Figure from PRICING-RESEARCH.md row 52. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "annual cost to company",
+     "low": 180000,
+     "high": 450000,
+     "currency": "ZAR",
+     "source": "https://firstaidfiresafety.co.za/blog/career-insight-health-and-safety-officer-salary-in-south-africa/",
+     "as_at": "undated, retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Training provider blog: R180,000 to R350,000 per year on average; up to R450,000 for experienced officers in high risk industries. Salary, not full cost to company."
+    },
+    {
+     "basis": "per month",
+     "low": 25000,
+     "high": 30000,
+     "currency": "ZAR",
+     "source": "https://jobrato.co.za/samtrac-safety-officer-salary-in-south-africa-health-safety-pay-scales-corporate-benchmarks-2026-guide/",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "CHSO range R25,000 to R30,000 per month (x12 = R300,000 to R360,000). Attribution to this page comes from a combined search summary; confirm. The same guide says SACPCMP registration adds a 20% to 35% premium."
+    },
+    {
+     "basis": "per hour",
+     "low": 750,
+     "high": 750,
+     "currency": "ZAR",
+     "source": "https://firstaidfiresafety.co.za/ohs-management-services/",
+     "as_at": "retrieved 23/09/2026",
+     "read": "snippet",
+     "working": "Outsourced consultancy charge out rate R750 per hour ex VAT (PRICING-RESEARCH.md row 45). x8 = R6,000 per day."
+    },
+    {
+     "basis": "course fee",
+     "low": 6850,
+     "high": 6850,
+     "currency": "ZAR",
+     "source": "https://blog.oric.network/index.php/how-much-does-it-cost-to-register-a-sacpcmp-as-a-safety-officer/",
+     "as_at": "undated",
+     "read": "snippet",
+     "working": "SACPCMP first year registration (application, assessment and initial registration fees combined), about R6,850. Undated blog; confirm against the gazetted 2026/27 fees."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Registration as Construction Health and Safety Officer (CHSO)",
+     "critical": true,
+     "body": "SACPCMP",
+     "source": "https://mychs.sacpcmp.org.za/Register-Categories"
+    },
+    {
+     "name": "SAMTRAC or equivalent NQF 5 OHS qualification",
+     "critical": false,
+     "body": "NOSA (SAMTRAC R19,940 incl VAT classroom, https://nosa.co.za/courses/SAMTRAC/)",
+     "source": "https://nosa.co.za/courses/SAMTRAC/"
+    },
+    {
+     "name": "SAIOSH designation such as TechSaiosh (NQF 5 plus 2 years)",
+     "critical": false,
+     "body": "SAIOSH (SAQA recognised professional body)",
+     "source": "https://www.saiosh.co.za/page/About_membership"
+    },
+    {
+     "name": "First aid level 1 or higher",
+     "critical": false,
+     "body": "QCTO or HWSETA accredited provider",
+     "source": "https://absolutehealth.co.za/first-aid-training-courses/first-aid-level-1/"
+    }
+   ],
+   "notes": "The Construction Regulations 2014 make SACPCMP CHSO registration the norm for construction appointments; confirm the regulation number. Gazetted SACPCMP 2026/27 fees exist but could not be read (site blocked)."
+  },
+  "APP-04": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "duty added to an existing employee",
+     "per site or per project"
+    ],
+    "note": "Foremen and site supervisors are appointed in writing per project, usually from existing staff."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 13575,
+     "high": 20790,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/construction-supervisor/salaries",
+     "as_at": "Feb 2026",
+     "read": "snippet",
+     "working": "Indeed construction supervisor R20,790 per month (x12 = R249,480); site supervisor R13,575 per month (x12 = R162,900), from https://za.indeed.com/career/site-supervisor/salaries. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "per hour",
+     "low": 80,
+     "high": 80,
+     "currency": "ZAR",
+     "source": "https://www.payscale.com/research/ZA/Job=Construction_Supervisor/Hourly_Rate",
+     "as_at": "2025",
+     "read": "snippet",
+     "working": "PayScale construction supervisor average R80 per hour; x8 = R640 per day."
+    },
+    {
+     "basis": "course fee",
+     "low": 900,
+     "high": 900,
+     "currency": "ZAR",
+     "source": "https://safetysupplier.co.za/product/25-construction-supervision-1-day-r900-p-p-excl-vat-minimum-5-x-people-per-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Construction Supervision course, 1 day, R900 per person ex VAT, minimum 5 people."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Construction supervisor or SHE supervisor short course (SAQA unit standards)",
+     "critical": false,
+     "body": "QCTO or CETA accredited provider",
+     "source": "https://safetysupplier.co.za/product/25-construction-supervision-1-day-r900-p-p-excl-vat-minimum-5-x-people-per-course/"
+    },
+    {
+     "name": "Trade or experience in the relevant work",
+     "critical": true,
+     "body": "Employer (competence assessment)",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-05": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Usually the safety officer or a trained supervisor; consultancies sell risk assessments per site or per day."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 975,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/health-safety-training/hazard-identification-risk-assessment-hira/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "HIRA 1 day: R975 ex VAT in person, R825 ex VAT online."
+    },
+    {
+     "basis": "per day",
+     "low": 5500,
+     "high": 6000,
+     "currency": "ZAR",
+     "source": "https://accesspd.co.za/health-safety-ohs-risk-assessment",
+     "as_at": "retrieved 23/09/2026",
+     "read": "snippet",
+     "working": "Outsourced: AccessPD implied R5,500 per day for a risk assessment with report; Absolute Health R6,000 for a 1 day site assessment (PRICING-RESEARCH.md rows 47 and 48). Both ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "HIRA or risk assessment course (SAQA unit standard based)",
+     "critical": true,
+     "body": "QCTO or HWSETA accredited provider",
+     "source": "https://absolutehealth.co.za/health-safety-training/hazard-identification-risk-assessment-hira/"
+    },
+    {
+     "name": "For construction: SACPCMP CHSO or CHSM registration where the client requires it",
+     "critical": false,
+     "body": "SACPCMP",
+     "source": "https://mychs.sacpcmp.org.za/Register-Categories"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-06": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Usually the safety officer or a supervisor who has done the fall protection planner course; small contractors outsource the plan."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 2795,
+     "high": 3815,
+     "currency": "ZAR",
+     "source": "https://gravitytraining.co.za/fall-protection-plan-development/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Gravity Training Fall Protection Plan Development: R3,815 incl VAT classroom, R2,795 online."
+    },
+    {
+     "basis": "course fee",
+     "low": 3500,
+     "high": 3500,
+     "currency": "ZAR",
+     "source": "https://www.swiftskillsacademy.com/working-at-heights-training-cape-town-saqa-229998",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Fall protection planner, 3 days, R3,500 ex VAT. Melior Rope Access also lists R3,500 ex VAT (https://melioraccess.com/iwh-fall-arrest-training-cape-town/)."
+    },
+    {
+     "basis": "course fee",
+     "low": 8500,
+     "high": 8500,
+     "currency": "ZAR",
+     "source": "https://cdn.ymaws.com/www.masterbuilders.co.za/resource/resmgr/docs/training/Fall_protection_planner.pdf",
+     "as_at": "undated",
+     "read": "snippet",
+     "working": "Master Builders KZN Institute of Learning, 4 day course, R8,500 per person. VAT status not stated."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Fall protection planner course (SAQA unit standard based, working at heights)",
+     "critical": true,
+     "body": "QCTO or CETA accredited provider",
+     "source": "https://gravitytraining.co.za/fall-protection-plan-development/"
+    },
+    {
+     "name": "Fall arrest user training (SAQA 229998 is quoted by one provider)",
+     "critical": false,
+     "body": "QCTO accredited provider",
+     "source": "https://www.swiftskillsacademy.com/working-at-heights-training-cape-town-saqa-229998"
+    }
+   ],
+   "notes": "No published salary; this is a competence attached to an existing role."
+  },
+  "APP-07": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Usually a scaffold team leader or the scaffold hire company's supervisor."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 20790,
+     "high": 20790,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/construction-supervisor/salaries",
+     "as_at": "Feb 2026",
+     "read": "snippet",
+     "working": "Proxy only: construction supervisor R20,790 per month. No scaffold supervisor salary was published. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "course fee",
+     "low": 800,
+     "high": 4500,
+     "currency": "ZAR",
+     "source": "https://coursetakers.com/south-africa/professional/health-and-safety/occupational/scaffolding",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Scaffolding courses: FTS Training from R800 per person (https://ftssafety.co.za/safety-training/scaffold-training); Cranes Training R4,500 for 1 week (https://cranestraining.com/scaffoldingcourse.php); aggregator range R1,100 to R7,000."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Scaffold supervisor or erector training to SANS 10085",
+     "critical": true,
+     "body": "CETA or QCTO accredited provider",
+     "source": "https://lopterraservices.com/hs-courses/scaffold-inspector/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-08": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "An existing supervisor or safety officer who has done the inspector course; scaffold hire firms often provide inspection."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 950,
+     "high": 950,
+     "currency": "ZAR",
+     "source": "https://safetysupplier.co.za/product/10-scaffold-inspector-1-day-r950-p-p-excl-vat-minimum-5-x-people-per-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Scaffold Inspector, 1 day, R950 per person ex VAT, minimum 5."
+    },
+    {
+     "basis": "course fee",
+     "low": 400,
+     "high": 400,
+     "currency": "ZAR",
+     "source": "https://lopterraservices.com/hs-courses/scaffold-inspector/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Add on only: CETA statement of results certificate R400 ex VAT, issued 6 to 8 months later. Course fee itself not shown."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Scaffold inspector unit standard SAQA 263205 (inspect access scaffolding)",
+     "critical": true,
+     "body": "CETA or QCTO accredited provider",
+     "source": "https://www.swiftskillsacademy.com/post/scaffold-inspector-course-south-africa-saqa-263205"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-09": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "per site or per project"
+    ],
+    "note": "A foreman or supervisor appointed for the excavation work."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 950,
+     "high": 950,
+     "currency": "ZAR",
+     "source": "https://safetysupplier.co.za/product/28-excavation-supervisor-1-day-r950-p-p-excl-vat-minimum-5-x-people-per-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Excavation supervisor, 1 day, R950 per person ex VAT, minimum 5. Excavation inspector course same price."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Excavation supervisor or inspection training",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://safetysupplier.co.za/product/28-excavation-supervisor-1-day-r950-p-p-excl-vat-minimum-5-x-people-per-course/"
+    },
+    {
+     "name": "Geotechnical or engineering input where the design requires it",
+     "critical": false,
+     "body": "ECSA registered person",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-10": {
+   "engagement": {
+    "typical": "per site or per project",
+    "options": [
+     "per site or per project",
+     "outsourced service"
+    ],
+    "note": "Usually supplied by the specialist demolition subcontractor."
+   },
+   "pricing": [],
+   "qualifications": [
+    {
+     "name": "Demolition supervisor competence (no published course price found)",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://www.mysafetyshop.co.za/Products/Demolition-Work-Supervisor-Appointment"
+    }
+   ],
+   "notes": "No South African price was published for a demolition supervisor course or salary. MySafetyShop lists the appointment, but the page showed no price."
+  },
+  "APP-11": {
+   "engagement": {
+    "typical": "outsourced service",
+    "options": [
+     "outsourced service",
+     "per site or per project"
+    ],
+    "note": "A consulting engineer or the formwork or falsework supplier's engineer, engaged per project."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 17799,
+     "high": 69636,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/structural-engineer/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Proxy: Indeed structural engineer average R43,684 per month (x12 = R524,208); junior R17,799 per month; senior R835,630 per year (/12 = R69,636). Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Professional registration (Pr Eng or Pr Tech Eng) in civil or structural engineering",
+     "critical": true,
+     "body": "ECSA",
+     "source": "https://www.ecsa.co.za/"
+    }
+   ],
+   "notes": "ECSA gazetted a Guideline Scope of Services and Professional Fees on 16 May 2025 (https://www.gov.za/sites/default/files/gcis_document/202505/52691bn783.pdf) with time based fees, but the hourly rates could not be read. Consulting charge out rates remain unsourced."
+  },
+  "APP-12": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "per site or per project"
+    ],
+    "note": "Usually the formwork foreman or site agent."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 20790,
+     "high": 20790,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/construction-supervisor/salaries",
+     "as_at": "Feb 2026",
+     "read": "snippet",
+     "working": "Proxy only: construction supervisor R20,790 per month. No temporary works supervisor data was published. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Competence in formwork and support work; experience based",
+     "critical": true,
+     "body": "Employer (competence assessment)",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "No role specific price or course was found."
+  },
+  "APP-13": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "fixed term contract",
+     "outsourced service"
+    ],
+    "note": "Operators are employed, or supplied with the machine under plant hire (wet hire)."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 14727,
+     "high": 17578,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/plant-operator/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed plant operator R17,578 per month (x12 = R210,936); excavator operator R14,727 per month (https://za.indeed.com/career/excavator-operator/salaries). Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "course fee",
+     "low": 1600,
+     "high": 5000,
+     "currency": "ZAR",
+     "source": "https://cranestraining.com/price.php",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Operator courses: forklift R1,600 (5 days), TLB R4,500 (7 days), mobile crane R5,000 (7 to 10 days). VAT status not stated."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Operator certificate of competence for each machine type (SAQA unit standards)",
+     "critical": true,
+     "body": "TETA or QCTO accredited provider",
+     "source": "https://cranestraining.com/price.php"
+    },
+    {
+     "name": "Annual medical certificate of fitness",
+     "critical": true,
+     "body": "Occupational medical practitioner",
+     "source": "not sourced in this pass; confirm"
+    },
+    {
+     "name": "Driving licence where the machine uses public roads",
+     "critical": false,
+     "body": "DLTC (provincial)",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-14": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "permanent hire"
+    ],
+    "note": "A plant foreman or supervisor appointed in writing."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 20790,
+     "high": 20790,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/construction-supervisor/salaries",
+     "as_at": "Feb 2026",
+     "read": "snippet",
+     "working": "Proxy only: construction supervisor R20,790 per month. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Plant supervision competence, usually a former operator",
+     "critical": true,
+     "body": "Employer (competence assessment)",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "No role specific salary or course price was found."
+  },
+  "APP-15": {
+   "engagement": {
+    "typical": "outsourced service",
+    "options": [
+     "outsourced service",
+     "permanent hire"
+    ],
+    "note": "Usually the registered electrical contractor's installation electrician."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 17442,
+     "high": 22919,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/electrician/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed electrician R17,442 per month; industrial electrician R22,919 (https://za.indeed.com/career/industrial-electrician/salaries). x12 = R209,304 to R275,028. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "course fee",
+     "low": 240,
+     "high": 240,
+     "currency": "ZAR",
+     "source": "https://ecasa.co.za/member-support/electrical-contractor-registration-fees-go-up-to-r240-00-per-year/",
+     "as_at": "undated",
+     "read": "snippet",
+     "working": "Electrical contractor registration fee R240 per year (Department of Employment and Labour). Company registration, not a course."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Registration as Installation Electrician or Master Installation Electrician (Wireman's Licence)",
+     "critical": true,
+     "body": "Department of Employment and Labour (Chief Inspector)",
+     "source": "https://renkalec.com/wiremans-licence/"
+    },
+    {
+     "name": "Electrician trade test (Red Seal)",
+     "critical": true,
+     "body": "QCTO, NAMB trade test centre",
+     "source": "not sourced in this pass; confirm"
+    },
+    {
+     "name": "Electrical contractor registration of the employer",
+     "critical": true,
+     "body": "Department of Employment and Labour",
+     "source": "https://ecasa.co.za/member-support/electrical-contractor-registration-fees-go-up-to-r240-00-per-year/"
+    }
+   ],
+   "notes": "The Electrical Installation Regulations are the lead; confirm the regulation numbers."
+  },
+  "APP-16": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "A competent electrician on site appointed to control temporary construction supply."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 17442,
+     "high": 18718,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/electrician/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed electrician R17,442; maintenance electrician R18,718 per month. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Qualified electrician (trade test)",
+     "critical": true,
+     "body": "QCTO, NAMB",
+     "source": "not sourced in this pass; confirm"
+    },
+    {
+     "name": "Installation Electrician registration where a CoC is required",
+     "critical": false,
+     "body": "Department of Employment and Labour",
+     "source": "https://renkalec.com/wiremans-licence/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-17": {
+   "engagement": {
+    "typical": "outsourced service",
+    "options": [
+     "outsourced service",
+     "permanent hire"
+    ],
+    "note": "Almost always a registered Lifting Machinery Entity (LME) sending an LMI per inspection; large users sometimes employ one."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 30860,
+     "high": 30860,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/cmp/Lifting-Machine-Inspector/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed: LMI average R30,860 per month (5 data points); x12 = R370,320. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "per month",
+     "low": 35000,
+     "high": 45000,
+     "currency": "ZAR",
+     "source": "https://www.executiveplacements.com/Jobs/L/LIFTING-MACHINE-INSPECTOR-LMI-with-valid-ECSA-Cert-1145220-Job-Search-1-8-2025-12-58-54-PM.asp",
+     "as_at": "Aug 2025",
+     "read": "snippet",
+     "working": "Advert: LMI with valid ECSA certificate, R35,000 to R45,000 per month (x12 = R420,000 to R540,000)."
+    },
+    {
+     "basis": "per day",
+     "low": 14250,
+     "high": 14250,
+     "currency": "ZAR",
+     "source": "https://shutterlock.co.za/wp-content/uploads/2017/08/Shutterlock-loadtesting-A5-leaflet-web.pdf",
+     "as_at": "about 2017 (from file path)",
+     "read": "snippet",
+     "working": "Outsourced LMI daily rate including mobile test rig R14,250 per day. Likely dated; confirm."
+    },
+    {
+     "basis": "per inspection",
+     "low": 800,
+     "high": 2500,
+     "currency": "ZAR",
+     "source": "https://gpforklifts.co.za/forklift-load-testing-cape-town/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Forklift load test and inspection R800 to R2,500 per unit."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Registration as Lifting Machinery Inspector (LMI)",
+     "critical": true,
+     "body": "ECSA",
+     "source": "https://verlinde.co.za/about-us/machinery-inspector/"
+    },
+    {
+     "name": "Employer registered as a Lifting Machinery Entity (LME)",
+     "critical": true,
+     "body": "Department of Employment and Labour (Chief Inspector)",
+     "source": "https://leeasa.co.za/about-leeasa/"
+    }
+   ],
+   "notes": "A search snippet cites the Driven Machinery Regulations inspection intervals (6 months for lifting machines, 3 months for tackle) as a lead; confirm."
+  },
+  "APP-18": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Crane operators are employed or supplied with hired cranes; overhead crane and hoist operation is often a duty of production staff."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 15239,
+     "high": 15239,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/crane-operator/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed crane operator R15,239 per month (x12 = R182,868); regional averages R5,807 to R30,825. Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "course fee",
+     "low": 1800,
+     "high": 1800,
+     "currency": "ZAR",
+     "source": "https://safetysupplier.co.za/product/11-overhead-crane-r1-800-p-p-excl-vat/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Overhead crane operator course R1,800 per person ex VAT."
+    },
+    {
+     "basis": "course fee",
+     "low": 5000,
+     "high": 5000,
+     "currency": "ZAR",
+     "source": "https://cranestraining.com/mobile.php",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Mobile crane course R5,000, 7 to 10 days. VAT status not stated."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Operator certificate for the specific lifting machine (SAQA unit standards)",
+     "critical": true,
+     "body": "TETA or QCTO accredited provider",
+     "source": "https://safetysupplier.co.za/product/11-overhead-crane-r1-800-p-p-excl-vat/"
+    },
+    {
+     "name": "Medical certificate of fitness",
+     "critical": true,
+     "body": "Occupational medical practitioner",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-19": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Usually the engineering or maintenance manager; a full time appointment where machinery exceeds the regulation thresholds."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 1530,
+     "high": 1530,
+     "currency": "ZAR",
+     "source": "https://nosa.co.za/courses/gmr21-supervisor-machinery-webinar/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "NOSA GMR 2(1) Supervisor for Machinery webinar, 1 day, R1,530."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Government Certificate of Competency (GCC) Factories where total machinery power exceeds 3,000 kW",
+     "critical": true,
+     "body": "Department of Employment and Labour",
+     "source": "https://www.palucraft-gccstudy.com/post/what-is-a-gmr-2-1-appointment"
+    },
+    {
+     "name": "Engineering qualification (N6, diploma or degree) plus experience below that threshold",
+     "critical": false,
+     "body": "Employer, with ECSA registration where held",
+     "source": "https://westcoast.worksafe.org.za/the-role-and-functions-of-the-gmr21-appointee/"
+    }
+   ],
+   "notes": "General Machinery Regulation 2(1) and the 3,000 kW threshold are stated by sources; treat as leads to confirm. No salary figure was published for the GMR 2(1) title."
+  },
+  "APP-20": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "The user's engineer or maintenance manager supervises; statutory inspection is outsourced to an Approved Inspection Authority (AIA)."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 37630,
+     "high": 40704,
+     "currency": "ZAR",
+     "source": "https://www.saiw.co.za/saiw/welding-courses/competent-persons-training/pressure-vessels/",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "SAIW Competent Person (Pressure Vessels) course, 15 days, R37,630 (corporate members) to R40,704 incl VAT. The figure may come from the SAIW 2026 Competent Persons PDF; confirm."
+    },
+    {
+     "basis": "per inspection",
+     "low": 12000,
+     "high": 12000,
+     "currency": "ZAR",
+     "source": "https://powertooltraders.co.za/products/aia-pressure-vessel-inspection-report-certificate",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "AIA pressure vessel inspection report and certificate listed at R12,000. One retailer listing only."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Competent Person (CP) certification for pressure equipment",
+     "critical": true,
+     "body": "SAQCC CP (administered through SAIW)",
+     "source": "https://www.saiw.co.za/saiw-certification/certifications/individuals/competent-person-pressure-vessels/"
+    },
+    {
+     "name": "Inspections by an Approved Inspection Authority",
+     "critical": true,
+     "body": "Department of Employment and Labour (accredits AIAs; SANAS accreditation)",
+     "source": "https://www.sgs.com/en-za/services/pressure-equipment-certification"
+    }
+   ],
+   "notes": "Pressure Equipment Regulations are the lead; a snippet states a 3 yearly test for air receivers outside mines. Confirm."
+  },
+  "APP-21": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Usually the safety officer or stores supervisor; air monitoring is outsourced to an occupational hygiene AIA."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 955,
+     "high": 955,
+     "currency": "ZAR",
+     "source": "https://www.iefa.co.za/hazmat.php",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "HAZMAT awareness, 8 hours, R955 per person. Attribution from a combined search summary; confirm. No HCS specific course price found."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Hazardous chemical substances or HAZMAT training",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://www.saflii.org/za/legis/consol_reg/rfhcs429/"
+    },
+    {
+     "name": "Occupational hygiene monitoring by an Approved Inspection Authority",
+     "critical": false,
+     "body": "Department of Employment and Labour; SAIOH for hygienists",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "The Regulations for Hazardous Chemical Substances (saflii) are the lead; newer Hazardous Chemical Agents Regulations 2021 should be confirmed."
+  },
+  "APP-22": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "A storeman or supervisor who checks ladders; no hire."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 950,
+     "high": 950,
+     "currency": "ZAR",
+     "source": "https://safetysupplier.co.za/product/19-ladder-inspector-1-day-r950-p-p-excl-vat-minimum-5-x-people-per-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Ladder Inspector, 1 day, R950 per person ex VAT, minimum 5."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Ladder inspection or safety short course",
+     "critical": false,
+     "body": "Accredited training provider",
+     "source": "https://safetysupplier.co.za/product/19-ladder-inspector-1-day-r950-p-p-excl-vat-minimum-5-x-people-per-course/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-23": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Warehouse or stores supervisor."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 825,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/stacking-storage/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Stacking and Storage, 1 day, R825 ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Stacking and storage short course",
+     "critical": false,
+     "body": "Accredited training provider",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/stacking-storage/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-24": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Existing employees are trained; the statutory ratio drives how many."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 975,
+     "high": 975,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/first-aid-training-courses/first-aid-level-1/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "First Aid NQF Level 1, 2 days, R975 ex VAT."
+    },
+    {
+     "basis": "course fee",
+     "low": 1815,
+     "high": 1815,
+     "currency": "ZAR",
+     "source": "https://stjohn.org.za/first-aid-training-level-1/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "St John First Aid Level 1, 2 days, R1,815. VAT status not stated."
+    },
+    {
+     "basis": "course fee",
+     "low": 925,
+     "high": 1955,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/first-aid-training-courses/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Basic Emergency First Aid Responder 2 days R925 ex VAT; Advanced Emergency First Aid Responder 5 days R1,955 ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Valid first aid certificate (level 1 minimum; higher levels for high risk sites)",
+     "critical": true,
+     "body": "Provider approved by the Department of Employment and Labour; HWSETA or QCTO accreditation",
+     "source": "https://absolutehealth.co.za/blog/department-of-labour-first-aid-training-requirements/"
+    }
+   ],
+   "notes": "Sources state General Safety Regulation 3: a first aider where more than 10 employees, one per 50 employees (one per 100 in shops and offices). Lead to confirm (https://labourguide.co.za/health-and-safety/update-first-aid-and-aid-boxes)."
+  },
+  "APP-25": {
+   "engagement": {
+    "typical": "outsourced service",
+    "options": [
+     "outsourced service",
+     "duty added to an existing employee"
+    ],
+    "note": "Monthly visual checks are an internal duty; annual servicing is outsourced to a SAQCC Fire registered company."
+   },
+   "pricing": [
+    {
+     "basis": "per inspection",
+     "low": 120,
+     "high": 250,
+     "currency": "ZAR",
+     "source": "https://www.altrafire.co.za/fire-compliance-costs-in-south-africa-what-businesses-actually-pay-2026/",
+     "as_at": "June 2026",
+     "read": "snippet",
+     "working": "Annual SANS 1475-1 service per portable extinguisher R120 to R250 ex VAT, Gauteng. Five yearly overhaul R350 to R700 per unit."
+    },
+    {
+     "basis": "course fee",
+     "low": 4450,
+     "high": 4450,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/fire-fighting-training-courses/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Firefighting Equipment Servicing Technician (SAQCC 1475), 5 days, R4,450 ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Technician registration with SAQCC Fire; company SANS 1475 permit",
+     "critical": true,
+     "body": "SAQCC Fire; SABS permit",
+     "source": "https://www.altrafire.co.za/fire-compliance-costs-in-south-africa-what-businesses-actually-pay-2026/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-26": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Volunteers from the workforce, trained and drilled."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 1750,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/fire-fighting-training-courses/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Basic firefighting 1 day R825 ex VAT; advanced firefighting 2 days R1,750 ex VAT."
+    },
+    {
+     "basis": "course fee",
+     "low": 700,
+     "high": 850,
+     "currency": "ZAR",
+     "source": "https://www.ddigroup.co.za/blog/basic-fire-fighting-course-prices-explained",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Basic fire fighting R700 to R850 per delegate."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Basic or advanced firefighting (SAQA unit standards)",
+     "critical": true,
+     "body": "QCTO or SETA accredited provider",
+     "source": "https://absolutehealth.co.za/fire-fighting-training-courses/fire-fighting-1/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-27": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Usually the safety officer, facilities manager or site manager."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 825,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/evacuation-planning/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Evacuation Planning, 1 day, R825 ex VAT."
+    },
+    {
+     "basis": "course fee",
+     "low": 3950,
+     "high": 3950,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/first-aid-fire-and-evacuation-skills-program/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "First Aid, Fire and Evacuation Skills Program, 5 days, R3,950 ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Emergency or evacuation planning course",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/evacuation-planning/"
+    },
+    {
+     "name": "First aid and firefighting certificates",
+     "critical": false,
+     "body": "Accredited training provider",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-28": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "One warden per floor or area, drawn from existing staff."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 450,
+     "high": 550,
+     "currency": "ZAR",
+     "source": "https://www.heandshedrivingschool.co.za/courses/fire-marshal-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Fire marshal or firefighting level 1 R450, level 2 R550, ex VAT, 1 day each. Attribution from a combined search summary; confirm."
+    },
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 825,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/specialised-health-safety-training-courses/evacuation-planning/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Evacuation Planning, 1 day, R825 ex VAT."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Fire marshal or evacuation warden training",
+     "critical": false,
+     "body": "Accredited training provider",
+     "source": "https://www.hretd.co.za/fem.html"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-29": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "Supervisors and the safety officer; serious incidents may be outsourced."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 825,
+     "high": 925,
+     "currency": "ZAR",
+     "source": "https://absolutehealth.co.za/health-safety-training/incident-investigation/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Incident Investigation 1 day: R825 to R925 ex VAT depending on format."
+    },
+    {
+     "basis": "course fee",
+     "low": 2518.5,
+     "high": 3979.0,
+     "currency": "ZAR",
+     "source": "https://safetycloud.co.za/course/incident-investigation-level-3-2/",
+     "as_at": "2026 price list",
+     "read": "snippet",
+     "working": "SafetyCloud (NOSA) Incident Investigation Level 3, 3 days: R2,518.50 e learning to R3,979.00 classroom; mining version R6,641.25."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Incident investigation course (for example ICAM or root cause methods)",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://absolutehealth.co.za/health-safety-training/incident-investigation/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-30": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "A trained supervisor; specialist contractors supply supervisors and rescue teams for major entries."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 1000,
+     "high": 1500,
+     "currency": "ZAR",
+     "source": "https://www.swiftskillsacademy.com/confined-spaces-course-cape-town-saqa-15034",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Confined space refresher R1,000 to R1,500 ex VAT. Initial course fee not shown."
+    },
+    {
+     "basis": "course fee",
+     "low": 700,
+     "high": 4500,
+     "currency": "ZAR",
+     "source": "https://coursetakers.com/south-africa/professional/health-and-safety/occupational/confined-space-entry",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Aggregator range: R700 (1 day) to R4,500 (3 days, confined spaces on construction sites)."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Confined space entry and supervision (SAQA 15034 quoted by one provider)",
+     "critical": true,
+     "body": "QCTO or SETA accredited provider",
+     "source": "https://www.swiftskillsacademy.com/confined-spaces-course-cape-town-saqa-15034"
+    },
+    {
+     "name": "Gas testing competence and medical fitness",
+     "critical": true,
+     "body": "Accredited training provider; occupational medical practitioner",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-31": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Tradespeople trained by the tool supplier."
+   },
+   "pricing": [],
+   "qualifications": [
+    {
+     "name": "Explosive powered tool operator card from the manufacturer's training",
+     "critical": true,
+     "body": "Tool manufacturer (for example Hilti)",
+     "source": "https://www.hilti.co.za/c/CLS_SERVICES/CLS_S_TRAINING/r4164921"
+    }
+   ],
+   "notes": "Hilti South Africa offers operator training and a card, but no price is published. No other South African price was found."
+  },
+  "APP-32": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Usually the storeman who controls issue and cartridges."
+   },
+   "pricing": [],
+   "qualifications": [
+    {
+     "name": "Operator training plus stores control procedure",
+     "critical": false,
+     "body": "Tool manufacturer or accredited provider",
+     "source": "https://www.hilti.co.za/c/CLS_SERVICES/CLS_S_TRAINING"
+    }
+   ],
+   "notes": "No published price. Cost is internal time."
+  },
+  "APP-33": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "A supervisor issues the hot work permit; a fire watcher is assigned."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 1063.75,
+     "high": 1063.75,
+     "currency": "ZAR",
+     "source": "https://safetycloud.co.za/wp-content/uploads/2025/12/safetycloud-student-course-pricelist-2026.pdf",
+     "as_at": "2026 price list",
+     "read": "snippet",
+     "working": "Proxy: Permit to Work workshop, 1 day, R1,063.75 (in house day rate R21,545.25). No hot work specific price found."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Permit to work or hot work training; fire watcher training",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://www.hretd.co.za/hw.html"
+    },
+    {
+     "name": "Basic firefighting",
+     "critical": false,
+     "body": "Accredited training provider",
+     "source": "https://absolutehealth.co.za/fire-fighting-training-courses/fire-fighting-1/"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-34": {
+   "engagement": {
+    "typical": "outsourced service",
+    "options": [
+     "outsourced service"
+    ],
+    "note": "Asbestos work is done by a registered asbestos contractor that supplies its own supervisor."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 400,
+     "high": 400,
+     "currency": "ZAR",
+     "source": "https://ecasa.co.za/wpc/wp-content/uploads/2022/08/OHS-Directive-Schedule-of-Fees-to-Register-Entities-Annexure-A.pdf",
+     "as_at": "about 2022",
+     "read": "snippet",
+     "working": "Department of Employment and Labour registration fee for an asbestos contractor R400 (R600 duplicate). Company registration fee, not a course."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Registered asbestos contractor (Type 2 or Type 3 work)",
+     "critical": true,
+     "body": "Department of Employment and Labour (Chief Inspector)",
+     "source": "https://www.labour.gov.za/DocumentCenter/Publications/Occupational%20Health%20and%20Safety/Criteria%20for%20Contractor%20registration%20type%202%20and%203%20asbestos%20work%20(February%202023).pdf"
+    },
+    {
+     "name": "Asbestos supervisor training as required by the registration criteria",
+     "critical": true,
+     "body": "Accredited provider",
+     "source": "https://www.labour.gov.za/DocumentCenter/Publications/Occupational%20Health%20and%20Safety/Criteria%20for%20Contractor%20registration%20type%202%20and%203%20asbestos%20work%20(February%202023).pdf"
+    }
+   ],
+   "notes": "The Asbestos Abatement Regulations 2020 are the lead. No South African asbestos supervisor course price or salary was found."
+  },
+  "APP-35": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "A supervisor; exposure monitoring is outsourced to an occupational hygiene AIA and medical surveillance to an occupational health practitioner."
+   },
+   "pricing": [],
+   "qualifications": [
+    {
+     "name": "Lead awareness training, refreshed at least yearly (per the Lead Regulations)",
+     "critical": true,
+     "body": "Competent trainer",
+     "source": "https://www.saflii.org/za/legis/consol_reg/lr2001148/"
+    }
+   ],
+   "notes": "Lead Regulations 2001 are the lead. No South African price was found for lead supervisor training."
+  },
+  "APP-36": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "outsourced service"
+    ],
+    "note": "A supervisor controls the zone; noise surveys are outsourced to an AIA."
+   },
+   "pricing": [],
+   "qualifications": [
+    {
+     "name": "Noise and hearing conservation awareness",
+     "critical": false,
+     "body": "Accredited provider or PPE supplier",
+     "source": "https://www.3m.co.za/3M/en_ZA/safety-centers-of-expertise-za/center-for-hearing-conservation/train/"
+    },
+    {
+     "name": "Noise surveys by an Approved Inspection Authority",
+     "critical": true,
+     "body": "Department of Employment and Labour",
+     "source": "https://www.dashservices.co.za/noise-surveys/"
+    }
+   ],
+   "notes": "The Noise Induced Hearing Loss Regulations, 2003 were repealed from 6 September 2026 and replaced by the Noise Exposure Regulations, 2024; the survey interval in the older rules is not relied on. No price was published for a noise zone controller course or for a noise survey."
+  },
+  "APP-37": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee",
+     "permanent hire",
+     "outsourced service"
+    ],
+    "note": "Often a radiographer, NDT technician or engineer with RPO duties; large users employ a dedicated RPO; consultants act as RPO for small users."
+   },
+   "pricing": [
+    {
+     "basis": "annual cost to company",
+     "low": 254415,
+     "high": 440335,
+     "currency": "ZAR",
+     "source": "https://www.salaryexpert.com/salary/job/radiation-safety-officer/south-africa",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "SalaryExpert radiation safety officer average R353,205 per year; entry R254,415; senior R440,335. /12 = R21,201 to R36,695 per month. Modelled salary, not full cost to company."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "RPO training and competence per SAHPRA guideline",
+     "critical": true,
+     "body": "SAHPRA (Radiation Control)",
+     "source": "https://www.sahpra.org.za/document/rpo-competence-and-training-requirements/"
+    },
+    {
+     "name": "For nuclear installations or NORM: NNR requirements",
+     "critical": false,
+     "body": "National Nuclear Regulator",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": "RPO course providers (Protocor, Radiation Dosimetry and Protection cc, SGS) do not publish prices."
+  },
+  "APP-38": {
+   "engagement": {
+    "typical": "duty added to an existing employee",
+    "options": [
+     "duty added to an existing employee"
+    ],
+    "note": "Kitchen or canteen manager, appointed as person in charge."
+   },
+   "pricing": [
+    {
+     "basis": "course fee",
+     "low": 249,
+     "high": 649,
+     "currency": "ZAR",
+     "source": "https://ascfoodsafetytraining.com/courses/basic-food-safety-practices-for-food-handlers-course/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "Food handler training from R249; Basic Food Hygiene Awareness R420; Basic Food Safety Practices R649 per person (online)."
+    },
+    {
+     "basis": "course fee",
+     "low": 2730,
+     "high": 3950,
+     "currency": "ZAR",
+     "source": "https://ascfoodsafetytraining.com/which-haccp-course-do-you-need-introduction-supervisors-or-advanced/",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "HACCP for supervisors R2,730; advanced HACCP R3,950. Attribution from a combined search summary; confirm."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Food safety training for persons in charge (R638 aligned)",
+     "critical": true,
+     "body": "Accredited training provider",
+     "source": "https://ascfoodsafetytraining.com/product/food-safety-for-persons-in-charge-of-food-premises-course/"
+    },
+    {
+     "name": "Certificate of Acceptability for the premises",
+     "critical": true,
+     "body": "Municipal environmental health",
+     "source": "https://ascfoodsafetytraining.com/2026-guide-certificate-of-acceptability-for-sa-municipalities/"
+    }
+   ],
+   "notes": "Regulation R638 is the lead; confirm."
+  },
+  "APP-39": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire",
+     "outsourced service"
+    ],
+    "note": "Drivers are employed or supplied through transport contractors."
+   },
+   "pricing": [
+    {
+     "basis": "per month",
+     "low": 12791,
+     "high": 20000,
+     "currency": "ZAR",
+     "source": "https://za.indeed.com/career/truck-driver/salaries",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "Indeed truck driver R12,791 per month (x12 = R153,492); Code 14 adverts R15,000 to R20,000 per month (https://za.indeed.com/Code-14-Driver-jobs). Monthly figure multiplied by 12 gives an annual basic salary, not a full cost to company; add employer costs (UIF, SDL, COIDA, benefits) separately."
+    },
+    {
+     "basis": "course fee",
+     "low": 518,
+     "high": 518,
+     "currency": "ZAR",
+     "source": "https://k-53.co.za/prdp",
+     "as_at": "retrieved 24/09/2026",
+     "read": "snippet",
+     "working": "PrDP fees: application R324 + Afiswitch R110 + temporary permit R84 = R518; medical certificate R300 to R600 extra. Provincial fees vary."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Driving licence of the right code plus Professional Driving Permit (PrDP)",
+     "critical": true,
+     "body": "Driving Licence Testing Centre (provincial), National Road Traffic Act",
+     "source": "https://www.gov.za/services/driving-licence/professional-driving-permit"
+    },
+    {
+     "name": "Medical certificate for PrDP",
+     "critical": true,
+     "body": "Registered medical practitioner",
+     "source": "https://k-53.co.za/prdp"
+    },
+    {
+     "name": "Dangerous goods training for PrDP category D",
+     "critical": false,
+     "body": "Accredited provider",
+     "source": "not sourced in this pass; confirm"
+    }
+   ],
+   "notes": ""
+  },
+  "APP-40": {
+   "engagement": {
+    "typical": "permanent hire",
+    "options": [
+     "permanent hire"
+    ],
+    "note": "Mine managers and MHSA statutory appointees are permanent employees; legal appointments cannot be outsourced in practice."
+   },
+   "pricing": [
+    {
+     "basis": "annual cost to company",
+     "low": 415674,
+     "high": 715195,
+     "currency": "ZAR",
+     "source": "https://www.salaryexpert.com/salary/job/mine-manager/south-africa",
+     "as_at": "2026",
+     "read": "snippet",
+     "working": "SalaryExpert mine manager average R574,624 per year; entry R415,674; senior R715,195; bonus about R15,228. Mine operations manager averages R944,188 (https://www.salaryexpert.com/salary/job/mine-operations-manager/south-africa)."
+    }
+   ],
+   "qualifications": [
+    {
+     "name": "Mine Manager's Certificate of Competency",
+     "critical": true,
+     "body": "Department of Mineral and Petroleum Resources, Mine Health and Safety Inspectorate",
+     "source": "https://www.dmr.gov.za/mine-health-and-safety/gcc-examinations/certifications?id=2635"
+    },
+    {
+     "name": "Engineer's GCC (Mines and Works) for engineering appointees",
+     "critical": true,
+     "body": "Department of Mineral and Petroleum Resources",
+     "source": "https://www.gccmineshub.com/post/gcc-mines-a-comprehensive-step-by-step-guide-to-obtaining-the-gcc-mines-in-south-africa"
+    }
+   ],
+   "notes": "Mine Health and Safety Act 1996 is the lead; appointment section numbers not confirmed. Care Net's OHS Act based offering may not cover mines."
+  }
+ }
+}

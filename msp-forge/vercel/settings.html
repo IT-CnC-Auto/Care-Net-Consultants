@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>CNC MSP FORGE Settings</title>
+<meta property="og:image" content="https://img.carenetcdn.com/medical-surveillance/og/settings-og-1200x630.jpg" data-asset="settings-og">
 <link rel="preload" as="image" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
 <link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
 <!-- The shared site header, footer stamp and pattern strip, the same as the
      client facing pages. Presentation only: no endpoints, no data handling. -->
 <link rel="stylesheet" href="/fonts/cnc-fonts.css">
-<link rel="stylesheet" href="/css/cnc-header.css?v=20260918a">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260922a">
 <link rel="stylesheet" href="/css/cnc-footer.css?v=20260918a">
 <link rel="stylesheet" href="/css/cnc-pattern.css?v=20260918a">
 <style>
@@ -60,6 +61,10 @@
   textarea { width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 13px; }
   .answer { white-space: pre-wrap; background: #fafafa; border: 1px solid #e2e2e2; border-radius: 6px; padding: 14px; font-size: 13px; line-height: 1.55; }
 </style>
+<!-- Shared Care Net settings and consent aware tracking (hsf/BUILD-CONTRACT.md
+     section 6). Consent mode defaults to denied and no tag loads before consent. -->
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
 </head>
 <body>
 <!-- ============ Site header, matching carenetconsultants.co.za ============
@@ -73,20 +78,20 @@
   <nav class="cnc-mainnav" aria-label="Site menu">
     <div class="mwrap">
       <a class="logo-link" href="/" aria-label="Care Net Consultants home">
-        <img class="logo-img" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+        <img class="logo-img" data-asset="settings-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
       </a>
       <ul>
         <li><a href="/">Start your journey</a></li>
         <li><a href="/pilot.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
-        <li><a href="/shop.html">Packages and pricing</a></li>
+        <li><a href="/shop.html">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
       </ul>
     </div>
   </nav>
 </header>
 
-<div class="pattern-strip" role="presentation"></div>
+<div class="pattern-strip" role="presentation" data-asset="settings-pattern"></div>
 
 <!-- The strip the old dark banner used to carry: which tool this is, who is
      signed in, and the way across to the other one. #who is still filled by
@@ -95,7 +100,7 @@
   <div class="awrap">
     <b>MSP Forge Settings</b>
     <span class="spacer"></span>
-    <a class="adminlink" href="/review.html">Review</a>
+    <a class="adminlink" href="/review.html" data-cta="staff_review">Review</a>
     <span id="who" class="muted"></span>
   </div>
 </div>
@@ -104,17 +109,18 @@
     <h3>Administrator sign in</h3>
     <p class="muted">Reading the running configuration needs any forge role. Changing it needs forge_admin. A magic link is emailed to you and no passwords are stored.</p>
     <input id="email" type="email" placeholder="name@carenetconsultants.co.za">
-    <button id="send">Email me a sign in link</button>
+    <button id="send" data-cta="send_sign_in_link">Email me a sign in link</button>
     <div id="msg"></div>
+    <p class="muted">Looking for your Plans and Files? <a href="/portal.html" data-cta="sign_in" style="color:#C5141B;font-weight:bold">Sign in</a> to the Care Net portal.</p>
   </div>
 
   <div id="app" style="display:none">
     <nav>
-      <button data-tab="params" class="active">Parameters</button>
-      <button data-tab="history">Change history</button>
-      <button data-tab="schedule">Schedule</button>
-      <button data-tab="usage">Assistant usage</button>
-      <button data-tab="test">Assistant test</button>
+      <button data-tab="params" data-cta="settings_tab_params" class="active">Parameters</button>
+      <button data-tab="history" data-cta="settings_tab_history">Change history</button>
+      <button data-tab="schedule" data-cta="settings_tab_schedule">Schedule</button>
+      <button data-tab="usage" data-cta="settings_tab_usage">Assistant usage</button>
+      <button data-tab="test" data-cta="settings_tab_test">Assistant test</button>
     </nav>
     <div id="content"></div>
   </div>
@@ -218,7 +224,7 @@ const tabs = {
           </div>
           <div class="edit">
             ${control(p)}
-            <button data-save="${esc(p.key)}"${isAdmin ? '' : ' disabled'}>Save</button>
+            <button data-save="${esc(p.key)}" data-cta="save_parameter"${isAdmin ? '' : ' disabled'}>Save</button>
           </div>
         </div>`).join('');
       html += '</div>';
@@ -291,7 +297,7 @@ const tabs = {
           </select>
           <select id="t-industry" style="padding:8px;border:1px solid #ccc;border-radius:5px;margin:0 0 8px 8px">${opts}</select>
           <textarea id="t-question" rows="3" placeholder="Your question, or the business description to triage."></textarea>
-          <button id="t-go" style="margin-top:8px;background:#ED1B24;color:#fff;border:none;padding:10px 18px;border-radius:5px;font-weight:bold;cursor:pointer">Ask</button>
+          <button id="t-go" data-cta="ask_assistant" style="margin-top:8px;background:#ED1B24;color:#fff;border:none;padding:10px 18px;border-radius:5px;font-weight:bold;cursor:pointer">Ask</button>
         </div>
       </div>
       <div id="t-out"></div>
@@ -363,11 +369,107 @@ boot();
 <div class="ah-stamp">
   <div class="ah-row">
     <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
-      <img class="ah-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <img class="ah-bee" data-asset="settings-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
       <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
     </a>
   </div>
 </div>
 <script src="/js/cnc-header.js?v=20260918a" defer></script>
+<!-- Designer asset specification (hsf/BUILD-CONTRACT.md section 6). Read by
+     /js/cnc-design-assets.js when the address carries ?design=1 or #design,
+     and by hsf/build_asset_manifest.py. Visitors see no difference. -->
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/settings.html",
+ "title": "MSP Forge Settings (staff tool)",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "settings-og",
+   "block": "Head: social share card (og:image)",
+   "purpose": "The image shown when the MSP Forge Settings staff page is shared on WhatsApp, LinkedIn, Facebook or in email previews.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "webp"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 200,
+   "colour": "Charcoal #1A1A1A ground, Care Net red #ED1B24 accent, white Bebas Neue headline \"MSP Forge Settings\", Care Net logo top left, Africa pattern strip along the bottom edge",
+   "alt": "Care Net MSP Forge settings, a staff tool",
+   "file_name": "settings-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/medical-surveillance/og/settings-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 x 566 safe area, because platforms crop the edges. The og:image tag points at the JPG, which every platform reads; supply a WebP of the same design alongside it with the same name ending .webp. Each file under 200 KB. No identifiable people without a model release, and no readable personal or health information. The og:image tag already points at the delivery address, so the card appears the day the file is uploaded; until then a shared link shows no image, as it did before. The page is a staff tool behind a sign in and is not indexed (noindex), but its link is shared between staff, so it still needs a card. The card shows only the tool name: no queue content, names, practice numbers, references or settings."
+  },
+  {
+   "id": "settings-logo",
+   "block": "Site header: logo",
+   "purpose": "The Care Net Consultants logo in the shared site header, linking home.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png",
+    "svg"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master as supplied, on a transparent ground",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shows 223 px wide on desktop and 167 px wide on phones, so 445 x 160 covers 2x and the current file already meets it. Shared by every page and preloaded in the head, so replace it in place at the same address, never page by page. Keep an SVG master for print and 3x phone screens, and a PNG for email."
+  },
+  {
+   "id": "settings-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high, so a tile 96 px high covers 2x. The tile must join seamlessly at its left and right edges. The current tile is 1200 px wide at a height not confirmed here, so keep its proportions if they differ from 25:1. Shared by every page: supply the 2x tile as shared_cnc-nl-africa-pattern-strip-2400.png and the stylesheet changes in one line."
+  },
+  {
+   "id": "settings-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the credit strip that closes every page.",
+   "type": "icon",
+   "formats": [
+    "svg",
+    "webp",
+    "png"
+   ],
+   "width": 44,
+   "height": 44,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "AutoHive gold as supplied",
+   "alt": "Decorative, no alternative text (the credit text sits beside it)",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shows at 22 x 22 px, so 44 x 44 covers 2x. AutoHive artwork, supplied by AutoHive. Shared by every page: replace in place at the same address."
+  }
+ ]
+}
+</script>
+<script src="/js/cnc-design-assets.js" defer></script>
 </body>
 </html>

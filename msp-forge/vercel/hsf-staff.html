@@ -1,0 +1,1560 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Health and Safety File staff console | Care Net Consultants</title>
+<meta name="description" content="The Care Net staff console for the Health and Safety File: verify client companies, watch security scans and staging, keep signatory credentials and record sign offs.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Health and Safety File staff console | Care Net Consultants">
+<meta property="og:description" content="For Care Net staff: client verification, security scans, signatories and sign offs, each on record.">
+<meta property="og:image" data-asset="hsf-staff-og" content="https://img.carenetcdn.com/health-and-safety-file/hsf-staff-og-1200x630.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<!--
+=====================================================================
+ hsf-staff.html :: Version 1.0 :: 23 September 2026
+ The staff console for CNC HSF FORGE (hsf/BUILD-CONTRACT.md 11.5, with
+ the signatory expiry alerts of 11.4), on the shared Care Net shell
+ (cnc-header, cnc-hero, cnc-pattern, cnc-secnav, cnc-footer) as the
+ File builder.
+
+ STATES
+   1. Signed out            email one time link through /js/cnc-auth.js
+   2. Not staff             the API answers 403: a plain note that the
+                            console is for Care Net staff, with a link to
+                            the File builder. No role name is shown.
+   3. Console               four tabs:
+        Clients to verify          verify (method and evidence reference)
+                                   or revoke (reason, confirmed in the page)
+        Scans and staging          scans pending or in error with attempts
+                                   and findings; scan reset (confirmed in the
+                                   page); staging alerts with expires_on
+        Signatories                expiry alerts; the credential records;
+                                   add or correct (every 053 field)
+        Sign offs and readiness    Files with the latest decision of each
+                                   kind and release readiness; record a
+                                   sign off; check readiness again
+   Demo (?demo=1)           fictitious sample rows, each marked Sample.
+                            Nothing is sent; actions change the sample in
+                            this browser only, and a few mirror the
+                            database's refusals.
+
+ CALLS: only /api/hsf-staff with the user's access token (auth.apiFetch):
+   GET  ?view=verification | scans | signatories | signatory_alerts |
+        files | readiness&file_id=&revision=
+   POST {action: verify_client | revoke_client | scan_reset |
+         signatory_save | signoff_record, ...}
+ The API checks the staff role before anything else, and each database
+ function checks it again and records the staff member's email. No
+ secret is held in this page, and no alert or confirm dialog is used:
+ revocation and scan reset are confirmed inside the page.
+
+ HARD RULES: SA British English, dates as DD/MM/YYYY, no dashes in copy,
+ numbering from 1, never a compliance stamp. No section or regulation
+ numbers except section 16(2) of the OHS Act.
+=====================================================================
+-->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/BebasNeue.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Montserrat-var.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Inter-var.woff2">
+<link rel="preload" as="image" fetchpriority="high" type="image/webp" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="preconnect" href="https://img.carenetcdn.com" crossorigin>
+<link rel="icon" href="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp">
+<link rel="stylesheet" href="/fonts/cnc-fonts.css">
+<link rel="stylesheet" href="/css/cnc-header.css?v=20260925a">
+<link rel="stylesheet" href="/css/cnc-footer.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-pattern.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-hero.css?v=20260915a">
+<link rel="stylesheet" href="/css/cnc-secnav.css?v=20260915b">
+<style>
+  :root { --red: #ED1B24; --red-ink: #C5141B; --charcoal: #1A1A1A; --ink-2: #4d4d4d; --line: #e5e2e2; --soft: #f7f5f5; --green: #2A7D4E; --green-ink: #1B6E45; --amber-bg: #fdf3dc; --amber-line: #ecd49a; --amber-ink: #6b4600; --blue-bg: #eef3fb; --blue-ink: #2B4C8C; --blue-line: #4a6fb5; --grey-bg: #f0efef; }
+  * { box-sizing: border-box; }
+  main > *, .card, .grid > * { min-width: 0; }
+  [hidden] { display: none !important; }
+  html { overflow-x: hidden; }
+  body { font-family: 'Inter', Arial, Helvetica, sans-serif; color: var(--charcoal); margin: 0; background: #f4f4f4; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  main { max-width: 1000px; margin: 0 auto; padding: 26px 16px 70px; }
+  section { scroll-margin-top: 130px; margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; align-items: start; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: #fff; border-radius: 8px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  @media (max-width: 520px) { .card { padding: 18px 16px; } }
+  .card + .card { margin-top: 18px; }
+  .card h2 { color: var(--red-ink); font-size: 17px; margin: 0 0 10px; }
+  .card h3 { font-size: 15px; margin: 18px 0 6px; }
+  .card p, .card li { font-size: 14px; line-height: 1.55; }
+  .card p { margin: 0 0 10px; }
+  .muted { font-size: 13px; color: var(--ink-2); }
+  .eyebrow { display: block; font-family: 'Montserrat', Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--red-ink); margin-bottom: 6px; }
+  .sechead { margin: 6px 0 14px; }
+  .sechead h2 { font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; letter-spacing: .03em; font-size: clamp(26px, 3.6vw, 36px); line-height: 1; margin: 0; color: var(--charcoal); text-transform: uppercase; text-wrap: balance; overflow-wrap: break-word; }
+  .sechead h2 .r { color: var(--red); }
+  .sechead p { font-size: 14px; line-height: 1.55; color: var(--ink-2); margin: 10px 0 0; max-width: 72ch; }
+  .btn { display: block; text-align: center; text-decoration: none; background: var(--red-ink); color: #fff; border: none; border-radius: 5px; padding: 12px 20px; font-weight: bold; cursor: pointer; margin-top: 14px; font-size: 14px; font-family: inherit; }
+  .btn.inl { display: inline-block; margin-top: 0; }
+  .btn.sm { padding: 8px 14px; font-size: 13px; }
+  .btn.ghost { background: #fff; color: var(--red-ink); border: 2px solid var(--red); }
+  .btn.plain { background: #fff; color: var(--charcoal); border: 1px solid #bdbdbd; }
+  .btn.danger { background: #8a1016; }
+  .btn:hover { background: #B7141A; color: #fff; }
+  .btn.plain:hover { background: var(--soft); color: var(--charcoal); }
+  .btn.danger:hover { background: #6d0c11; }
+  .btn[disabled] { opacity: .55; cursor: not-allowed; }
+  .btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  a.inline { color: var(--red-ink); font-weight: bold; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .pending { background: var(--amber-bg); border: 1px solid var(--amber-line); color: var(--amber-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .note { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.55; }
+  .okbox { background: #e8f7ec; border: 1px solid var(--green); color: var(--green-ink); border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
+  .errbox { background: #fff1f1; border: 1px solid #f0b7b9; color: #8a1016; border-radius: 6px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; }
+  .okbox p, .errbox p, .note p, .pending p { margin: 0; }
+  .vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+  footer { text-align: center; font-size: 12px; color: #6B6B6B; padding: 26px; }
+  :target { scroll-margin-top: 130px; }
+
+  /* Forms */
+  label.l { display: block; font-size: 13px; font-weight: bold; margin: 12px 0 6px; }
+  .help { font-size: 12.5px; color: var(--ink-2); margin: 4px 0 0; line-height: 1.45; }
+  input[type=email], input[type=text], input[type=number], input[type=date], input[type=datetime-local], select, textarea { width: 100%; max-width: 100%; padding: 10px 11px; border: 1px solid #bdbdbd; border-radius: 5px; font-family: inherit; font-size: 14px; background: #fff; color: var(--charcoal); min-width: 0; }
+  textarea { min-height: 76px; resize: vertical; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--red); outline-offset: 1px; }
+  [aria-invalid="true"] { border-color: #8a1016; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 4px 14px 14px; margin: 16px 0 0; min-width: 0; }
+  legend { font-weight: 700; font-size: 13.5px; padding: 0 6px; }
+  .formbox { border: 2px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-top: 12px; background: #fcfbfb; }
+  .formbox h4, .confirm h4 { font-size: 15px; margin: 0 0 6px; }
+  .formbox h4:focus, .confirm h4:focus { outline: none; }
+  .formbox h4:focus-visible, .confirm h4:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
+  .confirm { border: 2px solid #f0b7b9; border-radius: 8px; padding: 14px 16px; margin-top: 12px; background: #fffafa; }
+  .fmsg { margin-top: 10px; }
+  .fmsg:empty { display: none; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); margin: 18px 0 0; overflow-x: auto; }
+  .tabs button { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; background: none; border: none; border-bottom: 3px solid transparent; margin-bottom: -2px; padding: 10px 12px; cursor: pointer; color: var(--ink-2); white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { color: var(--red-ink); border-bottom-color: var(--red); }
+  .tabs .tico { width: 26px; height: 26px; border-radius: 7px; background: #fff5f5; border: 1px solid #f3caca; color: var(--red-ink); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; flex: none; }
+  .tabs .cnt { font-family: 'Inter', Arial, sans-serif; font-size: 11px; background: var(--grey-bg); color: var(--charcoal); border-radius: 20px; padding: 1px 7px; }
+  @media (max-width: 620px) { .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0; overflow: visible; } .tabs button { white-space: normal; text-align: left; font-size: 12.5px; padding: 10px 8px; } }
+  .tabpanel { padding-top: 16px; }
+  .tabpanel:focus { outline: none; }
+  .tabpanel h3 { font-size: 15.5px; margin: 18px 0 6px; }
+  .tabpanel h3:first-child { margin-top: 0; }
+
+  /* Rows */
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .rowcard { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-top: 10px; background: #fff; overflow-wrap: anywhere; }
+  .rowcard .top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
+  .rowcard .nm { font-weight: 700; font-size: 14.5px; margin: 0; flex: 1 1 220px; min-width: 0; }
+  .rowcard .meta { font-size: 12.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.55; }
+  .rowcard .meta b { color: var(--charcoal); font-weight: 600; }
+  .rowcard .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .rowcard ul.fl { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.5; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 30px; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border: 1px solid transparent; white-space: nowrap; }
+  .pill.ok { background: #e8f7ec; color: var(--green-ink); border-color: #9fd3b3; }
+  .pill.wait { background: var(--amber-bg); color: var(--amber-ink); border-color: var(--amber-line); }
+  .pill.no { background: #fff1f1; color: #8a1016; border-color: #f0b7b9; }
+  .pill.info { background: var(--blue-bg); color: var(--blue-ink); border-color: #c4d3ee; }
+  .pill.grey { background: var(--grey-bg); color: var(--ink-2); border-color: #dcd8d8; }
+  .pill.sample { background: var(--charcoal); color: #fff; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kvs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 14px; margin-top: 8px; font-size: 12.5px; }
+  @media (max-width: 760px) { .kvs { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 460px) { .kvs { grid-template-columns: 1fr; } }
+  .kvs div { min-width: 0; }
+  .kvs span { display: block; color: var(--ink-2); font-size: 11.5px; }
+  .miss { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.5; color: #8a1016; }
+  .counts { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; }
+  .empty { text-align: center; padding: 16px 8px; }
+  .ill { display: flex; align-items: center; justify-content: center; border-radius: 8px; background: repeating-linear-gradient(45deg, #faf8f8 0 12px, #f3f0f0 12px 24px); border: 1px dashed #d8d3d3; color: var(--ink-2); font-size: 12px; text-align: center; padding: 10px; }
+  .empty .ill { aspect-ratio: 16 / 10; max-width: 260px; margin: 0 auto 10px; }
+  .ill.signin { aspect-ratio: 3 / 2; max-width: 240px; float: right; margin: 0 0 10px 16px; width: 40%; }
+  @media (max-width: 620px) { .ill.signin { float: none; width: 100%; max-width: 100%; margin: 0 0 12px; } }
+  .who { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+  .who p { margin: 0; font-size: 13.5px; overflow-wrap: anywhere; }
+  .rules ol { margin: 6px 0 0; padding-left: 20px; }
+  .rules li { margin-bottom: 6px; }
+
+  .demo-banner { background: #1A1A1A; color: #fff; border-radius: 8px; padding: 14px 16px; margin-bottom: 18px; font-size: 14px; line-height: 1.5; border-left: 6px solid var(--red); }
+  .demo-banner b { color: #fff; font-family: 'Montserrat', Arial, sans-serif; letter-spacing: .05em; text-transform: uppercase; font-size: 12px; display: block; margin-bottom: 4px; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 3px solid #e3dede; border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite; vertical-align: -3px; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+  @media print { .cnc-sitehead, .cnc-hero, .pattern-strip, .cnc-secnav, .ah-stamp, .demo-banner, .acts, .formbox, .confirm { display: none !important; } }
+</style>
+<script src="/js/cnc-config.js"></script>
+<script src="/js/cnc-tracking.js"></script>
+<!-- Feature flags (contract 16): the Bee-Inspect menu items show only while bee_inspect_ads is on. -->
+<script src="/js/flags.js"></script>
+</head>
+<body>
+<a class="cnc-skip" href="#main">Skip to main content</a>
+
+<header class="cnc-sitehead">
+  <div class="band"></div>
+  <nav class="cnc-mainnav" aria-label="Site menu">
+    <div class="mwrap">
+      <a class="logo-link" href="/health-and-safety-file" aria-label="Care Net Consultants, Health and Safety File home">
+        <img class="logo-img" data-asset="hsf-staff-logo" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp" alt="Care Net Consultants, Occupational Health Medical Specialists" width="445" height="160" fetchpriority="high" decoding="async">
+      </a>
+      <ul>
+        <li><a href="/health-and-safety-file.html">Health and Safety File</a></li>
+        <li><a href="/hsf-builder.html">Build my File</a></li>
+        <li><a href="/hsf-sample.html">Sample File</a></li>
+        <!-- Bee-Inspect P2: shown only while CNC_FLAGS.bee_inspect_ads is on (css/cnc-header.css). -->
+        <li data-flag="bee_inspect_ads"><a href="/bee-inspect">Bee-Inspect</a></li>
+        <li data-flag="bee_inspect_ads"><a href="/get-app">Get the app</a></li>
+        <li><a href="/portal.html">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<section class="cnc-hero">
+  <div class="hwrap">
+    <div>
+      <span class="eyebrow">Health and Safety File staff console</span>
+      <h1>Check, verify, sign off. <span class="r">Every step on record.</span></h1>
+      <p class="lede">For Care Net staff. Verify client companies before their uploads open, watch the security scans and what waits in staging, keep the credentials of the practitioners who sign, and record each sign off with the release readiness it leaves behind. Every change carries your email in the audit trail.</p>
+      <div class="chips">
+        <a class="chip" href="#console" data-cta="hsf_staff_hero_console">Open the console</a>
+        <a class="chip" href="#rules" data-cta="hsf_staff_hero_rules">The rules the checks follow</a>
+        <a class="chip" href="/hsf-staff.html?demo=1" data-cta="hsf_staff_hero_demo">See it with sample rows</a>
+      </div>
+    </div>
+    <div class="heroimg" data-asset="hsf-staff-hero">
+      <img src="https://img.carenetcdn.com/medical-surveillance/record-submission.webp" alt="A health and safety record being checked" width="1920" height="1080" fetchpriority="high" decoding="async">
+    </div>
+  </div>
+</section>
+<div class="pattern-strip" role="presentation" data-asset="hsf-staff-pattern"></div>
+
+<main id="main">
+
+  <div class="demo-banner" id="demo-banner" role="note" hidden>
+    <b>Sample rows for a demonstration</b>
+    Every company, person, document and File below is fictitious and marked Sample. Nothing you do here is saved or sent: verifying, revoking, resetting a scan, saving a signatory and recording a sign off change the sample in this browser only. <a class="inline" style="color:#fff" href="/hsf-staff.html" data-cta="hsf_staff_demo_exit">Leave the demonstration</a>.
+  </div>
+
+  <!-- 1 :: THE CONSOLE -->
+  <section id="console" aria-labelledby="console-title">
+    <div class="sechead">
+      <span class="eyebrow">Staff console</span>
+      <h2 id="console-title">The File, <span class="r">checked by people.</span></h2>
+    </div>
+
+    <div class="card" id="st-loading" role="status">
+      <p><span class="spinner" aria-hidden="true"></span>Getting the staff console ready.</p>
+    </div>
+
+    <div class="card" id="st-error" hidden>
+      <h2 id="st-error-title" tabindex="-1">The staff console cannot reach Care Net right now</h2>
+      <div class="errbox" id="st-error-msg" role="alert">Please try again in a few minutes.</div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn inl" id="retry" data-cta="hsf_staff_retry">Try again</button>
+        <a class="btn plain inl" href="/hsf-staff.html?demo=1" data-cta="hsf_staff_demo_from_error">See it with sample rows</a>
+      </div>
+    </div>
+
+    <div class="card" id="st-signin" hidden>
+      <div class="ill signin" data-asset="hsf-staff-signin-illustration" aria-hidden="true">Sign in illustration</div>
+      <h2 id="signin-title" tabindex="-1">Sign in with your Care Net email</h2>
+      <p>Enter your work email and we will send you a one time sign in link. There is no password. The console opens only for Care Net staff; the server checks your access every time you open or change something.</p>
+      <form id="signin-form" novalidate>
+        <label class="l" for="signin-email">Work email</label>
+        <input type="email" id="signin-email" name="email" autocomplete="email" inputmode="email" required aria-describedby="signin-help signin-msg">
+        <p class="help" id="signin-help">The link signs you in on this device and brings you back to this page.</p>
+        <div id="signin-msg" role="status" aria-live="polite" style="margin-top:10px"></div>
+        <button type="submit" class="btn" id="signin-btn" data-cta="hsf_staff_send_link">Send my sign in link</button>
+      </form>
+    </div>
+
+    <div class="card" id="st-denied" hidden>
+      <h2 id="denied-title" tabindex="-1">This console is for Care Net staff</h2>
+      <p>You are signed in as <b id="denied-email">your email</b>, which does not open the staff console. If you are a Care Net client, your Health and Safety File is in the File builder, and a sales executive can help with anything else.</p>
+      <div class="row">
+        <a class="btn inl" href="/hsf-builder.html" data-cta="build_my_file">Build my File</a>
+        <a class="btn ghost inl" href="https://wa.me/27600702723" target="_blank" rel="noopener" data-cta="whatsapp_sales_executive">WhatsApp a sales executive</a>
+        <button type="button" class="btn plain inl" data-signout data-cta="hsf_staff_sign_out">Sign out</button>
+      </div>
+    </div>
+
+    <div class="card" id="st-console" hidden>
+      <div class="who">
+        <p>Signed in as <b id="who-email">staff</b>. Your email is recorded against every change you make here.</p>
+        <div class="row">
+          <button type="button" class="btn plain sm inl" id="refresh" data-cta="hsf_staff_refresh">Refresh this tab</button>
+          <button type="button" class="btn plain sm inl" data-signout data-cta="hsf_staff_sign_out">Sign out</button>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Console views">
+        <button type="button" role="tab" id="tab-clients" aria-controls="panel-clients" aria-selected="true"><span class="tico" data-asset="hsf-staff-tab-clients-icon" aria-hidden="true">1</span>Clients to verify <span class="cnt" id="cnt-clients" hidden></span></button>
+        <button type="button" role="tab" id="tab-scans" aria-controls="panel-scans" aria-selected="false" tabindex="-1"><span class="tico" data-asset="hsf-staff-tab-scans-icon" aria-hidden="true">2</span>Scans and staging <span class="cnt" id="cnt-scans" hidden></span></button>
+        <button type="button" role="tab" id="tab-signatories" aria-controls="panel-signatories" aria-selected="false" tabindex="-1"><span class="tico" data-asset="hsf-staff-tab-signatories-icon" aria-hidden="true">3</span>Signatories <span class="cnt" id="cnt-signatories" hidden></span></button>
+        <button type="button" role="tab" id="tab-signoffs" aria-controls="panel-signoffs" aria-selected="false" tabindex="-1"><span class="tico" data-asset="hsf-staff-tab-signoffs-icon" aria-hidden="true">4</span>Sign offs and readiness <span class="cnt" id="cnt-signoffs" hidden></span></button>
+      </div>
+      <div class="tabpanel" role="tabpanel" id="panel-clients" aria-labelledby="tab-clients" tabindex="0"></div>
+      <div class="tabpanel" role="tabpanel" id="panel-scans" aria-labelledby="tab-scans" tabindex="0" hidden></div>
+      <div class="tabpanel" role="tabpanel" id="panel-signatories" aria-labelledby="tab-signatories" tabindex="0" hidden></div>
+      <div class="tabpanel" role="tabpanel" id="panel-signoffs" aria-labelledby="tab-signoffs" tabindex="0" hidden></div>
+    </div>
+
+    <div id="live" class="vh" aria-live="polite" aria-atomic="true"></div>
+  </section>
+
+  <!-- 2 :: THE RULES -->
+  <section id="rules" aria-labelledby="rules-title">
+    <div class="sechead">
+      <span class="eyebrow">The rules the checks follow</span>
+      <h2 id="rules-title">The database decides, <span class="r">the console shows why.</span></h2>
+      <p>Every rule below is enforced in the database whatever this page shows. The console asks the same rules the release uses, so a File that reads ready here is one the release will accept.</p>
+    </div>
+    <div class="grid rules">
+      <div class="card">
+        <h2>Before a company uploads</h2>
+        <ol>
+          <li>Uploads open only once the Director opens them for everyone.</li>
+          <li>A company must be verified as a Care Net client, with the evidence recorded: its MyClinicOnline company reference, its client register number, or a sales executive&rsquo;s confirmation.</li>
+          <li>Revoking a verification stops new uploads and blocks documents not yet transferred. Nothing is deleted.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Before a document moves on</h2>
+        <ol>
+          <li>Every document is checked for harmful content and by the antivirus engine.</li>
+          <li>Hidden details such as the author, the company and the location are removed, and the cleaned copy replaces the original in staging.</li>
+          <li>A scan that ends in an error is tried again, five times at most. Once the cause is fixed, a scan reset gives it five fresh attempts.</li>
+          <li>Nothing stays in Care Net staging longer than two years.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Who signs a File</h2>
+        <ol>
+          <li>A registered health and safety practitioner signs the safety content. The registering body and category must fit the File&rsquo;s industry, and a candidate category never signs alone.</li>
+          <li>The registration must be current on the day of the decision, and the public register must have been checked, with saved proof, <span id="rule-check-days">no more than the number of days Care Net sets</span> before it and not after it. A fresh check of credentials that support a released File is recorded as a new dated check.</li>
+          <li>The appointment letter and the engagement letter must be on record and dated on or before the decision.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Before a File is released</h2>
+        <ol>
+          <li>An approved safety content sign off that meets every rule above.</li>
+          <li>The client&rsquo;s acceptance by its section 16(2) appointee, with the reference of the signed document.</li>
+          <li>Every instrument the File names verified for a File. The chief executive&rsquo;s acknowledgement is recorded, but it does not hold a release back.</li>
+          <li>The Occupational Medical Practitioner does not sign a File. The signed Medical Surveillance Plan, a separate Care Net product, is filed in Section E as evidence.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>Proudly prepared by the Care Net Consultants Team. Your Partner in Workplace Health.<nav class="cnc-footlinks" data-flag="bee_inspect_ads" aria-label="Bee-Inspect"><a href="/bee-inspect" data-cta="footer_bee_inspect">Bee-Inspect</a><a href="/get-app" data-cta="footer_get_app">Get the app</a></nav></footer>
+<div class="ah-stamp">
+  <div class="ah-row">
+    <a class="ah-credit-link" href="https://www.autohive.co.za" target="_blank" rel="noopener">
+      <img class="ah-bee" data-asset="hsf-staff-autohive-bee" src="https://img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp" alt="" width="22" height="22" loading="lazy" decoding="async">
+      <span>A proudly AutoHive built application <i aria-hidden="true">&middot;</i> AutoHive Intelligent Automation for South African SME&rsquo;s <i aria-hidden="true">&middot;</i> <b>www.autohive.co.za</b></span>
+    </a>
+  </div>
+</div>
+
+<nav class="cnc-secnav" aria-label="Jump to a section on this page">
+  <a href="#console"><i aria-hidden="true">1</i><span>Staff console</span></a>
+  <a href="#rules"><i aria-hidden="true">2</i><span>The rules</span></a>
+</nav>
+
+<noscript><p style="text-align:center;padding:16px">The staff console needs JavaScript. Please enable it.</p></noscript>
+
+<script type="application/json" id="cnc-asset-spec">
+{
+ "page": "/hsf-staff.html",
+ "title": "Health and Safety File staff console",
+ "version": "1.0",
+ "date": "23/09/2026",
+ "assets": [
+  {
+   "id": "hsf-staff-og",
+   "block": "Head: social share card",
+   "purpose": "The image shown if the staff console link is pasted into a chat or email among Care Net staff. The page is not indexed.",
+   "type": "og_image",
+   "formats": [
+    "jpg",
+    "png"
+   ],
+   "width": 1200,
+   "height": 630,
+   "ratio": "1.91:1",
+   "max_kb": 300,
+   "colour": "Charcoal #1A1A1A field, Care Net red #ED1B24 accent, white Bebas Neue headline \"Health and Safety File staff console\", Care Net logo top left, pattern strip along the bottom edge",
+   "alt": "The Care Net Health and Safety File staff console",
+   "file_name": "hsf-staff-og-1200x630.jpg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-staff-og-1200x630.jpg",
+   "status": "needed",
+   "notes": "Keep all text inside the central 1080 by 566 safe area. No client names, no documents with readable details, no screenshots of real records. The meta tag already points at the delivery path."
+  },
+  {
+   "id": "hsf-staff-logo",
+   "block": "Header: logo",
+   "purpose": "Care Net Consultants logo in the shared site header.",
+   "type": "logo",
+   "formats": [
+    "webp",
+    "png"
+   ],
+   "width": 445,
+   "height": 160,
+   "ratio": "2.78:1",
+   "max_kb": 30,
+   "colour": "Brand master",
+   "alt": "Care Net Consultants, Occupational Health Medical Specialists",
+   "file_name": "New-Site_Care_Net_Logo.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Care_Net_Logo.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  },
+  {
+   "id": "hsf-staff-hero",
+   "block": "Hero: photograph card (right)",
+   "purpose": "Sets the scene for the console: a Care Net staff member at a desk checking a Health and Safety File on screen against a printed register, a File binder beside the keyboard.",
+   "type": "photo",
+   "formats": [
+    "avif",
+    "webp",
+    "jpg"
+   ],
+   "width": 1920,
+   "height": 1080,
+   "ratio": "16:9",
+   "max_kb": 220,
+   "colour": "Natural office light, warm neutrals; a touch of Care Net red (lanyard, binder spine). Dark enough at the left edge to sit against the charcoal hero.",
+   "alt": "A Care Net staff member checking a Health and Safety File against a register",
+   "file_name": "hsf-staff-hero-1920x1080.webp",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-staff-hero-1920x1080.webp",
+   "status": "needed",
+   "notes": "Until delivered the page shows the existing record-submission.webp. Supply 960 by 540 as well for mobile (max 90 KB). Screens and papers must show no readable client, personal or health information. Model release required for anyone identifiable."
+  },
+  {
+   "id": "hsf-staff-pattern",
+   "block": "Africa pattern strip under the hero",
+   "purpose": "The Care Net Africa pattern strip, the page break used across carenetconsultants.co.za.",
+   "type": "pattern",
+   "formats": [
+    "png",
+    "webp"
+   ],
+   "width": 2400,
+   "height": 96,
+   "ratio": "25:1",
+   "max_kb": 80,
+   "colour": "The Africa pattern in its own brand colours on a white ground; the strip blends the white away (multiply), so no transparency is needed",
+   "alt": "Decorative, no alternative text",
+   "file_name": "shared_cnc-nl-africa-pattern-strip-1200.png",
+   "delivery": "img.carenetcdn.com/medical-surveillance/shared_cnc-nl-africa-pattern-strip-1200.png",
+   "status": "existing",
+   "notes": "Set by /css/cnc-pattern.css as a background that repeats left to right at 48 px high. Shared by every page; the 2x tile is specified on the File builder page."
+  },
+  {
+   "id": "hsf-staff-signin-illustration",
+   "block": "Console: sign in card",
+   "purpose": "Illustration beside the staff sign in form: a staff lanyard card and an envelope carrying a key towards an open File binder.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 480,
+   "height": 320,
+   "ratio": "3:2",
+   "max_kb": 25,
+   "colour": "Line art in charcoal #1A1A1A with Care Net red #ED1B24 accents on a white or #F7F5F5 ground",
+   "alt": "A staff card and an envelope carrying a key to an open Health and Safety File",
+   "file_name": "hsf-staff-signin-480x320.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-staff-signin-480x320.svg",
+   "status": "needed",
+   "notes": "Decorative on the page (the form carries the meaning), so it is placed with empty alternative text. SVG preferred; PNG at 2x (960 by 640) as fallback. Floats right on desktop, full width on mobile. Shown only while signed out."
+  },
+  {
+   "id": "hsf-staff-tab-clients-icon",
+   "block": "Console: tab 1, Clients to verify",
+   "purpose": "Icon on the Clients to verify tab: a company building with a small tick on a card.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 26 by 26 inside a #FFF5F5 rounded tile.",
+   "alt": "Clients to verify",
+   "file_name": "hsf-staff-tab-clients.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-staff-tab-clients.svg",
+   "status": "needed",
+   "notes": "Icon 1 of a set of four sharing one stroke weight and corner radius; must read at 26 by 26. The tab name sits beside it, so it is placed with empty alternative text. Until delivered the tile shows the tab number. Visible once signed in with staff access, or on ?demo=1."
+  },
+  {
+   "id": "hsf-staff-tab-scans-icon",
+   "block": "Console: tab 2, Scans and staging",
+   "purpose": "Icon on the Scans and staging tab: a document under a magnifying glass with a small shield.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 26 by 26 inside a #FFF5F5 rounded tile.",
+   "alt": "Scans and staging",
+   "file_name": "hsf-staff-tab-scans.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-staff-tab-scans.svg",
+   "status": "needed",
+   "notes": "Icon 2 of a set of four. No padlock or badge that could read as a certification mark. Placed with empty alternative text. Until delivered the tile shows the tab number."
+  },
+  {
+   "id": "hsf-staff-tab-signatories-icon",
+   "block": "Console: tab 3, Signatories",
+   "purpose": "Icon on the Signatories tab: a person with a registration card and a pen.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 26 by 26 inside a #FFF5F5 rounded tile.",
+   "alt": "Signatories",
+   "file_name": "hsf-staff-tab-signatories.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-staff-tab-signatories.svg",
+   "status": "needed",
+   "notes": "Icon 3 of a set of four. No real registering body logo or card design. Placed with empty alternative text. Until delivered the tile shows the tab number."
+  },
+  {
+   "id": "hsf-staff-tab-signoffs-icon",
+   "block": "Console: tab 4, Sign offs and readiness",
+   "purpose": "Icon on the Sign offs and readiness tab: a File binder with a signature line and a small arrow leaving it.",
+   "type": "icon",
+   "formats": [
+    "svg"
+   ],
+   "width": 64,
+   "height": 64,
+   "ratio": "1:1",
+   "max_kb": 4,
+   "colour": "Two colour line icon: charcoal #1A1A1A strokes at 2 px on a 24 px grid, one Care Net red #C5141B accent; transparent background. Displayed at 26 by 26 inside a #FFF5F5 rounded tile.",
+   "alt": "Sign offs and readiness",
+   "file_name": "hsf-staff-tab-signoffs.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-staff-tab-signoffs.svg",
+   "status": "needed",
+   "notes": "Icon 4 of a set of four. No stamp or seal (the console never shows a compliance stamp). Placed with empty alternative text. Until delivered the tile shows the tab number."
+  },
+  {
+   "id": "hsf-staff-empty-state",
+   "block": "Console: any tab with nothing waiting",
+   "purpose": "Empty state for a console list with nothing in it: a tidy desk tray with a single checked sheet.",
+   "type": "illustration",
+   "formats": [
+    "svg",
+    "png"
+   ],
+   "width": 520,
+   "height": 325,
+   "ratio": "16:10",
+   "max_kb": 30,
+   "colour": "Soft neutrals #F7F5F5 and #E5E2E2 with charcoal line work and one Care Net red accent",
+   "alt": "Nothing waiting",
+   "file_name": "hsf-staff-empty-520x325.svg",
+   "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-staff-empty-520x325.svg",
+   "status": "needed",
+   "notes": "Displayed at up to 260 by 163. Decorative on the page; the sentence beneath it carries the message. Shown only when a list is empty, so design mode may list it without a visible slot."
+  },
+  {
+   "id": "hsf-staff-autohive-bee",
+   "block": "Footer: AutoHive stamp",
+   "purpose": "The AutoHive bee in the shared footer stamp.",
+   "type": "icon",
+   "formats": [
+    "webp"
+   ],
+   "width": 22,
+   "height": 22,
+   "ratio": "1:1",
+   "max_kb": 3,
+   "colour": "Gold, as supplied",
+   "alt": "Decorative, no alternative text",
+   "file_name": "New-Site_Bee_Icon_Gold.webp",
+   "delivery": "img.carenetcdn.com/medical-surveillance/New-Site_Bee_Icon_Gold.webp",
+   "status": "existing",
+   "notes": "Shared across every page. No change needed."
+  }
+ ]
+}
+</script>
+
+<script type="module">
+import { auth } from '/js/cnc-auth.js';
+
+/* =====================================================================
+   The staff console. Everything below runs inside try/catch boundaries
+   so an unreachable API shows a friendly state, never a page error.
+   ===================================================================== */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+const params = new URLSearchParams(location.search);
+const DEMO = params.get('demo') === '1';
+
+/* hsf_client_verification.method (contract 10.2). */
+const METHODS = [
+  ['mco_company_ref', 'MyClinicOnline company reference'],
+  ['client_register', 'Care Net client register number'],
+  ['sales_executive', 'Confirmed by a sales executive']
+];
+const METHOD_NAME = Object.fromEntries(METHODS);
+/* hsf_signatory categories by registering body (053). Candidate categories
+   are recorded but never sign a File alone. */
+const CATEGORIES = {
+  SACPCMP: ['Pr CHSA', 'CHSM', 'CHSO', 'Can CHSA', 'Can CHSM', 'Can CHSO'],
+  SAIOSH: ['TechSAIOSH', 'GradSAIOSH', 'CMSAIOSH']
+};
+/* The sign off kinds the console records. The OMP is not a File signatory,
+   so omp_medical is never offered (the database refuses it anyway). */
+const KINDS = [
+  ['safety_content', 'Safety content sign off by a registered practitioner'],
+  ['client_16_2_acceptance', 'Client acceptance by the section 16(2) appointee'],
+  ['ceo_16_1_acknowledgement', 'Chief executive acknowledgement (recorded, not needed for release)']
+];
+const KIND_SHORT = { safety_content: 'Safety content', client_16_2_acceptance: 'Client acceptance', ceo_16_1_acknowledgement: 'Chief executive acknowledgement' };
+const DECISIONS = [['approved', 'Approved'], ['amended', 'Amended, changes asked for'], ['rejected', 'Rejected']];
+const DECISION_NAME = { approved: 'Approved', amended: 'Amended', rejected: 'Rejected' };
+const DEPT_NAME = { EXEC: 'Executive and legal', HR: 'Human resources', SHE: 'Health and safety', OPS: 'Operations', ENG: 'Engineering and maintenance', PROC: 'Procurement and contractors', OH: 'Occupational health and medical', TRAIN: 'Training and development', FAC: 'Facilities and security' };
+const TYPE_NAME = {
+  'application/pdf': 'PDF', 'image/jpeg': 'JPEG image', 'image/png': 'PNG image', 'text/csv': 'CSV file',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'Word document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel workbook',
+  'application/msword': 'Word document (older format)', 'application/vnd.ms-excel': 'Excel workbook (older format)'
+};
+const UPLOAD_STATUS = { uploaded: 'Uploaded', verified: 'Uploaded', held: 'Held for MyClinicOnline', transferring: 'Being moved to MyClinicOnline', transferred: 'Transferred to MyClinicOnline', rejected: 'Not accepted', failed: 'Failed', client_deleted: 'Deleted by the client', expired: 'Removed at the two year limit' };
+const BLOCKED = { 'consent withdrawn': 'Transfer blocked: a consent was withdrawn', 'client verification revoked': 'Transfer blocked: the client verification was revoked' };
+const SCAN_TRIES = 5;
+
+/* ------------------------------------------------------------ helpers */
+const dmy = (d) => {
+  if (!d) return '';
+  const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + '/' + m[2] + '/' + m[1] : String(d);
+};
+const SAST = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Johannesburg', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+const when = (ts) => {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return isNaN(d) ? dmy(ts) : SAST.format(d).replace(',', '');
+};
+const fmtSize = (b) => {
+  const n = Number(b) || 0;
+  if (n >= 1048576) return (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+  if (n >= 1024) return Math.max(1, Math.round(n / 1024)) + ' KB';
+  return n + (n === 1 ? ' byte' : ' bytes');
+};
+const fmtPct = (n) => (n == null || n === '' || isNaN(Number(n))) ? 'Not yet worked out' : Number(n).toFixed(1).replace('.', ',') + '%';
+const words = (s) => String(s || '').replace(/_/g, ' ');
+/* Today and now on the South African calendar (UTC+2, no daylight saving). */
+const saNow = () => new Date(Date.now() + 2 * 3600000).toISOString();
+const todaySA = () => saNow().slice(0, 10);
+const plural = (n, one, many) => n + ' ' + (n === 1 ? one : (many || one + 's'));
+const sampleTag = (r) => (DEMO && r && r.__sample ? ' <span class="pill sample">Sample</span>' : '');
+let liveTimer = null;
+function announce(msg) {
+  const el = $('live'); if (!el) return;
+  el.textContent = '';
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => { el.textContent = msg; }, 60);
+}
+function withTimeout(p, ms) {
+  let t;
+  return Promise.race([p, new Promise((_, rej) => { t = setTimeout(() => { const e = new Error('timeout'); e.timeout = true; rej(e); }, ms); })])
+    .finally(() => clearTimeout(t));
+}
+function friendly(err, fallback) {
+  if (!err) return fallback;
+  if (err.timeout) return 'Care Net’s servers took too long to answer. Please try again shortly.';
+  if (!err.status || err.status >= 500 || err.status === 405) return fallback;
+  if (err.status === 404 && !err.code) return fallback;
+  return err.message || fallback;
+}
+function msgBox(kind, text) {
+  return '<div class="' + (kind === 'ok' ? 'okbox' : 'errbox') + '" role="' + (kind === 'ok' ? 'status' : 'alert') + '">' + text + '</div>';
+}
+function emptyState(text) {
+  return '<div class="empty"><div class="ill" data-asset="hsf-staff-empty-state" aria-hidden="true">Nothing waiting</div><p class="muted">' + esc(text) + '</p></div>';
+}
+
+const STATES = ['st-loading', 'st-error', 'st-signin', 'st-denied', 'st-console'];
+function show(id) { STATES.forEach((s) => { $(s).hidden = s !== id; }); }
+function showError(msg) {
+  $('st-error-msg').textContent = msg || 'Please try again in a few minutes.';
+  show('st-error');
+}
+
+/* ------------------------------------------------------------ state */
+const TABS = ['tab-clients', 'tab-scans', 'tab-signatories', 'tab-signoffs'];
+const S = {
+  user: null, tab: 'tab-clients',
+  verification: null, scans: null, signatories: null, alerts: null, files: null,
+  errors: {},
+  /* What is open inside a panel: at most one form or confirmation per panel. */
+  open: { clients: null, scans: null, signatories: null, signoffs: null },
+  flash: { clients: '', scans: '', signatories: '', signoffs: '' },
+  busy: false
+};
+
+/* ------------------------------------------------------------ API */
+async function api(path, opts) {
+  if (DEMO) return demoApi(path, opts || {});
+  return withTimeout(auth.apiFetch(path, opts), 20000);
+}
+/* A 401 or 403 in the middle of a session moves the page to the right state. */
+function sessionGone(e) {
+  if (e && e.status === 401) { show('st-signin'); return true; }
+  if (e && e.status === 403) { showDenied(); return true; }
+  return false;
+}
+function showDenied() {
+  $('denied-email').textContent = (S.user && S.user.email) || 'your email';
+  show('st-denied');
+}
+
+const LOADERS = {
+  'tab-clients': async () => { S.verification = await api('/api/hsf-staff?view=verification'); },
+  'tab-scans': async () => { S.scans = await api('/api/hsf-staff?view=scans'); },
+  'tab-signatories': async () => {
+    const [list, alerts] = await Promise.all([api('/api/hsf-staff?view=signatories'), api('/api/hsf-staff?view=signatory_alerts')]);
+    S.signatories = list; S.alerts = alerts;
+  },
+  'tab-signoffs': async () => {
+    const [files, list] = await Promise.all([api('/api/hsf-staff?view=files'), S.signatories ? Promise.resolve(S.signatories) : api('/api/hsf-staff?view=signatories')]);
+    S.files = files; S.signatories = list;
+  }
+};
+async function loadTab(id, force) {
+  const key = id.slice(4);
+  const have = { clients: S.verification, scans: S.scans, signatories: S.signatories && S.alerts, signoffs: S.files }[key];
+  if (have && !force) { render(key); return true; }
+  S.errors[key] = null;
+  $(panelOf(id)).innerHTML = '<p class="muted" role="status"><span class="spinner" aria-hidden="true"></span>Loading.</p>';
+  try {
+    await LOADERS[id]();
+  } catch (e) {
+    if (sessionGone(e)) return false;
+    S.errors[key] = friendly(e, 'This list could not be loaded just now. Please try again shortly.');
+  }
+  render(key);
+  return true;
+}
+const panelOf = (tabId) => $(tabId).getAttribute('aria-controls');
+
+/* ------------------------------------------------------------ rendering */
+function render(key) {
+  const p = $('panel-' + key);
+  if (S.errors[key]) {
+    p.innerHTML = msgBox('err', esc(S.errors[key])) + '<div class="row" style="margin-top:10px"><button type="button" class="btn plain sm inl" data-act="reload" data-cta="hsf_staff_reload_tab">Try again</button></div>';
+    return;
+  }
+  const html = { clients: renderClients, scans: renderScans, signatories: renderSignatories, signoffs: renderSignoffs }[key]();
+  p.innerHTML = (S.flash[key] ? '<div id="flash-' + key + '" tabindex="-1">' + S.flash[key] + '</div>' : '') + html;
+  renderCounts();
+  const rule = $('rule-check-days');
+  if (rule) rule.textContent = checkLimit() + (checkDays() ? ' (the number Care Net sets)' : '');
+}
+/* hsf.signoff_register_check_max_days as hsf_staff_signatory_list returns it
+   with every signatory, so the page states the limit the release gate applies
+   and never a number of its own. */
+function checkDays() {
+  const n = S.signatories && S.signatories.length ? Number(S.signatories[0].register_check_max_days) : NaN;
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+function checkLimit() {
+  const n = checkDays();
+  return n ? 'no more than ' + plural(n, 'day') : 'no more than the number of days Care Net sets';
+}
+function renderCounts() {
+  const set = (id, n) => { const el = $(id); if (!el) return; el.hidden = n == null; el.innerHTML = n == null ? '' : n + '<span class="vh"> needing attention</span>'; };
+  set('cnt-clients', S.verification ? S.verification.filter((r) => r.status === 'requested').length : null);
+  set('cnt-scans', S.scans ? S.scans.scans.length + S.scans.staging_alerts.length : null);
+  set('cnt-signatories', S.alerts ? S.alerts.length : null);
+  set('cnt-signoffs', S.files ? S.files.filter((f) => f.readiness && f.readiness.ready && !f.readiness.released).length : null);
+}
+/* A help line is tied to its control unless the control already names what
+   describes it. */
+const field = (id, label, input, help) => {
+  const tied = help && input.indexOf('aria-describedby') < 0 ? input.replace('id="' + id + '"', 'id="' + id + '" aria-describedby="' + id + '-help"') : input;
+  return '<label class="l" for="' + id + '">' + esc(label) + '</label>' + tied + (help ? '<p class="help" id="' + id + '-help">' + esc(help) + '</p>' : '');
+};
+const textInput = (id, value, extra) => '<input type="text" id="' + id + '" value="' + esc(value || '') + '" autocomplete="off"' + (extra || '') + '>';
+const dateInput = (id, value, extra) => '<input type="date" id="' + id + '" value="' + esc(value || '') + '"' + (extra || '') + '>';
+const selectInput = (id, options, value, extra) => '<select id="' + id + '"' + (extra || '') + '>' + options.map((o) => '<option value="' + esc(o[0]) + '"' + (o[0] === value ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>';
+
+/* ---------- tab 1: clients to verify */
+function renderClients() {
+  const rows = S.verification || [];
+  const n = (st) => rows.filter((r) => r.status === st).length;
+  let html = '<h3>Companies that asked for verification</h3>'
+    + '<p class="muted" style="margin:0">A company uploads only once it is verified as a Care Net client. Record what the verification rests on, so the next person can check it.</p>'
+    + '<div class="counts"><span class="pill wait">' + n('requested') + ' waiting</span><span class="pill ok">' + n('verified') + ' verified</span><span class="pill grey">' + n('revoked') + ' revoked</span></div>';
+  if (!rows.length) return html + emptyState('No company has asked for verification yet.');
+  html += '<ul class="rows">' + rows.map((r) => {
+    const id = r.client_account_id;
+    const pill = r.status === 'verified' ? '<span class="pill ok">Verified</span>' : (r.status === 'revoked' ? '<span class="pill no">Revoked</span>' : '<span class="pill wait">Waiting for verification</span>');
+    const o = S.open.clients && S.open.clients.id === id ? S.open.clients : null;
+    const meta = ['<b>' + esc(r.contact_email || 'No contact email') + '</b>', 'Asked on ' + esc(when(r.requested_at))];
+    /* A company registered for its File alone stays an applicant (approval comes only with the Plan), so only a declined account is flagged. */
+    if (r.account_kind === 'declined') meta.push('Account: ' + esc(words(r.account_kind)));
+    let detail = '';
+    if (r.method) detail += '<div class="meta">Evidence (' + esc(METHOD_NAME[r.method] || words(r.method)) + '): <b>' + esc(r.evidence_ref || '') + '</b>' + (r.verified_at ? ', verified on ' + esc(when(r.verified_at)) : '') + (r.verified_by ? ' by ' + esc(r.verified_by) : '') + '</div>';
+    if (r.status === 'revoked') detail += '<div class="meta">Revoked on ' + esc(when(r.revoked_at)) + (r.revoked_by ? ' by ' + esc(r.revoked_by) : '') + ': ' + esc(r.revoke_reason || '') + '</div>';
+    let acts = '';
+    if (!o) {
+      acts = '<div class="acts">'
+        + (r.status !== 'verified' ? '<button type="button" class="btn sm inl" data-act="verify-open" data-id="' + esc(id) + '" data-cta="hsf_staff_verify_open">' + (r.status === 'revoked' ? 'Verify again' : 'Verify this company') + '</button>' : '')
+        + (r.status === 'verified' ? '<button type="button" class="btn plain sm inl" data-act="revoke-open" data-id="' + esc(id) + '" data-cta="hsf_staff_revoke_open">Revoke verification</button>' : '')
+        + '</div>';
+    }
+    return '<li class="rowcard" id="cl-' + esc(id) + '"><div class="top"><h4 class="nm">' + esc(r.company_name || 'Company') + sampleTag(r) + '</h4>' + pill + '</div>'
+      + '<div class="meta">' + meta.join(' <span aria-hidden="true">&middot;</span> ') + '</div>' + detail + acts
+      + (o && o.mode === 'verify' ? verifyForm(r, o) : '') + (o && o.mode === 'revoke' ? revokeConfirm(r, o) : '') + '</li>';
+  }).join('') + '</ul>';
+  return html;
+}
+function verifyForm(r, o) {
+  return '<form class="formbox" id="verify-form" data-id="' + esc(r.client_account_id) + '" novalidate>'
+    + '<h4 id="form-title" tabindex="-1">Verify ' + esc(r.company_name || 'this company') + '</h4>'
+    + field('vf-method', 'How the company was verified', selectInput('vf-method', [['', 'Choose one']].concat(METHODS), o.method || '', ' required aria-describedby="vf-msg"'))
+    + field('vf-ref', 'Evidence reference', textInput('vf-ref', o.ref, ' maxlength="200" required aria-describedby="vf-ref-help vf-msg"'), 'For example the MyClinicOnline company reference, the client register number, or the date and name of the sales executive’s confirmation.')
+    + '<div class="fmsg" id="vf-msg">' + (o.msg || '') + '</div>'
+    + '<div class="row" style="margin-top:12px"><button type="submit" class="btn inl" id="vf-submit" data-cta="hsf_staff_verify_submit">Verify company</button>'
+    + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_form_cancel">Cancel</button></div></form>';
+}
+function revokeConfirm(r, o) {
+  return '<form class="confirm" id="revoke-form" data-id="' + esc(r.client_account_id) + '" novalidate>'
+    + '<h4 id="form-title" tabindex="-1">Revoke the verification of ' + esc(r.company_name || 'this company') + '?</h4>'
+    + '<p class="muted" style="margin:0">New uploads stop at once. Documents not yet transferred are blocked from the scan and the transfer. Nothing is deleted, and the company can be verified again later.</p>'
+    + field('rv-reason', 'Reason for the revocation', '<textarea id="rv-reason" maxlength="500" required aria-describedby="rv-reason-help rv-msg">' + esc(o.reason || '') + '</textarea>', 'Kept on record with your email. Up to 500 characters.')
+    + '<div class="fmsg" id="rv-msg">' + (o.msg || '') + '</div>'
+    + '<div class="row" style="margin-top:12px"><button type="submit" class="btn danger inl" id="rv-submit" data-cta="hsf_staff_revoke_confirm">Confirm revocation</button>'
+    + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_revoke_cancel">Cancel</button></div></form>';
+}
+
+/* ---------- tab 2: scans and staging */
+function findingsHtml(f) {
+  const list = Array.isArray(f) ? f : [];
+  if (!list.length) return '';
+  return '<ul class="fl">' + list.slice(0, 8).map((x) => '<li>' + esc(x && typeof x === 'object' ? (x.message || x.code || '') : x) + '</li>').join('') + '</ul>';
+}
+function whereHtml(u) {
+  const bits = [];
+  if (u.section_code) bits.push('Section ' + esc(u.section_code));
+  if (u.department_code) bits.push(esc(DEPT_NAME[u.department_code] || u.department_code));
+  if (u.mime_type) bits.push(esc(TYPE_NAME[u.mime_type] || u.mime_type));
+  if (u.size_bytes != null) bits.push(esc(fmtSize(u.size_bytes)));
+  return bits.join(' <span aria-hidden="true">&middot;</span> ');
+}
+function renderScans() {
+  const d = S.scans || { scans: [], staging_alerts: [] };
+  let html = '<h3>Security scans waiting</h3>'
+    + '<p class="muted" style="margin:0">Documents uploaded but not yet cleared by the security scan. A scan that ends in an error is tried again, ' + SCAN_TRIES + ' times at most. File names are never shown here.</p>';
+  if (!d.scans.length) html += emptyState('No document is waiting for its security scan.');
+  else html += '<ul class="rows">' + d.scans.map((u) => {
+    const id = u.upload_id;
+    const o = S.open.scans && S.open.scans.id === id ? S.open.scans : null;
+    const st = u.scan_status === 'error' ? '<span class="pill no">Scan error</span>' : '<span class="pill wait">Scan pending</span>';
+    const tries = '<span class="pill ' + (u.scan_exhausted ? 'no' : 'grey') + '">' + (u.scan_exhausted ? 'All ' + SCAN_TRIES + ' attempts used' : 'Attempt ' + (Number(u.scan_attempts) || 0) + ' of ' + SCAN_TRIES) + '</span>';
+    return '<li class="rowcard" id="sc-' + esc(id) + '"><div class="top"><h4 class="nm">' + esc(u.company_name || 'Company') + sampleTag(u) + '</h4><span class="pills">' + st + tries + '</span></div>'
+      + '<div class="meta">' + whereHtml(u) + '</div>'
+      + '<div class="meta">Uploaded ' + esc(when(u.uploaded_at) || 'not yet') + (u.scanned_at ? ' <span aria-hidden="true">&middot;</span> last scanned ' + esc(when(u.scanned_at)) : '') + (u.scan_engine ? ' <span aria-hidden="true">&middot;</span> engine ' + esc(u.scan_engine) : '') + '</div>'
+      + (u.transfer_blocked_reason ? '<div class="meta"><b>' + esc(BLOCKED[u.transfer_blocked_reason] || ('Transfer blocked: ' + u.transfer_blocked_reason)) + '</b></div>' : '')
+      + findingsHtml(u.scan_findings)
+      + (o ? resetConfirm(u, o) : '<div class="acts"><button type="button" class="btn ' + (u.scan_exhausted ? '' : 'plain ') + 'sm inl" data-act="reset-open" data-id="' + esc(id) + '" data-cta="hsf_staff_scan_reset_open">Scan again</button></div>')
+      + '</li>';
+  }).join('') + '</ul>';
+  html += '<h3>Staging alerts</h3>'
+    + '<p class="muted" style="margin:0">Documents held in Care Net staging longer than the alert period, within 30 days of the two year limit, or whose scan used every attempt.</p>';
+  if (!d.staging_alerts.length) html += emptyState('Nothing in staging needs attention.');
+  else html += '<ul class="rows">' + d.staging_alerts.map((a) => {
+    const soon = a.expires_on && a.expires_on <= new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+    return '<li class="rowcard"><div class="top"><h4 class="nm">' + esc(a.company_name || 'Company') + sampleTag(a) + '</h4><span class="pills">'
+      + '<span class="pill ' + (soon ? 'no' : 'grey') + '">Leaves staging by ' + esc(dmy(a.expires_on)) + '</span>'
+      + (a.scan_exhausted ? '<span class="pill no">Scan attempts used</span>' : '') + '</span></div>'
+      + '<div class="meta">' + esc(UPLOAD_STATUS[a.status] || words(a.status)) + ' <span aria-hidden="true">&middot;</span> ' + whereHtml(a) + '</div>'
+      + '<div class="meta">In staging since ' + esc(when(a.staged_since)) + ', ' + plural(Number(a.days_in_staging) || 0, 'day') + '</div>'
+      + (a.transfer_blocked_reason ? '<div class="meta"><b>' + esc(BLOCKED[a.transfer_blocked_reason] || ('Transfer blocked: ' + a.transfer_blocked_reason)) + '</b></div>' : '')
+      + '</li>';
+  }).join('') + '</ul>';
+  return html;
+}
+function resetConfirm(u, o) {
+  return '<div class="confirm" role="group" aria-labelledby="form-title">'
+    + '<h4 id="form-title" tabindex="-1">Give this document ' + SCAN_TRIES + ' fresh scan attempts?</h4>'
+    + '<p class="muted" style="margin:0">The next scan run picks it up again. Do this once the cause of the errors is fixed; the reset is recorded with your email.</p>'
+    + '<div class="fmsg" id="rs-msg">' + (o.msg || '') + '</div>'
+    + '<div class="row" style="margin-top:12px"><button type="button" class="btn danger inl" id="rs-submit" data-act="reset-confirm" data-id="' + esc(u.upload_id) + '" data-cta="hsf_staff_scan_reset_confirm">Confirm scan reset</button>'
+    + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_scan_reset_cancel">Cancel</button></div></div>';
+}
+
+/* ---------- tab 3: signatories */
+/* Contract 12.5 and 12.6: find a practitioner, or a registered, competent
+   auditor, in the Bee-Matched recruitment portal. While CNC_CONFIG.recruitmentPortalUrl is
+   null (pending), or is not an https address, the buttons ask a sales
+   executive on WhatsApp; once set, they open the portal for the need. */
+function portalHref(need) {
+  const base = (window.CNC_CONFIG || {}).recruitmentPortalUrl;
+  if (!base) return null;
+  try {
+    const u = new URL(base, location.href);
+    if (u.protocol !== 'https:') return null;
+    u.searchParams.set('source', 'hsf'); u.searchParams.set('need', need);
+    return u.toString();
+  } catch (_) { return null; }
+}
+function recruitHtml() {
+  const wa = (window.CNC_CONFIG || {}).whatsappUrl || 'https://wa.me/27600702723';
+  const sig = portalHref('signatory'), aud = portalHref('auditor');
+  return '<div class="note" style="margin-top:12px"><p style="margin:0 0 8px">Need a SACPCMP or SAIOSH registered practitioner to sign a File, or a competent person for an appointment? Care Net’s Bee-Matched recruitment portal places and onboards them, with the appointment and engagement letters the File needs. Their recruitment portal reference goes in the letter fields below.'
+    + (sig ? '' : ' The portal address is pending, so for now a sales executive arranges it.') + '</p>'
+    + '<a class="btn ghost sm inl" href="' + esc(sig || wa) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_hs_practitioner" data-need="signatory">' + esc(sig ? 'Find a practitioner in the Bee-Matched recruitment portal' : 'Ask a sales executive about onboarding a registered Health and Safety practitioner') + '</a>'
+    + '<p style="margin:12px 0 8px">A File should be audited by someone whose registration and experience fit the company’s industry: for construction, SACPCMP registration in a construction health and safety category; for mining, experience under the Mine Health and Safety Act regime; for every other industry, a registered health and safety practitioner, SACPCMP or SAIOSH, and, where the company runs a certified management system, an ISO 45001 lead auditor qualification. This is Care Net’s standard for the Bee-Matched recruitment portal to confirm.</p>'
+    + '<a class="btn ghost sm inl" href="' + esc(aud || wa) + '" target="_blank" rel="noopener" data-cta="recruitment_onboard_auditor" data-need="auditor">' + esc(aud ? 'Onboard a registered, competent auditor' : 'Ask a sales executive about onboarding a registered, competent auditor') + '</a></div>';
+}
+function sigLabel(s) { return (s.full_name || 'Signatory') + ', ' + s.registration_body + ' ' + s.category + ' ' + s.registration_number; }
+function renderSignatories() {
+  const list = S.signatories || [], alerts = S.alerts || [];
+  const o = S.open.signatories;
+  let html = '<h3>Registrations expiring or expired</h3>'
+    + '<p class="muted" style="margin:0">Practitioners whose registration expires within 60 days or has expired, with the Files they signed that are not yet released.</p>';
+  if (!alerts.length) html += emptyState('No registration expires within 60 days.');
+  else html += '<ul class="rows">' + alerts.map((a) => {
+    const files = Array.isArray(a.unreleased_files) ? a.unreleased_files : [];
+    const days = Number(a.days_to_expiry);
+    return '<li class="rowcard"><div class="top"><h4 class="nm">' + esc(a.full_name) + sampleTag(a) + '</h4><span class="pills">'
+      + (a.expired ? '<span class="pill no">Expired on ' + esc(dmy(a.registration_expires_on)) + '</span>' : '<span class="pill wait">Expires ' + esc(dmy(a.registration_expires_on)) + ', in ' + plural(days, 'day') + '</span>')
+      + (a.renewed ? '<span class="pill ok">Renewal on record</span>' : '') + '</span></div>'
+      + '<div class="meta">' + esc(a.registration_body + ' ' + a.category + ' ' + a.registration_number) + '</div>'
+      + (files.length ? '<div class="meta"><b>Signed, not yet released:</b></div><ul class="fl">' + files.map((f) => '<li>' + esc(f.reference) + ' revision ' + esc(f.revision) + ', ' + esc(f.company_name) + ', signed ' + esc(when(f.decided_at)) + '</li>').join('') + '</ul>' : '<div class="meta">No unreleased File rests on this registration.</div>')
+      + '</li>';
+  }).join('') + '</ul>';
+  html += '<h3>Signatory credentials</h3>'
+    + '<p class="muted" style="margin:0">One record per registration period: record a renewal as a new signatory. Credentials that support a released File cannot be changed, except to add a recruitment portal reference once.</p>'
+    + recruitHtml();
+  html += (o && !o.id ? signatoryForm(null, o) : '<div class="acts"><button type="button" class="btn sm inl" data-act="sig-new" data-cta="hsf_staff_signatory_add">Add a signatory</button></div>');
+  if (!list.length) return html + emptyState('No signatory is recorded yet.');
+  html += '<ul class="rows">' + list.map((s) => {
+    const mine = o && o.id === s.id;
+    const flags = [];
+    flags.push(s.expired ? '<span class="pill no">Registration expired</span>' : '<span class="pill ok">Registered until ' + esc(dmy(s.registration_expires_on)) + '</span>');
+    if (/^Can /.test(s.category)) flags.push('<span class="pill grey">Candidate: never signs alone</span>');
+    flags.push(s.register_check_current ? '<span class="pill ok">Register check current</span>' : '<span class="pill wait">Register check ' + (s.register_checked_on ? 'too old' : 'missing') + '</span>');
+    flags.push(s.letters_on_record ? '<span class="pill ok">Both letters on record</span>' : '<span class="pill wait">Letter missing</span>');
+    if (s.frozen) flags.push('<span class="pill info">Supports a released File</span>');
+    const letter = (kind, ref, date, portal) => ref ? esc(ref) + ', dated ' + esc(dmy(date)) + (portal ? ', recruitment portal ' + esc(portal) : '') : 'Not on record';
+    return '<li class="rowcard" id="sg-' + esc(s.id) + '"><div class="top"><h4 class="nm">' + esc(s.full_name) + sampleTag(s) + '</h4></div>'
+      + '<div class="pills" style="margin-top:6px">' + flags.join('') + '</div>'
+      + '<div class="kvs">'
+      + '<div><span>Registration</span>' + esc(s.registration_body + ' ' + s.category) + '<br>' + esc(s.registration_number) + '</div>'
+      + '<div><span>Register checked</span>' + (s.register_checked_on ? esc(dmy(s.register_checked_on)) + ' (' + plural(Number(s.register_check_age_days) || 0, 'day') + ' ago)<br>Proof ' + esc(s.register_proof_ref) + (Number(s.register_checks) > 1 ? '<br>' + esc(s.register_checks) + ' checks on record' : '') : 'Not recorded') + '</div>'
+      + '<div><span>Sign offs</span>' + esc(s.signoffs || 0) + '</div>'
+      + '<div><span>Appointment letter</span>' + letter('a', s.appointment_letter_ref, s.appointment_letter_date, s.appointment_letter_recruitment_portal_ref) + '</div>'
+      + '<div><span>Engagement letter</span>' + letter('e', s.engagement_letter_ref, s.engagement_letter_date, s.engagement_letter_recruitment_portal_ref) + '</div>'
+      + '<div><span>Recorded</span>' + esc(when(s.created_at)) + (s.created_by ? '<br>by ' + esc(s.created_by) : '') + '</div>'
+      + '</div>'
+      + (mine ? signatoryForm(s, o) : '<div class="acts"><button type="button" class="btn plain sm inl" data-act="sig-edit" data-id="' + esc(s.id) + '" data-cta="hsf_staff_signatory_correct">' + (s.frozen ? 'Record a register check or a portal reference' : 'Correct these details') + '</button></div>')
+      + '</li>';
+  }).join('') + '</ul>';
+  return html;
+}
+const SIG_FIELDS = ['full_name', 'registration_body', 'category', 'registration_number', 'registration_expires_on', 'register_checked_on', 'register_proof_ref',
+  'appointment_letter_ref', 'appointment_letter_date', 'appointment_letter_recruitment_portal_ref', 'engagement_letter_ref', 'engagement_letter_date', 'engagement_letter_recruitment_portal_ref'];
+function signatoryForm(s, o) {
+  const v = o.values || {};
+  const body = v.registration_body || 'SACPCMP';
+  const cats = (CATEGORIES[body] || []).map((c) => [c, c]);
+  const today = todaySA();
+  return '<form class="formbox" id="sig-form" novalidate' + (s ? ' data-id="' + esc(s.id) + '"' : '') + '>'
+    + '<h4 id="form-title" tabindex="-1">' + (s ? 'Correct the details of ' + esc(s.full_name) : 'Add a signatory') + '</h4>'
+    + (s && s.frozen ? '<p class="pending">These credentials support a released File, so the details that release relied on are kept. The database accepts a recruitment portal reference that is not yet set, and a fresh register check: a later check date with the reference of its saved proof, recorded as a new dated check. Any other change is refused. Record a renewal or a correction as a new signatory.</p>' : '')
+    + '<div class="grid">'
+    + '<div>' + field('sf-full_name', 'Full name, as on the register', textInput('sf-full_name', v.full_name, ' maxlength="200" required autocomplete="off"')) + '</div>'
+    + '<div>' + field('sf-registration_number', 'Registration or membership number', textInput('sf-registration_number', v.registration_number, ' maxlength="100" required'), 'Never an identity number.') + '</div>'
+    + '<div>' + field('sf-registration_body', 'Registering body', selectInput('sf-registration_body', [['SACPCMP', 'SACPCMP'], ['SAIOSH', 'SAIOSH']], body, ' required')) + '</div>'
+    + '<div>' + field('sf-category', 'Category or designation', selectInput('sf-category', [['', 'Choose one']].concat(cats), v.category || '', ' required'), 'Candidate categories are recorded but never sign a File alone.') + '</div>'
+    + '<div>' + field('sf-registration_expires_on', 'Registration expires on', dateInput('sf-registration_expires_on', v.registration_expires_on, ' required')) + '</div>'
+    + '</div>'
+    + '<fieldset><legend>Public register check</legend><div class="grid">'
+    + '<div>' + field('sf-register_checked_on', 'Checked on', dateInput('sf-register_checked_on', v.register_checked_on, ' max="' + today + '"')) + '</div>'
+    + '<div>' + field('sf-register_proof_ref', 'Reference of the saved proof', textInput('sf-register_proof_ref', v.register_proof_ref, ' maxlength="200"')) + '</div>'
+    + '</div><p class="help">Record both or neither. A release needs a check ' + esc(checkLimit()) + ' before the decision' + (s && s.frozen ? '; the date shown is the latest check on record' : '') + '.</p></fieldset>'
+    + '<fieldset><legend>Appointment letter</legend><div class="grid">'
+    + '<div>' + field('sf-appointment_letter_ref', 'Document reference', textInput('sf-appointment_letter_ref', v.appointment_letter_ref, ' maxlength="200"')) + '</div>'
+    + '<div>' + field('sf-appointment_letter_date', 'Dated', dateInput('sf-appointment_letter_date', v.appointment_letter_date)) + '</div>'
+    + '<div>' + field('sf-appointment_letter_recruitment_portal_ref', 'Recruitment portal reference (optional)', textInput('sf-appointment_letter_recruitment_portal_ref', v.appointment_letter_recruitment_portal_ref, ' maxlength="200"')) + '</div>'
+    + '</div></fieldset>'
+    + '<fieldset><legend>Engagement letter</legend><div class="grid">'
+    + '<div>' + field('sf-engagement_letter_ref', 'Document reference', textInput('sf-engagement_letter_ref', v.engagement_letter_ref, ' maxlength="200"')) + '</div>'
+    + '<div>' + field('sf-engagement_letter_date', 'Dated', dateInput('sf-engagement_letter_date', v.engagement_letter_date)) + '</div>'
+    + '<div>' + field('sf-engagement_letter_recruitment_portal_ref', 'Recruitment portal reference (optional)', textInput('sf-engagement_letter_recruitment_portal_ref', v.engagement_letter_recruitment_portal_ref, ' maxlength="200"')) + '</div>'
+    + '</div></fieldset>'
+    + '<div class="fmsg" id="sf-msg">' + (o.msg || '') + '</div>'
+    + '<div class="row" style="margin-top:12px"><button type="submit" class="btn inl" id="sf-submit" data-cta="hsf_staff_signatory_save">' + (s ? 'Save the correction' : 'Save the signatory') + '</button>'
+    + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_form_cancel">Cancel</button></div></form>';
+}
+
+/* ---------- tab 4: sign offs and readiness */
+function readinessHtml(r) {
+  if (!r) return '<p class="muted">Readiness not worked out yet.</p>';
+  if (r.released) return '<p class="okbox">Revision ' + esc(r.revision) + ' is released.</p>';
+  if (r.ready) return '<p class="okbox">Revision ' + esc(r.revision) + ' meets every release rule and may be released.</p>';
+  const miss = Array.isArray(r.missing) ? r.missing : [];
+  return '<div class="pending"><p><b>Revision ' + esc(r.revision) + ' is not ready for release.</b></p><ul class="miss">' + miss.map((m) => '<li>' + esc(m) + '</li>').join('') + '</ul></div>';
+}
+function renderSignoffs() {
+  const files = S.files || [];
+  let html = '<h3>Files, their sign offs and release readiness</h3>'
+    + '<p class="muted" style="margin:0">The latest decision of each kind on the current revision, and what a release still needs. Readiness runs the release rules and changes nothing.</p>';
+  if (!files.length) return html + emptyState('No File has been generated yet.');
+  html += '<ul class="rows">' + files.map((f) => {
+    const o = S.open.signoffs && S.open.signoffs.id === f.file_id ? S.open.signoffs : null;
+    const so = f.signoffs || {};
+    const soRow = KINDS.map((k) => {
+      const x = so[k[0]];
+      const txt = x ? esc(DECISION_NAME[x.decision] || words(x.decision)) + ' on ' + esc(when(x.decided_at)) + (x.signatory_name ? ', ' + esc(x.signatory_name) : '') : 'Not recorded';
+      return '<div><span>' + esc(KIND_SHORT[k[0]]) + '</span>' + txt + '</div>';
+    }).join('');
+    const released = f.readiness && f.readiness.released;
+    return '<li class="rowcard" id="fl-' + esc(f.file_id) + '"><div class="top"><h4 class="nm">' + esc(f.reference) + ', ' + esc(f.company_name) + sampleTag(f) + '</h4><span class="pills"><span class="pill grey">' + esc(words(f.status)) + '</span><span class="pill info">Revision ' + esc(f.revision) + '</span></span></div>'
+      + '<div class="meta">' + esc(f.industry_name || f.industry_code || '') + ' <span aria-hidden="true">&middot;</span> Compliance figure ' + esc(fmtPct(f.compliance_pct)) + ' <span aria-hidden="true">&middot;</span> Generated ' + esc(when(f.created_at)) + '</div>'
+      + '<div class="kvs">' + soRow + '</div>'
+      + '<div style="margin-top:10px" id="rd-' + esc(f.file_id) + '">' + readinessHtml(f.readiness) + '</div>'
+      + (o ? signoffForm(f, o) : '<div class="acts">'
+        + (released ? '' : '<button type="button" class="btn sm inl" data-act="so-open" data-id="' + esc(f.file_id) + '" data-cta="hsf_staff_signoff_open">Record a sign off</button>')
+        + '<button type="button" class="btn plain sm inl" data-act="readiness" data-id="' + esc(f.file_id) + '" data-cta="hsf_staff_readiness_check">Check readiness again</button></div>')
+      + '</li>';
+  }).join('') + '</ul>';
+  return html;
+}
+function signoffForm(f, o) {
+  const v = o.values || {};
+  const kind = v.kind || 'safety_content';
+  const sigs = (S.signatories || []).map((s) => [s.id, sigLabel(s) + (s.expired ? ' (registration expired)' : '') + (/^Can /.test(s.category) ? ' (candidate)' : '')]);
+  const safety = kind === 'safety_content';
+  return '<form class="formbox" id="so-form" data-id="' + esc(f.file_id) + '" novalidate>'
+    + '<h4 id="form-title" tabindex="-1">Record a sign off on ' + esc(f.reference) + '</h4>'
+    + '<div class="grid">'
+    + '<div>' + field('so-kind', 'Kind of sign off', selectInput('so-kind', KINDS, kind, ' required')) + '</div>'
+    + '<div>' + field('so-decision', 'Decision', selectInput('so-decision', [['', 'Choose one']].concat(DECISIONS), v.decision || '', ' required')) + '</div>'
+    + '<div>' + field('so-decided_at', 'Decided on', '<input type="datetime-local" id="so-decided_at" value="' + esc(v.decided_at || saNow().slice(0, 16)) + '" max="' + esc(saNow().slice(0, 16)) + '" required aria-describedby="so-decided_at-help">', 'South African time.') + '</div>'
+    + '<div>' + field('so-revision', 'File revision', '<input type="number" id="so-revision" min="1" max="' + esc(f.revision) + '" step="1" value="' + esc(v.revision || f.revision) + '" inputmode="numeric" required>', 'The current revision is ' + f.revision + '.') + '</div>'
+    + '</div>'
+    + (safety
+      ? field('so-signatory_id', 'Signatory', selectInput('so-signatory_id', [['', sigs.length ? 'Choose the signatory' : 'No signatory recorded yet']].concat(sigs), v.signatory_id || '', ' required'), 'Add the practitioner in the Signatories tab first if they are not listed.')
+        + field('so-scope', 'Scope of the sign off', '<textarea id="so-scope" maxlength="500" required>' + esc(v.scope || '') + '</textarea>', 'What the practitioner reviewed, for example the sections and sites.')
+        + field('so-document_ref', 'Reference of the signed document (optional)', textInput('so-document_ref', v.document_ref, ' maxlength="200"'))
+      : field('so-signatory_name', 'Name of the person who signed', textInput('so-signatory_name', v.signatory_name, ' maxlength="200" required'))
+        + field('so-document_ref', kind === 'client_16_2_acceptance' ? 'Reference of the signed acceptance document' : 'Reference of the signed acknowledgement document', textInput('so-document_ref', v.document_ref, ' maxlength="200" required')))
+    + '<div class="fmsg" id="so-msg">' + (o.msg || '') + '</div>'
+    + '<div class="row" style="margin-top:12px"><button type="submit" class="btn inl" id="so-submit" data-cta="hsf_staff_signoff_submit">Record the sign off</button>'
+    + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_form_cancel">Cancel</button></div></form>';
+}
+
+/* ------------------------------------------------------------ opening and closing forms */
+function panelKey(el) { const p = el.closest('.tabpanel'); return p ? p.id.slice(6) : null; }
+function openForm(key, o, back) {
+  S.open[key] = Object.assign({ back }, o);
+  S.flash[key] = '';
+  render(key);
+  const t = $('form-title'); if (t) t.focus();
+}
+/* Closing returns focus to the button that opened the form, found again by
+   its action and record after the panel is drawn afresh. */
+function closeForm(key, focusSel) {
+  const o = S.open[key];
+  S.open[key] = null;
+  render(key);
+  const target = (focusSel && document.querySelector(focusSel)) || (o && o.back && document.querySelector(o.back)) || $('flash-' + key) || $(TABS.find((t) => t.slice(4) === key));
+  if (target) target.focus();
+}
+function formError(key, boxId, text, focusId) {
+  const o = S.open[key]; if (o) o.msg = msgBox('err', esc(text));
+  const box = $(boxId); if (box) box.innerHTML = msgBox('err', esc(text));
+  const f = focusId && $(focusId);
+  if (f) { f.setAttribute('aria-invalid', 'true'); f.focus(); }
+  announce(text);
+}
+function clearInvalid(form) { form.querySelectorAll('[aria-invalid]').forEach((x) => x.removeAttribute('aria-invalid')); }
+function setBusy(btn, on, label) {
+  if (!btn) return;
+  S.busy = on;
+  btn.disabled = on;
+  if (on) { btn.dataset.label = btn.textContent; btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>' + esc(label); btn.setAttribute('aria-busy', 'true'); }
+  else { btn.textContent = btn.dataset.label || btn.textContent; btn.removeAttribute('aria-busy'); }
+}
+function done(key, text) {
+  S.flash[key] = msgBox('ok', esc(text));
+  S.open[key] = null;
+  render(key);
+  const f = $('flash-' + key); if (f) f.focus();
+  announce(text);
+}
+
+/* ------------------------------------------------------------ actions */
+async function submitVerify(form) {
+  const key = 'clients', o = S.open.clients;
+  clearInvalid(form);
+  o.method = $('vf-method').value; o.ref = $('vf-ref').value.trim();
+  if (!o.method) return formError(key, 'vf-msg', 'Choose how the company was verified.', 'vf-method');
+  if (!o.ref) return formError(key, 'vf-msg', 'Record what the verification rests on, for example the client register number.', 'vf-ref');
+  const btn = $('vf-submit'); setBusy(btn, true, 'Verifying');
+  try {
+    await api('/api/hsf-staff', { method: 'POST', body: { action: 'verify_client', client_account_id: form.dataset.id, method: o.method, evidence_ref: o.ref } });
+    const row = (S.verification || []).find((r) => r.client_account_id === form.dataset.id);
+    await reloadQuiet('tab-clients');
+    setBusy(btn, false);
+    done(key, (row ? row.company_name : 'The company') + ' is verified. Its uploads can open.');
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    formError(key, 'vf-msg', friendly(e, 'The verification could not be saved just now. Please try again.'), 'vf-submit');
+  }
+}
+async function submitRevoke(form) {
+  const key = 'clients', o = S.open.clients;
+  clearInvalid(form);
+  o.reason = $('rv-reason').value.trim();
+  if (!o.reason) return formError(key, 'rv-msg', 'Give the reason for the revocation.', 'rv-reason');
+  const btn = $('rv-submit'); setBusy(btn, true, 'Revoking');
+  try {
+    const r = await api('/api/hsf-staff', { method: 'POST', body: { action: 'revoke_client', client_account_id: form.dataset.id, reason: o.reason } });
+    const row = (S.verification || []).find((x) => x.client_account_id === form.dataset.id);
+    await reloadQuiet('tab-clients');
+    setBusy(btn, false);
+    const n = r && Number.isInteger(r.blocked_uploads) ? r.blocked_uploads : 0;
+    done(key, 'The verification of ' + (row ? row.company_name : 'the company') + ' is revoked. ' + (n ? plural(n, 'document') + ' not yet transferred ' + (n === 1 ? 'is' : 'are') + ' now blocked; nothing was deleted.' : 'No document was waiting to transfer.'));
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    formError(key, 'rv-msg', friendly(e, 'The revocation could not be saved just now. Nothing has changed.'), 'rv-submit');
+  }
+}
+async function confirmReset(btn) {
+  const key = 'scans', id = btn.dataset.id;
+  setBusy(btn, true, 'Resetting');
+  try {
+    await api('/api/hsf-staff', { method: 'POST', body: { action: 'scan_reset', upload_id: id } });
+    const row = ((S.scans && S.scans.scans) || []).find((u) => u.upload_id === id);
+    await reloadQuiet('tab-scans');
+    setBusy(btn, false);
+    done(key, 'The scan of the document from ' + (row ? row.company_name : 'the company') + ' starts again with ' + SCAN_TRIES + ' fresh attempts.');
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    formError(key, 'rs-msg', friendly(e, 'The scan reset could not be saved just now. Nothing has changed.'), 'rs-submit');
+  }
+}
+function readSignatoryForm() {
+  const v = {};
+  SIG_FIELDS.forEach((k) => { const el = $('sf-' + k); v[k] = el ? el.value.trim() : ''; });
+  return v;
+}
+async function submitSignatory(form) {
+  const key = 'signatories', o = S.open.signatories;
+  clearInvalid(form);
+  const v = o.values = readSignatoryForm();
+  const need = [['full_name', 'the full name'], ['registration_number', 'the registration number'], ['category', 'the category'], ['registration_expires_on', 'the registration expiry date']];
+  for (const [k, label] of need) if (!v[k]) return formError(key, 'sf-msg', 'Enter ' + label + '.', 'sf-' + k);
+  if (/\d{13}/.test(Object.values(v).join(' '))) return formError(key, 'sf-msg', 'A field appears to hold an identity number. The console records registration numbers only.', 'sf-registration_number');
+  const pairs = [['register_checked_on', 'register_proof_ref', 'the register check date and the reference of its saved proof'], ['appointment_letter_ref', 'appointment_letter_date', 'the appointment letter reference and its date'], ['engagement_letter_ref', 'engagement_letter_date', 'the engagement letter reference and its date']];
+  for (const [a, b, label] of pairs) if (!v[a] !== !v[b]) return formError(key, 'sf-msg', 'Record ' + label + ' together.', 'sf-' + (v[a] ? b : a));
+  if (v.register_checked_on && v.register_checked_on > todaySA()) return formError(key, 'sf-msg', 'The register check date cannot be in the future.', 'sf-register_checked_on');
+  const body = Object.assign({}, v); if (o.id) body.id = o.id;
+  const btn = $('sf-submit'); setBusy(btn, true, 'Saving');
+  try {
+    const r = await api('/api/hsf-staff', { method: 'POST', body: { action: 'signatory_save', signatory: body } });
+    await reloadQuiet('tab-signatories');
+    S.files = null; /* the sign off form lists the signatories: read them again there */
+    setBusy(btn, false);
+    if (r && r.action === 'register_checked') done(key, 'The new register check of ' + v.full_name + ' is recorded.');
+    else done(key, (r && r.action === 'corrected' ? 'The correction to ' : 'The credentials of ') + v.full_name + ' ' + (r && r.action === 'corrected' ? 'is saved.' : 'are saved.'));
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    formError(key, 'sf-msg', friendly(e, 'The signatory could not be saved just now. Please try again.'), 'sf-submit');
+  }
+}
+async function submitSignoff(form) {
+  const key = 'signoffs', o = S.open.signoffs;
+  clearInvalid(form);
+  const g = (id) => { const el = $(id); return el ? el.value.trim() : ''; };
+  const v = o.values = { kind: g('so-kind'), decision: g('so-decision'), decided_at: g('so-decided_at'), revision: g('so-revision'), signatory_id: g('so-signatory_id'), scope: g('so-scope'), signatory_name: g('so-signatory_name'), document_ref: g('so-document_ref') };
+  const file = (S.files || []).find((f) => f.file_id === form.dataset.id) || {};
+  if (!v.decision) return formError(key, 'so-msg', 'Choose the decision.', 'so-decision');
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v.decided_at)) return formError(key, 'so-msg', 'Enter the date and time of the decision.', 'so-decided_at');
+  if (v.decided_at > saNow().slice(0, 16)) return formError(key, 'so-msg', 'The date of the decision cannot be in the future.', 'so-decided_at');
+  const rev = Number(v.revision);
+  if (!Number.isInteger(rev) || rev < 1 || rev > Number(file.revision || rev)) return formError(key, 'so-msg', 'The revision must be a whole number from 1 to ' + (file.revision || 1) + '.', 'so-revision');
+  const p = { file_id: form.dataset.id, revision: rev, kind: v.kind, decision: v.decision, decided_at: v.decided_at + ':00+02:00' };
+  if (v.kind === 'safety_content') {
+    if (!v.signatory_id) return formError(key, 'so-msg', 'Choose the signatory whose credentials this sign off rests on.', 'so-signatory_id');
+    if (!v.scope) return formError(key, 'so-msg', 'Describe the scope of the sign off.', 'so-scope');
+    p.signatory_id = v.signatory_id; p.scope = v.scope;
+    if (v.document_ref) p.document_ref = v.document_ref;
+  } else {
+    if (!v.signatory_name) return formError(key, 'so-msg', 'Enter the name of the person who signed.', 'so-signatory_name');
+    if (!v.document_ref) return formError(key, 'so-msg', 'Enter the reference of the signed document.', 'so-document_ref');
+    p.signatory_name = v.signatory_name; p.document_ref = v.document_ref;
+  }
+  const btn = $('so-submit'); setBusy(btn, true, 'Recording');
+  try {
+    const r = await api('/api/hsf-staff', { method: 'POST', body: { action: 'signoff_record', signoff: p } });
+    await reloadQuiet('tab-signoffs');
+    setBusy(btn, false);
+    let text = KIND_SHORT[v.kind] + ' recorded as ' + (DECISION_NAME[v.decision] || v.decision).toLowerCase() + ' on ' + (file.reference || 'the File') + ' revision ' + rev + '.';
+    if (r && r.signatory_fit) text += ' This sign off cannot release the File: ' + r.signatory_fit + '.';
+    if (r && r.readiness) text += r.readiness.ready ? ' The revision now meets every release rule.' : ' The revision is not ready for release yet.';
+    done(key, text);
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    formError(key, 'so-msg', friendly(e, 'The sign off could not be recorded just now. Please try again.'), 'so-submit');
+  }
+}
+async function checkReadiness(btn) {
+  const id = btn.dataset.id;
+  const f = (S.files || []).find((x) => x.file_id === id); if (!f) return;
+  setBusy(btn, true, 'Checking');
+  try {
+    f.readiness = await api('/api/hsf-staff?view=readiness&file_id=' + encodeURIComponent(id) + '&revision=' + encodeURIComponent(f.revision));
+    S.busy = false;
+    S.flash.signoffs = '';
+    render('signoffs');
+    const b = document.querySelector('[data-act="readiness"][data-id="' + CSS.escape(id) + '"]'); if (b) b.focus();
+    announce(f.reference + ': ' + (f.readiness && f.readiness.ready ? 'ready for release.' : 'not ready for release.'));
+  } catch (e) {
+    setBusy(btn, false);
+    if (sessionGone(e)) return;
+    const box = $('rd-' + id);
+    if (box) box.insertAdjacentHTML('beforeend', msgBox('err', esc(friendly(e, 'Readiness could not be checked just now.'))));
+    btn.focus();
+  }
+}
+/* After a write the list is read again, so what shows is what the database holds. */
+async function reloadQuiet(tabId) {
+  try { await LOADERS[tabId](); } catch (e) { if (e && (e.status === 401 || e.status === 403)) throw e; }
+}
+
+function wirePanels() {
+  document.querySelectorAll('.tabpanel').forEach((p) => {
+    p.addEventListener('click', (ev) => {
+      const b = ev.target.closest('[data-act]'); if (!b || S.busy) return;
+      const key = panelKey(b), id = b.dataset.id, act = b.dataset.act;
+      const back = '[data-act="' + act + '"]' + (id ? '[data-id="' + CSS.escape(id) + '"]' : '');
+      if (act === 'reload') loadTab('tab-' + key, true).then(() => { const t = $('tab-' + key); if (t) t.focus(); });
+      else if (act === 'close') closeForm(key);
+      else if (act === 'verify-open') openForm(key, { mode: 'verify', id }, back);
+      else if (act === 'revoke-open') openForm(key, { mode: 'revoke', id }, back);
+      else if (act === 'reset-open') openForm(key, { id }, back);
+      else if (act === 'reset-confirm') confirmReset(b);
+      else if (act === 'sig-new') openForm(key, { id: null, values: {} }, back);
+      else if (act === 'sig-edit') {
+        const s = (S.signatories || []).find((x) => x.id === id) || {};
+        const values = {}; SIG_FIELDS.forEach((k) => { values[k] = s[k] == null ? '' : String(s[k]); });
+        openForm(key, { id, values }, back);
+      }
+      else if (act === 'so-open') openForm(key, { id, values: {} }, back);
+      else if (act === 'readiness') checkReadiness(b);
+    });
+    p.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      if (S.busy) return;
+      const f = ev.target;
+      if (f.id === 'verify-form') submitVerify(f);
+      else if (f.id === 'revoke-form') submitRevoke(f);
+      else if (f.id === 'sig-form') submitSignatory(f);
+      else if (f.id === 'so-form') submitSignoff(f);
+    });
+    /* Changing the body offers its categories; changing the kind of sign off
+       offers its fields. What was typed is kept. */
+    p.addEventListener('change', (ev) => {
+      const t = ev.target;
+      if (t.id === 'sf-registration_body') {
+        S.open.signatories.values = readSignatoryForm();
+        S.open.signatories.values.category = '';
+        render('signatories');
+        $('sf-registration_body').focus();
+      } else if (t.id === 'so-kind') {
+        const o = S.open.signoffs;
+        const g = (x) => { const el = $(x); return el ? el.value : ''; };
+        o.values = Object.assign({}, o.values, { kind: g('so-kind'), decision: g('so-decision'), decided_at: g('so-decided_at'), revision: g('so-revision') });
+        render('signoffs');
+        $('so-kind').focus();
+      }
+    });
+    p.addEventListener('keydown', (ev) => {
+      if (ev.key !== 'Escape') return;
+      const key = panelKey(ev.target);
+      if (key && S.open[key] && !S.busy) { ev.preventDefault(); closeForm(key); }
+    });
+  });
+}
+
+/* ------------------------------------------------------------ tabs */
+function selectTab(id) {
+  TABS.forEach((t) => {
+    const b = $(t), on = t === id;
+    b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1;
+    $(b.getAttribute('aria-controls')).hidden = !on;
+  });
+  S.tab = id;
+  return loadTab(id, false);
+}
+function wireTabs() {
+  TABS.forEach((t, i) => {
+    const b = $(t);
+    b.addEventListener('click', () => { selectTab(t); });
+    b.addEventListener('keydown', (ev) => {
+      let n = null;
+      if (ev.key === 'ArrowRight') n = TABS[(i + 1) % TABS.length];
+      if (ev.key === 'ArrowLeft') n = TABS[(i + TABS.length - 1) % TABS.length];
+      if (ev.key === 'Home') n = TABS[0];
+      if (ev.key === 'End') n = TABS[TABS.length - 1];
+      if (n) { ev.preventDefault(); selectTab(n); $(n).focus(); }
+    });
+  });
+  $('refresh').addEventListener('click', async () => {
+    const key = S.tab.slice(4);
+    S.open[key] = null; S.flash[key] = '';
+    if (key === 'signoffs') S.signatories = null;
+    const ok = await loadTab(S.tab, true);
+    if (ok) announce('This tab has been refreshed.');
+  });
+}
+
+/* ------------------------------------------------------------ sign in and out */
+function wireSignin() {
+  $('signin-form').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('signin-email').value.trim(), msg = $('signin-msg'), btn = $('signin-btn');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      $('signin-email').setAttribute('aria-invalid', 'true');
+      msg.innerHTML = msgBox('err', 'Please enter a valid email address.');
+      $('signin-email').focus();
+      return;
+    }
+    $('signin-email').removeAttribute('aria-invalid');
+    btn.disabled = true;
+    try {
+      if (DEMO) throw Object.assign(new Error('Signing in is switched off in the demonstration.'), { status: 400 });
+      await auth.signInWithEmail(email, location.origin + location.pathname);
+      msg.innerHTML = msgBox('ok', 'Check your inbox for the sign in link. It opens this console.');
+    } catch (e) {
+      msg.innerHTML = msgBox('err', esc(e && e.message ? e.message : 'The sign in link could not be sent. Please try again.'));
+    } finally { btn.disabled = false; }
+  });
+  document.querySelectorAll('[data-signout]').forEach((b) => b.addEventListener('click', async () => {
+    if (DEMO) { location.href = '/hsf-staff.html'; return; }
+    try { await auth.signOut(); } catch (_) { /* local session only */ }
+    S.user = null; S.verification = S.scans = S.signatories = S.alerts = S.files = null;
+    show('st-signin');
+    $('signin-title').focus();
+  }));
+}
+
+/* ------------------------------------------------------------ start */
+async function openConsole() {
+  $('who-email').textContent = (S.user && S.user.email) || (DEMO ? 'sample.staff@example.co.za' : 'staff');
+  show('st-console');
+  /* The first read decides the state: 403 means signed in without staff access. */
+  try {
+    await LOADERS['tab-clients']();
+  } catch (e) {
+    if (sessionGone(e)) return;
+    showError(friendly(e, 'The staff console could not reach Care Net’s servers just now. Please try again in a few minutes.'));
+    return;
+  }
+  selectTab('tab-clients');
+}
+async function startLive() {
+  show('st-loading');
+  let session = null;
+  try {
+    await withTimeout(auth.init(), 15000);
+    session = await withTimeout(auth.session(), 10000);
+  } catch (e) {
+    showError('Sign in could not be reached just now. Please try again in a few minutes.');
+    return;
+  }
+  if (!session) { show('st-signin'); return; }
+  S.user = session.user || null;
+  await openConsole();
+}
+async function startDemo() {
+  $('demo-banner').hidden = false;
+  document.title = 'Demonstration | Health and Safety File staff console | Care Net Consultants';
+  S.user = { email: 'sample.staff@example.co.za' };
+  await openConsole();
+}
+
+/* ============================================================ demonstration */
+/* Fictitious rows only, each marked Sample. The handler mirrors the API's
+   answers and a few of the database's refusals, word for word, so the
+   demonstration shows what staff will meet. */
+const D = (() => {
+  const day = (n) => new Date(Date.now() + n * 86400000).toISOString();
+  const date = (n) => day(n).slice(0, 10);
+  const acc = (i) => '00000000-0000-4000-8000-00000000000' + i;
+  const sig = (i) => '00000000-0000-4000-9000-00000000000' + i;
+  const file = (i) => '00000000-0000-4000-a000-00000000000' + i;
+  const up = (i) => '00000000-0000-4000-b000-00000000000' + i;
+  const s = (o) => Object.assign({ __sample: true }, o);
+  return {
+    verification: [
+      s({ client_account_id: acc(1), company_name: 'Sample Scaffolding and Access (Pty) Ltd', contact_email: 'safety@sample-scaffolding.example', account_kind: 'approved_client', status: 'requested', requested_at: day(-2), method: null, evidence_ref: null }),
+      s({ client_account_id: acc(2), company_name: 'Sample Cold Chain Logistics (Pty) Ltd', contact_email: 'she@sample-coldchain.example', account_kind: 'approved_client', status: 'requested', requested_at: day(-5), method: null, evidence_ref: null }),
+      s({ client_account_id: acc(3), company_name: 'Sample Precast Works (Pty) Ltd', contact_email: 'hr@sample-precast.example', account_kind: 'approved_client', status: 'verified', requested_at: day(-40), method: 'client_register', evidence_ref: 'CR 1042', verified_by: 'sample.staff@example.co.za', verified_at: day(-39) }),
+      s({ client_account_id: acc(4), company_name: 'Sample Harbour Services CC', contact_email: 'ops@sample-harbour.example', account_kind: 'declined', status: 'revoked', requested_at: day(-90), method: 'sales_executive', evidence_ref: 'Call note, sample', verified_by: 'sample.staff@example.co.za', verified_at: day(-88), revoked_by: 'sample.staff@example.co.za', revoked_at: day(-10), revoke_reason: 'The sample contract ended.' })
+    ],
+    scans: {
+      scans: [
+        s({ upload_id: up(1), client_account_id: acc(3), company_name: 'Sample Precast Works (Pty) Ltd', file_id: file(1), department_code: 'SHE', section_code: 'C', mime_type: 'application/pdf', size_bytes: 482113, uploaded_at: day(-1), scan_status: 'error', scan_attempts: 5, scanned_at: day(-0.2), scan_engine: 'sample engine', scan_findings: [{ code: 'av_unreachable', message: 'The antivirus engine did not answer.' }], scan_exhausted: true, transfer_blocked_reason: null }),
+        s({ upload_id: up(2), client_account_id: acc(3), company_name: 'Sample Precast Works (Pty) Ltd', file_id: file(1), department_code: 'TRAIN', section_code: 'D', mime_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', size_bytes: 88210, uploaded_at: day(-0.1), scan_status: 'pending', scan_attempts: 0, scanned_at: null, scan_engine: null, scan_findings: null, scan_exhausted: false, transfer_blocked_reason: null })
+      ],
+      staging_alerts: [
+        s({ upload_id: up(3), client_account_id: acc(4), company_name: 'Sample Harbour Services CC', file_id: file(2), status: 'held', department_code: 'OPS', section_code: 'G', size_bytes: 240512, staged_since: day(-712), days_in_staging: 712, transfer_blocked_reason: 'client verification revoked', expires_on: date(18), scan_exhausted: false }),
+        s({ upload_id: up(1), client_account_id: acc(3), company_name: 'Sample Precast Works (Pty) Ltd', file_id: file(1), status: 'uploaded', department_code: 'SHE', section_code: 'C', size_bytes: 482113, staged_since: day(-1), days_in_staging: 1, transfer_blocked_reason: null, expires_on: date(729), scan_exhausted: true })
+      ]
+    },
+    signatories: [
+      s({ id: sig(1), full_name: 'Sample Practitioner One', registration_body: 'SACPCMP', category: 'CHSM', registration_number: 'SAMPLE-CHSM-001', registration_expires_on: date(300), register_checked_on: date(-3), register_proof_ref: 'SAMPLE-PROOF-01', appointment_letter_ref: 'SAMPLE-APPT-01', appointment_letter_date: date(-60), appointment_letter_recruitment_portal_ref: null, engagement_letter_ref: 'SAMPLE-ENG-01', engagement_letter_date: date(-60), engagement_letter_recruitment_portal_ref: null, created_by: 'sample.staff@example.co.za', created_at: day(-60), frozen: false, expired: false, days_to_expiry: 300, register_checks: 1, register_check_age_days: 3, register_check_current: true, register_check_max_days: 30, letters_on_record: true, signoffs: 1 }),
+      s({ id: sig(2), full_name: 'Sample Practitioner Two', registration_body: 'SAIOSH', category: 'GradSAIOSH', registration_number: 'SAMPLE-GRAD-002', registration_expires_on: date(21), register_checked_on: date(-45), register_proof_ref: 'SAMPLE-PROOF-02', appointment_letter_ref: 'SAMPLE-APPT-02', appointment_letter_date: date(-200), appointment_letter_recruitment_portal_ref: null, engagement_letter_ref: null, engagement_letter_date: null, engagement_letter_recruitment_portal_ref: null, created_by: 'sample.staff@example.co.za', created_at: day(-200), frozen: true, expired: false, days_to_expiry: 21, register_checks: 1, register_check_age_days: 45, register_check_current: false, register_check_max_days: 30, letters_on_record: false, signoffs: 2 })
+    ],
+    alerts: [
+      s({ signatory_id: sig(2), full_name: 'Sample Practitioner Two', registration_body: 'SAIOSH', category: 'GradSAIOSH', registration_number: 'SAMPLE-GRAD-002', registration_expires_on: date(21), days_to_expiry: 21, expired: false, renewed: false, unreleased_files: [{ file_id: file(2), reference: 'HSF-SAMPLE-002', revision: 1, company_name: 'Sample Harbour Services CC', decided_at: day(-30) }] })
+    ],
+    files: [
+      s({ file_id: file(1), reference: 'HSF-SAMPLE-001', company_name: 'Sample Precast Works (Pty) Ltd', industry_code: 'MANUFACTURING', industry_name: 'Manufacturing', status: 'draft', revision: 1, compliance_pct: 62.5, created_at: day(-20),
+        signoffs: { safety_content: { decision: 'approved', decided_at: day(-2), signatory_name: 'Sample Practitioner One', recorded_by: 'sample.staff@example.co.za' } },
+        readiness: { file_id: file(1), revision: 1, ready: false, released: false, missing: ['The client’s section 16(2) acceptance is not approved for this revision.', 'The File cites instruments not yet verified for a File: sample instrument.'] } }),
+      s({ file_id: file(2), reference: 'HSF-SAMPLE-002', company_name: 'Sample Harbour Services CC', industry_code: 'TRANSPORT', industry_name: 'Transport and logistics', status: 'draft', revision: 2, compliance_pct: 88, created_at: day(-120), signoffs: {},
+        readiness: { file_id: file(2), revision: 2, ready: false, released: false, missing: ['No approved safety content sign off by a registered practitioner is recorded for this revision.', 'The client’s section 16(2) acceptance is not approved for this revision.'] } })
+    ]
+  };
+})();
+function demoRefusal(message, status) {
+  const e = new Error(message); e.status = status || 400; e.code = 'refused'; e.data = { error: message, code: 'refused' }; return e;
+}
+async function demoApi(path, o) {
+  await new Promise((ok) => setTimeout(ok, 250));
+  const copy = (x) => JSON.parse(JSON.stringify(x));
+  const url = new URL(path, location.origin);
+  if (!o.method || o.method === 'GET') {
+    const view = url.searchParams.get('view');
+    if (view === 'verification') return copy(D.verification);
+    if (view === 'scans') return copy(D.scans);
+    if (view === 'signatories') return copy(D.signatories);
+    if (view === 'signatory_alerts') return copy(D.alerts);
+    if (view === 'files') return copy(D.files);
+    if (view === 'readiness') { const f = D.files.find((x) => x.file_id === url.searchParams.get('file_id')); return copy(f.readiness); }
+    throw demoRefusal('Unknown view.');
+  }
+  const b = o.body || {};
+  const me = 'sample.staff@example.co.za';
+  if (b.action === 'verify_client') {
+    const r = D.verification.find((x) => x.client_account_id === b.client_account_id);
+    if (r.account_kind === 'declined') throw demoRefusal('A declined company account cannot be verified.');
+    Object.assign(r, { status: 'verified', method: b.method, evidence_ref: b.evidence_ref, verified_by: me, verified_at: new Date().toISOString(), revoked_by: null, revoked_at: null, revoke_reason: null });
+    return { client_account_id: r.client_account_id, status: 'verified' };
+  }
+  if (b.action === 'revoke_client') {
+    const r = D.verification.find((x) => x.client_account_id === b.client_account_id);
+    if (r.status !== 'verified') throw demoRefusal('That company account is not verified.');
+    Object.assign(r, { status: 'revoked', revoked_by: me, revoked_at: new Date().toISOString(), revoke_reason: b.reason });
+    return { client_account_id: r.client_account_id, status: 'revoked', blocked_uploads: 1 };
+  }
+  if (b.action === 'scan_reset') {
+    const u = D.scans.scans.find((x) => x.upload_id === b.upload_id);
+    if (u.scan_status === 'pending' && !u.scan_attempts) throw demoRefusal('Only an uploaded document still waiting for its security scan can be scanned again (status uploaded, scan pending). This sample has not been tried yet.');
+    Object.assign(u, { scan_attempts: 0, scan_exhausted: false });
+    D.scans.staging_alerts = D.scans.staging_alerts.filter((a) => a.upload_id !== u.upload_id || !a.scan_exhausted || a.days_in_staging > 14);
+    return { upload_id: u.upload_id, scan_status: u.scan_status, scan_attempts: 0 };
+  }
+  if (b.action === 'signatory_save') {
+    const p = b.signatory;
+    if (p.id) {
+      const s = D.signatories.find((x) => x.id === p.id);
+      const changed = SIG_FIELDS.filter((k) => String(s[k] == null ? '' : s[k]) !== String(p[k] || ''));
+      const check = changed.some((k) => /^register_(checked_on|proof_ref)$/.test(k));
+      if (s.frozen && changed.some((k) => !/^register_(checked_on|proof_ref)$/.test(k) && (!/recruitment_portal_ref$/.test(k) || s[k]))) throw demoRefusal('These credentials support a released File and cannot be changed. Record a renewal or a correction as a new signatory.');
+      if (s.frozen && check && !(p.register_checked_on && p.register_proof_ref && p.register_checked_on > (s.register_checked_on || ''))) {
+        throw demoRefusal('A new register check on credentials that support a released File must be dated after the last one on record (' + dmy(s.register_checked_on) + '), with the reference of its saved proof.');
+      }
+      SIG_FIELDS.forEach((k) => { s[k] = p[k] || null; });
+      Object.assign(s, s0(Object.assign({}, s)), { __sample: s.__sample, id: s.id, created_by: s.created_by, created_at: s.created_at, frozen: s.frozen, signoffs: s.signoffs });
+      if (s.frozen && check) s.register_checks = (s.register_checks || 1) + 1;
+      return Object.assign(copy(s), { action: s.frozen && check && changed.length <= 2 ? 'register_checked' : 'corrected' });
+    }
+    if (D.signatories.some((x) => x.registration_body === p.registration_body && x.registration_number === p.registration_number && x.registration_expires_on === p.registration_expires_on)) {
+      throw demoRefusal('A signatory with this registering body, registration number and expiry date is already recorded.');
+    }
+    const row = s0(p);
+    D.signatories.push(row);
+    return Object.assign(copy(row), { action: 'created' });
+  }
+  if (b.action === 'signoff_record') {
+    const p = b.signoff, f = D.files.find((x) => x.file_id === p.file_id);
+    const at = new Date(p.decided_at).toISOString();
+    let fit = null;
+    if (p.kind === 'safety_content') {
+      const s = D.signatories.find((x) => x.id === p.signatory_id);
+      if (/^Can /.test(s.category)) fit = s.full_name + ' is a candidate category (' + s.registration_body + ' ' + s.category + ') and never signs a File alone';
+      else if (!s.register_check_current) fit = 'the ' + s.registration_body + ' register was last checked for ' + s.full_name + ' more than ' + s.register_check_max_days + ' days before the decision';
+      else if (!s.letters_on_record) fit = 'the engagement letter of ' + s.full_name + ' is not on record';
+      f.signoffs[p.kind] = { decision: p.decision, decided_at: at, signatory_name: s.full_name, recorded_by: me };
+      s.signoffs = (s.signoffs || 0) + 1;
+    } else {
+      f.signoffs[p.kind] = { decision: p.decision, decided_at: at, signatory_name: p.signatory_name, recorded_by: me };
+    }
+    const miss = [];
+    const sc = f.signoffs.safety_content;
+    if (!sc || sc.decision !== 'approved') miss.push('No approved safety content sign off by a registered practitioner is recorded for this revision.');
+    else if (fit && p.kind === 'safety_content') miss.push('The safety content sign off cannot release this File: ' + fit + '.');
+    const ca = f.signoffs.client_16_2_acceptance;
+    if (!ca || ca.decision !== 'approved') miss.push('The client’s section 16(2) acceptance is not approved for this revision.');
+    miss.push('The File cites instruments not yet verified for a File: sample instrument.');
+    f.readiness = { file_id: f.file_id, revision: f.revision, ready: false, released: false, missing: miss };
+    return { signoff_id: 'sample', file_id: f.file_id, revision: p.revision, kind: p.kind, decision: p.decision, recorded_by: me, signatory_fit: p.kind === 'safety_content' && p.decision === 'approved' ? fit : null, readiness: copy(f.readiness) };
+  }
+  throw demoRefusal('Unknown action.');
+}
+function s0(p) {
+  const today = todaySA();
+  const max = checkDays() || 30; /* the sample rows carry the parameter as the database would */
+  const age = p.register_checked_on ? Math.round((Date.parse(today) - Date.parse(p.register_checked_on)) / 86400000) : null;
+  return Object.assign({ __sample: true, id: '00000000-0000-4000-9000-' + String(Date.now()).slice(-12).padStart(12, '0'), created_by: 'sample.staff@example.co.za', created_at: new Date().toISOString(), frozen: false, signoffs: 0, register_checks: p.register_checked_on ? 1 : 0 },
+    p, { expired: p.registration_expires_on < today, register_check_age_days: age, register_check_current: age != null && age <= max, register_check_max_days: max, letters_on_record: !!(p.appointment_letter_ref && p.engagement_letter_ref) });
+}
+
+/* ============================================================ boot */
+function boot() {
+  wireTabs(); wirePanels(); wireSignin();
+  $('retry').addEventListener('click', () => { (DEMO ? startDemo() : startLive()).catch(() => showError()); });
+  const run = DEMO ? startDemo() : startLive();
+  run.catch(() => showError('The staff console could not start just now. Please try again in a few minutes.'));
+  if (!DEMO) {
+    try {
+      auth.onChange((event) => { if (event === 'SIGNED_IN' && !$('st-signin').hidden) startLive().catch(() => showError()); });
+    } catch (_) { /* provider pending: the start routine already shows a friendly state */ }
+  }
+}
+try { boot(); } catch (e) { try { showError('The staff console could not start just now. Please try again in a few minutes.'); } catch (_) { /* nothing more to do */ } }
+</script>
+<script src="/js/cnc-header.js?v=20260915a" defer></script>
+<script src="/js/cnc-secnav.js?v=20260915b" defer></script>
+<script src="/js/cnc-design-assets.js" defer></script>
+</body>
+</html>

@@ -149,12 +149,12 @@
         },
         {
           "name": "reg_noise",
-          "label": "Noise-Induced Hearing Loss Regulations / Noise Exposure Regulations",
+          "label": "Noise Exposure Regulations, 2024 (these replaced the Noise Induced Hearing Loss Regulations, 2003 from 6 September 2026)",
           "type": "checkbox"
         },
         {
           "name": "reg_asbestos",
-          "label": "Asbestos Abatement Regulations",
+          "label": "Work with asbestos",
           "type": "checkbox"
         },
         {

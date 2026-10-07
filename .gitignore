@@ -1,0 +1,13 @@
+# Operating system litter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local dependencies and environment files (never commit secrets)
+node_modules/
+.env
+.env.*
+.vercel/
+
+# Local migration replay harness scratch output
+msp-forge/test/sql/.last_err

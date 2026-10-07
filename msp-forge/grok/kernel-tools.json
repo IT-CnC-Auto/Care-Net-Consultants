@@ -1,0 +1,115 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_industries",
+      "description": "List every industry held in the Care Net Cognitive Kernel, each with code, name and regime (OHSA or MHSA). Call this first when you need an industry code for another tool. Every tool returns {kernel_release, as_at, notice, data}: framework reference data only.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_industry",
+      "description": "Read one industry from the Care Net Cognitive Kernel: code, name, regime, its selectable subindustries with their job role titles, all its job roles, the hazards those roles face, its medical surveillance protocols (basis from citable instruments only) and the citable legal instruments mapped to it. Use a code returned by kernel_industries; an unknown code is refused as not found.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Industry code exactly as kernel_industries returns it, for example CONSTR or MINING.",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}(-[A-Za-z0-9_]{1,31}){0,4}$"
+          }
+        },
+        "required": ["code"],
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_instruments",
+      "description": "List the legal instruments the Care Net Cognitive Kernel may cite: only those verified three ways, in force and not under a currency hold. Each carries short_name (cite exactly this), full_citation, instrument_type, gazette_reference, effective_date, verified_on, review_due, scope (medical, safety or both) and industries (code and name). Optionally filter by industry code; an unknown code is refused as not found.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "Optional industry code from kernel_industries. Leave out for every citable instrument.",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}(-[A-Za-z0-9_]{1,31}){0,4}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_protocols",
+      "description": "List the medical surveillance protocols in the Care Net Cognitive Kernel, each with name, test_type, hazard, periodic_interval_months and basis (at most one citable instrument; an empty basis means the kernel holds no citable basis for it yet, not that no law applies). Framework reference data, not a clinical opinion. Optionally filter by industry code to get the protocols that industry's roles call for; an unknown code is refused as not found.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "Optional industry code from kernel_industries.",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}(-[A-Za-z0-9_]{1,31}){0,4}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_elements",
+      "description": "List the Health and Safety File elements in the Care Net Cognitive Kernel: section_code, section_name, code, name, the duty in plain words, universal, citable (instruments the element may cite) and awaiting (instruments still awaiting verification; never cite those as a basis). Until the safety instruments are verified again for the File, citable is empty for every element: say the basis is awaiting verification. Filter by industry code where you can (universal elements plus that industry's overlay): the full list is long and may be cut.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "Optional industry code from kernel_industries.",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}(-[A-Za-z0-9_]{1,31}){0,4}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "kernel_search",
+      "description": "Search the Care Net Cognitive Kernel across citable instrument names and citations, protocol names, job role titles and Health and Safety File element names. Returns at most 50 matches, each with kind (instrument, protocol, role or element), name and code (the element code, the industry code of a role, or null). Use short plain search words such as noise, asbestos or scaffolding. Never put personal information in the search text.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search words: 2 to 100 letters, digits, spaces or simple punctuation (. , ' ( ) & / and hyphen). The characters % _ and backslash are refused.",
+            "minLength": 2,
+            "maxLength": 100
+          }
+        },
+        "required": ["q"],
+        "additionalProperties": false
+      }
+    }
+  }
+]
