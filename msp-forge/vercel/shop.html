@@ -19,6 +19,10 @@
  msp_public_review_fee, which returns only the answer for the headcount
  entered. NO AMOUNT IS PUBLISHED ON THIS PAGE.
 
+ CEILING (Kc, 07/10/2026): above 100 people this page works out nothing and
+ asks the parameter store for nothing. It routes the visitor to section 4 for
+ a written quotation. See QUOTE_ABOVE in the script below.
+
  THE LAW BEHIND YOUR PLAN (section 5): the industries covered and every
  verified instrument, with full citation, gazette reference, verification
  date and next review, read live from msp_public_instrument_register and
@@ -308,6 +312,7 @@
 
           <label for="people">Number of people to be covered on the report</label>
           <input id="people" name="employee_count" type="number" min="1" max="100000" inputmode="numeric" required>
+          <p class="help">Over 100 people we quote in writing rather than calculate, because a report that size turns on your sites and your shifts.</p>
 
           <label for="medicals">Occupational medicals a year with Care Net</label>
           <input id="medicals" name="annual_medicals_estimate" type="number" min="0" value="0" inputmode="numeric">
@@ -557,7 +562,10 @@
       .catch(function () { renderJobs({ subindustries: [] }); });
   });
 
-  /* ---- The calculator: one headcount in, one answer out. */
+  /* ---- The calculator: one headcount in, one answer out.
+     Above QUOTE_ABOVE people no figure is worked out and none is requested,
+     because a report that size is quoted in writing by a sales executive. */
+  var QUOTE_ABOVE = 100;
   el('calc-form').addEventListener('submit', function (ev) {
     ev.preventDefault();
     var out = el('result');
@@ -566,6 +574,13 @@
     var medicals = parseInt(el('medicals').value || '0', 10);
     out.style.display = 'block';
     if (!people || people < 1) { out.innerHTML = '<p>Enter how many people the report covers.</p>'; return; }
+    if (people > QUOTE_ABOVE) {
+      out.innerHTML = '<p class="big">We quote this one.</p>'
+        + '<p>Above ' + QUOTE_ABOVE + ' people we put the figure in writing instead of working one out here. A report that size turns on how many sites you run, how your shifts fall and how many job categories carry the same hazard, so a per head number would be a guess.</p>'
+        + '<p class="muted">Fill in your details below and a sales executive comes back with a written quotation. Your Plan itself remains free to build and yours to keep.</p>';
+      window.__cncCalc = { people: people, jobs: jobs, medicals: medicals, fee: null, industry: el('industry').value };
+      return;
+    }
     out.innerHTML = '<p class="muted">Working it out.</p>';
     fetch(API + '/rpc/msp_public_review_fee', { method: 'POST', headers: H, body: JSON.stringify({ p_people: people }) })
       .then(function (r) { return r.json(); })
