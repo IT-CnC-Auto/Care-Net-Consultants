@@ -90,6 +90,8 @@
   .twoways { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
   @media (max-width: 860px) { .twoways { grid-template-columns: 1fr; } }
   .twoways .card { margin-bottom: 0; }
+  .twoways .col { display: grid; gap: 18px; align-items: start; min-width: 0; }
+  .twoways > .card, .twoways > .col { min-width: 0; }
   .resume .draftbox { background: #f7f9fc; border: 1px solid #d8e0ec; border-radius: 6px;
                       padding: 14px 16px; margin: 14px 0 0; }
   .resume .draftbox b { display: block; font-size: 15px; margin-bottom: 2px; }
@@ -110,6 +112,9 @@
   /* The framework card under "Pick up where you left off": what the Plan is
      built from, in four figures, and the call to action to the sample Plan. */
   .frame { margin-top: 18px; border-top: 5px solid var(--red); }
+  /* As a column of its own it starts level with the card beside it; the grid
+     gap does the spacing when the two stack on a phone. */
+  .twoways > .frame { margin-top: 0; }
   .frame .figs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
   .frame .fig { background: #f7f7f9; border-radius: 6px; padding: 10px 12px; }
   .frame .fig b { display: block; font-family: 'Bebas Neue', 'Montserrat', Arial, sans-serif; font-weight: 400; font-size: 30px; line-height: 1; color: var(--charcoal); }
@@ -178,6 +183,10 @@
 <main id="main">
   <p>A Medical Surveillance Plan sets out, per job category, which occupational medical assessments your employees need, how often, and on what legal basis. Care Net builds yours from a structured assessment of your operations, checks it against the Occupational Health and Safety Act 85 of 1993 and the regulations that apply to your industry, and has a registered Occupational Medical Practitioner sign it off before release. Approved plans are hosted securely with revision control, and updated as your operations or the law change.</p>
   <div class="twoways">
+  <!-- Left column: whichever of these four applies to the visitor right now.
+       Three of them are hidden at any one time, so the column is one card tall
+       in the normal case. -->
+  <div class="col">
   <div class="card" id="signin-card">
     <h2>Start a new assessment</h2>
     <p class="ready"><b>Before you start:</b> have your risk assessment (HIRA) and your list of job categories to hand.
@@ -270,10 +279,12 @@
       <p class="nodraft">Drafts stay in the browser they were started in. If you began on another computer, open this page there. Otherwise sign in on the left to start fresh.</p>
     </div>
   </div>
+  </div><!-- /left column -->
 
-  <!-- What the Plan is built from: the four figures, read live from the
-       framework, and the way to a sample Plan. Fills the column under the
-       resume card so the page never shows an empty block on the right. -->
+  <!-- Right column: what the Plan is built from. The four figures, read live
+       from the framework, and the way to a sample Plan. It sits alongside the
+       sign in card rather than under it, so the right of the page is never
+       empty whichever of the left-hand cards is showing. -->
   <div class="card frame" id="frame-card">
     <h2>What your Plan is built from</h2>
     <p class="muted">Not a generic template. Every industry carries its own verified instrument set, its own areas of work and its own job role library, and every medical assessment the Method prescribes has a legal basis.</p>
