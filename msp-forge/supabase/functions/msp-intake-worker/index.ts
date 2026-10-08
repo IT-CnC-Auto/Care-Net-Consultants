@@ -1,3 +1,200 @@
+// @ts-nocheck
+// CNC MSP FORGE | AGT-RUN-01 v1.0.0 | msp-intake-worker 08/10/2026
+//
+// Called by pg_cron every five minutes (migration 066), or on demand by a
+// forge_admin through msp_intake_worker_kick. One run:
+//   1. drafts up to agent.pipeline_batch_size clean submissions with the
+//      deterministic pipeline (agent/pipeline.js, inlined below; no AI), writes
+//      each stage to msp_draft and queues the Plan for the practitioner, or
+//      halts it for a person with the reasons;
+//   2. sends what is owed, once per engagement per kind: new submission and
+//      drafting outcome to sales; review request and one overdue reminder to the
+//      practitioner (only once integration.msp_notify_omp_to holds an address).
+//
+// Request: POST, header x-msp-worker-key (the Vault secret msp_worker_key).
+// Body (all optional): { "dry_run": true }        compute and report, write and send nothing
+//                      { "mode": "notify" }       notifications only
+//                      { "mode": "pipeline" }     drafting only
+//                      { "mode": "preflight", "scope": "industry" | "all" }
+//                         runs the pipeline on a fictitious TEST intake for every
+//                         industry (or every selectable area of work) and reports
+//                         which would draft cleanly; writes and sends nothing.
+//
+// Secrets (already set on ahp-production for auth-send-email): GRAPH_TENANT_ID,
+// GRAPH_CLIENT_ID, GRAPH_CLIENT_SECRET, MAIL_SENDER. The platform injects
+// SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY. Deploy with JWT verification OFF:
+// the worker key is the gate.
+//
+// No clinical data: submissions hold roles, hazards and exposure levels, never a
+// person's results, and mails carry company and contact details only.
+
+const SUPABASE_URL = (Deno.env.get("SUPABASE_URL") ?? "").replace(/\/$/, "");
+const SERVICE_KEY = (Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "").trim();
+const TENANT_ID = (Deno.env.get("GRAPH_TENANT_ID") ?? "").trim();
+const CLIENT_ID = (Deno.env.get("GRAPH_CLIENT_ID") ?? "").trim();
+const CLIENT_SECRET = (Deno.env.get("GRAPH_CLIENT_SECRET") ?? "").trim();
+const MAIL_SENDER = (Deno.env.get("MAIL_SENDER") ?? "").trim();
+const MAX_MAILS_PER_RUN = 25;
+
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+}
+
+async function rpc(fn, args = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    method: "POST",
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`${fn} ${res.status}: ${text.slice(0, 300)}`);
+  return text ? JSON.parse(text) : null;
+}
+
+let cachedToken = null;
+async function graphToken() {
+  if (cachedToken) return cachedToken;
+  const res = await fetch(`https://login.microsoftonline.com/${TENANT_ID}/oauth2/v2.0/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_id: CLIENT_ID, client_secret: CLIENT_SECRET,
+      scope: "https://graph.microsoft.com/.default", grant_type: "client_credentials" }),
+  });
+  if (!res.ok) throw new Error(`graph token ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  cachedToken = (await res.json()).access_token;
+  return cachedToken;
+}
+
+async function graphSend(to, cc, subject, html) {
+  const token = await graphToken();
+  const addr = (a) => ({ emailAddress: { address: a } });
+  const res = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(MAIL_SENDER)}/sendMail`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: { subject, body: { contentType: "HTML", content: html },
+        toRecipients: to.map(addr), ccRecipients: cc.map(addr) },
+      saveToSentItems: true,
+    }),
+  });
+  if (res.status !== 202) throw new Error(`sendMail ${res.status}: ${(await res.text()).slice(0, 200)}`);
+}
+
+function todaySast() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Johannesburg" }).format(new Date());
+}
+
+async function draftClaimed(item) {
+  try {
+    const kernel = await rpc("msp_pipeline_kernel", { p_subindustry_code: item.intake.subindustry_code || "" });
+    const result = runPipeline(PIPELINE, kernel, item.intake, item.reference, todaySast());
+    const saved = await rpc("msp_pipeline_persist", { p_engagement_id: item.engagement_id, p_result: result });
+    return { reference: item.reference, outcome: result.outcome, status: saved.status, summary: result.summary };
+  } catch (err) {
+    const message = String(err && err.message || err).slice(0, 500);
+    try {
+      const saved = await rpc("msp_pipeline_persist", { p_engagement_id: item.engagement_id,
+        p_result: { outcome: "error", error: message, model_used: MODEL_USED } });
+      return { reference: item.reference, outcome: "error", status: saved.status, error: message };
+    } catch (err2) {
+      return { reference: item.reference, outcome: "error", status: "unrecorded", error: `${message} | ${err2.message}` };
+    }
+  }
+}
+
+async function preflight(scope) {
+  const rows = await fetch(`${SUPABASE_URL}/rest/v1/msp_subindustry?select=code,name,selectable,msp_industry(code,name,regulatory_regime)&order=code`, {
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+  }).then((r) => r.json());
+  const selectable = rows.filter((r) => r.selectable);
+  const picks = scope === "all" ? selectable
+    : Object.values(selectable.reduce((acc, r) => { const k = r.msp_industry.code; if (!acc[k]) acc[k] = r; return acc; }, {}));
+  const out = [];
+  for (const sub of picks) {
+    try {
+      const kernel = await rpc("msp_pipeline_kernel", { p_subindustry_code: sub.code });
+      const intake = preflightIntake(kernel, sub.code);
+      const r = runPipeline(PIPELINE, kernel, intake, "CNC-MSP-PREFLIGHT", todaySast());
+      out.push({ industry: sub.msp_industry.code, regime: sub.msp_industry.regulatory_regime, subindustry: sub.code,
+        outcome: r.outcome, jobs: intake.jobs.length, summary: r.summary,
+        failed_checks: r.defects.map((d) => d.defect_code) });
+    } catch (err) {
+      out.push({ industry: sub.msp_industry.code, subindustry: sub.code, outcome: "error", error: String(err.message || err).slice(0, 300) });
+    }
+  }
+  return { checked: out.length, clean: out.filter((x) => x.outcome === "queued").length, results: out };
+}
+
+async function notify(due, dryRun) {
+  const s = due.settings || {};
+  const salesTo = emails(s.sales_to), salesCc = emails(s.sales_cc), ompTo = emails(s.omp_to);
+  const site = siteBase(s.site_url);
+  const plan = [];
+  for (const e of due.intake_received || []) plan.push({ e, kind: "intake_received", to: salesTo, cc: salesCc, mail: renderIntakeMail(e, site) });
+  for (const e of due.pipeline_result || []) plan.push({ e, kind: "pipeline_result", to: salesTo, cc: salesCc, mail: renderResultMail(e, site, ompTo.length > 0, s.review_days) });
+  if (ompTo.length) {
+    for (const e of due.omp_review_requested || []) plan.push({ e, kind: "omp_review_requested", to: ompTo, cc: salesTo, mail: renderOmpMail(e, site, s.review_days) });
+    for (const e of due.omp_review_overdue || []) plan.push({ e, kind: "omp_review_overdue", to: ompTo, cc: [...salesTo, ...salesCc], mail: renderOverdueMail(e, site, s.review_days) });
+  }
+  const report = { planned: plan.length, sent: 0, failed: [], skipped_no_recipient: 0, held_for_next_run: 0, items: [] };
+  for (const [i, p] of plan.entries()) {
+    if (i >= MAX_MAILS_PER_RUN) { report.held_for_next_run++; continue; }
+    if (!p.to.length) { report.skipped_no_recipient++; continue; }
+    report.items.push({ kind: p.kind, reference: p.e.reference, to: p.to, subject: p.mail.subject });
+    if (dryRun) continue;
+    try {
+      await graphSend(p.to, p.cc.filter((c) => !p.to.includes(c)), p.mail.subject, p.mail.html);
+      await rpc("msp_notify_record", { p_engagement_id: p.e.engagement_id, p_kind: p.kind,
+        p_recipients: [...p.to, ...p.cc].join(", "), p_subject: p.mail.subject });
+      report.sent++;
+    } catch (err) {
+      report.failed.push({ kind: p.kind, reference: p.e.reference, error: String(err.message || err).slice(0, 200) });
+    }
+  }
+  return report;
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "GET") return json({ ok: true, fn: "msp-intake-worker", version: WORKER_VERSION,
+    secrets: { graph: !!(TENANT_ID && CLIENT_ID && CLIENT_SECRET), sender: !!MAIL_SENDER, service: !!SERVICE_KEY } });
+  if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
+  const key = req.headers.get("x-msp-worker-key") || "";
+  try {
+    if (!(await rpc("msp_worker_key_check", { p_key: key }))) return json({ error: "unauthorised" }, 401);
+  } catch (err) {
+    return json({ error: "key check failed", detail: String(err.message || err).slice(0, 200) }, 500);
+  }
+  const body = await req.json().catch(() => ({}));
+  const dryRun = body.dry_run === true;
+  const mode = ["all", "notify", "pipeline", "preflight"].includes(body.mode) ? body.mode : "all";
+  const started = Date.now();
+  try {
+    if (mode === "preflight") return json({ mode, version: WORKER_VERSION, ...(await preflight(body.scope)) });
+    let due = await rpc("msp_notify_due");
+    const out = { mode, dry_run: dryRun, version: WORKER_VERSION, drafted: [], notifications: null };
+    if ((mode === "all" || mode === "pipeline") && due.settings && due.settings.auto_run && !dryRun) {
+      const claimed = await rpc("msp_pipeline_claim", { p_limit: due.settings.batch || 3 });
+      for (const item of claimed || []) out.drafted.push(await draftClaimed(item));
+      if (out.drafted.length) due = await rpc("msp_notify_due");
+    }
+    if (mode === "all" || mode === "notify") out.notifications = await notify(due, dryRun);
+    out.ms = Date.now() - started;
+    return json(out);
+  } catch (err) {
+    return json({ error: "worker failed", detail: String(err.message || err).slice(0, 500), ms: Date.now() - started }, 500);
+  }
+});
+
+// ============================== CORE START ==============================
+// Pure JavaScript from here to CORE END: no Deno, no network. The Node test
+// (msp-forge/test/intake-worker.test.mjs) loads this region on its own.
+
+const WORKER_VERSION = "1.0.0";
+const MODEL_USED = "deterministic pipeline.js (no AI), msp-intake-worker " + WORKER_VERSION;
+
+const PIPELINE = (() => {
+  const module = { exports: {} };
+  /* PIPELINE START: generated from msp-forge/agent/pipeline.js by build.mjs, do not edit here */
 // CNC MSP FORGE | AGT-CLS-01..AGT-COM-01 v1.0.1 | Generation pipeline core
 // v1.0.1 (08/10/2026): ODMWA_COIDA_ROUTE_CORRECT checks the route against the
 // industry's regime instead of demanding COIDA everywhere (mining halted).
@@ -489,3 +686,217 @@ function validateDraft(composeOut, framed, prescribed, kernel) {
 }
 
 module.exports = { classify, frame, profile, prescribe, compose, validateDraft, TRIAGE_CONFIDENCE_THRESHOLD };
+  /* PIPELINE END */
+  return module.exports;
+})();
+
+function runPipeline(P, kernel, intake, reference, dateOfIssue) {
+  const stages = {};
+  if (!kernel) {
+    return { outcome: "triage", model_used: MODEL_USED, stages,
+      defects: [{ stage: "classify", defect_code: "AREA_OF_WORK_UNKNOWN", blocking: true,
+        detail: { detail: `Area of work ${intake.subindustry_code || "(blank)"} is not in the framework.` } }],
+      summary: { halted_at: "classify", reason: `Area of work ${intake.subindustry_code || "(blank)"} is not in the framework.` } };
+  }
+  const classification = P.classify(intake, kernel);
+  stages.classify = classification;
+  if (classification.triage) {
+    return { outcome: "triage", model_used: MODEL_USED, stages,
+      defects: [{ stage: "classify", defect_code: "CLASSIFY_TRIAGE", blocking: true,
+        detail: { detail: classification.rationale, confidence: classification.confidence } }],
+      summary: { halted_at: "classify", reason: classification.rationale } };
+  }
+  const framed = P.frame(intake, kernel, classification, dateOfIssue);
+  stages.frame = framed;
+  const prof = P.profile(intake, kernel);
+  stages.profile = prof;
+  const prescribed = P.prescribe(intake, kernel, prof, framed);
+  stages.prescribe = prescribed;
+  const composed = P.compose(intake, kernel, classification, framed, prof, prescribed, { reference, date_of_issue: dateOfIssue });
+  stages.compose = composed;
+  const validation = P.validateDraft(composed, framed, prescribed, kernel);
+  stages.validate = validation;
+  const summary = {
+    industry: classification.industry_code, subindustry: classification.subindustry_code,
+    instruments: framed.instruments.length,
+    triggers: framed.triggered_additions.map((t) => t.rule_code),
+    jobs: prof.jobs.length,
+    risk_rows: prof.jobs.reduce((a, j) => a + j.risk_matrix.length, 0),
+    exposures_at_or_above_limit: prof.exceedances.filter((x) => ["exceeds", "significantly_exceeds", "borderline"].includes(x.assessment)).length,
+    programmes: prescribed.programmes.length,
+    omp_notes: (composed.omp_notes || prescribed.omp_notes || []).length,
+    checks_passed: validation.checks.filter((c) => c.result === "pass").length,
+    checks_total: validation.checks.length,
+    kernel_release: kernel.kernel_release || null,
+  };
+  if (!validation.passed) {
+    return { outcome: "triage", model_used: MODEL_USED, stages,
+      defects: validation.defects.map((d) => ({ stage: "validate", ...d })),
+      summary: { ...summary, halted_at: "validate" } };
+  }
+  return { outcome: "queued", model_used: MODEL_USED, stages, defects: [], summary };
+}
+
+// A fictitious intake for one area of work, built from the kernel's own roles,
+// used only by preflight. Nothing here is ever written to the database.
+function preflightIntake(kernel, subCode) {
+  const sub = kernel.subindustries.find((s) => s.code === subCode);
+  const industry = sub ? kernel.industries.find((i) => i.id === sub.industry_id) : null;
+  const roles = sub ? kernel.roles.filter((r) => r.subindustry_id === sub.id).slice(0, 3) : [];
+  const codeOf = (id) => (kernel.hazards.find((h) => h.id === id) || {}).code;
+  const jobs = (roles.length ? roles : [{ id: null, title: "General Worker", duties_summary: "General duties" }]).map((r) => {
+    const codes = kernel.job_hazards.filter((m) => m.job_role_id === r.id).map((m) => codeOf(m.hazard_id)).filter(Boolean);
+    return { title: r.title, duties: r.duties_summary, headcount: 10, hazard_codes: codes.length ? codes : ["A"],
+      rpe_issued: "None", rpe_fit_tested: "Not applicable", rpe_fit_test_interval: null, other_ppe: null,
+      existing_controls: "Standard controls", physical_demands: null, sensory_cognitive_demands: null,
+      statutory_requirement: null, chronic_flag: false };
+  });
+  return {
+    schema_version: "intake.v1", validation_status: "valid", triage_reason: null,
+    industry_code: industry ? industry.code : null, subindustry_code: subCode, industry_other_detail: null,
+    company_registered_name: "TEST Preflight Company (Pty) Ltd", company_trading_name: "TEST Preflight",
+    company_registration_number: "2020/000000/07", company_vat_number: null,
+    company_head_office_address: "1 Test Street, Midrand, 1685", company_years_operating: 5,
+    company_core_industry_freetext: "Fictitious company used to check the drafting pipeline.",
+    workforce_total: jobs.length * 10, employees_under_18: false, pregnancy_exposed_roles: false,
+    jobs, sites: [{ name: "TEST Site", address: "1 Test Street, Midrand, 1685", activity: "Operations", headcount: jobs.length * 10 }],
+    exposures: [], chemicals: [],
+    shift_night_work: false, shift_pattern_detail: null, nightwork_medical_current: false, nightwork_medical_interval: null,
+    ra_exists: true, ra_date: "2026-03-01", ra_conducted_by: "TEST Assessor", ra_assessor_accreditation: null, ra_next_review_date: "2027-03-01",
+    hygiene_results_exist: false, hygiene_date: null, hygiene_conducted_by: null,
+    current_medicals_exist: false, current_tests_detail: null, current_provider: null, records_format: null,
+    coida_registered: true, coida_class_tariff_number: null, coida_claims_3yr: false, injuries_3yr: false,
+    enforcement_notice_3yr: false, enforcement_notice_detail: null, incident_history_detail: null,
+    third_party_cert_required: false, third_party_cert_detail: null, certificate_format_preference: null,
+    hs_committee_present: true, outstanding_referrals: false, modified_duties_current: false,
+    process_change_since_ra: false, process_change_detail: null, chronic_flag_present: false, chronic_flag_categories: null,
+    hazard_additional_detail: null, employees_informed_before_exam: true,
+    information_officer_name: "TEST Information Officer", information_officer_contact: "it@carenetconsultants.co.za",
+    delivery_contact_name: "TEST Contact", delivery_contact_email: "it@carenetconsultants.co.za",
+    declarant_full_name: "TEST Declarant", declarant_position: "SHE Officer", declarant_company: "TEST Preflight Company (Pty) Ltd",
+    declaration_date: "2026-10-08", consent_processing: true, consent_marketing: false, popia_use_cnc_forms: true,
+    consent_wording_version: "popia.v1", docuseal_submission_id: "PREFLIGHT", brand_colour_hex: null,
+  };
+}
+
+function emails(v) {
+  return String(v || "").split(/[,;\s]+/).map((x) => x.trim().toLowerCase())
+    .filter((x) => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(x));
+}
+
+function siteBase(v) {
+  const s = String(v || "").trim();
+  return /^https:\/\//.test(s) ? s.replace(/\/$/, "") : "https://medicalsurveillance.carenetconsultants.co.za";
+}
+
+function esc(v) {
+  return String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function sast(iso) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("en-GB", { timeZone: "Africa/Johannesburg", day: "2-digit", month: "2-digit",
+    year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(iso)) + " SAST";
+}
+
+function shell(heading, inner) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2F2F2;padding:20px 0"><tr><td align="center">`
+    + `<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#1E1E1E;font-size:14px;line-height:1.5">`
+    + `<tr><td style="height:5px;background:#ED1B24;line-height:5px;font-size:0">&nbsp;</td></tr>`
+    + `<tr><td style="padding:24px 28px 8px 28px"><p style="margin:0;font-size:11px;letter-spacing:1px;color:#ED1B24;font-weight:bold">MEDICAL SURVEILLANCE PLAN</p>`
+    + `<h1 style="margin:6px 0 0 0;font-size:19px;font-family:Montserrat,Arial,sans-serif">${esc(heading)}</h1></td></tr>`
+    + `<tr><td style="padding:12px 28px 24px 28px">${inner}</td></tr>`
+    + `<tr><td style="padding:16px 28px;background:#F2F2F2;border-top:1px solid #E2E2E2;font-size:11px;color:#787878">`
+    + `Sent automatically by the Medical Surveillance Plan service. Care Net Consultants (Pty) Ltd. Internal notice: company and contact details only, no clinical information.`
+    + `</td></tr></table></td></tr></table>`;
+}
+
+function rows(pairs) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin:8px 0 14px 0">`
+    + pairs.filter(([, v]) => v !== null && v !== undefined && v !== "").map(([k, v]) =>
+      `<tr><td style="padding:6px 10px 6px 0;color:#555;width:170px;vertical-align:top;border-bottom:1px solid #EEE">${esc(k)}</td>`
+      + `<td style="padding:6px 0;vertical-align:top;border-bottom:1px solid #EEE">${v}</td></tr>`).join("")
+    + `</table>`;
+}
+
+function button(href, label) {
+  return `<p style="margin:16px 0 4px 0"><a href="${esc(href)}" style="display:inline-block;background:#ED1B24;color:#ffffff;text-decoration:none;padding:11px 22px;font-weight:bold;border-radius:5px">${esc(label)}</a></p>`;
+}
+
+function companyLine(e) {
+  return esc(e.company) + (e.trading_name && e.trading_name !== e.company ? ` <span style="color:#777">(trading as ${esc(e.trading_name)})</span>` : "");
+}
+
+function contactLine(e) {
+  const parts = [esc(e.contact_name), e.contact_position ? esc(e.contact_position) : null,
+    e.contact_email ? `<a href="mailto:${esc(e.contact_email)}">${esc(e.contact_email)}</a>` : null].filter(Boolean);
+  return parts.join(", ");
+}
+
+function renderIntakeMail(e, site) {
+  const clean = e.validation_status !== "triage";
+  const status = clean
+    ? "Clean. Drafting starts automatically within five minutes."
+    : `Needs a person (triage)${e.triage_reason ? ": " + esc(e.triage_reason) : "."}`;
+  const inner = `<p style="margin:0 0 6px 0">A company has finished the Medical Surveillance Plan assessment.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+      ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
+      ["People covered", esc(e.workforce_total)], ["Job categories", esc(e.job_categories)], ["Sites", esc(e.sites)],
+      ["Contact", contactLine(e)], ["Received", esc(sast(e.created_at))], ["Status", status]])
+    + `<p style="margin:0">${clean
+      ? "You will get a second notice when the Plan is drafted, or if drafting needs a person."
+      : "Nothing is drafted until a person resolves the triage reason. Open the submission in the staff tool."}</p>`
+    + button(`${site}/review.html`, "Open the staff tool");
+  return { subject: `New Plan submission: ${e.reference}, ${e.company}${clean ? "" : " (triage)"}`,
+    html: shell("New submission received", inner) };
+}
+
+function describeDefect(d) {
+  const detail = d && d.detail && (d.detail.detail || d.detail.error) ? `: ${d.detail.detail || d.detail.error}` : "";
+  return `${esc(d.code || d.defect_code)}${esc(detail)}`;
+}
+
+function renderResultMail(e, site, ompConfigured, reviewDays) {
+  if (e.status === "omp_queue") {
+    const clock = ompConfigured
+      ? `The reviewing practitioner has been asked to review it within ${esc(reviewDays)} days.`
+      : "No reviewing practitioner is named yet, so the review clock has not started. The Plan waits in the queue until one is.";
+    const inner = `<p style="margin:0 0 6px 0">The Plan for this submission has been drafted and passed every automatic check. It is waiting for practitioner review.</p>`
+      + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+        ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
+        ["People covered", esc(e.workforce_total)], ["Contact", contactLine(e)], ["Practitioner review", clock]])
+      + `<p style="margin:0">Nothing reaches the client until a registered Occupational Medical Practitioner has reviewed and signed the Plan.</p>`
+      + button(`${site}/review.html`, "Open the review queue");
+    return { subject: `Plan drafted, waiting for practitioner review: ${e.reference}, ${e.company}`,
+      html: shell("Plan drafted", inner) };
+  }
+  const defects = (e.defects || []).map((d) => `<li style="margin:0 0 4px 0">${describeDefect(d)}</li>`).join("");
+  const inner = `<p style="margin:0 0 6px 0">Drafting stopped for this submission and needs a person before the Plan can go to the practitioner.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+      ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
+      ["Contact", contactLine(e)]])
+    + `<p style="margin:0 0 4px 0;font-weight:bold">Why it stopped</p><ul style="margin:0 0 12px 18px;padding:0">${defects || "<li>No reason was recorded. IT will look.</li>"}</ul>`
+    + `<p style="margin:0">Once the cause is fixed, a forge_admin can send it back for drafting with msp_pipeline_rerun, and it is drafted again within five minutes.</p>`
+    + button(`${site}/review.html`, "Open the staff tool");
+  return { subject: `Plan drafting needs a person: ${e.reference}, ${e.company}`, html: shell("Drafting stopped", inner) };
+}
+
+function renderOmpMail(e, site, reviewDays) {
+  const inner = `<p style="margin:0 0 6px 0">A Medical Surveillance Plan is ready for your review and signature.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+      ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
+      ["People covered", esc(e.workforce_total)], ["Review window", `${esc(reviewDays)} days from this notice`]])
+    + `<p style="margin:0">The Plan sets out the programme per job category: hazards, tests, intervals and their legal basis. It holds no individual clinical results. Sign in with your practitioner account to approve, amend or return it.</p>`
+    + button(`${site}/review.html`, "Review the Plan");
+  return { subject: `Plan ready for your review: ${e.reference}, ${e.company}`, html: shell("Plan ready for review", inner) };
+}
+
+function renderOverdueMail(e, site, reviewDays) {
+  const inner = `<p style="margin:0 0 6px 0">This Plan has waited longer than the ${esc(reviewDays)} day review window.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+      ["Sent for review", esc(sast(e.omp_requested_at))], ["Contact", contactLine(e)]])
+    + `<p style="margin:0">This reminder is sent once. Sales are copied so the client can be kept informed.</p>`
+    + button(`${site}/review.html`, "Review the Plan");
+  return { subject: `Review overdue: ${e.reference}, ${e.company}`, html: shell("Review overdue", inner) };
+}
+// =============================== CORE END ===============================
