@@ -58,6 +58,15 @@ const pf = W.preflightIntake(kernel, 'CONSTR-BUILD');
 ok(pf.jobs.length >= 1 && pf.jobs.every(j => j.hazard_codes.length), `preflight intake builds ${pf.jobs.length} jobs with hazard codes`);
 ok(W.runPipeline(W.PIPELINE, kernel, pf, 'P', '2026-10-08').outcome === 'queued', 'preflight intake drafts cleanly for CONSTR-BUILD');
 
+// 5b. missing measured levels (CNC-MSP-2026-1008-001, 12/10/2026)
+const noLevel = { ...intake, exposures: [ { hazard_location: 'Heat and humidity', measured_level: null, unit: 'Whole company', stated_oel: 'Underground workings' }, { hazard_location: 'Flying particles', unit: 'all' } ] };
+const nl = W.runPipeline(W.PIPELINE, kernel, noLevel, 'R', '2026-10-12');
+ok(nl.stages.profile.exceedances.every(x => x.measured === 'Not measured'), 'exposure rows without a level read Not measured');
+ok(!JSON.stringify(nl).includes('undefined') && nl.outcome === 'queued', 'no undefined text anywhere and the Plan still queues');
+const poisoned = JSON.parse(JSON.stringify(r.stages.compose)); poisoned.sections[0].blocks.push({ kind: 'paragraph', text: 'measured undefined' });
+const vp = W.PIPELINE.validateDraft(poisoned, r.stages.frame, r.stages.prescribe, kernel);
+ok(vp.checks.find(c => c.check_code === 'NO_MISSING_VALUE_TEXT').result === 'fail' && !vp.passed, 'a stray undefined in client text halts the Plan');
+
 // 6. mails
 const e = { engagement_id: 'x', reference: 'CNC-MSP-2026-1008-001', status: 'omp_queue', created_at: '2026-10-08T07:00:00Z',
   company: 'TEST <Acme> & Sons (Pty) Ltd', trading_name: 'Acme', industry_code: 'CONSTR', industry_name: 'Construction',

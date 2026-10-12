@@ -1,4 +1,6 @@
-// CNC MSP FORGE | AGT-CLS-01..AGT-COM-01 v1.0.1 | Generation pipeline core
+// CNC MSP FORGE | AGT-CLS-01..AGT-COM-01 v1.0.2 | Generation pipeline core
+// v1.0.2 (12/10/2026): an exposure row with no measured level prints "Not measured"
+// instead of "undefined" (found in CNC-MSP-2026-1008-001).
 // v1.0.1 (08/10/2026): ODMWA_COIDA_ROUTE_CORRECT checks the route against the
 // industry's regime instead of demanding COIDA everywhere (mining halted).
 // Pure, deterministic stage functions mapping intake variables through the
@@ -80,6 +82,10 @@ function frame(intake, kernel, classification, engagementDate) {
 }
 
 // ----------------------------------------------------------------- PROFILE --
+function hasLevel(v) {
+  return v !== undefined && v !== null && String(v).trim() !== '';
+}
+
 function parseNumeric(s) {
   if (s === null || s === undefined) return null;
   const m = String(s).replace(',', '.').match(/-?\d+(\.\d+)?/);
@@ -158,7 +164,8 @@ function profile(intake, kernel) {
     }
     return {
       hazard_location: e.hazard_location,
-      measured: `${e.measured_level} ${e.unit || ''}`.trim(),
+      // A row with no measured level says so instead of printing "undefined" (12/10/2026).
+      measured: hasLevel(e.measured_level) ? `${e.measured_level} ${e.unit || ''}`.trim() : 'Not measured',
       hazard_id: hazard ? hazard.id : null,
       hazard_code: hazard ? hazard.code : null,
       kernel_oel: hazard && hazard.verification_status === 'verified' && hazard.oel_value !== null
@@ -459,6 +466,12 @@ function validateDraft(composeOut, framed, prescribed, kernel) {
   push('PROSE_RULE_HOLDS',
     !clientText.includes('—') && !clientText.includes(' - '),
     'no em dash and no spaced hyphen punctuation in client facing prose');
+
+  // A missing value must never reach the client as the word "undefined" or
+  // "NaN" (JSON.stringify drops real undefined values, so a match is a string).
+  push('NO_MISSING_VALUE_TEXT',
+    !/\bundefined\b|\bNaN\b/.test(JSON.stringify({ placeholders: composeOut.placeholders, sections: composeOut.sections, framed, prescribed })),
+    'no missing-value placeholder text anywhere in the draft');
 
   push('NO_INDIVIDUAL_CLINICAL_DETAIL',
     !/\d{13}/.test(clientText),
