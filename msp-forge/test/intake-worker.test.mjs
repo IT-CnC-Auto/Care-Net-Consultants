@@ -17,7 +17,7 @@ const index = readFileSync(join(root, 'supabase/functions/msp-intake-worker/inde
 const core = index.slice(index.indexOf('// ============================== CORE START'), index.indexOf('// =============================== CORE END'));
 const dir = mkdtempSync(join(tmpdir(), 'msp-worker-'));
 const modPath = join(dir, 'core.mjs');
-writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, MODEL_USED };\n');
+writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, mailRecipients, recipientsLine, MODEL_USED };\n');
 const W = await import(pathToFileURL(modPath).href);
 
 let failed = 0;
@@ -84,6 +84,11 @@ const bodies = mails.map(x => x.html).join('\n');
 ok(!bodies.includes('<Acme>') && bodies.includes('&lt;Acme&gt;'), 'client text is escaped in mail bodies (subjects are plain text)');
 ok(mails[2].html.includes('review clock has not started') && mails[3].html.includes('within 5 days'), 'result mail states the review clock honestly');
 ok(W.emails('salesdesk@carenetconsultants.co.za, it@carenetconsultants.co.za').length === 2 && W.emails('pending').length === 0, 'recipient parsing: list kept, pending ignored');
+{
+  const r = W.mailRecipients(['salesdesk@carenetconsultants.co.za'], W.emails('director@example.co.za, salesdesk@carenetconsultants.co.za'), W.emails('it@carenetconsultants.co.za, director@example.co.za'));
+  ok(r.to.length === 1 && r.cc.join() === 'director@example.co.za' && r.bcc.join() === 'it@carenetconsultants.co.za', 'blind copy: each address once, To over Cc over Bcc');
+  ok(W.recipientsLine(r).endsWith(' | bcc it@carenetconsultants.co.za') && W.recipientsLine(W.mailRecipients(['a@b.co'], [], W.emails('pending'))) === 'a@b.co', 'blind copy recorded in the register; pending sends none');
+}
 ok(W.siteBase('pending') === 'https://medicalsurveillance.carenetconsultants.co.za', 'site falls back to the custom domain');
 
 writeFileSync(join(dir, 'sample-mail.html'), mails.map(x => `<h3>${x.subject}</h3>${x.html}`).join('<hr>'));
