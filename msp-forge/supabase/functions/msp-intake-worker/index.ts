@@ -1,5 +1,6 @@
 // @ts-nocheck
-// CNC MSP FORGE | AGT-RUN-01 v1.0.1 | msp-intake-worker 08/10/2026, pipeline v1.0.2 12/10/2026
+// CNC MSP FORGE | AGT-RUN-01 v1.0.2 | msp-intake-worker 08/10/2026, pipeline v1.0.2 12/10/2026
+// v1.0.2 (12/10/2026): blind copy (integration.msp_notify_sales_bcc, migration 068) on every mail.
 //
 // Called by pg_cron every five minutes (migration 066), or on demand by a
 // forge_admin through msp_intake_worker_kick. One run:
@@ -65,7 +66,7 @@ async function graphToken() {
   return cachedToken;
 }
 
-async function graphSend(to, cc, subject, html) {
+async function graphSend(to, cc, bcc, subject, html) {
   const token = await graphToken();
   const addr = (a) => ({ emailAddress: { address: a } });
   const res = await fetch(`https://graph.microsoft.com/v1.0/users/${encodeURIComponent(MAIL_SENDER)}/sendMail`, {
@@ -73,7 +74,7 @@ async function graphSend(to, cc, subject, html) {
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       message: { subject, body: { contentType: "HTML", content: html },
-        toRecipients: to.map(addr), ccRecipients: cc.map(addr) },
+        toRecipients: to.map(addr), ccRecipients: cc.map(addr), bccRecipients: bcc.map(addr) },
       saveToSentItems: true,
     }),
   });
@@ -127,7 +128,7 @@ async function preflight(scope) {
 
 async function notify(due, dryRun) {
   const s = due.settings || {};
-  const salesTo = emails(s.sales_to), salesCc = emails(s.sales_cc), ompTo = emails(s.omp_to);
+  const salesTo = emails(s.sales_to), salesCc = emails(s.sales_cc), salesBcc = emails(s.sales_bcc), ompTo = emails(s.omp_to);
   const site = siteBase(s.site_url);
   const plan = [];
   for (const e of due.intake_received || []) plan.push({ e, kind: "intake_received", to: salesTo, cc: salesCc, mail: renderIntakeMail(e, site) });
@@ -140,12 +141,13 @@ async function notify(due, dryRun) {
   for (const [i, p] of plan.entries()) {
     if (i >= MAX_MAILS_PER_RUN) { report.held_for_next_run++; continue; }
     if (!p.to.length) { report.skipped_no_recipient++; continue; }
-    report.items.push({ kind: p.kind, reference: p.e.reference, to: p.to, subject: p.mail.subject });
+    const r = mailRecipients(p.to, p.cc, salesBcc);
+    report.items.push({ kind: p.kind, reference: p.e.reference, to: r.to, cc: r.cc, bcc: r.bcc, subject: p.mail.subject });
     if (dryRun) continue;
     try {
-      await graphSend(p.to, p.cc.filter((c) => !p.to.includes(c)), p.mail.subject, p.mail.html);
+      await graphSend(r.to, r.cc, r.bcc, p.mail.subject, p.mail.html);
       await rpc("msp_notify_record", { p_engagement_id: p.e.engagement_id, p_kind: p.kind,
-        p_recipients: [...p.to, ...p.cc].join(", "), p_subject: p.mail.subject });
+        p_recipients: recipientsLine(r), p_subject: p.mail.subject });
       report.sent++;
     } catch (err) {
       report.failed.push({ kind: p.kind, reference: p.e.reference, error: String(err.message || err).slice(0, 200) });
@@ -189,7 +191,7 @@ Deno.serve(async (req) => {
 // Pure JavaScript from here to CORE END: no Deno, no network. The Node test
 // (msp-forge/test/intake-worker.test.mjs) loads this region on its own.
 
-const WORKER_VERSION = "1.0.1";
+const WORKER_VERSION = "1.0.2";
 const MODEL_USED = "deterministic pipeline.js (no AI), msp-intake-worker " + WORKER_VERSION;
 
 const PIPELINE = (() => {
@@ -795,6 +797,18 @@ function preflightIntake(kernel, subCode) {
 function emails(v) {
   return String(v || "").split(/[,;\s]+/).map((x) => x.trim().toLowerCase())
     .filter((x) => /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(x));
+}
+
+// One address appears once per mail: To wins over Cc, Cc over Bcc. The Bcc goes on
+// every mail (sales and practitioner) so IT sees all traffic without being named.
+function mailRecipients(to, cc, bcc) {
+  const seen = new Set();
+  const take = (list) => (list || []).filter((a) => !seen.has(a) && seen.add(a));
+  return { to: take(to), cc: take(cc), bcc: take(bcc) };
+}
+
+function recipientsLine(r) {
+  return [...r.to, ...r.cc].join(", ") + (r.bcc.length ? " | bcc " + r.bcc.join(", ") : "");
 }
 
 function siteBase(v) {
