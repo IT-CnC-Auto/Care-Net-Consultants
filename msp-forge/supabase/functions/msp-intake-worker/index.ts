@@ -1,6 +1,10 @@
 // @ts-nocheck
-// CNC MSP FORGE | AGT-RUN-01 v1.0.2 | msp-intake-worker 08/10/2026, pipeline v1.0.2 12/10/2026
+// CNC MSP FORGE | AGT-RUN-01 v1.1.0 | msp-intake-worker 08/10/2026, pipeline v1.0.2 12/10/2026
 // v1.0.2 (12/10/2026): blind copy (integration.msp_notify_sales_bcc, migration 068) on every mail.
+// v1.1.0 (13/10/2026, migration 071, MSP Journey SOP): sales mails are sent from the events
+// table (msp_event) and their outcome recorded there, with retries that double their gap and
+// an alert to IT when one is abandoned; the submission mail follows the SOP wording with the
+// contact number and a link to the record; a clean Plan waits for the booking or deposit.
 //
 // Called by pg_cron every five minutes (migration 066), or on demand by a
 // forge_admin through msp_intake_worker_kick. One run:
@@ -8,9 +12,10 @@
 //      deterministic pipeline (agent/pipeline.js, inlined below; no AI), writes
 //      each stage to msp_draft and queues the Plan for the practitioner, or
 //      halts it for a person with the reasons;
-//   2. sends what is owed, once per engagement per kind: new submission and
-//      drafting outcome to sales; review request and one overdue reminder to the
-//      practitioner (only once integration.msp_notify_omp_to holds an address).
+//   2. sends what is owed: every sales event due in msp_event (intake.submitted,
+//      plan.drafted, plan.draft_failed), first sends and retries alike, recording each
+//      outcome; then the practitioner review request and one overdue reminder, once per
+//      engagement (only once integration.msp_notify_omp_to holds an address).
 //
 // Request: POST, header x-msp-worker-key (the Vault secret msp_worker_key).
 // Body (all optional): { "dry_run": true }        compute and report, write and send nothing
@@ -130,17 +135,51 @@ async function notify(due, dryRun) {
   const s = due.settings || {};
   const salesTo = emails(s.sales_to), salesCc = emails(s.sales_cc), salesBcc = emails(s.sales_bcc), ompTo = emails(s.omp_to);
   const site = siteBase(s.site_url);
+  const report = { planned: 0, sent: 0, failed: [], abandoned: [], skipped_no_recipient: 0, held_for_next_run: 0, items: [] };
+  let budget = MAX_MAILS_PER_RUN;
+
+  // 1. Sales events. The row exists before the send; its outcome is written after.
+  for (const ev of due.events || []) {
+    const mail = mailForEvent(ev, site);
+    if (!mail) continue;
+    report.planned++;
+    const reference = ev.payload && ev.payload.reference;
+    if (budget <= 0) { report.held_for_next_run++; continue; }
+    const r = mailRecipients(salesTo, salesCc, salesBcc);
+    if (!r.to.length) { report.skipped_no_recipient++; continue; }
+    budget--;
+    report.items.push({ kind: ev.event_type, reference, to: r.to, cc: r.cc, bcc: r.bcc, subject: mail.subject, attempt: (ev.attempts || 0) + 1 });
+    if (dryRun) continue;
+    let error = null;
+    try { await graphSend(r.to, r.cc, r.bcc, mail.subject, mail.html); } catch (err) { error = String(err.message || err).slice(0, 300); }
+    try {
+      const res = await rpc("msp_event_result", { p_event_id: ev.event_id, p_ok: !error, p_recipients: recipientsLine(r),
+        p_subject: mail.subject, p_error: error });
+      if (error) report.failed.push({ kind: ev.event_type, reference, error, attempts: res.attempts, delivery: res.delivery });
+      else report.sent++;
+      if (res.abandoned) {
+        const alert = renderAbandonedMail(ev, error, res.attempts, site);
+        const it = salesBcc.length ? salesBcc : salesTo;
+        let alerted = false;
+        try { await graphSend(it, [], [], alert.subject, alert.html); alerted = true; } catch (_) { /* recorded below */ }
+        report.abandoned.push({ kind: ev.event_type, reference, attempts: res.attempts, it_alerted: alerted });
+      }
+    } catch (err) {
+      report.failed.push({ kind: ev.event_type, reference, error: `outcome not recorded: ${String(err.message || err).slice(0, 200)}` });
+    }
+  }
+
+  // 2. Practitioner notices, once per engagement (msp_notification), only once a practitioner is named.
   const plan = [];
-  for (const e of due.intake_received || []) plan.push({ e, kind: "intake_received", to: salesTo, cc: salesCc, mail: renderIntakeMail(e, site) });
-  for (const e of due.pipeline_result || []) plan.push({ e, kind: "pipeline_result", to: salesTo, cc: salesCc, mail: renderResultMail(e, site, ompTo.length > 0, s.review_days) });
   if (ompTo.length) {
     for (const e of due.omp_review_requested || []) plan.push({ e, kind: "omp_review_requested", to: ompTo, cc: salesTo, mail: renderOmpMail(e, site, s.review_days) });
     for (const e of due.omp_review_overdue || []) plan.push({ e, kind: "omp_review_overdue", to: ompTo, cc: [...salesTo, ...salesCc], mail: renderOverdueMail(e, site, s.review_days) });
   }
-  const report = { planned: plan.length, sent: 0, failed: [], skipped_no_recipient: 0, held_for_next_run: 0, items: [] };
-  for (const [i, p] of plan.entries()) {
-    if (i >= MAX_MAILS_PER_RUN) { report.held_for_next_run++; continue; }
+  for (const p of plan) {
+    report.planned++;
+    if (budget <= 0) { report.held_for_next_run++; continue; }
     if (!p.to.length) { report.skipped_no_recipient++; continue; }
+    budget--;
     const r = mailRecipients(p.to, p.cc, salesBcc);
     report.items.push({ kind: p.kind, reference: p.e.reference, to: r.to, cc: r.cc, bcc: r.bcc, subject: p.mail.subject });
     if (dryRun) continue;
@@ -172,8 +211,9 @@ Deno.serve(async (req) => {
   const started = Date.now();
   try {
     if (mode === "preflight") return json({ mode, version: WORKER_VERSION, ...(await preflight(body.scope)) });
-    let due = await rpc("msp_notify_due");
     const out = { mode, dry_run: dryRun, version: WORKER_VERSION, drafted: [], notifications: null };
+    if (!dryRun) out.events_captured = await rpc("msp_event_capture");
+    let due = await rpc("msp_notify_due");
     if ((mode === "all" || mode === "pipeline") && due.settings && due.settings.auto_run && !dryRun) {
       const claimed = await rpc("msp_pipeline_claim", { p_limit: due.settings.batch || 3 });
       for (const item of claimed || []) out.drafted.push(await draftClaimed(item));
@@ -191,7 +231,9 @@ Deno.serve(async (req) => {
 // Pure JavaScript from here to CORE END: no Deno, no network. The Node test
 // (msp-forge/test/intake-worker.test.mjs) loads this region on its own.
 
-const WORKER_VERSION = "1.0.2";
+const WORKER_VERSION = "1.1.0";
+// Keep in step with the header of agent/pipeline.js (the test checks it).
+const PIPELINE_VERSION = "1.0.2";
 const MODEL_USED = "deterministic pipeline.js (no AI), msp-intake-worker " + WORKER_VERSION;
 
 const PIPELINE = (() => {
@@ -743,6 +785,7 @@ function runPipeline(P, kernel, intake, reference, dateOfIssue) {
     checks_passed: validation.checks.filter((c) => c.result === "pass").length,
     checks_total: validation.checks.length,
     kernel_release: kernel.kernel_release || null,
+    pipeline_version: PIPELINE_VERSION,
   };
   if (!validation.passed) {
     return { outcome: "triage", model_used: MODEL_USED, stages,
@@ -855,27 +898,38 @@ function companyLine(e) {
 }
 
 function contactLine(e) {
-  const parts = [esc(e.contact_name), e.contact_position ? esc(e.contact_position) : null,
-    e.contact_email ? `<a href="mailto:${esc(e.contact_email)}">${esc(e.contact_email)}</a>` : null].filter(Boolean);
+  const name = esc(e.contact_name) + (e.contact_position ? ` (${esc(e.contact_position)})` : "");
+  const parts = [name, e.contact_email ? `<a href="mailto:${esc(e.contact_email)}">${esc(e.contact_email)}</a>` : null,
+    e.contact_number ? `<a href="tel:${esc(String(e.contact_number).replace(/[^\d+]/g, ""))}">${esc(e.contact_number)}</a>` : "no contact number given"]
+    .filter(Boolean);
   return parts.join(", ");
 }
 
+// The staff record for one submission.
+function recordLink(site, reference) {
+  return `${site}/review.html?ref=${encodeURIComponent(reference || "")}`;
+}
+
+function signOff() {
+  return `<p style="margin:12px 0 0 0">Thanks,<br>Care Net Medical Surveillance Plan system</p>`;
+}
+
+// SOP section 03, sales notification email (draft wording), to the sales desk.
 function renderIntakeMail(e, site) {
   const clean = e.validation_status !== "triage";
-  const status = clean
-    ? "Clean. Drafting starts automatically within five minutes."
-    : `Needs a person (triage)${e.triage_reason ? ": " + esc(e.triage_reason) : "."}`;
-  const inner = `<p style="margin:0 0 6px 0">A company has finished the Medical Surveillance Plan assessment.</p>`
+  const status = clean ? "Clean" : `Needs triage${e.triage_reason ? ": " + esc(e.triage_reason) : ""}`;
+  const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+    + `<p style="margin:0 0 6px 0">A new Medical Surveillance Plan assessment has just come in.</p>`
     + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
-      ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
-      ["People covered", esc(e.workforce_total)], ["Job categories", esc(e.job_categories)], ["Sites", esc(e.sites)],
-      ["Contact", contactLine(e)], ["Received", esc(sast(e.created_at))], ["Status", status]])
+      ["Industry", esc(e.industry_name || e.industry_code)], ["Status", status], ["Contact", contactLine(e)]])
+    + rows([["Area of work", esc(e.subindustry_name || e.subindustry_code)], ["People covered", esc(e.workforce_total)],
+      ["Job categories", esc(e.job_categories)], ["Sites", esc(e.sites)], ["Received", esc(sast(e.created_at))]])
     + `<p style="margin:0">${clean
-      ? "You will get a second notice when the Plan is drafted, or if drafting needs a person."
-      : "Nothing is drafted until a person resolves the triage reason. Open the submission in the staff tool."}</p>`
-    + button(`${site}/review.html`, "Open the staff tool");
-  return { subject: `New Plan submission: ${e.reference}, ${e.company}${clean ? "" : " (triage)"}`,
-    html: shell("New submission received", inner) };
+      ? "The draft plan is being prepared now. It goes to the client once their medicals are booked with us or a booking deposit is paid, so a quick call to confirm that is the next step."
+      : "The status says triage, so drafting waits until the reason above is resolved. Please look over the record before you call."}</p>`
+    + button(recordLink(site, e.reference), "Open the record")
+    + signOff();
+  return { subject: `New assessment in: ${e.reference}, ${e.company}`, html: shell("New assessment in", inner) };
 }
 
 function describeDefect(d) {
@@ -883,29 +937,54 @@ function describeDefect(d) {
   return `${esc(d.code || d.defect_code)}${esc(detail)}`;
 }
 
-function renderResultMail(e, site, ompConfigured, reviewDays) {
-  if (e.status === "omp_queue") {
-    const clock = ompConfigured
-      ? `The reviewing practitioner has been asked to review it within ${esc(reviewDays)} days.`
-      : "No reviewing practitioner is named yet, so the review clock has not started. The Plan waits in the queue until one is.";
-    const inner = `<p style="margin:0 0 6px 0">The Plan for this submission has been drafted and passed every automatic check. It is waiting for practitioner review.</p>`
+// plan.drafted (checks passed or not) and plan.draft_failed.
+function renderResultMail(e, site, payload) {
+  const pl = payload || {};
+  if (pl.checks_passed === true) {
+    const checks = pl.checks && pl.checks_total ? ` (${esc(pl.checks)} of ${esc(pl.checks_total)})` : "";
+    const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+      + `<p style="margin:0 0 6px 0">The Plan for this assessment is drafted and passed every automatic check${checks}.</p>`
       + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
-        ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
-        ["People covered", esc(e.workforce_total)], ["Contact", contactLine(e)], ["Practitioner review", clock]])
-      + `<p style="margin:0">Nothing reaches the client until a registered Occupational Medical Practitioner has reviewed and signed the Plan.</p>`
-      + button(`${site}/review.html`, "Open the review queue");
-    return { subject: `Plan drafted, waiting for practitioner review: ${e.reference}, ${e.company}`,
-      html: shell("Plan drafted", inner) };
+        ["Industry", esc(e.industry_name || e.industry_code)], ["People covered", esc(e.workforce_total)],
+        ["Contact", contactLine(e)], ["Status", "Waiting for the booking or deposit"]])
+      + `<p style="margin:0 0 8px 0">It goes to the client once their medicals are booked with us or a booking deposit is paid. Every page is marked planning only, because no practitioner has reviewed or signed it.</p>`
+      + `<p style="margin:0">Release is not automatic yet. Until the booking step is live, tell IT when the booking or deposit is confirmed and IT sends the Plan to the client.</p>`
+      + button(recordLink(site, e.reference), "Open the record")
+      + signOff();
+    return { subject: `Plan drafted, waiting for booking: ${e.reference}, ${e.company}`, html: shell("Plan drafted", inner) };
   }
   const defects = (e.defects || []).map((d) => `<li style="margin:0 0 4px 0">${describeDefect(d)}</li>`).join("");
-  const inner = `<p style="margin:0 0 6px 0">Drafting stopped for this submission and needs a person before the Plan can go to the practitioner.</p>`
+  const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+    + `<p style="margin:0 0 6px 0">Drafting stopped for this assessment and needs a person before the Plan can go to the client.</p>`
     + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
       ["Industry", esc(e.industry_name || e.industry_code)], ["Area of work", esc(e.subindustry_name || e.subindustry_code)],
       ["Contact", contactLine(e)]])
     + `<p style="margin:0 0 4px 0;font-weight:bold">Why it stopped</p><ul style="margin:0 0 12px 18px;padding:0">${defects || "<li>No reason was recorded. IT will look.</li>"}</ul>`
-    + `<p style="margin:0">Once the cause is fixed, a forge_admin can send it back for drafting with msp_pipeline_rerun, and it is drafted again within five minutes.</p>`
-    + button(`${site}/review.html`, "Open the staff tool");
+    + `<p style="margin:0">Once the cause is fixed, IT sends it back for drafting and it is drafted again within five minutes.</p>`
+    + button(recordLink(site, e.reference), "Open the record")
+    + signOff();
   return { subject: `Plan drafting needs a person: ${e.reference}, ${e.company}`, html: shell("Drafting stopped", inner) };
+}
+
+// One sales event to one mail; null for an event that sends nothing.
+function mailForEvent(ev, site) {
+  const e = ev && ev.engagement;
+  if (!e) return null;
+  if (ev.event_type === "intake.submitted") return renderIntakeMail(e, site);
+  if (ev.event_type === "plan.drafted") return renderResultMail(e, site, ev.payload);
+  if (ev.event_type === "plan.draft_failed") return renderResultMail(e, site, { checks_passed: false });
+  return null;
+}
+
+// To IT, once, when a sales mail has failed every attempt.
+function renderAbandonedMail(ev, error, attempts, site) {
+  const e = ev.engagement || {};
+  const inner = `<p style="margin:0 0 6px 0">A Medical Surveillance Plan mail to sales could not be delivered after ${esc(attempts)} attempts and has been abandoned.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)], ["Event", esc(ev.event_type)],
+      ["Last error", esc(error || "not recorded")]])
+    + `<p style="margin:0">The event row in msp_event holds the detail. Fix the cause, then set its delivery back to pending to send it again.</p>`
+    + button(recordLink(site, e.reference), "Open the record");
+  return { subject: `MSP mail abandoned: ${e.reference}, ${ev.event_type}`, html: shell("Mail abandoned", inner) };
 }
 
 function renderOmpMail(e, site, reviewDays) {

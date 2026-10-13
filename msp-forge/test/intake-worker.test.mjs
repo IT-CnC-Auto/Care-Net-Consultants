@@ -17,7 +17,7 @@ const index = readFileSync(join(root, 'supabase/functions/msp-intake-worker/inde
 const core = index.slice(index.indexOf('// ============================== CORE START'), index.indexOf('// =============================== CORE END'));
 const dir = mkdtempSync(join(tmpdir(), 'msp-worker-'));
 const modPath = join(dir, 'core.mjs');
-writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, mailRecipients, recipientsLine, MODEL_USED };\n');
+writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, mailRecipients, recipientsLine, mailForEvent, renderAbandonedMail, recordLink, PIPELINE_VERSION, MODEL_USED };\n');
 const W = await import(pathToFileURL(modPath).href);
 
 let failed = 0;
@@ -74,15 +74,37 @@ const e = { engagement_id: 'x', reference: 'CNC-MSP-2026-1008-001', status: 'omp
   job_categories: 3, sites: 1, contact_name: 'TEST Contact', contact_email: 'it@carenetconsultants.co.za', contact_position: 'SHE Officer',
   defects: [{ stage: 'validate', code: 'PROSE_RULE_HOLDS', detail: { detail: 'no em dash' } }], omp_requested_at: '2026-10-01T07:00:00Z' };
 const site = W.siteBase('https://medicalsurveillance.carenetconsultants.co.za');
-const mails = [W.renderIntakeMail(e, site), W.renderIntakeMail({ ...e, validation_status: 'triage', triage_reason: 'Area of work Other' }, site),
-  W.renderResultMail(e, site, false, 5), W.renderResultMail(e, site, true, 5), W.renderResultMail({ ...e, status: 'triage' }, site, false, 5),
-  W.renderOmpMail(e, site, 5), W.renderOverdueMail(e, site, 5)];
+const drafted = { reference: e.reference, checks_passed: true, checks: 10, checks_total: 10 };
+const mails = [W.renderIntakeMail(e, site), W.renderIntakeMail({ ...e, validation_status: 'triage', triage_reason: 'Area of work Other', contact_number: '060 070 2723' }, site),
+  W.renderResultMail(e, site, drafted), W.renderResultMail({ ...e, status: 'triage' }, site, { checks_passed: false }),
+  W.renderOmpMail(e, site, 5), W.renderOverdueMail(e, site, 5),
+  W.renderAbandonedMail({ event_type: 'intake.submitted', engagement: e }, 'sendMail 503', 5, site)];
 const all = mails.map(x => x.subject + x.html).join('\n');
 ok(!/[–—]/.test(all), 'no en or em dash in any mail');
 ok(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}]/u.test(all), 'no emoji in any mail');
 const bodies = mails.map(x => x.html).join('\n');
 ok(!bodies.includes('<Acme>') && bodies.includes('&lt;Acme&gt;'), 'client text is escaped in mail bodies (subjects are plain text)');
-ok(mails[2].html.includes('review clock has not started') && mails[3].html.includes('within 5 days'), 'result mail states the review clock honestly');
+ok(mails[0].subject === 'New assessment in: CNC-MSP-2026-1008-001, TEST <Acme> & Sons (Pty) Ltd', 'submission mail subject follows the SOP');
+ok(mails[0].html.includes('A new Medical Surveillance Plan assessment has just come in.') && mails[0].html.includes('quick call to confirm'), 'submission mail carries the SOP wording');
+ok(mails[0].html.includes('review.html?ref=CNC-MSP-2026-1008-001') && mails[0].html.includes('Open the record'), 'submission mail links to the record');
+ok(mails[0].html.includes('no contact number given') && mails[1].html.includes('tel:0600702723') && mails[1].html.includes('060 070 2723'), 'contact number shown when known, said plainly when not');
+ok(mails[1].html.includes('Needs triage: Area of work Other') && mails[1].html.includes('look over the record before you call'), 'triage submission mail asks for a look first');
+ok(mails[2].subject.startsWith('Plan drafted, waiting for booking') && mails[2].html.includes('booking deposit is paid') && mails[2].html.includes('10 of 10') && mails[2].html.includes('marked planning only'), 'drafted mail: waiting for booking, checks, marking');
+ok(!/practitioner review/i.test(mails[2].html) && mails[3].subject.startsWith('Plan drafting needs a person'), 'a clean Plan no longer goes to the practitioner queue; a halted one asks for a person');
+{
+  const ev = (t, payload) => ({ event_id: 'x', event_type: t, attempts: 0, payload, engagement: e });
+  ok(W.mailForEvent(ev('intake.submitted', {}), site).subject.startsWith('New assessment in')
+    && W.mailForEvent(ev('plan.drafted', drafted), site).subject.startsWith('Plan drafted')
+    && W.mailForEvent(ev('plan.drafted', { checks_passed: false }), site).subject.startsWith('Plan drafting needs')
+    && W.mailForEvent(ev('plan.draft_failed', {}), site).subject.startsWith('Plan drafting needs')
+    && W.mailForEvent(ev('booking.confirmed', {}), site) === null
+    && W.mailForEvent({ event_type: 'intake.submitted' }, site) === null, 'each sales event maps to its mail; others send nothing');
+}
+ok(mails[6].subject === 'MSP mail abandoned: CNC-MSP-2026-1008-001, intake.submitted' && mails[6].html.includes('sendMail 503'), 'IT is told when a mail is abandoned');
+{
+  const header = readFileSync(join(root, 'agent/pipeline.js'), 'utf8').split('\n')[0];
+  ok(header.includes(`v${W.PIPELINE_VERSION} `) && r.summary.pipeline_version === W.PIPELINE_VERSION, 'drafting records the pipeline version, in step with pipeline.js');
+}
 ok(W.emails('salesdesk@carenetconsultants.co.za, it@carenetconsultants.co.za').length === 2 && W.emails('pending').length === 0, 'recipient parsing: list kept, pending ignored');
 {
   const r = W.mailRecipients(['salesdesk@carenetconsultants.co.za'], W.emails('director@example.co.za, salesdesk@carenetconsultants.co.za'), W.emails('it@carenetconsultants.co.za, director@example.co.za'));
