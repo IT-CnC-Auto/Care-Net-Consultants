@@ -234,7 +234,7 @@
           <li>The full guided assessment</li>
           <li>Your Plan drafted against the verified law for your industry</li>
           <li>Every section of the sample Plan, from the regulatory framework to the surveillance calendar</li>
-          <li>The watermark lifts for Care Net clients, or the day you book your medicals with us</li>
+          <li>Marked planning only on every page, until a practitioner reviews it and signs</li>
         </ul>
         <a class="btn ghost" href="#inside" data-cta="see_what_is_in_plan">See what is in the Plan</a>
       </div>
@@ -591,7 +591,13 @@
         parts.push('<p class="muted">Practitioner review, for a report covering ' + people + (people === 1 ? ' person' : ' people') + (jobs ? ' across ' + jobs + (jobs === 1 ? ' job category' : ' job categories') : '') + '.</p>');
         parts.push('<p class="big">' + zar(d.fee_zar) + '</p>');
         parts.push('<p class="muted">Your Plan itself remains free to build and yours to keep.</p>');
-        if (free) parts.push('<p><strong>Your watermark lifts automatically.</strong> At ' + medicals + ' medicals a year with Care Net you are inside the client benefit, so your Plan is released unwatermarked.</p>');
+        /* This used to promise an unwatermarked Plan with no signature on it.
+           Barteld's ruling of 12/10/2026 makes the marking mean "no practitioner
+           has read this", so it cannot come off for a commercial reason while the
+           Plan is still unreviewed. The client benefit itself is Barteld's to
+           redefine; until he does, this says only what is certain. See the note to
+           Od about the watermark_free flag in migration 045. */
+        if (free) parts.push('<p><strong>You qualify as a Care Net client.</strong> At ' + medicals + ' medicals a year with us, a sales executive confirms what your agreement covers towards this review before anything is charged.</p>');
         parts.push('<p class="muted">This is the calculation for the headcount you entered. A sales executive confirms it against your industry and how complex your operation is before anything begins.</p>');
         out.innerHTML = parts.join('');
         window.__cncCalc = { people: people, jobs: jobs, medicals: medicals, fee: d.fee_zar, industry: el('industry').value };
