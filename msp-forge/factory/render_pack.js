@@ -1,4 +1,10 @@
-// CNC MSP FORGE | DOC-GEN-01 v1.1.0 | Document Factory renderer
+// CNC MSP FORGE | DOC-GEN-01 v1.2.0 | Document Factory renderer
+// v1.2.0 (13/10/2026): every page of an unsigned Plan is marked PLANNING ONLY (MD ruling
+// 12/10/2026): a diagonal marking behind the content and a band in the header. The
+// marking comes off only when MSP_SIGNOFF names the practitioner sign off record from
+// msp_plan_signoff(reference) (migration 069) for this Plan, and that record shows an
+// approved decision with the practitioner's name, HPCSA number, signature and signing
+// time. No other setting removes it.
 // v1.1.0 (14/09/2026): executive summary derived from the draft (was sample template text);
 // MSP_CLIENT_LOGO / MSP_CLIENT_LOGO_SIZE override the client logo asset.
 // Renders the validated structured draft (agent/draft.json) into the dual
@@ -7,6 +13,7 @@
 // never paraphrased. Geometry is verified after render by verify_geometry.py.
 //
 // Usage: node render_pack.js <draft.json> <output.docx>
+//        MSP_SIGNOFF=<signoff.json> node render_pack.js ...   (signed Plan, unmarked)
 
 const fs = require('fs');
 const path = require('path');
@@ -15,6 +22,7 @@ const {
   Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
   AlignmentType, HeadingLevel, TableOfContents, PageBreak, PageNumber,
   TabStopType, VerticalAlign,
+  HorizontalPositionRelativeFrom, VerticalPositionRelativeFrom, TextWrappingType,
 } = require('docx');
 
 const draft = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
@@ -35,6 +43,28 @@ const CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), '
 if (!P.omp_name_placeholder || P.omp_name_placeholder.includes('CR-12.7')) {
   P.omp_name_placeholder = CONFIG.designated_omp.display_line + ' (approval pending, Section 11.1)';
 }
+// ------------------------------------------------------------ planning only --
+// The marking is a clinical statement: no Occupational Medical Practitioner has
+// reviewed or signed this document. Marked unless a valid sign off record says otherwise.
+const MARK_BAND = 'PLANNING ONLY. NOT REVIEWED OR SIGNED BY AN OMP.';
+function signoffProblem(s) {
+  if (!s) return 'no practitioner sign off record (MSP_SIGNOFF not set)';
+  if (s.reference !== P.reference) return `sign off record is for ${s.reference}, not ${P.reference}`;
+  if (s.decision !== 'approved') return `practitioner decision is ${s.decision || 'not recorded'}, not approved`;
+  for (const k of ['omp_name', 'omp_hpcsa_number', 'signature_name', 'signed_at']) {
+    if (!String(s[k] || '').trim()) return `sign off record has no ${k}`;
+  }
+  if (s.signed !== true) return 'sign off record is not marked signed';
+  return null;
+}
+const SIGNOFF = process.env.MSP_SIGNOFF ? JSON.parse(fs.readFileSync(process.env.MSP_SIGNOFF, 'utf8')) : null;
+const MARK_REASON = signoffProblem(SIGNOFF);
+const MARKED = MARK_REASON !== null;
+const markingImage = MARKED ? fs.readFileSync(path.join(ASSETS, 'marking_planning_only.png')) : null;
+if (!MARKED) {
+  P.omp_name_placeholder = `${SIGNOFF.omp_name}, HPCSA ${SIGNOFF.omp_hpcsa_number}, approved and signed ${String(SIGNOFF.signed_at).slice(0, 10)}`;
+}
+
 const cncBanner = fs.readFileSync(path.join(ASSETS, 'cnc_header_banner.png'));
 const cncFooter = fs.readFileSync(path.join(ASSETS, 'cnc_footer_banner.png'));
 // Client logo: the prepared sample asset by default; MSP_CLIENT_LOGO (path) and
@@ -90,12 +120,38 @@ function brandTable(headers, rows, widths) {
     },
     rows: [
       new TableRow({ tableHeader: true, children: headers.map((t, i) => cell(t, { w: widths[i], shade: CHARCOAL, color: 'FFFFFF', bold: true })) }),
-      ...rows.map((r, ri) => new TableRow({ children: r.map((t, i) => cell(t, { w: widths[i], shade: ri % 2 ? LIGHT : 'FFFFFF' })) })),
+      ...rows.map((r, ri) => new TableRow({ children: r.map((t, i) => cell(t, { w: widths[i], shade: ri % 2 ? LIGHT : undefined })) })),
     ],
   });
 }
 
 // -------------------------------------------------------------- header/footer --
+// Full page image anchored to the page and drawn behind the text, so it repeats on
+// every page under the content; then a red band under the brand row. Table rows that
+// were filled white are left unfilled (same look on a white page) so the marking shows.
+function markingParagraphs() {
+  if (!MARKED) return [];
+  return [new Paragraph({
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 60, after: 0 },
+    shading: { type: ShadingType.CLEAR, fill: RED },
+    children: [
+      new ImageRun({
+        type: 'png', data: markingImage,
+        transformation: { width: 794, height: 1123 },
+        floating: {
+          horizontalPosition: { relative: HorizontalPositionRelativeFrom.PAGE, offset: 0 },
+          verticalPosition: { relative: VerticalPositionRelativeFrom.PAGE, offset: 0 },
+          behindDocument: true, allowOverlap: true, lockAnchor: true,
+          wrap: { type: TextWrappingType.NONE },
+        },
+        altText: { title: 'Planning only', description: 'PLANNING ONLY marking: not reviewed or signed by an Occupational Medical Practitioner', name: 'planning-only-marking' },
+      }),
+      new TextRun({ text: MARK_BAND, font: FONT, size: 16, bold: true, color: 'FFFFFF' }),
+    ],
+  })];
+}
+
 function dualBrandHeader() {
   return new Header({
     children: [new Table({
@@ -114,7 +170,7 @@ function dualBrandHeader() {
           }),
         ],
       })],
-    })],
+    }), ...markingParagraphs()],
   });
 }
 
@@ -305,4 +361,5 @@ const doc = new Document({
 Packer.toBuffer(doc).then(buf => {
   fs.writeFileSync(OUT, buf);
   console.log(`${OUT} written (${buf.length} bytes)`);
+  console.log(MARKED ? `marking: PLANNING ONLY on every page (${MARK_REASON})` : `marking: none, signed by ${SIGNOFF.signature_name} on ${SIGNOFF.signed_at}`);
 });
