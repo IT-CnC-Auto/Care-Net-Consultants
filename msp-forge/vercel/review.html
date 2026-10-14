@@ -41,6 +41,18 @@
   .pill { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: bold; }
   .pill.open, .pill.pending { background: #fdeaea; color: var(--red); }
   .pill.resolved, .pill.verified { background: #e8f7ec; color: #2e7d32; }
+  .tri-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .tri-row input { margin: 0; }
+  @media (max-width: 560px) { .tri-row { grid-template-columns: 1fr; } }
+  .tri-other { border-top: 1px solid #eee; padding-top: 12px; }
+  /* The reason is the audit trail, so give it a full line to be read in
+     rather than a truncated box squeezed between two buttons. */
+  form.tri-correct [name=reason], form.tri-close [name=reason] { display: block; width: 100%; margin: 10px 0 8px; }
+  form.tri-correct button.tri-add { margin-bottom: 2px; }
+  form.tri-close { display: grid; grid-template-columns: 1fr; gap: 0; }
+  form.tri-close select { width: 100%; margin: 0; }
+  form.tri-booking select, form.tri-booking input { display: block; width: 100%; margin: 0 0 8px; }
+  button.ghost { background: #fff; color: var(--red); border: 1px solid var(--red); }
   .note { background: #fff8e6; border-left: 3px solid #e0a800; padding: 8px 12px; margin: 6px 0; font-size: 13px; }
   form.decide { margin-top: 12px; display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
   form.decide textarea, form.decide input, form.decide select { padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; font-size: 13px; }
@@ -108,6 +120,7 @@
   <div id="app" style="display:none">
     <nav>
       <button data-tab="queue" data-cta="review_tab_queue" class="active">OMP queue</button>
+      <button data-tab="triage" data-cta="review_tab_triage">Triage and booking</button>
       <button data-tab="confirmation" data-cta="review_tab_confirmation">Confirmation register</button>
       <button data-tab="exclusion" data-cta="review_tab_exclusion">Exclusion register</button>
       <button data-tab="due" data-cta="review_tab_due">Verification due</button>
@@ -151,6 +164,75 @@ document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
 });
 
 const tabs = {
+  /* Triage and booking. A submission that failed its checks used to sit here
+     with nothing anybody could do about it. Od's migration 074 gives it four
+     ways out and these are the buttons for them:
+       correct   msp_triage_correct  fix the fields and send it back to drafting
+       re-run    msp_pipeline_rerun  try the same data again, for a failure that
+                                     was the pipeline rather than the answers
+       close     msp_triage_close    rejected, or archived for a duplicate
+       confirm   msp_booking_confirm open the booking gate with its evidence
+     Every one is audited on the back end and every one needs forge_admin. */
+  async triage() {
+    const { data, error } = await supabase.rpc('msp_triage_cases');
+    if (error) return `<div class="card">Triage unavailable: ${esc(error.message)}. This tab needs the forge_admin role.</div>`;
+    const cases = data || [];
+    if (!cases.length) return '<div class="card">Nothing in triage and nothing waiting at the booking gate.</div>';
+    return cases.map(c => {
+      const reasons = c.open_reasons || [];
+      const defects = c.defects || [];
+      const gate = c.status === 'awaiting_booking';
+      return `
+      <div class="card">
+        <h3>${esc(c.reference)} &middot; ${esc(c.company)}</h3>
+        <p class="muted">Status ${esc(c.status)} &middot; submitted ${esc(c.created_at)} &middot; this version ${esc(c.intake_version_at)} &middot; ${c.corrections} correction${c.corrections === 1 ? '' : 's'} so far</p>
+        ${c.triage_reason ? `<div class="note"><strong>Sent to triage because</strong>: ${esc(c.triage_reason)}</div>` : ''}
+
+        <h3 style="margin-top:14px">What is still wrong</h3>
+        ${reasons.length
+          ? reasons.map(r => `<div class="note"><strong>Open</strong>: ${esc(r)}</div>`).join('')
+          : '<p class="muted">Nothing. The answers pass the checks as they stand, so this one can go straight back for drafting.</p>'}
+        ${defects.length ? '<h3 style="margin-top:14px">Defects recorded</h3>' + defects.map(d => `<div class="note" style="border-left-color:#8a6d00"><strong>${esc(d.stage)} ${esc(d.code)}</strong> &middot; ${esc(d.at)}<br>${esc(d.detail)}</div>`).join('') : ''}
+
+        <details style="margin-top:12px">
+          <summary class="muted">The answers as they stand</summary>
+          <pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;background:#f7f7f9;padding:10px;border-radius:6px">${esc(JSON.stringify(c.payload, null, 2))}</pre>
+        </details>
+
+        <h3 style="margin-top:16px">Correct the answers and send it back</h3>
+        <p class="muted">One row per field. The field name is the one in the answers above, for example job_1_hazards. Use dots for a field inside a list, for example sites.0.name. The client's own consent and declaration cannot be corrected here.</p>
+        <form class="tri-correct" data-ref="${esc(c.reference)}">
+          <div class="tri-rows">
+            <div class="tri-row"><input name="field" placeholder="Field name" required><input name="value" placeholder="New value" required></div>
+          </div>
+          <button type="button" class="tri-add ghost">Add another field</button>
+          <input name="reason" placeholder="Why this is being corrected (at least five characters)" required minlength="5">
+          <button type="submit">Correct and send back for drafting</button>
+        </form>
+
+        ${gate ? `
+        <h3 style="margin-top:16px">Confirm the booking or deposit</h3>
+        <p class="muted">This opens the gate and releases the Plan. Give the booking number, deposit reference or invoice number as the evidence.</p>
+        <form class="tri-booking" data-ref="${esc(c.reference)}">
+          <select name="type"><option value="booking">Medicals booked</option><option value="deposit">Deposit paid</option></select>
+          <input name="evidence" placeholder="Booking number, deposit reference or invoice number" required minlength="3">
+          <input name="note" placeholder="Note (optional)">
+          <button type="submit">Confirm and release the Plan</button>
+        </form>` : ''}
+
+        <h3 style="margin-top:16px">Other ways out</h3>
+        <div class="tri-other">
+          <button type="button" class="tri-rerun ghost" data-ref="${esc(c.reference)}">Re-run the same answers</button>
+          <form class="tri-close" data-ref="${esc(c.reference)}">
+            <select name="outcome"><option value="rejected">Reject, it will not be drafted</option><option value="archived">Archive, duplicate or withdrawn</option></select>
+            <input name="reason" placeholder="Why (at least five characters)" required minlength="5">
+            <button type="submit">Close this submission</button>
+          </form>
+        </div>
+      </div>`;
+    }).join('');
+  },
+
   async queue() {
     const { data, error } = await supabase.from('msp_review_queue').select('*');
     if (error) return `<div class="card">Queue unavailable: ${esc(error.message)}. Your account may not carry a forge role yet.</div>`;
@@ -257,6 +339,72 @@ function wireSignature(canvas) {
 async function show(tab) {
   $('#content').innerHTML = '<div class="card muted">Loading…</div>';
   $('#content').innerHTML = await tabs[tab]();
+
+  /* Triage: add another field row. */
+  document.querySelectorAll('button.tri-add').forEach(b => b.onclick = () => {
+    const rows = b.parentElement.querySelector('.tri-rows');
+    const r = document.createElement('div');
+    r.className = 'tri-row';
+    r.innerHTML = '<input name="field" placeholder="Field name" required><input name="value" placeholder="New value" required>';
+    rows.appendChild(r);
+  });
+
+  /* Triage: correct the answers. The back end wants an array of
+     {path, value}; a dotted field name becomes the path segments. */
+  document.querySelectorAll('form.tri-correct').forEach(f => f.onsubmit = async ev => {
+    ev.preventDefault();
+    const changes = [];
+    f.querySelectorAll('.tri-row').forEach(r => {
+      const field = r.querySelector('[name=field]').value.trim();
+      const value = r.querySelector('[name=value]').value;
+      if (field) changes.push({ path: field.split('.').filter(Boolean), value: value });
+    });
+    if (!changes.length) { alert('Name at least one field to correct.'); return; }
+    const reason = f.querySelector('[name=reason]').value.trim();
+    if (!window.confirm('Correct ' + changes.length + ' field' + (changes.length === 1 ? '' : 's') + ' on ' + f.dataset.ref
+        + ' and send it back for drafting?\n\n' + changes.map(c => c.path.join('.') + ' = ' + c.value).join('\n'))) return;
+    const { data, error } = await supabase.rpc('msp_triage_correct', {
+      p_reference: f.dataset.ref, p_changes: changes, p_reason: reason,
+    });
+    alert(error ? 'Refused: ' + error.message
+                : 'Corrected and sent back for drafting. ' + JSON.stringify(data));
+    if (!error) show('triage');
+  });
+
+  /* Triage: re-run the same answers, for a failure that was the pipeline
+     rather than the answers. It refuses a submission the form held back. */
+  document.querySelectorAll('button.tri-rerun').forEach(b => b.onclick = async () => {
+    if (!window.confirm('Re-run ' + b.dataset.ref + ' with the answers exactly as they are?')) return;
+    const { data, error } = await supabase.rpc('msp_pipeline_rerun', { p_reference: b.dataset.ref });
+    alert(error ? 'Refused: ' + error.message : 'Sent back for drafting. ' + JSON.stringify(data));
+    if (!error) show('triage');
+  });
+
+  /* Triage: confirm the booking or deposit, which opens the gate. */
+  document.querySelectorAll('form.tri-booking').forEach(f => f.onsubmit = async ev => {
+    ev.preventDefault();
+    const fd = new FormData(f);
+    if (!window.confirm('Confirm ' + fd.get('type') + ' for ' + f.dataset.ref + ' against evidence "'
+        + fd.get('evidence') + '" and release the Plan?')) return;
+    const { data, error } = await supabase.rpc('msp_booking_confirm', {
+      p_reference: f.dataset.ref, p_type: fd.get('type'),
+      p_evidence_ref: fd.get('evidence'), p_note: fd.get('note') || null,
+    });
+    alert(error ? 'Refused: ' + error.message : 'Booking confirmed and the Plan released. ' + JSON.stringify(data));
+    if (!error) show('triage');
+  });
+
+  /* Triage: close a submission that will not be drafted. */
+  document.querySelectorAll('form.tri-close').forEach(f => f.onsubmit = async ev => {
+    ev.preventDefault();
+    const fd = new FormData(f);
+    if (!window.confirm('Close ' + f.dataset.ref + ' as ' + fd.get('outcome') + '? This stops it being drafted.')) return;
+    const { data, error } = await supabase.rpc('msp_triage_close', {
+      p_reference: f.dataset.ref, p_outcome: fd.get('outcome'), p_reason: fd.get('reason'),
+    });
+    alert(error ? 'Refused: ' + error.message : 'Closed. ' + JSON.stringify(data));
+    if (!error) show('triage');
+  });
 
   document.querySelectorAll('form.recommend').forEach(f => f.onsubmit = async ev => {
     ev.preventDefault();
