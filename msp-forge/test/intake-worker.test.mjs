@@ -17,7 +17,7 @@ const index = readFileSync(join(root, 'supabase/functions/msp-intake-worker/inde
 const core = index.slice(index.indexOf('// ============================== CORE START'), index.indexOf('// =============================== CORE END'));
 const dir = mkdtempSync(join(tmpdir(), 'msp-worker-'));
 const modPath = join(dir, 'core.mjs');
-writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, mailRecipients, recipientsLine, mailForEvent, renderAbandonedMail, recordLink, PIPELINE_VERSION, MODEL_USED };\n');
+writeFileSync(modPath, core + '\nexport { PIPELINE, runPipeline, preflightIntake, renderIntakeMail, renderResultMail, renderOmpMail, renderOverdueMail, emails, siteBase, mailRecipients, recipientsLine, mailForEvent, renderAbandonedMail, recordLink, PIPELINE_VERSION, MODEL_USED, bookingLink, renderBookingConfirmedMail, renderClientChoiceMail };\n');
 const W = await import(pathToFileURL(modPath).href);
 
 let failed = 0;
@@ -97,10 +97,40 @@ ok(!/practitioner review/i.test(mails[2].html) && mails[3].subject.startsWith('P
     && W.mailForEvent(ev('plan.drafted', drafted), site).subject.startsWith('Plan drafted')
     && W.mailForEvent(ev('plan.drafted', { checks_passed: false }), site).subject.startsWith('Plan drafting needs')
     && W.mailForEvent(ev('plan.draft_failed', {}), site).subject.startsWith('Plan drafting needs')
-    && W.mailForEvent(ev('booking.confirmed', {}), site) === null
+    && W.mailForEvent(ev('plan.released', {}), site) === null
     && W.mailForEvent({ event_type: 'intake.submitted' }, site) === null, 'each sales event maps to its mail; others send nothing');
 }
 ok(mails[6].subject === 'MSP mail abandoned: CNC-MSP-2026-1008-001, intake.submitted' && mails[6].html.includes('sendMail 503'), 'IT is told when a mail is abandoned');
+{
+  // Booking gate (worker v1.2.0, migration 074)
+  const waiting = { ...e, status: 'awaiting_booking' };
+  const url = W.bookingLink('https://medicalsurveillance.carenetconsultants.co.za/booking-confirm.html', 'abc123');
+  ok(url === 'https://medicalsurveillance.carenetconsultants.co.za/booking-confirm.html?t=abc123'
+    && W.bookingLink('https://x.test/p?a=1', 't') === 'https://x.test/p?a=1&t=t'
+    && W.bookingLink('pending', 't') === null && W.bookingLink('https://x.test/p', null) === null, 'booking link: built from the page setting, none while pending');
+  const withLink = W.renderResultMail(waiting, site, drafted, { bookingUrl: url });
+  const noLink = W.renderResultMail(waiting, site, drafted);
+  ok(withLink.html.includes(url) && withLink.html.includes('Confirm booking or deposit') && withLink.html.includes('nothing changes until you press Confirm'),
+    'drafted mail carries the one-time confirmation link when the page exists');
+  ok(!noLink.html.includes('Confirm booking or deposit') && noLink.html.includes('send IT the booking number or deposit reference'), 'without the page, the mail says how to send the evidence');
+  const already = W.renderResultMail({ ...e, status: 'booking_confirmed' }, site, drafted);
+  ok(already.subject.startsWith('Plan drafted, booking confirmed') && already.html.includes('ready for release'), 'a Plan drafted after its booking was confirmed says it is ready for release');
+  const conf = W.renderBookingConfirmedMail({ ...e, status: 'booking_confirmed' }, site,
+    { type: 'deposit', evidence_ref: 'OZ-123', confirmed_by: 'link:Celeste', method: 'link', confirmed_at: '2026-10-14T08:00:00Z' });
+  ok(conf.subject === 'Booking confirmed: CNC-MSP-2026-1008-001, TEST <Acme> & Sons (Pty) Ltd' && conf.html.includes('Booking deposit paid')
+    && conf.html.includes('OZ-123') && conf.html.includes('Celeste (one-time link)') && !conf.html.includes('link:Celeste') && conf.html.includes('ready for release'), 'booking confirmed mail: type, evidence, who, status');
+  const early = W.renderBookingConfirmedMail({ ...e, status: 'classifying' }, site, { type: 'booking', evidence_ref: 'MCO 55', confirmed_by: 'it:sql-editor', method: 'staff' });
+  ok(early.html.includes('Medicals booked with Care Net') && early.html.includes('passes the gate as soon as it is drafted'), 'a booking confirmed before drafting says the gate passes on drafting');
+  const choices = ['booked', 'deposit', 'call_me'].map((c) => W.renderClientChoiceMail(e, site, { choice: c, note: c === 'call_me' ? 'after 14:00' : null, chosen_at: '2026-10-14T08:00:00Z' }));
+  ok(choices[0].subject.startsWith('Client says the medicals are booked') && choices[0].html.includes('I have booked my medicals')
+    && choices[1].subject.startsWith('Client wants to pay a booking deposit') && choices[1].html.includes('Online payment is not built yet')
+    && choices[2].subject.startsWith('Client asks for a call') && choices[2].html.includes('after 14:00'), 'each client answer gets its own mail and next step');
+  const all2 = [withLink, noLink, already, conf, early, ...choices].map((x) => x.subject + x.html).join('\n');
+  ok(!/[–—]/.test(all2) && !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}]/u.test(all2), 'booking mails: no dashes, no emoji');
+  ok(W.mailForEvent({ event_type: 'booking.confirmed', payload: { type: 'booking' }, engagement: e }, site).subject.startsWith('Booking confirmed')
+    && W.mailForEvent({ event_type: 'client.booking_choice', payload: { choice: 'deposit' }, engagement: e }, site).subject.startsWith('Client wants'),
+    'booking events map to their mails');
+}
 {
   const header = readFileSync(join(root, 'agent/pipeline.js'), 'utf8').split('\n')[0];
   ok(header.includes(`v${W.PIPELINE_VERSION} `) && r.summary.pipeline_version === W.PIPELINE_VERSION, 'drafting records the pipeline version, in step with pipeline.js');

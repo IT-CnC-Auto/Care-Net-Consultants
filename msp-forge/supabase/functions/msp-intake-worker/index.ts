@@ -5,6 +5,10 @@
 // table (msp_event) and their outcome recorded there, with retries that double their gap and
 // an alert to IT when one is abandoned; the submission mail follows the SOP wording with the
 // contact number and a link to the record; a clean Plan waits for the booking or deposit.
+// v1.2.0 (14/10/2026, migration 074, booking gate): the "Plan drafted" mail carries a one-time
+// "Confirm booking or deposit" link once integration.msp_booking_page names the page, or says
+// how to send the evidence until then; new sales mails for booking.confirmed and for the
+// client's answer on screen (client.booking_choice).
 //
 // Called by pg_cron every five minutes (migration 066), or on demand by a
 // forge_admin through msp_intake_worker_kick. One run:
@@ -140,6 +144,15 @@ async function notify(due, dryRun) {
 
   // 1. Sales events. The row exists before the send; its outcome is written after.
   for (const ev of due.events || []) {
+    // A one-time confirmation link for a Plan waiting for its booking (none in a dry run,
+    // none until the confirmation page exists: the database returns null then).
+    if (!dryRun && ev.event_type === "plan.drafted" && ev.payload && ev.payload.checks_passed === true
+        && ev.engagement && ev.engagement.status === "awaiting_booking") {
+      try {
+        const token = await rpc("msp_booking_link_issue", { p_engagement_id: ev.engagement.engagement_id });
+        if (token) ev.booking_url = bookingLink(s.booking_page, token);
+      } catch (_) { /* the mail still goes, without the link */ }
+    }
     const mail = mailForEvent(ev, site);
     if (!mail) continue;
     report.planned++;
@@ -231,7 +244,7 @@ Deno.serve(async (req) => {
 // Pure JavaScript from here to CORE END: no Deno, no network. The Node test
 // (msp-forge/test/intake-worker.test.mjs) loads this region on its own.
 
-const WORKER_VERSION = "1.1.0";
+const WORKER_VERSION = "1.2.0";
 // Keep in step with the header of agent/pipeline.js (the test checks it).
 const PIPELINE_VERSION = "1.0.2";
 const MODEL_USED = "deterministic pipeline.js (no AI), msp-intake-worker " + WORKER_VERSION;
@@ -938,8 +951,21 @@ function describeDefect(d) {
 }
 
 // plan.drafted (checks passed or not) and plan.draft_failed.
-function renderResultMail(e, site, payload) {
+function renderResultMail(e, site, payload, opts) {
   const pl = payload || {};
+  const o = opts || {};
+  if (pl.checks_passed === true && e.status === "booking_confirmed") {
+    const checks = pl.checks && pl.checks_total ? ` (${esc(pl.checks)} of ${esc(pl.checks_total)})` : "";
+    const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+      + `<p style="margin:0 0 6px 0">The Plan for this assessment is drafted and passed every automatic check${checks}. The booking was already confirmed, so it is ready for release.</p>`
+      + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+        ["Industry", esc(e.industry_name || e.industry_code)], ["People covered", esc(e.workforce_total)],
+        ["Contact", contactLine(e)], ["Status", "Booking confirmed, ready for release"]])
+      + `<p style="margin:0">Release is not automatic yet: IT sends the Plan to the client, marked planning only on every page.</p>`
+      + button(recordLink(site, e.reference), "Open the record")
+      + signOff();
+    return { subject: `Plan drafted, booking confirmed: ${e.reference}, ${e.company}`, html: shell("Plan drafted", inner) };
+  }
   if (pl.checks_passed === true) {
     const checks = pl.checks && pl.checks_total ? ` (${esc(pl.checks)} of ${esc(pl.checks_total)})` : "";
     const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
@@ -948,7 +974,11 @@ function renderResultMail(e, site, payload) {
         ["Industry", esc(e.industry_name || e.industry_code)], ["People covered", esc(e.workforce_total)],
         ["Contact", contactLine(e)], ["Status", "Waiting for the booking or deposit"]])
       + `<p style="margin:0 0 8px 0">It goes to the client once their medicals are booked with us or a booking deposit is paid. Every page is marked planning only, because no practitioner has reviewed or signed it.</p>`
-      + `<p style="margin:0">Release is not automatic yet. Until the booking step is live, tell IT when the booking or deposit is confirmed and IT sends the Plan to the client.</p>`
+      + (o.bookingUrl
+        ? `<p style="margin:0">When the medicals are booked or the deposit is paid, confirm it with the booking number or deposit reference. The link works once and opens a page; nothing changes until you press Confirm there.</p>`
+          + button(o.bookingUrl, "Confirm booking or deposit")
+        : `<p style="margin:0">When the medicals are booked or the deposit is paid, send IT the booking number or deposit reference and IT records it.</p>`)
+      + `<p style="margin:8px 0 0 0">Release is not automatic yet: once the booking is confirmed, IT sends the Plan to the client.</p>`
       + button(recordLink(site, e.reference), "Open the record")
       + signOff();
     return { subject: `Plan drafted, waiting for booking: ${e.reference}, ${e.company}`, html: shell("Plan drafted", inner) };
@@ -971,9 +1001,58 @@ function mailForEvent(ev, site) {
   const e = ev && ev.engagement;
   if (!e) return null;
   if (ev.event_type === "intake.submitted") return renderIntakeMail(e, site);
-  if (ev.event_type === "plan.drafted") return renderResultMail(e, site, ev.payload);
+  if (ev.event_type === "plan.drafted") return renderResultMail(e, site, ev.payload, { bookingUrl: ev.booking_url });
+  if (ev.event_type === "booking.confirmed") return renderBookingConfirmedMail(e, site, ev.payload);
+  if (ev.event_type === "client.booking_choice") return renderClientChoiceMail(e, site, ev.payload);
   if (ev.event_type === "plan.draft_failed") return renderResultMail(e, site, { checks_passed: false });
   return null;
+}
+
+// "https://site/page" + token -> "https://site/page?t=token" (keeps an existing query string).
+function bookingLink(page, token) {
+  const base = String(page || "").trim();
+  if (!base || /^pending$/i.test(base) || !token) return null;
+  return `${base}${base.includes("?") ? "&" : "?"}t=${encodeURIComponent(token)}`;
+}
+
+const CHOICE_TEXT = {
+  booked: ["I have booked my medicals", "Client says the medicals are booked",
+    "Check the booking with the client and confirm it with the booking number. The Plan is released only once sales confirm."],
+  deposit: ["Pay a booking deposit", "Client wants to pay a booking deposit",
+    "Send the client the deposit payment details. Online payment is not built yet; once the deposit is paid, confirm it with the payment reference."],
+  call_me: ["Please call me first", "Client asks for a call",
+    "Call the client to arrange the booking or deposit, then confirm it with the evidence."],
+};
+
+// booking.confirmed: the gate passed (or will, when the Plan drafts).
+function renderBookingConfirmedMail(e, site, payload) {
+  const pl = payload || {};
+  const passed = e.status === "booking_confirmed";
+  const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+    + `<p style="margin:0 0 6px 0">The ${pl.type === "deposit" ? "booking deposit" : "medicals booking"} for this assessment is confirmed.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)],
+      ["Confirmed", pl.type === "deposit" ? "Booking deposit paid" : "Medicals booked with Care Net"],
+      ["Evidence", esc(pl.evidence_ref)], ["Confirmed by", esc(String(pl.confirmed_by || "").replace(/^link:/, "") + (pl.method === "link" ? " (one-time link)" : ""))],
+      ["When", esc(sast(pl.confirmed_at))],
+      ["Status", passed ? "Booking confirmed, Plan ready for release" : "Confirmed before drafting finished; the Plan passes the gate as soon as it is drafted"]])
+    + `<p style="margin:0">Release is not automatic yet: IT sends the Plan to the client, marked planning only on every page.</p>`
+    + button(recordLink(site, e.reference), "Open the record")
+    + signOff();
+  return { subject: `Booking confirmed: ${e.reference}, ${e.company}`, html: shell("Booking confirmed", inner) };
+}
+
+// client.booking_choice: the client's answer on the screen after the assessment.
+function renderClientChoiceMail(e, site, payload) {
+  const pl = payload || {};
+  const c = CHOICE_TEXT[pl.choice] || [esc(pl.choice), "Client answered", "Contact the client."];
+  const inner = `<p style="margin:0 0 10px 0">Hi Sales team,</p>`
+    + `<p style="margin:0 0 6px 0">The client answered on the screen after their assessment: <strong>${c[0]}</strong>.</p>`
+    + rows([["Reference", `<strong>${esc(e.reference)}</strong>`], ["Company", companyLine(e)], ["Contact", contactLine(e)],
+      ...(pl.note ? [["Their note", esc(pl.note)]] : []), ["When", esc(sast(pl.chosen_at))]])
+    + `<p style="margin:0">${c[2]}</p>`
+    + button(recordLink(site, e.reference), "Open the record")
+    + signOff();
+  return { subject: `${c[1]}: ${e.reference}, ${e.company}`, html: shell(c[1], inner) };
 }
 
 // To IT, once, when a sales mail has failed every attempt.
