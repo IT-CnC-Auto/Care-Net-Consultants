@@ -157,7 +157,7 @@
       </a>
       <ul>
         <li class="active"><a href="/" aria-current="page">Start your journey</a></li>
-        <li><a href="/pilot.html">How it works</a></li>
+        <li><a href="/how-it-works.html">How it works</a></li>
         <li><a href="/method.html">The Care Net Method</a></li>
         <li><a href="/shop.html">Build your Plan</a></li>
         <li><a href="/sample.html">Sample Plan</a></li>
@@ -233,10 +233,21 @@
     <h2>Your account</h2>
     <div id="account-body"></div>
     <div id="register-body" style="display:none">
-      <p class="muted">Your email is verified. Add your company and your assessment opens immediately.</p>
-      <div class="fld"><label for="reg-company">Company name</label><input id="reg-company" type="text" autocomplete="organization"></div>
-      <div class="fld"><label for="reg-contact">Your name</label><input id="reg-contact" type="text" autocomplete="name"></div>
-      <div class="fld"><label for="reg-phone">Contact number <span class="opt">(optional)</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
+      <!-- Asked once. Whatever came across from the start card is shown back
+           to be confirmed, not typed again; the fields are still here, filled
+           and hidden, for anyone who wants to change something or who arrived
+           without details (a link opened on another machine). -->
+      <div id="reg-confirm" style="display:none">
+        <p class="muted">Your email is verified. These are the details you gave us. Confirm them and your assessment opens.</p>
+        <ul class="acct" id="reg-summary"></ul>
+        <button class="again" id="reg-edit" type="button" data-cta="edit_registration_details">Change these details</button>
+      </div>
+      <div id="reg-fields">
+        <p class="muted">Your email is verified. Add your company and your assessment opens immediately.</p>
+        <div class="fld"><label for="reg-company">Company name</label><input id="reg-company" type="text" autocomplete="organization"></div>
+        <div class="fld"><label for="reg-contact">Your name</label><input id="reg-contact" type="text" autocomplete="name"></div>
+        <div class="fld"><label for="reg-phone">Contact number <span class="opt">(optional)</span></label><input id="reg-phone" type="tel" autocomplete="tel" placeholder="+27 ..."></div>
+      </div>
       <button id="register" data-cta="register_company">Register my company and start</button>
     </div>
     <div id="start-body" style="display:none">
@@ -433,6 +444,18 @@ function renderReady(email, r, details) {
   hide(st);
 }
 
+function regRow(k, v) {
+  return '<li><span class="k">' + esc(k) + '</span><span class="v">' + esc(v) + '</span></li>';
+}
+
+/* Show the fields to fill in, or the details to confirm. Called with false
+   from the Change these details button. */
+function regAskMode(ask) {
+  hide($(ask ? 'reg-confirm' : 'reg-fields'));
+  $(ask ? 'reg-fields' : 'reg-confirm').style.display = 'block';
+  $('register').textContent = ask ? 'Register my company and start' : 'Confirm and start my assessment';
+}
+
 function askToRegister(email, details) {
   $('account-body').innerHTML = '<ul class="acct"><li><span class="k">Signed in as</span>'
     + '<span class="v">' + esc(email) + '</span></li></ul>';
@@ -441,6 +464,15 @@ function askToRegister(email, details) {
     $('reg-contact').value = details.contact_name || '';
     $('reg-phone').value   = details.phone || '';
   }
+  /* The start card already asked for all of this. Asking again is the thing
+     sales flagged, so when it is known it is confirmed instead. */
+  var known = details && details.company_name && details.contact_name;
+  if (known) {
+    $('reg-summary').innerHTML = regRow('Company', details.company_name)
+      + regRow('Your name', details.contact_name)
+      + (details.phone ? regRow('Contact number', details.phone) : '');
+  }
+  regAskMode(!known);
   hide($('start-body'));
   $('register-body').style.display = 'block';
 }
@@ -498,6 +530,8 @@ async function loadAccount(session) {
   }
 }
 
+$('reg-edit').onclick = () => { regAskMode(true); $('reg-company').focus(); };
+
 $('register').onclick = async () => {
   const { data: { session } } = await sb.auth.getSession();
   const st = $('account-status');
@@ -505,12 +539,13 @@ $('register').onclick = async () => {
   const contact = $('reg-contact').value.trim();
   const phone   = $('reg-phone').value.trim();
   if (!company || !contact) { show(st, 'err', 'Company name and your name are both needed.'); return; }
-  const btn = $('register'); btn.disabled = true; btn.textContent = 'Registering...';
+  const btn = $('register'); const btnLabel = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Registering...';
   const r = await signon({
     company_name: company, contact_name: contact,
     contact_email: session.user.email, notes: noteFor(phone),
   }).catch(() => null);
-  btn.disabled = false; btn.textContent = 'Register my company and start';
+  btn.disabled = false; btn.textContent = btnLabel;
   if (r && r.status === 'received') { renderReady(session.user.email, r, { phone: phone }); }
   else show(st, 'err', (r && r.error) || 'The registration could not be recorded. Please try again.');
 };

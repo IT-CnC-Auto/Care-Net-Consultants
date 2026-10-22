@@ -9,6 +9,16 @@
   },
   "redirects": [
     {
+      "source": "/pilot",
+      "destination": "/how-it-works.html",
+      "permanent": true
+    },
+    {
+      "source": "/pilot.html",
+      "destination": "/how-it-works.html",
+      "permanent": true
+    },
+    {
       "source": "/samples/CNC-MSP-SAMPLE-Construction.pdf",
       "destination": "/sample.html?industry=construction",
       "permanent": true
