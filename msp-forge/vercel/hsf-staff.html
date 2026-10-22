@@ -315,7 +315,7 @@
         <h2>Before a company uploads</h2>
         <ol>
           <li>Uploads open only once the Director opens them for everyone.</li>
-          <li>A company must be verified as a Care Net client, with the evidence recorded: its MyClinicOnline company reference, its client register number, or a sales executive&rsquo;s confirmation.</li>
+          <li>A company must be verified as a Care Net client, with the evidence recorded: its My Clinic Online company reference, its client register number, or a sales executive&rsquo;s confirmation.</li>
           <li>Revoking a verification stops new uploads and blocks documents not yet transferred. Nothing is deleted.</li>
         </ol>
       </div>
@@ -606,7 +606,7 @@ const DEMO = params.get('demo') === '1';
 
 /* hsf_client_verification.method (contract 10.2). */
 const METHODS = [
-  ['mco_company_ref', 'MyClinicOnline company reference'],
+  ['mco_company_ref', 'My Clinic Online company reference'],
   ['client_register', 'Care Net client register number'],
   ['sales_executive', 'Confirmed by a sales executive']
 ];
@@ -634,7 +634,7 @@ const TYPE_NAME = {
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'Excel workbook',
   'application/msword': 'Word document (older format)', 'application/vnd.ms-excel': 'Excel workbook (older format)'
 };
-const UPLOAD_STATUS = { uploaded: 'Uploaded', verified: 'Uploaded', held: 'Held for MyClinicOnline', transferring: 'Being moved to MyClinicOnline', transferred: 'Transferred to MyClinicOnline', rejected: 'Not accepted', failed: 'Failed', client_deleted: 'Deleted by the client', expired: 'Removed at the two year limit' };
+const UPLOAD_STATUS = { uploaded: 'Uploaded', verified: 'Uploaded', held: 'Held for My Clinic Online', transferring: 'Being moved to My Clinic Online', transferred: 'Transferred to My Clinic Online', rejected: 'Not accepted', failed: 'Failed', client_deleted: 'Deleted by the client', expired: 'Removed at the two year limit' };
 const BLOCKED = { 'consent withdrawn': 'Transfer blocked: a consent was withdrawn', 'client verification revoked': 'Transfer blocked: the client verification was revoked' };
 const SCAN_TRIES = 5;
 
@@ -829,7 +829,7 @@ function verifyForm(r, o) {
   return '<form class="formbox" id="verify-form" data-id="' + esc(r.client_account_id) + '" novalidate>'
     + '<h4 id="form-title" tabindex="-1">Verify ' + esc(r.company_name || 'this company') + '</h4>'
     + field('vf-method', 'How the company was verified', selectInput('vf-method', [['', 'Choose one']].concat(METHODS), o.method || '', ' required aria-describedby="vf-msg"'))
-    + field('vf-ref', 'Evidence reference', textInput('vf-ref', o.ref, ' maxlength="200" required aria-describedby="vf-ref-help vf-msg"'), 'For example the MyClinicOnline company reference, the client register number, or the date and name of the sales executive’s confirmation.')
+    + field('vf-ref', 'Evidence reference', textInput('vf-ref', o.ref, ' maxlength="200" required aria-describedby="vf-ref-help vf-msg"'), 'For example the My Clinic Online company reference, the client register number, or the date and name of the sales executive’s confirmation.')
     + '<div class="fmsg" id="vf-msg">' + (o.msg || '') + '</div>'
     + '<div class="row" style="margin-top:12px"><button type="submit" class="btn inl" id="vf-submit" data-cta="hsf_staff_verify_submit">Verify company</button>'
     + '<button type="button" class="btn plain inl" data-act="close" data-cta="hsf_staff_form_cancel">Cancel</button></div></form>';

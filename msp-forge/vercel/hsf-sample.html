@@ -264,7 +264,7 @@
 
     <section class="card wm" aria-labelledby="bars-title" data-asset="hsf-sample-watermark">
       <h2 class="h" id="bars-title">Compliance by section</h2>
-      <p class="sub">Items with evidence linked from MyClinicOnline or uploaded, over every item that applies. Outstanding and expired items count against the figure; items marked not applicable, each with a written reason, leave the count.</p>
+      <p class="sub">Items with evidence linked from My Clinic Online or uploaded, over every item that applies. Outstanding and expired items count against the figure; items marked not applicable, each with a written reason, leave the count.</p>
       <div class="bars" id="bars"></div>
     </section>
 
@@ -297,7 +297,7 @@
       </div>
 
       <div role="tabpanel" id="v-people" aria-labelledby="t-people" hidden>
-        <p class="sub">Every person in scope against every requirement that applies to their job role. Medical certificates and Care Net training come straight from MyClinicOnline; the dates are expiry dates.</p>
+        <p class="sub">Every person in scope against every requirement that applies to their job role. Medical certificates and Care Net training come straight from My Clinic Online; the dates are expiry dates.</p>
         <div class="tw"><table class="pm" id="people"><thead></thead><tbody></tbody></table></div>
         <div class="legend">
           <span class="c c-ok">Valid</span><span class="c c-due">Due within 60 days</span><span class="c c-expired">Expired</span><span class="c c-missing">Missing</span><span class="c c-na">·</span><span>not required for this role</span>
@@ -579,7 +579,7 @@
       .sort(function (a, b) { return (a.status === b.status) ? 0 : (a.status === 'expired' ? -1 : 1); });
     $('gaps').tBodies[0].innerHTML = gaps.map(function (x) {
       var next = x.status === 'expired'
-        ? (x.source === 'MyClinicOnline' ? 'Book the renewal with Care Net; the new record links automatically' : 'Renew and upload the new evidence')
+        ? (x.source === 'My Clinic Online' ? 'Book the renewal with Care Net; the new record links automatically' : 'Renew and upload the new evidence')
         : 'Supply the evidence by the due date';
       return '<tr><td class="code">' + esc(x.code) + '</td><td>' + esc(x.name) + '</td><td>' + esc(x.responsible) + '</td>'
         + '<td><span class="pill p-' + x.status + '">' + STATUS[x.status] + '</span></td><td class="d">' + esc(x.to) + '</td><td>' + next + '</td></tr>';

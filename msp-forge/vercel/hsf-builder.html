@@ -7,7 +7,7 @@
 <meta name="description" content="Build your Health and Safety File with Care Net Consultants: sign in, give consent, generate the File for your industry and drop in the documents you already hold, section by section and department by department.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Build your Health and Safety File | Care Net Consultants">
-<meta property="og:description" content="Generate the File for your industry and drop in the documents you already hold. Held securely by Care Net, and kept with MyClinicOnline once it is connected.">
+<meta property="og:description" content="Generate the File for your industry and drop in the documents you already hold. Held securely by Care Net, and kept with My Clinic Online once it is connected.">
 <meta property="og:image" data-asset="hsf-builder-og" content="https://img.carenetcdn.com/health-and-safety-file/hsf-builder-og-1200x630.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <!--
@@ -87,11 +87,11 @@
                  company is verified and all three consents are given.
    Verification  POST /api/hsf-upload {action: 'request_verification'}.
    Uploads view  scan state, "Kept in Care Net staging until <date>",
-                 why a transfer is blocked, and that MyClinicOnline
+                 why a transfer is blocked, and that My Clinic Online
                  deletes what it holds. Contract 11.1: "Hidden details
                  removed: <labels>" from metadata_removed once the
                  cleaned copy is recorded. Contract 11.2: a document
-                 being moved to MyClinicOnline is never offered for
+                 being moved to My Clinic Online is never offered for
                  deletion, whatever the server says; it is offered
                  again only if the move stops and it is back to
                  uploaded.
@@ -471,7 +471,7 @@
     <div>
       <span class="eyebrow">Health and Safety File builder</span>
       <h1>Build your File. <span class="r">Drop in what you already hold.</span></h1>
-      <p class="lede">Generate the Health and Safety File for your industry and your sites, then drop your documents into the section and department they belong to. Every document is fingerprinted in your browser and held securely by Care Net. Once MyClinicOnline is connected, each one is kept there, where special personal information is protected.</p>
+      <p class="lede">Generate the Health and Safety File for your industry and your sites, then drop your documents into the section and department they belong to. Every document is fingerprinted in your browser and held securely by Care Net. Once My Clinic Online is connected, each one is kept there, where special personal information is protected.</p>
       <div class="chips">
         <a class="chip" href="#build" data-cta="hsf_builder_hero_start">Start building</a>
         <a class="chip" href="#journey" data-cta="hsf_builder_hero_journey">Where your documents go</a>
@@ -601,7 +601,7 @@
         <div class="consent-item">
           <label class="chk" for="c-transfer">
             <input type="checkbox" id="c-transfer" name="mco_transfer" value="mco_transfer">
-            <span><b class="n">2.</b> I consent to these documents being transferred to MyClinicOnline, where they are kept in a secure environment for special personal information, after which the staging copy held by Care Net on Supabase is deleted. A record of each document's name, size, department and SHA 256 fingerprint stays with the File as its audit trail.</span>
+            <span><b class="n">2.</b> I consent to these documents being transferred to My Clinic Online, where they are kept in a secure environment for special personal information, after which the staging copy held by Care Net on Supabase is deleted. A record of each document's name, size, department and SHA 256 fingerprint stays with the File as its audit trail.</span>
           </label>
         </div>
         <div class="consent-item">
@@ -615,7 +615,7 @@
           <span>Read our <a class="inline" href="https://www.carenetconsultants.co.za/privacy-policy" target="_blank" rel="noopener" data-cta="hsf_builder_privacy_policy">privacy policy</a></span>
         </div>
         <p class="muted" style="margin-top:12px"><b>Changing your mind.</b> You can withdraw any of these consents at any time from the Your consents panel on your File, which appears once you continue, or by asking a sales executive on WhatsApp at 27 60 070 2723. Withdrawal stops new uploads straight away.</p>
-        <p class="pending" data-mco-pending hidden>MyClinicOnline is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to MyClinicOnline the day the connection goes live. The staging copy is deleted only after MyClinicOnline confirms it has received an identical file.</p>
+        <p class="pending" data-mco-pending hidden>My Clinic Online is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to My Clinic Online the day the connection goes live. The staging copy is deleted only after My Clinic Online confirms it has received an identical file.</p>
         <div id="consent-msg" role="alert" style="margin-top:10px"></div>
         <button type="submit" class="btn" id="consent-btn" data-cta="hsf_builder_give_consent">Give consent and continue</button>
       </form>
@@ -684,7 +684,7 @@
           </div>
         </div>
         <div class="signready" id="f-signoff" hidden></div>
-        <p class="pending" data-mco-pending hidden style="margin-top:14px">MyClinicOnline is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to MyClinicOnline the day the connection goes live.</p>
+        <p class="pending" data-mco-pending hidden style="margin-top:14px">My Clinic Online is not connected to the File builder yet. Until it is, your documents are held securely in Care Net's staging environment, and they transfer to My Clinic Online the day the connection goes live.</p>
         <div id="consent-block" class="pending" style="margin-top:14px" hidden>Uploads are paused because not all three consents are in place. Give them again in the consent panel above to carry on.</div>
         <div class="gate" id="gate" hidden></div>
         <details id="consents" style="margin-top:14px">
@@ -706,7 +706,7 @@
         <div class="tabpanel gap" role="tabpanel" id="panel-gaps" aria-labelledby="tab-gaps" hidden></div>
         <div class="tabpanel" role="tabpanel" id="panel-uploads" aria-labelledby="tab-uploads" hidden>
           <div class="row" style="justify-content:space-between">
-            <p class="muted" style="margin:0">Each document shows its SHA 256 fingerprint, worked out in your browser before it leaves your device, and where it is on its way to MyClinicOnline.</p>
+            <p class="muted" style="margin:0">Each document shows its SHA 256 fingerprint, worked out in your browser before it leaves your device, and where it is on its way to My Clinic Online.</p>
             <button type="button" class="btn plain sm inl" id="q-refresh" data-cta="hsf_builder_refresh_uploads">Refresh statuses</button>
           </div>
           <div class="empty" id="q-empty">
@@ -715,7 +715,7 @@
           </div>
           <ul class="queue" id="queue" aria-label="Upload queue"></ul>
           <div class="delbar" id="del-bar" hidden>
-            <p>Documents still held by Care Net can be deleted permanently by your company, with a one time PIN. Once MyClinicOnline holds a document, it is deleted through MyClinicOnline&rsquo;s own process.</p>
+            <p>Documents still held by Care Net can be deleted permanently by your company, with a one time PIN. Once My Clinic Online holds a document, it is deleted through My Clinic Online&rsquo;s own process.</p>
             <button type="button" class="btn plain sm inl" id="del-open" aria-expanded="false" aria-controls="del-panel" data-cta="hsf_builder_delete_start">Delete documents</button>
           </div>
           <div class="delpanel" id="del-panel" role="region" aria-labelledby="del-title" hidden></div>
@@ -732,18 +732,18 @@
   <section id="journey" aria-labelledby="journey-title">
     <div class="sechead">
       <span class="eyebrow">Where your documents go</span>
-      <h2 id="journey-title">Held securely, <span class="r">then kept with MyClinicOnline.</span></h2>
-      <p>Every document follows the same five steps. You can see each one against every file in the Uploads view of your File. MyClinicOnline is not connected yet, so for now documents go no further than step 3 and stay held securely in Care Net&rsquo;s staging environment. Steps 4 and 5 follow once the connection goes live.</p>
+      <h2 id="journey-title">Held securely, <span class="r">then kept with My Clinic Online.</span></h2>
+      <p>Every document follows the same five steps. You can see each one against every file in the Uploads view of your File. My Clinic Online is not connected yet, so for now documents go no further than step 3 and stay held securely in Care Net&rsquo;s staging environment. Steps 4 and 5 follow once the connection goes live.</p>
     </div>
     <div class="card">
       <ol class="journey">
         <li><span class="jico s-up" data-asset="hsf-builder-state-uploading" aria-hidden="true">&uarr;</span><b>Uploading</b>Your browser works out the document's SHA 256 fingerprint, then sends it straight to Care Net's private staging storage.</li>
         <li><span class="jico s-ok" data-asset="hsf-builder-state-uploaded" aria-hidden="true">&check;</span><b>Uploaded</b>The document is in staging, checked against the size you sent, and linked to its section, department and element.</li>
-        <li><span class="jico s-held" data-asset="hsf-builder-state-held" aria-hidden="true">&#9679;</span><b>Held for MyClinicOnline</b>The document waits, encrypted and reachable only by Care Net's servers, until MyClinicOnline takes it.</li>
-        <li><span class="jico s-mco" data-asset="hsf-builder-state-transferred" aria-hidden="true">&rarr;</span><b>Transferred to MyClinicOnline</b>MyClinicOnline confirms it received a file with the same fingerprint, and keeps it in its secure environment for special personal information.</li>
+        <li><span class="jico s-held" data-asset="hsf-builder-state-held" aria-hidden="true">&#9679;</span><b>Held for My Clinic Online</b>The document waits, encrypted and reachable only by Care Net's servers, until My Clinic Online takes it.</li>
+        <li><span class="jico s-mco" data-asset="hsf-builder-state-transferred" aria-hidden="true">&rarr;</span><b>Transferred to My Clinic Online</b>My Clinic Online confirms it received a file with the same fingerprint, and keeps it in its secure environment for special personal information.</li>
         <li><span class="jico s-del" data-asset="hsf-builder-state-removed" aria-hidden="true">&times;</span><b>Removed from Care Net staging</b>Only then is the staging copy deleted. The name, size and fingerprint stay with your File as its audit trail.</li>
       </ol>
-      <div class="ill bridge" data-asset="hsf-builder-journey-diagram" aria-hidden="true">Journey diagram: your browser, Care Net staging, MyClinicOnline</div>
+      <div class="ill bridge" data-asset="hsf-builder-journey-diagram" aria-hidden="true">Journey diagram: your browser, Care Net staging, My Clinic Online</div>
       <p class="muted" style="margin-top:12px"><span class="stateico s-no" data-asset="hsf-builder-state-rejected" aria-hidden="true">!</span> A document of the wrong type or over 25 MB is turned away in your browser before anything is sent, with a plain message saying why.</p>
     </div>
   </section>
@@ -782,7 +782,7 @@
     <div class="grid">
       <div class="card">
         <h2>What we ask and why</h2>
-        <p>Three separate consents, each in full, before a single document is stored: storage in Care Net's secure staging environment for the single purpose of building your File, transfer to MyClinicOnline with the staging copy deleted afterwards, and your confirmation that you may share the documents for your employer.</p>
+        <p>Three separate consents, each in full, before a single document is stored: storage in Care Net's secure staging environment for the single purpose of building your File, transfer to My Clinic Online with the staging copy deleted afterwards, and your confirmation that you may share the documents for your employer.</p>
         <p>Documents go to private, encrypted storage that only Care Net's servers can reach. They are never placed where the public can see them, and the File keeps each document's fingerprint so any change can be detected.</p>
       </div>
       <div class="card">
@@ -936,7 +936,7 @@
   {
    "id": "hsf-builder-consent-illustration",
    "block": "Build: consent card",
-   "purpose": "Reassures before the three POPIA consents: a shield with a padlock over a document, and an arrow to a second secure vault (MyClinicOnline).",
+   "purpose": "Reassures before the three POPIA consents: a shield with a padlock over a document, and an arrow to a second secure vault (My Clinic Online).",
    "type": "illustration",
    "formats": [
     "svg",
@@ -1318,7 +1318,7 @@
   {
    "id": "hsf-builder-state-held",
    "block": "Journey section and Uploads tab: upload state 3",
-   "purpose": "Status icon for the upload state \"Held for MyClinicOnline\", used in the five step journey and next to each document in the upload queue.",
+   "purpose": "Status icon for the upload state \"Held for My Clinic Online\", used in the five step journey and next to each document in the upload queue.",
    "type": "icon",
    "formats": [
     "svg"
@@ -1328,7 +1328,7 @@
    "ratio": "1:1",
    "max_kb": 4,
    "colour": "Single colour glyph amber #6B4600 on #FDF3DC tile",
-   "alt": "Held for MyClinicOnline",
+   "alt": "Held for My Clinic Online",
    "file_name": "hsf-upload-state-held-48.svg",
    "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-held-48.svg",
    "status": "needed",
@@ -1337,7 +1337,7 @@
   {
    "id": "hsf-builder-state-transferred",
    "block": "Journey section and Uploads tab: upload state 4",
-   "purpose": "Status icon for the upload state \"Transferred to MyClinicOnline\", used in the five step journey and next to each document in the upload queue.",
+   "purpose": "Status icon for the upload state \"Transferred to My Clinic Online\", used in the five step journey and next to each document in the upload queue.",
    "type": "icon",
    "formats": [
     "svg"
@@ -1347,7 +1347,7 @@
    "ratio": "1:1",
    "max_kb": 4,
    "colour": "Single colour glyph teal #1D5D6F on #E9F4F7 tile",
-   "alt": "Transferred to MyClinicOnline",
+   "alt": "Transferred to My Clinic Online",
    "file_name": "hsf-upload-state-transferred-48.svg",
    "delivery": "img.carenetcdn.com/health-and-safety-file/icons/hsf-upload-state-transferred-48.svg",
    "status": "needed",
@@ -1394,7 +1394,7 @@
   {
    "id": "hsf-builder-journey-diagram",
    "block": "Journey section: diagram under the five steps",
-   "purpose": "Simple left to right diagram of where a document travels: the company's browser (fingerprint worked out), Care Net staging on Supabase (private, encrypted), MyClinicOnline secure environment for special personal information, and the staging copy deleted after an identical fingerprint is confirmed.",
+   "purpose": "Simple left to right diagram of where a document travels: the company's browser (fingerprint worked out), Care Net staging on Supabase (private, encrypted), My Clinic Online secure environment for special personal information, and the staging copy deleted after an identical fingerprint is confirmed.",
    "type": "illustration",
    "formats": [
     "svg",
@@ -1405,11 +1405,11 @@
    "ratio": "3:1",
    "max_kb": 60,
    "colour": "Charcoal line work, green for secure stores, Care Net red for the arrows; labels in Inter 14 px or larger",
-   "alt": "Documents travel from your browser to Care Net staging and then to MyClinicOnline, after which the staging copy is deleted",
+   "alt": "Documents travel from your browser to Care Net staging and then to My Clinic Online, after which the staging copy is deleted",
    "file_name": "hsf-builder-journey-1200x400.svg",
    "delivery": "img.carenetcdn.com/health-and-safety-file/hsf-builder-journey-1200x400.svg",
    "status": "needed",
-   "notes": "Also supply a stacked 600 by 400 (3:2) version for phones. Do not show any real MyClinicOnline screen, logo lock up or address: the MCO interface is pending (HSF-3). No certification marks."
+   "notes": "Also supply a stacked 600 by 400 (3:2) version for phones. Do not show any real My Clinic Online screen, logo lock up or address: the MCO interface is pending (HSF-3). No certification marks."
   },
   {
    "id": "hsf-builder-autohive-bee",
@@ -1474,7 +1474,7 @@ const WORDING_VERSION = 'HSF-CONSENT-1.0';
 const CONSENT_KINDS = ['document_storage', 'mco_transfer', 'authority_to_share'];
 const CONSENT_LABELS = {
   document_storage: 'Storage in Care Net’s secure staging environment',
-  mco_transfer: 'Transfer to MyClinicOnline, then deletion from staging',
+  mco_transfer: 'Transfer to My Clinic Online, then deletion from staging',
   authority_to_share: 'Authority to share for your employer'
 };
 
@@ -1546,11 +1546,11 @@ const ACTIVITY_GROUPS = [
 const INDUSTRY_RAISED = ['T-MINING'];
 
 const ITEM_STATUS = {
-  linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding',
+  linked_mco: 'Linked from My Clinic Online', uploaded: 'Uploaded', outstanding: 'Outstanding',
   expired: 'Expired', not_applicable: 'Not applicable'
 };
 /* The upload lifecycle, labelled exactly as the build contract lists it. */
-const LIFECYCLE = ['Uploading', 'Uploaded', 'Held for MyClinicOnline', 'Transferred to MyClinicOnline', 'Removed from Care Net staging'];
+const LIFECYCLE = ['Uploading', 'Uploaded', 'Held for My Clinic Online', 'Transferred to My Clinic Online', 'Removed from Care Net staging'];
 const UPLOAD_STATUS = {
   checking: { label: 'Checking the file', step: 0, cls: 's-up', ico: '…' },
   hashing: { label: 'Working out the SHA 256 fingerprint', step: 0, cls: 's-up', ico: '#' },
@@ -1559,9 +1559,9 @@ const UPLOAD_STATUS = {
   uploading: { label: 'Uploading', step: 1, cls: 's-up', ico: '↑' },
   uploaded: { label: 'Uploaded', step: 2, cls: 's-ok', ico: '✓' },
   verified: { label: 'Uploaded', step: 2, cls: 's-ok', ico: '✓' },
-  held: { label: 'Held for MyClinicOnline', step: 3, cls: 's-held', ico: '●' },
-  transferring: { label: 'Held for MyClinicOnline', step: 3, cls: 's-held', ico: '●' },
-  transferred: { label: 'Transferred to MyClinicOnline', step: 4, cls: 's-mco', ico: '→' },
+  held: { label: 'Held for My Clinic Online', step: 3, cls: 's-held', ico: '●' },
+  transferring: { label: 'Held for My Clinic Online', step: 3, cls: 's-held', ico: '●' },
+  transferred: { label: 'Transferred to My Clinic Online', step: 4, cls: 's-mco', ico: '→' },
   staging_deleted: { label: 'Removed from Care Net staging', step: 5, cls: 's-del', ico: '×' },
   expired: { label: 'Removed from Care Net staging at the two year limit', step: -1, cls: 's-del', ico: '×' },
   client_deleted: { label: 'Deleted by your company', step: -1, cls: 's-del', ico: '×' },
@@ -2700,7 +2700,7 @@ function renderSectionCards() {
     const p = fmtPct(s.pct);
     const dept = deptChoice[c] || sectionDept(c);
     const lockNote = locked ? '<p class="help" style="grid-column:1/-1">' + esc(LOCK_NOTE[lock]) + '</p>' : '';
-    const eNote = c === 'E' ? '<p class="help" style="grid-column:1/-1">Documents here may contain employee health information, which is special personal information under POPIA. They are kept with MyClinicOnline once transferred.</p>' : '';
+    const eNote = c === 'E' ? '<p class="help" style="grid-column:1/-1">Documents here may contain employee health information, which is special personal information under POPIA. They are kept with My Clinic Online once transferred.</p>' : '';
     const items = s.items.map((it, idx) => elementRow(c, it, idx, locked)).join('');
     const secUps = sectionUploads(c);
     return '<article class="scard ' + sectionClass(s.pct) + '" id="sec-' + c + '" aria-labelledby="sec-' + c + '-h">'
@@ -2998,7 +2998,7 @@ async function processOne(q) {
         if (row.status !== 'uploaded') return; /* deleted in the meantime */
         row.status = 'held'; row.scan_status = 'clean';
         row.metadata_removed = /^image\//.test(row.mime_type || '') ? ['location', 'camera details'] : (row.mime_type === 'text/csv' ? [] : ['author', 'dates and times']);
-        q.state = 'held'; q.message = 'Demonstration: in a live File this document now waits in Care Net staging until MyClinicOnline takes it.';
+        q.state = 'held'; q.message = 'Demonstration: in a live File this document now waits in Care Net staging until My Clinic Online takes it.';
         update(); refreshElementUploads(); renderDelBar();
       }, 1400);
     } else {
@@ -3099,7 +3099,7 @@ function removedLabels(v) {
 }
 /* What the server says about a stored document (contract 10.3 to 10.6): its
    security scan, why its transfer is blocked, how long Care Net may keep it,
-   and who deletes it once MyClinicOnline holds it. */
+   and who deletes it once My Clinic Online holds it. */
 function uploadExtras(q) {
   const u = q.server; if (!u) return '';
   const st = q.state, out = [];
@@ -3121,13 +3121,13 @@ function uploadExtras(q) {
   const hidden = removedLabels(u.metadata_removed);
   if (hidden.length && scan === 'clean') out.push('<div class="qx">Hidden details removed: ' + esc(hidden.join(', ')) + '</div>');
   if (st === 'transferring') {
-    out.push('<div class="qx">This document is being moved to MyClinicOnline, so it cannot be deleted here. If the move stops, you can delete it again; once MyClinicOnline holds it, it is deleted through MyClinicOnline\u2019s own process.</div>');
+    out.push('<div class="qx">This document is being moved to My Clinic Online, so it cannot be deleted here. If the move stops, you can delete it again; once My Clinic Online holds it, it is deleted through My Clinic Online\u2019s own process.</div>');
   }
   if (u.transfer_blocked_reason && canDelete(u)) {
     out.push('<div class="qx blocked">' + esc(BLOCKED[u.transfer_blocked_reason] || ('Transfer blocked: ' + u.transfer_blocked_reason + '.')) + '</div>');
   }
   if (u.expires_on && canDelete(u)) out.push('<div class="qx">Kept in Care Net staging until ' + esc(dmy(u.expires_on)) + '</div>');
-  if (st === 'transferred' || st === 'staging_deleted') out.push('<div class="qx">MyClinicOnline holds this document. To delete it, use MyClinicOnline\u2019s own process.</div>');
+  if (st === 'transferred' || st === 'staging_deleted') out.push('<div class="qx">My Clinic Online holds this document. To delete it, use My Clinic Online\u2019s own process.</div>');
   if (u.transfer_blocked_reason && canDelete(u) && u.upload_id) {
     out.push('<div class="qacts"><button type="button" class="btn plain sm inl" data-del-one="' + esc(u.upload_id) + '" data-cta="hsf_builder_delete_blocked" aria-label="Delete ' + esc(u.original_name || 'this document') + '">Delete this document</button></div>');
   }
@@ -3236,7 +3236,7 @@ async function requestVerification() {
    (SMS only when the gate offers it), receive a one time PIN from Supabase
    Auth, enter it, confirm. The PIN is never kept on this page after it is sent. */
 const D = { step: null, ids: [], req: null, left: null, msg: '', busy: false, deleted: 0, back: null, demoTries: 0 };
-/* Contract 11.2: a document on its way to MyClinicOnline may already be there,
+/* Contract 11.2: a document on its way to My Clinic Online may already be there,
    so it is never offered for deletion, even if an older server says it may be. */
 const canDelete = (u) => !!(u && u.deletable && u.status !== 'transferring');
 const deletableUploads = () => (S.serverUploads || []).filter((u) => u && u.upload_id && canDelete(u));
@@ -3284,7 +3284,7 @@ function renderDelPanel() {
     const list = deletableUploads();
     const sms = !!(S.gate && S.gate.deletion_sms_available);
     html = '<h3 id="del-title" tabindex="-1">Delete documents held by Care Net</h3>'
-      + '<p class="help" style="margin:0">Only documents still in Care Net staging are listed. A document MyClinicOnline holds is deleted through MyClinicOnline’s own process.</p>'
+      + '<p class="help" style="margin:0">Only documents still in Care Net staging are listed. A document My Clinic Online holds is deleted through My Clinic Online’s own process.</p>'
       + '<form id="del-form" novalidate>'
       + '<fieldset><legend>Choose the documents to delete</legend><div class="dlist">'
       + (list.length ? list.map((u, i) => '<label class="chk" for="del-u-' + i + '"><input type="checkbox" id="del-u-' + i + '" value="' + esc(u.upload_id) + '"' + (D.ids.includes(u.upload_id) ? ' checked' : '') + '><span>' + esc(u.original_name) + '<small>' + esc(delUploadLabel(u)) + '</small></span></label>').join('')
@@ -3455,7 +3455,7 @@ function renderGaps() {
       + gaps.map((i) => {
         const medical = i.evidence === 'medical_certificate' || i.evidence === 'training_record';
         const path = i.status === 'expired'
-          ? (medical ? 'Renewal: book through MyClinicOnline once it is connected, or upload a current copy.' : 'Renewal: upload a current copy.')
+          ? (medical ? 'Renewal: book through My Clinic Online once it is connected, or upload a current copy.' : 'Renewal: upload a current copy.')
           : 'Next step: upload the evidence, or set it not applicable with a reason.';
         return '<div class="gi"><b>' + esc(i.name) + '</b> <span class="mono">' + esc(i.code || '') + '</span> <span class="pill ' + esc(i.status) + '">' + esc(ITEM_STATUS[i.status]) + '</span><br>'
           + (i.duty ? esc(i.duty) + '<br>' : '')

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your Care Net portal | Care Net Consultants</title>
-<meta name="description" content="One sign in for your company account, Medical Surveillance Plans, Health and Safety Files and quotations, and, once MyClinicOnline is connected, your people's certificates of fitness, training records and bookings.">
+<meta name="description" content="One sign in for your company account, Medical Surveillance Plans, Health and Safety Files and quotations, and, once My Clinic Online is connected, your people's certificates of fitness, training records and bookings.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Your Care Net portal | Care Net Consultants">
 <meta property="og:description" content="One sign in for your company records and your people's medicals and training.">
@@ -31,10 +31,10 @@
    Industry names come from the anonymous public view
    msp_public_industry_profile (optional: the code shows without it).
 
-   MEDICAL SPINE (MyClinicOnline)
+   MEDICAL SPINE (My Clinic Online)
      Certificates of fitness, training records and bookings. The MCO
      interface contract is pending (HSF-3), so each panel shows
-     "Arrives when MyClinicOnline is connected" and what will appear.
+     "Arrives when My Clinic Online is connected" and what will appear.
      Nothing is invented. ?demo=1 renders a clearly labelled
      demonstration from hsf/samples/construction.js (matrix people);
      no API is called in the demonstration.
@@ -46,7 +46,7 @@
  SIGN IN: one sign in through js/cnc-auth.js (Supabase email one time
  link today; MCO single sign on is a stub until HSF-3 closes).
 
- PORTABILITY: built to be served from inside MyClinicOnline. Every
+ PORTABILITY: built to be served from inside My Clinic Online. Every
  internal address on this page is relative (no leading slash), and
  every setting (Supabase, API base, WhatsApp, privacy policy, MCO
  portal address) is read from window.CNC_CONFIG (js/cnc-config.js).
@@ -57,8 +57,8 @@
  The Plan assessment itself opens from the landing page (./).
 
  MYCLINICONLINE TRANSFER: hsf.mco_transfer_mode is 'hold' until HSF-3
- closes, so the documents card describes the transfer to MyClinicOnline
- and the removal from staging as what happens once MyClinicOnline is
+ closes, so the documents card describes the transfer to My Clinic Online
+ and the removal from staging as what happens once My Clinic Online is
  connected. Restore the present tense together with the builder's
  notices when live transfer is switched on.
 
@@ -288,7 +288,7 @@
     <div>
       <span class="eyebrow">Your Care Net portal</span>
       <h1>One sign in. <span class="r">Your company and your people, together.</span></h1>
-      <p class="lede">Your company account, Medical Surveillance Plans, Health and Safety Files and quotations on one side. Your people&rsquo;s certificates of fitness, training records and bookings from MyClinicOnline on the other. One sign in opens both.</p>
+      <p class="lede">Your company account, Medical Surveillance Plans, Health and Safety Files and quotations on one side. Your people&rsquo;s certificates of fitness, training records and bookings from My Clinic Online on the other. One sign in opens both.</p>
       <div class="chips">
         <a class="chip" href="#portal" data-cta="sign_in">Sign in</a>
         <a class="chip" href="#commercial" data-cta="portal_hero_commercial">Company and Files</a>
@@ -307,7 +307,7 @@
 
   <div class="demo-banner" id="demo-banner" role="note" hidden>
     <b>Demonstration with fictitious data</b>
-    This is a demonstration portal for a fictitious construction company, built from the Care Net sample File. The company, the people, the dates and the figures are made up. Nothing is read from or sent to Care Net or MyClinicOnline. <a class="inline" href="portal.html" data-cta="portal_demo_exit">Leave the demonstration and sign in</a>.
+    This is a demonstration portal for a fictitious construction company, built from the Care Net sample File. The company, the people, the dates and the figures are made up. Nothing is read from or sent to Care Net or My Clinic Online. <a class="inline" href="portal.html" data-cta="portal_demo_exit">Leave the demonstration and sign in</a>.
   </div>
 
   <div id="live" class="vh" role="status" aria-live="polite"></div>
@@ -422,7 +422,7 @@
         <div class="chead"><span class="ico" data-asset="portal-documents-icon" aria-hidden="true">DO</span><h3 class="ct">Your documents</h3></div>
         <p>Drop the documents you already hold into your File, section by section and department by department. You give consent first. Each document is fingerprinted in your browser and held securely in Care Net&rsquo;s staging environment.</p>
         <p>Uploads open once Care Net has finished testing, and only for companies Care Net has verified as clients; you can build your File before then. Every document is scanned for viruses and harmful content before it can move, stays in Care Net&rsquo;s staging for at most two years, and can be deleted permanently by your company with a one time PIN while Care Net holds it.</p>
-        <p class="pending">MyClinicOnline is not connected to the File builder yet. Once it is, each document transfers to MyClinicOnline, where special personal information is protected, and the staging copy is deleted only after MyClinicOnline confirms it has received an identical file.</p>
+        <p class="pending">My Clinic Online is not connected to the File builder yet. Once it is, each document transfers to My Clinic Online, where special personal information is protected, and the staging copy is deleted only after My Clinic Online confirms it has received an identical file.</p>
         <a class="btn sm inl" href="hsf-builder.html#build" data-cta="build_my_file">Build my File</a>
       </div>
     </div>
@@ -435,19 +435,19 @@
         <span class="ico lg med" data-asset="portal-spine-medical-icon" aria-hidden="true">MD</span>
         <div>
           <span class="eyebrow">Medical records</span>
-          <h2 id="medical-title">Medicals and training <span class="r">from MyClinicOnline.</span></h2>
+          <h2 id="medical-title">Medicals and training <span class="r">from My Clinic Online.</span></h2>
         </div>
       </div>
-      <p>Certificates of fitness, training records and bookings are kept in MyClinicOnline, the secure environment for your people&rsquo;s special personal information. Your portal shows only what an employer may hold.</p>
+      <p>Certificates of fitness, training records and bookings are kept in My Clinic Online, the secure environment for your people&rsquo;s special personal information. Your portal shows only what an employer may hold.</p>
     </div>
 
     <div class="mcostate" id="mco-state">
-      <div class="ill" data-asset="portal-mco-pending-illustration" aria-hidden="true">MyClinicOnline connection illustration</div>
+      <div class="ill" data-asset="portal-mco-pending-illustration" aria-hidden="true">My Clinic Online connection illustration</div>
       <div>
-        <span class="pill wait">Arrives when MyClinicOnline is connected</span>
-        <h3>Your people&rsquo;s records arrive when MyClinicOnline is connected</h3>
-        <p>The link between this portal and <span class="mcologo" data-asset="portal-mco-logo">MyClinicOnline</span> is waiting on the MyClinicOnline interface contract, which is pending. Until it is live, this side of the portal stays empty on purpose: nothing is guessed and nothing is made up. The three panels below show what will appear.</p>
-        <p id="mco-open" hidden><a class="btn ghost sm inl" id="mco-open-link" href="#medical" target="_blank" rel="noopener" data-cta="portal_open_mco">Open MyClinicOnline</a></p>
+        <span class="pill wait">Arrives when My Clinic Online is connected</span>
+        <h3>Your people&rsquo;s records arrive when My Clinic Online is connected</h3>
+        <p>The link between this portal and <span class="mcologo" data-asset="portal-mco-logo">My Clinic Online</span> is waiting on the My Clinic Online interface contract, which is pending. Until it is live, this side of the portal stays empty on purpose: nothing is guessed and nothing is made up. The three panels below show what will appear.</p>
+        <p id="mco-open" hidden><a class="btn ghost sm inl" id="mco-open-link" href="#medical" target="_blank" rel="noopener" data-cta="portal_open_mco">Open My Clinic Online</a></p>
         <p class="muted">Want to see it filled in? <a class="inline" href="portal.html?demo=1" data-cta="portal_demo_from_medical">See a demonstration</a> with fictitious people.</p>
       </div>
     </div>
@@ -458,10 +458,10 @@
       <div class="card" id="m-cert">
         <div class="chead"><span class="ico med" data-asset="portal-certificates-icon" aria-hidden="true">CF</span><h3 class="ct">Certificates of fitness</h3></div>
         <div id="m-cert-body">
-          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <span class="pill wait">Arrives when My Clinic Online is connected</span>
           <h4>What will appear</h4>
           <ul class="tick">
-            <li>Every person in scope, matched on MyClinicOnline&rsquo;s own person reference, never on a name</li>
+            <li>Every person in scope, matched on My Clinic Online&rsquo;s own person reference, never on a name</li>
             <li>Each certificate: baseline, periodic and exit, and the construction, professional driving permit and mine certificates where they apply</li>
             <li>Issue date and expiry, with expiries flagged before they lapse</li>
             <li>The outcome an employer may hold: fit, fit with a restriction or not fit, with any work restriction</li>
@@ -472,10 +472,10 @@
       <div class="card" id="m-train">
         <div class="chead"><span class="ico med" data-asset="portal-training-icon" aria-hidden="true">TR</span><h3 class="ct">Training records</h3></div>
         <div id="m-train-body">
-          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <span class="pill wait">Arrives when My Clinic Online is connected</span>
           <h4>What will appear</h4>
           <ul class="tick">
-            <li>Every training record MyClinicOnline holds for your people</li>
+            <li>Every training record My Clinic Online holds for your people</li>
             <li>Provider, course or unit standard, date completed and expiry</li>
             <li>The certificate reference for each record</li>
             <li>The training matrix for every person in scope, which also fills your Health and Safety File</li>
@@ -486,12 +486,12 @@
       <div class="card" id="m-book">
         <div class="chead"><span class="ico med" data-asset="portal-bookings-icon" aria-hidden="true">BK</span><h3 class="ct">Bookings</h3></div>
         <div id="m-book-body">
-          <span class="pill wait">Arrives when MyClinicOnline is connected</span>
+          <span class="pill wait">Arrives when My Clinic Online is connected</span>
           <h4>What will appear</h4>
           <ul class="tick">
             <li>Medicals and training booked with Care Net, with the date and the people booked</li>
             <li>Renewals falling due, so you can book before a certificate lapses</li>
-            <li>The exact booking details follow the MyClinicOnline interface contract, which is pending</li>
+            <li>The exact booking details follow the My Clinic Online interface contract, which is pending</li>
           </ul>
         </div>
       </div>
@@ -521,18 +521,18 @@
   <section id="one-login" aria-labelledby="one-title">
     <div class="sechead">
       <span class="eyebrow">One login</span>
-      <h2 id="one-title">Built to be served <span class="r">from MyClinicOnline.</span></h2>
+      <h2 id="one-title">Built to be served <span class="r">from My Clinic Online.</span></h2>
     </div>
     <div class="card">
-      <div class="diagram" data-asset="portal-one-login-diagram" role="img" aria-label="Diagram: one sign in opens both sides of the portal. The commercial side holds your account, Plans, Files and quotations. The medical side holds certificates of fitness, training records and bookings. Both are served from MyClinicOnline.">
-        <div class="dg-host">Served from MyClinicOnline</div>
+      <div class="diagram" data-asset="portal-one-login-diagram" role="img" aria-label="Diagram: one sign in opens both sides of the portal. The commercial side holds your account, Plans, Files and quotations. The medical side holds certificates of fitness, training records and bookings. Both are served from My Clinic Online.">
+        <div class="dg-host">Served from My Clinic Online</div>
         <div class="dg-login">One sign in</div>
         <div class="dg-spines">
           <div class="dg-spine"><b>Commercial</b><span>Account</span><span>Plans</span><span>Files</span><span>Quotations</span></div>
           <div class="dg-spine med"><b>Medical</b><span>Certificates of fitness</span><span>Training records</span><span>Bookings</span></div>
         </div>
       </div>
-      <p>This portal is built to be served from inside MyClinicOnline, so your company records and your people&rsquo;s medical records open with one login. Every address on the page is relative and every setting comes from one shared configuration file, so the move needs no rewrite. Until MyClinicOnline single sign on is agreed, which is pending, you sign in here with your work email.</p>
+      <p>This portal is built to be served from inside My Clinic Online, so your company records and your people&rsquo;s medical records open with one login. Every address on the page is relative and every setting comes from one shared configuration file, so the move needs no rewrite. Until My Clinic Online single sign on is agreed, which is pending, you sign in here with your work email.</p>
     </div>
   </section>
 
@@ -783,7 +783,7 @@
   {
    "id": "portal-spine-medical-icon",
    "block": "Medicals and training: section heading",
-   "purpose": "Marks the medical side of the portal (MyClinicOnline records) at the head of the section.",
+   "purpose": "Marks the medical side of the portal (My Clinic Online records) at the head of the section.",
    "type": "icon",
    "formats": ["svg"],
    "width": 96,
@@ -795,37 +795,37 @@
    "file_name": "portal-spine-medical.svg",
    "delivery": "img.carenetcdn.com/portal/icons/portal-spine-medical.svg",
    "status": "needed",
-   "notes": "Suggested motif: a stethoscope around a certificate. Teal marks everything that comes from MyClinicOnline across the portal. No red cross or red crescent emblem. Placed with empty alternative text. Until delivered the tile shows the letters MD."
+   "notes": "Suggested motif: a stethoscope around a certificate. Teal marks everything that comes from My Clinic Online across the portal. No red cross or red crescent emblem. Placed with empty alternative text. Until delivered the tile shows the letters MD."
   },
   {
    "id": "portal-mco-logo",
    "block": "Medicals and training: connection panel",
-   "purpose": "The MyClinicOnline name mark inside the connection panel, so companies recognise where their people's records live.",
+   "purpose": "The My Clinic Online name mark inside the connection panel, so companies recognise where their people's records live.",
    "type": "logo",
    "formats": ["svg", "png"],
    "width": 240,
    "height": 48,
    "ratio": "5:1",
    "max_kb": 12,
-   "colour": "As supplied by the MyClinicOnline owner (brand master). Must read on white and on #E9F4F7.",
-   "alt": "MyClinicOnline",
+   "colour": "As supplied by the My Clinic Online owner (brand master). Must read on white and on #E9F4F7.",
+   "alt": "My Clinic Online",
    "file_name": "myclinic-online-logo-240x48.svg",
    "delivery": "img.carenetcdn.com/portal/myclinic-online-logo-240x48.svg",
    "status": "needed",
-   "notes": "PENDING: the logo and its usage rules must come from the MyClinicOnline owner; do not redraw it. Until supplied the name appears in text inside a teal outline. Displayed at 24 px high inline with the text; supply PNG at 2x (480 by 96) as fallback."
+   "notes": "PENDING: the logo and its usage rules must come from the My Clinic Online owner; do not redraw it. Until supplied the name appears in text inside a teal outline. Displayed at 24 px high inline with the text; supply PNG at 2x (480 by 96) as fallback."
   },
   {
    "id": "portal-mco-pending-illustration",
-   "block": "Medicals and training: Arrives when MyClinicOnline is connected panel",
-   "purpose": "Explains the waiting state at a glance: the portal and MyClinicOnline as two secure boxes with a dotted bridge between them and a plug about to connect.",
+   "block": "Medicals and training: Arrives when My Clinic Online is connected panel",
+   "purpose": "Explains the waiting state at a glance: the portal and My Clinic Online as two secure boxes with a dotted bridge between them and a plug about to connect.",
    "type": "illustration",
    "formats": ["svg", "png"],
    "width": 480,
    "height": 320,
    "ratio": "3:2",
    "max_kb": 30,
-   "colour": "Charcoal line art; Care Net red #ED1B24 on the portal box, teal #1D5D6F on the MyClinicOnline box, amber #ECD49A for the dotted bridge (the pending colour used on the page)",
-   "alt": "The Care Net portal waiting to connect to MyClinicOnline",
+   "colour": "Charcoal line art; Care Net red #ED1B24 on the portal box, teal #1D5D6F on the My Clinic Online box, amber #ECD49A for the dotted bridge (the pending colour used on the page)",
+   "alt": "The Care Net portal waiting to connect to My Clinic Online",
    "file_name": "portal-mco-pending-480x320.svg",
    "delivery": "img.carenetcdn.com/portal/portal-mco-pending-480x320.svg",
    "status": "needed",
@@ -902,19 +902,19 @@
   {
    "id": "portal-one-login-diagram",
    "block": "One login panel",
-   "purpose": "Explains in one picture that the portal is served from MyClinicOnline and that one sign in opens both sides: commercial (account, Plans, Files, quotations) and medical (certificates of fitness, training records, bookings).",
+   "purpose": "Explains in one picture that the portal is served from My Clinic Online and that one sign in opens both sides: commercial (account, Plans, Files, quotations) and medical (certificates of fitness, training records, bookings).",
    "type": "illustration",
    "formats": ["svg", "png"],
    "width": 1200,
    "height": 480,
    "ratio": "5:2",
    "max_kb": 40,
-   "colour": "White ground; a teal #E9F4F7 band across the top labelled Served from MyClinicOnline; a charcoal #1A1A1A pill labelled One sign in in the centre; two columns below, the commercial column topped with Care Net red #ED1B24, the medical column with teal #1D5D6F. Montserrat labels, Inter item text.",
-   "alt": "One sign in opens both sides of the portal, served from MyClinicOnline",
+   "colour": "White ground; a teal #E9F4F7 band across the top labelled Served from My Clinic Online; a charcoal #1A1A1A pill labelled One sign in in the centre; two columns below, the commercial column topped with Care Net red #ED1B24, the medical column with teal #1D5D6F. Montserrat labels, Inter item text.",
+   "alt": "One sign in opens both sides of the portal, served from My Clinic Online",
    "file_name": "portal-one-login-1200x480.svg",
    "delivery": "img.carenetcdn.com/portal/portal-one-login-1200x480.svg",
    "status": "needed",
-   "notes": "Until delivered the page draws the same diagram in HTML (role img with a full text description), so the words in the SVG must match: Served from MyClinicOnline; One sign in; Commercial: Account, Plans, Files, Quotations; Medical: Certificates of fitness, Training records, Bookings. Supply a stacked mobile version at 720 by 960 (3:4) as portal-one-login-720x960.svg. Text in the SVG must be real text or outlined with the full description kept in the page."
+   "notes": "Until delivered the page draws the same diagram in HTML (role img with a full text description), so the words in the SVG must match: Served from My Clinic Online; One sign in; Commercial: Account, Plans, Files, Quotations; Medical: Certificates of fitness, Training records, Bookings. Supply a stacked mobile version at 720 by 960 (3:4) as portal-one-login-720x960.svg. Text in the SVG must be real text or outlined with the full description kept in the page."
   },
   {
    "id": "portal-autohive-bee",
@@ -1040,7 +1040,7 @@ const SIGNOFF_LABEL = {
 };
 const SECTION_E_NOTE = 'The medical surveillance plan signed by the Occupational Medical Practitioner is filed in Section E as evidence. It is not a sign off of the File.';
 const DECISION = { approved: ['ok', 'Approved'], amended: ['blue', 'Amended'], rejected: ['no', 'Not approved'] };
-const COUNT_LABEL = { linked_mco: 'Linked from MyClinicOnline', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
+const COUNT_LABEL = { linked_mco: 'Linked from My Clinic Online', uploaded: 'Uploaded', outstanding: 'Outstanding', expired: 'Expired', not_applicable: 'Not applicable' };
 const COUNT_CLASS = { linked_mco: 'mco', uploaded: 'ok', outstanding: 'wait', expired: 'no', not_applicable: 'grey' };
 
 /* ------------------------------------------------------------ helpers */
@@ -1081,7 +1081,7 @@ function withTimeout(p, ms) {
 function friendly(err, fallback) {
   if (!err) return fallback;
   if (err.timeout) return 'Care Net’s servers took too long to answer. Please try again shortly.';
-  if (err.pending) return 'MyClinicOnline single sign on is pending, so sign in is not available here yet. Please WhatsApp a sales executive.';
+  if (err.pending) return 'My Clinic Online single sign on is pending, so sign in is not available here yet. Please WhatsApp a sales executive.';
   if (!err.status || err.status >= 500 || err.status === 404 || err.status === 405) return fallback;
   return err.message || fallback;
 }
@@ -1101,7 +1101,7 @@ function showError(msg) {
 function applyConfig() {
   document.querySelectorAll('a[data-wa]').forEach((a) => { a.href = WA_URL; });
   document.querySelectorAll('a[data-privacy]').forEach((a) => { a.href = PRIVACY_URL; });
-  /* The MyClinicOnline portal address is pending (HSF-3). Only once it is set
+  /* The My Clinic Online portal address is pending (HSF-3). Only once it is set
      in cnc-config.js does the link appear; the records still wait for the
      interface contract, so the panels keep their waiting state. */
   if (MCO_URL && !DEMO) {
@@ -1441,7 +1441,7 @@ function cellHtml(c) {
   const m = CELL[c.s] || ['', words(c.s), () => ''];
   const sub = m[2](dmy(c.d));
   return '<span class="cell ' + m[0] + '">' + esc(m[1]) + (sub ? '<small>' + esc(sub) + '</small>' : '')
-    + (c.src === 'MCO' ? '<abbr class="src" title="Linked from MyClinicOnline in the sample">MCO</abbr>' : '') + '</span>';
+    + (c.src === 'MCO' ? '<abbr class="src" title="Linked from My Clinic Online in the sample">MCO</abbr>' : '') + '</span>';
 }
 function tally(people, cols) {
   const t = { ok: 0, due: 0, expired: 0, missing: 0 };
@@ -1486,7 +1486,7 @@ function renderDemoMedical(s) {
   $('mco-state').hidden = true;
   const note = $('demo-medical-note');
   note.hidden = false;
-  note.innerHTML = '<span class="demo-tag">Demonstration</span> These people and records are fictitious and come from the Care Net sample File for ' + esc(s.company) + ', as at ' + esc(s.as_at || '') + '. In your portal they arrive when MyClinicOnline is connected. <abbr class="src" title="Linked from MyClinicOnline in the sample" style="text-decoration:none">MCO</abbr> marks a record the sample shows as linked from MyClinicOnline.';
+  note.innerHTML = '<span class="demo-tag">Demonstration</span> These people and records are fictitious and come from the Care Net sample File for ' + esc(s.company) + ', as at ' + esc(s.as_at || '') + '. In your portal they arrive when My Clinic Online is connected. <abbr class="src" title="Linked from My Clinic Online in the sample" style="text-decoration:none">MCO</abbr> marks a record the sample shows as linked from My Clinic Online.';
   note.style.marginBottom = '18px';
   $('med-grid').classList.add('stack');
 
@@ -1504,7 +1504,7 @@ function renderDemoMedical(s) {
     if (x && order[x.s]) renewals.push({ p, c, x });
   }));
   renewals.sort((a, b) => order[a.x.s] - order[b.x.s] || String(a.p.name).localeCompare(String(b.p.name)));
-  $('m-book-body').innerHTML = '<p>The sample holds no bookings. These are the ' + plural(renewals.length, 'renewal', 'renewals') + ' it shows as expired, with nothing on record or due, which is what you would book with Care Net through MyClinicOnline:</p>'
+  $('m-book-body').innerHTML = '<p>The sample holds no bookings. These are the ' + plural(renewals.length, 'renewal', 'renewals') + ' it shows as expired, with nothing on record or due, which is what you would book with Care Net through My Clinic Online:</p>'
     + (renewals.length
       ? '<ol class="blist">' + renewals.map((r) => { const k = CELL[r.x.s]; const sub = k[2](dmy(r.x.d)); return '<li><b>' + esc(r.p.name) + '</b>, ' + esc(r.p.role || '') + ': ' + esc(r.c.name) + ' <span class="pill ' + k[0] + '">' + esc(k[1] + (sub ? ' ' + sub : '')) + '</span></li>'; }).join('') + '</ol>'
       : '<p class="muted">Nothing is due in the sample.</p>');
